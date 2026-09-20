@@ -1,0 +1,18 @@
+.seo-hero { margin: 80px auto 130px; max-width: 900px; padding: 0 32px; text-align: center; }
+.seo-hero h1 { font-size: clamp(52px, 8vw, 104px); margin: 22px auto; max-width: 900px; }
+.seo-hero .lede { margin: 0 auto; max-width: 660px; }
+.seo-hero .actions { justify-content: center; }
+.seo-content { background: var(--ink); color: #f5eee2; display: grid; gap: 70px; grid-template-columns: 1fr 1fr; padding: 100px max(32px, calc((100vw - 1176px) / 2)); }
+.seo-content h2, .seo-cta h2 { margin-top: 16px; }
+.seo-points { display: grid; gap: 0; }
+.seo-points div { align-items: start; border-top: 1px solid #ffffff35; display: grid; grid-template-columns: 52px 1fr; padding: 20px 0; }
+.seo-points span { color: var(--accent); font-size: 12px; }
+.seo-points p { line-height: 1.6; margin: 0; }
+.seo-related { padding-top: 110px; }
+.related-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+.related-card { background: white; border: 1px solid #e2ded5; min-height: 190px; padding: 26px; }
+.related-card strong { font-family: var(--display); font-size: 25px; font-weight: 500; }
+.related-card p { color: var(--muted); line-height: 1.5; }
+.related-card span { color: var(--accent); font-size: 12px; }
+.seo-cta { background: #dcd7cc; margin-top: 60px; padding: 100px 32px; text-align: center; }
+@media (max-width: 760px) { .seo-content { grid-template-columns: 1fr; padding: 70px 24px; } .related-grid { grid-template-columns: 1fr; } .seo-hero { margin: 45px auto 80px; } }
