@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> { const { slug } = await params; return { title: `Thiệp cưới của ${slug}`, robots: { index: false, follow: false } }; }
+export default async function InvitePage({ params }: { params: Promise<{ slug: string }> }) { const { slug } = await params; return <main className="section"><header className="site-header"><Link className="brand" href="/"><span className="brand-mark">M</span>MỘC</Link><Link href="/studio">Chỉnh sửa thiệp ↗</Link></header><article className="hero"><div className="hero-copy"><p className="eyebrow">SAVE THE DATE</p><h1>{decodeURIComponent(slug)}</h1><p className="lede">Một lời mời thật riêng, được tạo bằng MỘC Wedding.</p><Link className="button-primary" href="/studio">Tạo thiệp của bạn →</Link></div><div className="hero-art"><div className="hero-card hero-card-front"><span>THE WEDDING OF</span><strong>{decodeURIComponent(slug)}</strong><small>08 · 11 · 2026</small></div></div></article></main>; }
