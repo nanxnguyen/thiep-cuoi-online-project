@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="description" content="MỘC Studio — tạo thiệp cưới online." />
+  <title>MỘC Studio — Tạo thiệp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" /><link rel="stylesheet" href="landing.css" /><link rel="stylesheet" href="phase2.css" />
+</head>
+<body class="standalone-page"><div class="page-loading">Đang mở Wedding Studio…</div><script>
+  fetch('index.html').then((response) => response.text()).then((source) => {
+    const documentSource = new DOMParser().parseFromString(source, 'text/html');
+    document.body.innerHTML = `${documentSource.querySelector('.topbar')?.outerHTML || ''}${documentSource.querySelector('.app-shell')?.outerHTML || ''}${documentSource.querySelector('.toast')?.outerHTML || ''}`;
+    const script = document.createElement('script'); script.src = 'script.js'; document.body.appendChild(script);
+  });
+</script></body>
+</html>
