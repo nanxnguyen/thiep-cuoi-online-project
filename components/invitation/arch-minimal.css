@@ -1,0 +1,399 @@
+/* Minimal (Soft Type): almost pure type on a lilac mist, the lightest and youngest of the set.
+   Signature: the wedding day is a tờ lịch bloc, the tear-off wall calendar leaf: one hairline-thin numeral
+   (Plus Jakarta Sans 200) over a punched perforation. The risk is scale: the day outweighs the names, the way
+   the date is the loudest thing on a real calendar leaf. Everything else stays quiet: pills, air, no ornaments.
+   Accent is only ever a rule, a perforation dot, a focus ring or a call to action. */
+
+[data-archetype="minimal"] {
+  --inv-radius: 24px;
+  --inv-label-tracking: 0.34em;
+  --inv-line: color-mix(in oklab, var(--inv-ink) 13%, transparent);
+  --inv-pill: 999px;
+}
+
+/* cover: a soft mist (two faint washes) instead of an ornament; the last layer hands the ground back to plain
+   --inv-bg at the bottom edge so the cover meets the first section without a seam */
+[data-archetype="minimal"] .inv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 76%, var(--inv-bg) 100%),
+    radial-gradient(90% 46% at 88% 6%, color-mix(in oklab, var(--inv-accent) 13%, transparent), transparent 70%),
+    radial-gradient(80% 50% at 6% 96%, color-mix(in oklab, var(--inv-surface) 85%, transparent), transparent 72%);
+}
+[data-archetype="minimal"] .inv-cover__frame {
+  z-index: 1;
+  gap: 0;
+  padding: 60px 28px 92px;
+}
+[data-archetype="minimal"] .inv-kicker {
+  order: -4;
+  margin: 0 0 30px;
+  padding-inline-start: 0.4em; /* balances the trailing letter-space so the line is truly centred */
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  color: var(--inv-muted);
+}
+[data-archetype="minimal"] .inv-hero {
+  order: -3;
+  width: 84px;
+  margin: 0 0 30px;
+}
+[data-archetype="minimal"] .inv-hero img {
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+/* the leaf: perforation, numeral, month, weekday */
+[data-archetype="minimal"] .inv-date {
+  order: -2;
+  width: 100%;
+}
+[data-archetype="minimal"] .inv-date::before {
+  content: "";
+  display: block;
+  height: 8px;
+  margin: 0 auto 22px;
+  max-width: 300px;
+  background: radial-gradient(circle, var(--inv-accent) 1.1px, transparent 1.6px) 0 50% / 11px 8px repeat-x;
+  -webkit-mask-image: linear-gradient(90deg, transparent, var(--inv-ink) 18%, var(--inv-ink) 82%, transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--inv-ink) 18%, var(--inv-ink) 82%, transparent);
+}
+[data-archetype="minimal"] .inv-date time {
+  gap: 0;
+}
+[data-archetype="minimal"] .inv-date__num {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  letter-spacing: 0;
+}
+[data-archetype="minimal"] .inv-date__d {
+  flex-basis: 100%;
+  font-size: clamp(110px, 48cqi, 230px);
+  font-weight: 200;
+  line-height: 0.86;
+  letter-spacing: -0.05em;
+  padding-inline-end: 0.05em; /* the negative tracking pulls the last glyph out of centre */
+  font-variant-numeric: tabular-nums;
+}
+[data-archetype="minimal"] .inv-date__d + .inv-date__sep {
+  display: none;
+}
+[data-archetype="minimal"] .inv-date__m,
+[data-archetype="minimal"] .inv-date__y,
+[data-archetype="minimal"] .inv-date__sep {
+  margin-top: 18px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+[data-archetype="minimal"] .inv-date__m::before {
+  content: "Tháng ";
+}
+[data-archetype="minimal"] .inv-date__sep {
+  margin-inline: 0.5em;
+}
+[data-archetype="minimal"] .inv-date__day {
+  margin-top: 20px;
+  padding: 8px 20px 8px calc(20px + 0.3em);
+  border: 1px solid var(--inv-line);
+  border-radius: var(--inv-pill);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--inv-ink);
+}
+
+/* names: light and small next to the day */
+[data-archetype="minimal"] .inv-names {
+  margin-top: 38px;
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-size: clamp(32px, 11.5cqi, 54px);
+  font-weight: 300;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+[data-archetype="minimal"] .inv-amp {
+  font-style: normal;
+  font-weight: 200;
+  font-size: 0.62em;
+  line-height: 1.7;
+  color: var(--inv-muted);
+}
+[data-archetype="minimal"] .inv-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  padding-inline-start: 0.4em;
+}
+[data-archetype="minimal"] .inv-scroll::after {
+  content: "";
+  width: 1px;
+  height: 26px;
+  background: linear-gradient(var(--inv-accent), transparent);
+}
+
+/* sections: separated by air, not by lines */
+[data-archetype="minimal"] .inv-section {
+  padding: 72px 32px;
+  text-align: center;
+}
+[data-archetype="minimal"] .inv-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 40px;
+  padding-inline-start: 0.34em;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--inv-muted);
+}
+[data-archetype="minimal"] .inv-label::before {
+  content: "";
+  width: 1px;
+  height: 28px;
+  background: var(--inv-accent);
+}
+[data-archetype="minimal"] .inv-lead,
+[data-archetype="minimal"] .inv-countdown__lead {
+  margin-inline: auto;
+  max-width: 30ch;
+  margin-bottom: 32px;
+}
+[data-archetype="minimal"] .inv-message {
+  margin-bottom: 52px;
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-size: clamp(20px, 5.8cqi, 26px);
+  font-weight: 300;
+  line-height: 1.62;
+}
+[data-archetype="minimal"] .inv-pair {
+  gap: 24px;
+}
+[data-archetype="minimal"] .inv-pair > div {
+  align-items: center;
+  gap: 8px;
+}
+[data-archetype="minimal"] .inv-role,
+[data-archetype="minimal"] .inv-side__title,
+[data-archetype="minimal"] .inv-leaf__weekday,
+[data-archetype="minimal"] .inv-clock__label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+}
+[data-archetype="minimal"] .inv-pair__name {
+  font-weight: 300;
+  font-size: clamp(24px, 7.6cqi, 32px);
+}
+[data-archetype="minimal"] .inv-side__name {
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+[data-archetype="minimal"] .inv-side__addr {
+  font-size: 13px;
+}
+
+/* events: the leaf repeats the cover's calendar, stripped down to type */
+[data-archetype="minimal"] .inv-event {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 24px;
+  padding: 36px 0;
+  border: 0;
+}
+[data-archetype="minimal"] .inv-event:last-child {
+  border: 0;
+}
+[data-archetype="minimal"] .inv-leaf {
+  min-width: 132px;
+  padding: 18px 0 0;
+  background: none;
+  border: 0;
+  border-top: 3px dotted color-mix(in oklab, var(--inv-accent) 55%, transparent);
+  border-radius: 0;
+  overflow: visible;
+}
+[data-archetype="minimal"] .inv-leaf__month {
+  padding: 0;
+  background: none;
+  color: var(--inv-muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+}
+[data-archetype="minimal"] .inv-leaf__day {
+  padding-top: 4px;
+  font-size: 72px;
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+[data-archetype="minimal"] .inv-leaf__lunar {
+  border-top: 0;
+  padding-top: 0;
+}
+[data-archetype="minimal"] .inv-event__title {
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 300;
+}
+[data-archetype="minimal"] .inv-event__time {
+  margin-bottom: 12px;
+  color: var(--inv-ink);
+  font-weight: 500;
+}
+[data-archetype="minimal"] .inv-actions {
+  justify-content: center;
+}
+[data-archetype="minimal"] .inv-map {
+  border-radius: var(--inv-radius);
+}
+
+/* buttons: pills. The one accent fill is the call to action. */
+[data-archetype="minimal"] .inv-btn {
+  min-height: 46px;
+  padding: 12px 24px;
+  border-radius: var(--inv-pill);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+[data-archetype="minimal"] a.inv-btn--ghost,
+[data-archetype="minimal"] .inv-btn--ghost {
+  border-color: var(--inv-line);
+  background: transparent;
+  color: var(--inv-ink);
+}
+[data-archetype="minimal"] .inv-btn--small {
+  min-height: 44px;
+}
+
+/* countdown: four hairline numerals, no boxes */
+[data-archetype="minimal"] .inv-clock {
+  gap: 4px;
+}
+[data-archetype="minimal"] .inv-clock__cell {
+  background: none;
+  border: 0;
+  padding: 8px 0;
+}
+[data-archetype="minimal"] .inv-clock__num {
+  font-size: clamp(38px, 12cqi, 56px);
+  font-weight: 200;
+  letter-spacing: -0.03em;
+}
+[data-archetype="minimal"] .inv-countdown .inv-actions {
+  margin-top: 28px;
+}
+
+/* album */
+[data-archetype="minimal"] .inv-album {
+  gap: 10px;
+}
+[data-archetype="minimal"] .inv-photo {
+  border-radius: 22px;
+}
+
+/* forms and cards: soft tinted pillows, pill fields */
+[data-archetype="minimal"] .inv-form {
+  text-align: left;
+}
+[data-archetype="minimal"] .inv-field > span,
+[data-archetype="minimal"] .inv-field > label > span {
+  padding-inline-start: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--inv-muted);
+}
+[data-archetype="minimal"] .inv-field input:not([type="radio"]) {
+  padding: 14px 22px;
+  border-color: transparent;
+  border-radius: var(--inv-pill);
+  background: color-mix(in oklab, var(--inv-surface) 78%, transparent);
+}
+[data-archetype="minimal"] .inv-field textarea {
+  padding: 16px 22px;
+  border-color: transparent;
+  border-radius: 24px;
+  background: color-mix(in oklab, var(--inv-surface) 78%, transparent);
+}
+[data-archetype="minimal"] .inv-field input:not([type="radio"]):focus-visible,
+[data-archetype="minimal"] .inv-field textarea:focus-visible {
+  outline-offset: 0;
+  border-color: var(--inv-accent);
+}
+[data-archetype="minimal"] .inv-field .inv-choice {
+  min-height: 48px;
+  padding: 12px 20px;
+  border-color: transparent;
+  border-radius: var(--inv-pill);
+  background: color-mix(in oklab, var(--inv-surface) 78%, transparent);
+}
+[data-archetype="minimal"] .inv-choice:has(input:checked) {
+  background: var(--inv-surface);
+}
+[data-archetype="minimal"] .inv-card,
+[data-archetype="minimal"] .inv-wish,
+[data-archetype="minimal"] .inv-account {
+  padding: 28px 24px;
+  border: 0;
+  border-radius: 28px;
+  background: color-mix(in oklab, var(--inv-surface) 78%, transparent);
+}
+[data-archetype="minimal"] .inv-wish {
+  padding: 20px 22px;
+  text-align: left;
+}
+[data-archetype="minimal"] .inv-wish__by {
+  color: var(--inv-muted);
+  font-weight: 500;
+}
+[data-archetype="minimal"] .inv-success {
+  color: var(--inv-ink);
+}
+[data-archetype="minimal"] .inv-account__title,
+[data-archetype="minimal"] .inv-done__title {
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+}
+[data-archetype="minimal"] .inv-account__info div {
+  border-bottom-style: solid;
+}
+
+/* thanks */
+[data-archetype="minimal"] .inv-thanks__msg {
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-weight: 300;
+}
+[data-archetype="minimal"] .inv-thanks__names {
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-size: clamp(30px, 10cqi, 44px);
+  font-weight: 200;
+  letter-spacing: -0.01em;
+  color: var(--inv-ink);
+}
+
+/* envelope gate: same mist, pill button */
+[data-archetype="minimal"] .inv-gate__kicker {
+  padding-inline-start: 0.34em;
+  font-weight: 500;
+  color: var(--inv-muted);
+}
+[data-archetype="minimal"] .inv-gate__guest {
+  font-family: var(--inv-font-body), system-ui, sans-serif;
+  font-weight: 300;
+}
