@@ -1,0 +1,357 @@
+/* Botanical (Wild Garden, Olive Story): a quiet garden print. Arched windows, hairline betel-leaf sprigs, a script
+   ampersand, soft paper depth. The arch is the window motif of the whole page: cover photo, countdown cells and
+   album thumbnails all share it.
+   Signature (and the one risk): the sprigs are not a symmetrical pair. One hangs from the top-left corner, its
+   sibling rises from the bottom-right, so the cover reads as a branch caught mid-growth, not a frame.
+   Wild Garden is airy sage light; Olive Story adds a parchment vignette, a printed keyline and italic second name. */
+
+[data-archetype="botanical"] {
+  --inv-radius: 18px;
+  --inv-label-tracking: 0.22em;
+  --inv-line: color-mix(in oklab, var(--inv-accent) 28%, transparent);
+  --inv-arch: 999px 999px 0 0;
+  --inv-pill: 999px;
+  /* the section divider: a horizontal branch of betel leaves, used as a mask so it takes the accent */
+  --inv-branch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 34'%3E%3Cdefs%3E%3Cpath id='l' d='M0 0C-4 8-18 14-26 4C-34-8-26-34-10-54C-6-62-2-70 0-78C2-70 6-62 10-54C26-34 34-8 26 4C18 14 4 8 0 0Z'/%3E%3C/defs%3E%3Cg fill='%23000' fill-opacity='.2' stroke='%23000' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 21Q39 25 70 21Q101 17 132 21' fill='none' stroke-width='1.2'/%3E%3Cuse href='%23l' transform='translate(70 21) rotate(-3) scale(.27)' stroke-width='4.4'/%3E%3Cuse href='%23l' transform='translate(46 23.4) rotate(-60) scale(.21)' stroke-width='5.6'/%3E%3Cuse href='%23l' transform='translate(94 18.6) rotate(60) scale(.21)' stroke-width='5.6'/%3E%3Cuse href='%23l' transform='translate(26 24.2) rotate(-122) scale(.17)' stroke-width='7'/%3E%3Cuse href='%23l' transform='translate(114 17.8) rotate(122) scale(.17)' stroke-width='7'/%3E%3C/g%3E%3C/svg%3E");
+}
+[data-template="olive-story"] {
+  --inv-radius: 12px;
+}
+
+/* cover: paper depth from two low-opacity radial washes; the top layer fades back to plain ground at the bottom edge */
+[data-archetype="botanical"] .inv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 80%, var(--inv-bg) 100%),
+    radial-gradient(85% 45% at 10% 2%, color-mix(in oklab, var(--inv-surface) 90%, transparent), transparent 70%),
+    radial-gradient(90% 46% at 96% 96%, color-mix(in oklab, var(--inv-accent) 15%, transparent), transparent 72%);
+}
+[data-template="olive-story"] .inv-cover::before {
+  /* parchment: a warm glow in the middle and a darker, printed edge */
+  background:
+    linear-gradient(180deg, transparent 80%, var(--inv-bg) 100%),
+    radial-gradient(70% 42% at 50% 34%, color-mix(in oklab, var(--inv-surface) 95%, transparent), transparent 72%),
+    radial-gradient(125% 88% at 50% 50%, transparent 52%, color-mix(in oklab, var(--inv-accent) 17%, transparent));
+}
+[data-archetype="botanical"] .inv-cover__frame {
+  z-index: 1;
+  gap: 10px;
+  padding: 96px 32px 100px;
+}
+[data-template="olive-story"] .inv-cover__frame::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border: 1px solid var(--inv-line);
+  pointer-events: none;
+}
+
+/* sprigs: top-left hangs, bottom-right rises. The SVG grows from bottom-left to top-right, so the first is
+   turned a quarter and pinned by its top-left corner; the second is only mirrored. Both bleed a few pixels past
+   the edge so they read as growing in from outside, and stay clear of the date. */
+[data-archetype="botanical"] .inv-orn {
+  overflow: visible; /* the tip leaf of a sprig pokes past its viewBox */
+}
+[data-archetype="botanical"] .inv-orn--sprig-l {
+  top: -6px;
+  left: -6px;
+  width: 104px;
+  height: 135px;
+  transform-origin: 0 0;
+  transform: translateX(135px) rotate(90deg);
+}
+[data-archetype="botanical"] .inv-orn--sprig-r {
+  right: -10px;
+  bottom: -8px;
+  width: 104px;
+  height: 135px;
+  transform: scaleX(-1);
+}
+
+[data-archetype="botanical"] .inv-kicker {
+  order: -3;
+  font-family: var(--inv-font-script), cursive;
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* the arch: photo, or the drawn arch when there is none */
+[data-archetype="botanical"] .inv-hero {
+  position: relative;
+  width: min(62%, 236px);
+  margin: 12px 0 14px;
+}
+[data-archetype="botanical"] .inv-hero::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 1px solid var(--inv-accent);
+  border-radius: var(--inv-arch);
+  pointer-events: none;
+}
+[data-archetype="botanical"] .inv-hero img {
+  aspect-ratio: 3 / 4.1;
+  border-radius: var(--inv-arch);
+}
+[data-archetype="botanical"] .inv-orn--arch {
+  position: relative;
+  order: -2;
+  width: min(54%, 200px);
+  height: auto;
+  margin: 8px 0 12px;
+}
+
+[data-archetype="botanical"] .inv-names {
+  font-size: clamp(50px, 16cqi, 76px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+}
+[data-template="olive-story"] .inv-names {
+  font-weight: 300;
+}
+[data-template="olive-story"] .inv-name:last-child {
+  font-style: italic;
+}
+[data-archetype="botanical"] .inv-amp {
+  font-family: var(--inv-font-script), cursive;
+  font-style: normal;
+  font-size: 1.05em;
+  line-height: 0.95;
+  margin-block: -0.02em;
+}
+[data-archetype="botanical"] .inv-date {
+  margin-top: 8px;
+}
+[data-archetype="botanical"] .inv-date__num {
+  font-size: 22px;
+  letter-spacing: 0.1em;
+}
+[data-archetype="botanical"] .inv-date__day {
+  font-size: 11px;
+}
+[data-archetype="botanical"] .inv-scroll {
+  bottom: 30px;
+  font-size: 10px;
+}
+
+/* sections: centred, a hairline branch above each label */
+[data-archetype="botanical"] .inv-section {
+  padding: 60px 30px 64px;
+  text-align: center;
+}
+[data-archetype="botanical"] .inv-section::before {
+  content: "";
+  display: block;
+  width: 128px;
+  height: 31px;
+  margin: 0 auto 18px;
+  background: var(--inv-accent);
+  -webkit-mask: var(--inv-branch) center / contain no-repeat;
+  mask: var(--inv-branch) center / contain no-repeat;
+}
+[data-archetype="botanical"] .inv-section:nth-of-type(even)::before {
+  transform: scaleX(-1);
+}
+[data-archetype="botanical"] .inv-label {
+  margin-bottom: 26px;
+  font-family: var(--inv-font-display), Georgia, serif;
+  font-size: 25px;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-transform: none;
+}
+[data-archetype="botanical"] .inv-lead,
+[data-archetype="botanical"] .inv-countdown__lead {
+  margin-inline: auto;
+  max-width: 32ch;
+}
+[data-archetype="botanical"] .inv-message {
+  font-size: clamp(21px, 6cqi, 27px);
+  line-height: 1.5;
+}
+[data-archetype="botanical"] .inv-pair > div,
+[data-archetype="botanical"] .inv-side {
+  align-items: center;
+}
+[data-archetype="botanical"] .inv-pair__name {
+  font-size: clamp(28px, 8.6cqi, 36px);
+}
+[data-archetype="botanical"] .inv-role,
+[data-archetype="botanical"] .inv-side__title {
+  font-size: 11px;
+}
+[data-archetype="botanical"] .inv-side__name {
+  font-size: 18px;
+  text-wrap: balance;
+}
+[data-archetype="botanical"] .inv-message,
+[data-archetype="botanical"] .inv-thanks__msg {
+  text-wrap: pretty;
+}
+
+/* events: a calendar leaf with an arched head */
+[data-archetype="botanical"] .inv-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 30px 0;
+  border: 0;
+}
+[data-archetype="botanical"] .inv-event + .inv-event {
+  border-top: 1px solid var(--inv-line);
+}
+[data-archetype="botanical"] .inv-event:last-child {
+  border-bottom: 0;
+}
+[data-archetype="botanical"] .inv-leaf {
+  min-width: 128px;
+  padding: 30px 10px 14px;
+  border-color: var(--inv-line);
+  border-radius: 64px 64px 14px 14px;
+}
+[data-archetype="botanical"] .inv-leaf__day {
+  order: 1;
+  padding-top: 0;
+  font-size: 54px;
+  font-weight: 400;
+}
+[data-archetype="botanical"] .inv-leaf__weekday {
+  order: 2;
+}
+[data-archetype="botanical"] .inv-leaf__month {
+  order: 3;
+  align-self: center;
+  margin-top: 6px;
+  padding: 0;
+  background: none;
+  color: var(--inv-accent);
+  font-size: 10.5px;
+}
+[data-archetype="botanical"] .inv-leaf__lunar {
+  order: 4;
+  border-top-style: solid;
+  border-top-color: var(--inv-line);
+}
+[data-archetype="botanical"] .inv-event__title {
+  font-size: 28px;
+  font-style: italic;
+  font-weight: 400;
+}
+[data-archetype="botanical"] .inv-actions {
+  justify-content: center;
+}
+
+/* buttons: pills */
+[data-archetype="botanical"] .inv-btn {
+  min-height: 46px;
+  padding: 12px 24px;
+  border-radius: var(--inv-pill);
+  letter-spacing: 0.02em;
+}
+[data-archetype="botanical"] a.inv-btn--ghost,
+[data-archetype="botanical"] .inv-btn--ghost {
+  border-color: var(--inv-line);
+  background: transparent;
+  color: var(--inv-ink);
+}
+[data-archetype="botanical"] .inv-btn--small {
+  min-height: 44px;
+}
+
+/* countdown: four little arched windows */
+[data-archetype="botanical"] .inv-clock__cell {
+  padding: 24px 2px 14px;
+  border-color: var(--inv-line);
+  border-radius: var(--inv-arch);
+}
+[data-archetype="botanical"] .inv-clock__num {
+  font-size: clamp(28px, 8.6cqi, 36px);
+  font-weight: 400;
+}
+[data-archetype="botanical"] .inv-clock__label {
+  font-size: 10.5px;
+}
+[data-archetype="botanical"] .inv-countdown .inv-actions {
+  justify-content: center;
+}
+
+/* album: thumbnails are arches too, the wide photos stay soft rectangles */
+[data-archetype="botanical"] .inv-album {
+  gap: 10px;
+}
+[data-archetype="botanical"] .inv-photo {
+  border-radius: var(--inv-arch);
+}
+[data-archetype="botanical"] .inv-album li:first-child .inv-photo,
+[data-archetype="botanical"] .inv-album li:last-child:nth-child(even) .inv-photo {
+  border-radius: 28px;
+}
+
+/* forms and cards */
+[data-archetype="botanical"] .inv-form,
+[data-archetype="botanical"] .inv-wishlist {
+  text-align: left;
+}
+[data-archetype="botanical"] .inv-field input:not([type="radio"]) {
+  padding: 13px 20px;
+  border-color: var(--inv-line);
+  border-radius: var(--inv-pill);
+}
+[data-archetype="botanical"] .inv-field textarea {
+  padding: 15px 20px;
+  border-color: var(--inv-line);
+  border-radius: 22px;
+}
+[data-archetype="botanical"] .inv-field .inv-choice {
+  min-height: 48px;
+  padding: 12px 20px;
+  border-color: var(--inv-line);
+  border-radius: var(--inv-pill);
+}
+[data-archetype="botanical"] .inv-card,
+[data-archetype="botanical"] .inv-account {
+  border-color: var(--inv-line);
+  border-radius: 24px;
+}
+[data-archetype="botanical"] .inv-wish {
+  border-color: var(--inv-line);
+  border-radius: 20px;
+}
+[data-archetype="botanical"] .inv-account__title,
+[data-archetype="botanical"] .inv-done__title {
+  font-style: italic;
+  font-weight: 400;
+}
+[data-archetype="botanical"] .inv-account__info div {
+  border-bottom-style: solid;
+  border-bottom-color: var(--inv-line);
+}
+
+/* thanks */
+[data-archetype="botanical"] .inv-thanks__names {
+  font-size: clamp(36px, 11.5cqi, 48px);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* envelope gate */
+[data-archetype="botanical"] .inv-gate__kicker {
+  font-family: var(--inv-font-script), cursive;
+  font-size: 30px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+[data-archetype="botanical"] .inv-gate__open {
+  border-radius: var(--inv-pill);
+}
