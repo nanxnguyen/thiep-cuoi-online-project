@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   title: { default: "MỘC — Thiệp cưới online sang trọng, đậm dấu ấn của hai bạn", template: "%s | MỘC Wedding" },
   description: "Tạo thiệp cưới online hiện đại, sang trọng: chọn mẫu, thêm ảnh và câu chuyện, gửi qua Zalo. Khách xác nhận tham dự, gửi lời chúc và mừng cưới ngay trên thiệp.",
   alternates: { canonical: "/" },
-  openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", title: "MỘC — Thiệp cưới online sang trọng", description: "Tạo chiếc thiệp cưới online mang dấu ấn của hai bạn." },
+  openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", title: "MỘC — Thiệp cưới online sang trọng", description: "Tạo chiếc thiệp cưới online mang dấu ấn của hai bạn.", images: [{ url: "/og.png", width: 1200, height: 630, alt: "MỘC Wedding — thiệp cưới online" }] },
+  twitter: { card: "summary_large_image", images: [{ url: "/og.png", alt: "MỘC Wedding — thiệp cưới online" }] },
   robots: { index: true, follow: true },
 };
 

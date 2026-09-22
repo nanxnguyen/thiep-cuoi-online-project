@@ -28,8 +28,10 @@ export type InvitationRendererProps = {
   mode: "live" | "preview";
   /** Required in live mode: the RSVP and wish forms post to /api/public/invitations/{slug}. */
   slug?: string;
-  /** From `?to=` on the link the guest opened. */
+  /** From `?to=` on the link the guest opened, or resolved from `?g=` (guest-manager link, Phase 3). */
   guestName?: string;
+  /** From `?g=` when it resolved to a real guest; sent with the RSVP so it can be attributed (lib/api.ts RsvpInput.guestToken). */
+  guestToken?: string;
   wishes?: PublicWish[];
   /** Fixed clock for deterministic rendering (tests, SSR). */
   now?: Date;
@@ -42,7 +44,7 @@ export type InvitationRendererProps = {
 // One renderer for every template: the palette and fonts arrive as CSS variables on .inv-stage and the
 // archetype selects the cover, ornaments and rhythm in CSS, so the section markup never forks per template.
 // The public page, the template preview and the Studio's live preview all render exactly this component.
-export function InvitationRenderer({ content, template, mode, slug, guestName = "", wishes = [], now, gate, only }: InvitationRendererProps) {
+export function InvitationRenderer({ content, template, mode, slug, guestName = "", guestToken = "", wishes = [], now, gate, only }: InvitationRendererProps) {
   const { palette: p, fonts: f } = template;
   const style = {
     "--inv-bg": p.bg,
@@ -82,7 +84,7 @@ export function InvitationRenderer({ content, template, mode, slug, guestName = 
               <Events content={content} />
               <CountdownSection content={content} now={clock} />
               <Album content={content} />
-              <RsvpSection content={content} slug={slug} preview={preview} guestName={guest} />
+              <RsvpSection content={content} slug={slug} preview={preview} guestName={guest} guestToken={guestToken} />
               <WishesSection content={content} slug={slug} preview={preview} guestName={guest} wishes={wishes} />
               <Gift content={content} />
             </main>

@@ -53,7 +53,8 @@ const sections: LegalSection[] = [
       [
         "img.vietqr.io: tạo hình mã QR mừng cưới. Địa chỉ ảnh chứa ngân hàng, số tài khoản và tên chủ tài khoản bạn nhập nên dịch vụ này nhận được các thông tin đó khi ảnh được tải.",
         "Google Maps: chỉ tải bản đồ nhúng khi khách bấm \"Xem bản đồ\"; nút \"Chỉ đường\" mở Google Maps ở một tab riêng.",
-        "api.qrserver.com: tạo mã QR của đường link thiệp trong hộp thoại chia sẻ của Studio, nên dịch vụ này nhận đường link thiệp.",
+        "api.qrserver.com: tạo mã QR của đường link thiệp trong hộp thoại chia sẻ của Studio và ở công cụ Tạo mã QR, nên dịch vụ này nhận đường link được nhập.",
+        "unpkg.com: công cụ Nén video (/cong-cu/nen-video) tải phần mềm xử lý video (ffmpeg) từ đây khi bạn mở trang đó, chỉ để trình duyệt của bạn dùng — video của bạn không được gửi lên unpkg.com hay bất kỳ máy chủ nào, việc nén diễn ra hoàn toàn trên máy bạn.",
       ],
       "Các dịch vụ này có chính sách riêng của họ.",
     ],
@@ -92,7 +93,7 @@ export default function PrivacyPage() {
   return (
     <MarketingLayout>
       <PageHero crumbs={[{ label: "Quyền riêng tư" }]} eyebrow="Quyền riêng tư" title={<>Dữ liệu của bạn, <em>nói rõ ràng.</em></>} lede="MỘC lưu gì, ai xem được, dùng dịch vụ nào bên ngoài và bạn có những quyền gì." />
-      <LegalBody sections={sections} updated="21 tháng 9, 2026" />
+      <LegalBody sections={sections} updated="22 tháng 9, 2026" />
     </MarketingLayout>
   );
 }

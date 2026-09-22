@@ -11,7 +11,7 @@ import { DEFAULT_TEMPLATE_ID, getTemplate } from "@/lib/templates";
 // Guests must always see the latest version of the invitation, so nothing here is cached.
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ to?: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ to?: string; g?: string }> };
 
 // generateMetadata and the page both need the invitation: one backend call per request.
 const load = cache(async (slug: string) => (isValidSlug(slug) ? api.getPublicInvitation(slug) : null));
@@ -35,15 +35,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Link cá nhân ?g=token (Phase 3) thắng ?to= thủ công khi cả hai có mặt; token sai/hết hạn/lỗi mạng
+// không được làm vỡ cả trang khách, nên mọi lỗi ở đây đều rơi về "không có tên khách", không throw.
+async function resolveGuest(slug: string, g?: string): Promise<{ name: string; token: string }> {
+  if (!g) return { name: "", token: "" };
+  try {
+    const household = await api.resolveGuestToken(slug, g);
+    return household ? { name: household, token: g } : { name: "", token: "" };
+  } catch {
+    return { name: "", token: "" };
+  }
+}
+
 export default async function InvitePage({ params, searchParams }: Props) {
-  const dto = await load((await params).slug);
+  const { slug } = await params;
+  const sp = await searchParams;
+  // Chạy song song: resolveGuest chỉ cần slug từ URL (không cần đợi load() trả về) — gộp lại thành 1 RTT
+  // thay vì 2 nối tiếp, quan trọng vì đây đúng là loại link (?g=) mà khách mở trên điện thoại.
+  const [dto, guest] = await Promise.all([load(slug), resolveGuest(slug, sp.g)]);
   if (!dto) notFound();
   const template = getTemplate(dto.templateId) ?? getTemplate(DEFAULT_TEMPLATE_ID)!;
-  const to = (await searchParams).to?.trim().slice(0, 80) ?? "";
+  const to = sp.to?.trim().slice(0, 80) ?? "";
+  const guestName = guest.name || to;
 
   return (
     <div className={fontClassesFor(template)}>
-      <InvitationRenderer mode="live" slug={dto.slug} template={template} content={dto.content} wishes={dto.wishes} guestName={to} />
+      <InvitationRenderer
+        mode="live"
+        slug={dto.slug}
+        template={template}
+        content={dto.content}
+        wishes={dto.wishes}
+        guestName={guestName}
+        guestToken={guest.token}
+      />
     </div>
   );
 }

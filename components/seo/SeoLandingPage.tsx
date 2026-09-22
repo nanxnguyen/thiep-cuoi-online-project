@@ -7,10 +7,11 @@ type SeoLandingPageProps = {
   title: React.ReactNode;
   description: string;
   points: string[];
+  sections?: { title: string; paragraphs: string[] }[];
   related: { href: string; label: string; description: string }[];
 };
 
-export function SeoLandingPage({ eyebrow, title, description, points, related }: SeoLandingPageProps) {
+export function SeoLandingPage({ eyebrow, title, description, points, sections = [], related }: SeoLandingPageProps) {
   return (
     <>
       <SiteHeader />
@@ -46,6 +47,12 @@ export function SeoLandingPage({ eyebrow, title, description, points, related }:
             ))}
           </div>
         </section>
+        {sections.map((section) => (
+          <section className="seo-copy" key={section.title}>
+            <h2>{section.title}</h2>
+            {section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </section>
+        ))}
         {related.length > 0 && (
           <section className="section seo-related">
             <p className="eyebrow">Khám phá thêm</p>

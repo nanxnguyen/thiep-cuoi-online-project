@@ -39,7 +39,8 @@ export type InvitationDto = {
 };
 export type CreatedInvitation = { id: string; slug: string; key: string };
 export type PublicInvitationDto = { slug: string; templateId: string; content: Content; wishes: PublicWish[] };
-// `website` is a honeypot: real users never fill it, bots do.
+// `website` is a honeypot: real users never fill it, bots do. `guestToken` comes from a `?g=` guest-manager
+// link (Phase 3); empty string for the manual `?to=` flow, resolved server-side into `guest_id` or ignored.
 export type RsvpInput = {
   name: string;
   attending: boolean;
@@ -47,6 +48,7 @@ export type RsvpInput = {
   note: string;
   answers: Record<string, string>;
   guestLabel: string;
+  guestToken: string;
   website: string;
 };
 export type WishInput = { name: string; message: string; website: string };
@@ -67,6 +69,34 @@ export type ResponsesDto = {
   wishes: WishRow[];
 };
 type Patch = { templateId?: string; content?: Content; slug?: string; published?: boolean };
+
+// Một dòng khách mời (hộ/nhóm). rsvpStatus/confirmedPax phản ánh RSVP mới nhất gắn guest này (GuestService).
+export type GuestRsvpStatus = "pending" | "attending" | "declined";
+export type GuestDto = {
+  id: string;
+  household: string;
+  groupName: string;
+  tableNo: string;
+  phone: string;
+  expectedPax: number;
+  note: string;
+  token: string;
+  link: string;
+  rsvpStatus: GuestRsvpStatus;
+  confirmedPax: number | null;
+  createdAt: string;
+  updatedAt: string;
+};
+// household bắt buộc khi tạo mới; khi sửa, trường bỏ qua (undefined) nghĩa là giữ nguyên (BE: null = unchanged).
+export type GuestInput = {
+  household?: string;
+  groupName?: string;
+  tableNo?: string;
+  phone?: string;
+  expectedPax?: number;
+  note?: string;
+};
+export type GuestImportResult = { created: number; errors: { index: number; message: string }[] };
 
 export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => fetch(...a)) {
   async function call<T>(path: string, init: RequestInit = {}, key?: string): Promise<T> {
@@ -123,6 +153,25 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
       call<void>(`/api/public/invitations/${slug}/rsvp`, json("POST", input)),
     submitWish: (slug: string, input: WishInput) =>
       call<PublicWish>(`/api/public/invitations/${slug}/wishes`, json("POST", input)),
+    listGuests: (id: string, key: string) => call<{ guests: GuestDto[] }>(`/api/invitations/${id}/guests`, {}, key),
+    createGuest: (id: string, key: string, input: GuestInput & { household: string }) =>
+      call<GuestDto>(`/api/invitations/${id}/guests`, json("POST", input), key),
+    updateGuest: (id: string, key: string, guestId: string, input: GuestInput) =>
+      call<GuestDto>(`/api/invitations/${id}/guests/${guestId}`, json("PATCH", input), key),
+    deleteGuest: (id: string, key: string, guestId: string) =>
+      call<void>(`/api/invitations/${id}/guests/${guestId}`, { method: "DELETE" }, key),
+    importGuests: (id: string, key: string, guests: (GuestInput & { household: string })[]) =>
+      call<GuestImportResult>(`/api/invitations/${id}/guests/import`, json("POST", { guests }), key),
+    // Token sai/hết hạn -> null (không lỗi cả trang khách); xem app/invite/[slug]/page.tsx.
+    async resolveGuestToken(slug: string, token: string): Promise<string | null> {
+      try {
+        const res = await call<{ household: string }>(`/api/public/invitations/${slug}/guests/${token}`);
+        return res.household;
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 404) return null;
+        throw e;
+      }
+    },
   };
 }
 

@@ -73,3 +73,50 @@ test("uploadMedia posts multipart with kind and file", async () => {
   // fetch must set the multipart boundary itself, so no explicit Content-Type may be sent.
   assert.equal(new Headers(calls[0].init.headers).get("content-type"), null);
 });
+
+test("createGuest POSTs the household and sends X-Edit-Key", async () => {
+  const { api, calls } = fake(201, { id: "g1", household: "Gia đình chú Ba", token: "tok" });
+  await api.createGuest("i", "k", { household: "Gia đình chú Ba" });
+  assert.equal(calls[0].url, "http://be/api/invitations/i/guests");
+  assert.equal(calls[0].init.method, "POST");
+  assert.equal(calls[0].init.body, JSON.stringify({ household: "Gia đình chú Ba" }));
+  assert.equal(new Headers(calls[0].init.headers).get("x-edit-key"), "k");
+});
+
+test("listGuests GETs the collection", async () => {
+  const { api, calls } = fake(200, { guests: [] });
+  assert.deepEqual(await api.listGuests("i", "k"), { guests: [] });
+  assert.equal(calls[0].url, "http://be/api/invitations/i/guests");
+});
+
+test("updateGuest PATCHes only the given fields", async () => {
+  const { api, calls } = fake(200, { id: "g1" });
+  await api.updateGuest("i", "k", "g1", { tableNo: "B1" });
+  assert.equal(calls[0].url, "http://be/api/invitations/i/guests/g1");
+  assert.equal(calls[0].init.method, "PATCH");
+  assert.equal(calls[0].init.body, JSON.stringify({ tableNo: "B1" }));
+});
+
+test("deleteGuest sends DELETE with no body", async () => {
+  const { api, calls } = fake(204, undefined);
+  await api.deleteGuest("i", "k", "g1");
+  assert.equal(calls[0].url, "http://be/api/invitations/i/guests/g1");
+  assert.equal(calls[0].init.method, "DELETE");
+});
+
+test("importGuests POSTs a guests array to /import", async () => {
+  const { api, calls } = fake(200, { created: 1, errors: [] });
+  const out = await api.importGuests("i", "k", [{ household: "Hộ một" }]);
+  assert.deepEqual(out, { created: 1, errors: [] });
+  assert.equal(calls[0].url, "http://be/api/invitations/i/guests/import");
+  assert.equal(calls[0].init.body, JSON.stringify({ guests: [{ household: "Hộ một" }] }));
+});
+
+test("resolveGuestToken returns the household name, and null on an unknown token", async () => {
+  const { api, calls } = fake(200, { household: "Gia đình chú Ba" });
+  assert.equal(await api.resolveGuestToken("s", "tok"), "Gia đình chú Ba");
+  assert.equal(calls[0].url, "http://be/api/public/invitations/s/guests/tok");
+
+  const notFound = fake(404, { title: "Not Found" });
+  assert.equal(await notFound.api.resolveGuestToken("s", "sai"), null);
+});

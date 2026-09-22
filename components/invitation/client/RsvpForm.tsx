@@ -5,9 +5,9 @@ import { api } from "@/lib/api";
 import { celebrate } from "@/lib/celebrate";
 
 type Question = { id: string; label: string; type: "text" | "yesno" };
-type Props = { slug?: string; preview: boolean; guestName: string; questions: Question[] };
+type Props = { slug?: string; preview: boolean; guestName: string; guestToken?: string; questions: Question[] };
 
-export function RsvpForm({ slug, preview, guestName, questions }: Props) {
+export function RsvpForm({ slug, preview, guestName, guestToken = "", questions }: Props) {
   const [name, setName] = useState(guestName);
   const [attending, setAttending] = useState<boolean | null>(null);
   const [guests, setGuests] = useState(1);
@@ -36,6 +36,7 @@ export function RsvpForm({ slug, preview, guestName, questions }: Props) {
         note: note.trim(),
         answers,
         guestLabel: guestName,
+        guestToken,
         website,
       });
       setStatus("done");

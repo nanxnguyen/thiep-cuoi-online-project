@@ -7,6 +7,7 @@ import { api, ApiError } from "@/lib/api";
 import { persistable, type Content } from "@/lib/content";
 import { createLocalStore, invitationTitle, parseEditLink } from "@/lib/local-invitations";
 import { DEFAULT_TEMPLATE_ID, getTemplate } from "@/lib/templates";
+import { GuestsPanel } from "./GuestsPanel";
 import { CouplePanel } from "./panels/CouplePanel";
 import { EventsPanel } from "./panels/EventsPanel";
 import { GiftPanel } from "./panels/GiftPanel";
@@ -26,6 +27,7 @@ const TABS = [
   { id: "events", label: "Sự kiện" },
   { id: "media", label: "Ảnh và nhạc" },
   { id: "rsvp", label: "Tham dự" },
+  { id: "guests", label: "Khách mời" },
   { id: "gift", label: "Mừng cưới" },
   { id: "template", label: "Mẫu" },
   { id: "responses", label: "Phản hồi" },
@@ -236,6 +238,11 @@ export function Editor({ id }: { id: string }) {
             <div className="studio-pane" hidden={tab !== "rsvp"}>
               <RsvpPanel content={draft.content} onChange={setContent} />
             </div>
+            {tab === "guests" && (
+              <div className="studio-pane">
+                <GuestsPanel id={id} editKey={editKey} published={meta.published} />
+              </div>
+            )}
             <div className="studio-pane" hidden={tab !== "gift"}>
               <GiftPanel content={draft.content} onChange={setContent} />
             </div>

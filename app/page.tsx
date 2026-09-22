@@ -5,6 +5,8 @@ import { Icon } from "@/components/home/Icons";
 import { FadeUp, FadeUpArticle, MotionProvider } from "@/components/motion/Motion";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { JsonLd } from "@/components/marketing/JsonLd";
+import { SITE_URL } from "@/lib/site";
 import { ScaledFrame } from "@/components/templates/ScaledFrame";
 import { sampleContent } from "@/lib/content";
 import { allFontClasses } from "@/lib/fonts";
@@ -37,6 +39,13 @@ export default function HomePage() {
   return (
     <div className={allFontClasses}>
       <SiteHeader />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@graph": [
+          { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "MỘC Wedding", url: SITE_URL },
+          { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: "MỘC Wedding", inLanguage: "vi-VN", publisher: { "@id": `${SITE_URL}/#organization` } },
+        ],
+      }} />
       <MotionProvider>
       <main>
         <section className="home-hero">
