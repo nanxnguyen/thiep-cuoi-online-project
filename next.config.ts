@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  output: "standalone",
   // A stray yarn.lock in the home directory otherwise makes Next infer the wrong workspace root.
   turbopack: { root: process.cwd() },
   images: {
