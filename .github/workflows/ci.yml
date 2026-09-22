@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "22.22.3" # pinned to match local — TS type-stripping in `node --test` needs a modern 22.x, don't float
           cache: "npm"
 
       - run: npm ci
