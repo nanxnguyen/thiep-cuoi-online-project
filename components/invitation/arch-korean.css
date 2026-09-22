@@ -1,0 +1,259 @@
+/* Korean (Sơ Xuân): a K-wedding film-photo mood, drawn for MỘC. Hanji-cream paper with a faint fibre grain, dusty rose
+   and sage, a thin serif with a script ampersand, and photos treated as prints: the cover photo is a polaroid taped
+   down with washi, the album is a scatter of small prints tilted a degree or two.
+   Signature (and the one risk): the tilt. Prints lean alternately left and right, never more than 2.2deg, and the
+   tape on the cover print is the only piece of "craft" on the page; everything else stays flat and quiet.
+   Sage is decoration only (tape, dots, calendar head, countdown cells), never text, so contrast stays with the
+   palette (tests/templates.test.ts). */
+
+[data-archetype="korean"] {
+  --inv-radius: 14px;
+  --inv-pill: 999px;
+  --inv-label-tracking: 0.22em;
+  --inv-line: color-mix(in oklab, var(--inv-accent) 24%, transparent);
+  --inv-sage: #93a58a;
+  --inv-sage-soft: color-mix(in oklab, var(--inv-sage) 24%, var(--inv-surface));
+  --inv-print: 0 1px 0 color-mix(in oklab, var(--inv-ink) 6%, transparent), 0 14px 26px -12px color-mix(in oklab, var(--inv-ink) 34%, transparent),
+    0 2px 5px color-mix(in oklab, var(--inv-ink) 10%, transparent);
+  /* hanji: a tile of fine warm fibre noise, tinted brown at low alpha; it tiles seamlessly (stitchTiles) */
+  --inv-fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .33 0 0 0 0 .27 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-archetype="korean"] .inv {
+  background-image: var(--inv-fiber);
+}
+
+/* cover: a sage bloom top-left, a rose bloom bottom-right; masked out toward the bottom edge so it never leaves a seam */
+[data-archetype="korean"] .inv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(80% 42% at 8% 4%, color-mix(in oklab, var(--inv-sage) 30%, transparent), transparent 70%),
+    radial-gradient(84% 44% at 96% 90%, color-mix(in oklab, var(--inv-accent) 16%, transparent), transparent 72%);
+  -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 68%, transparent 100%);
+}
+[data-archetype="korean"] .inv-cover__frame {
+  z-index: 1;
+  gap: 8px;
+  padding: 84px 32px 100px;
+}
+[data-archetype="korean"] .inv-kicker {
+  order: -3;
+  font-family: var(--inv-font-script), cursive;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* the print: a polaroid taped down at the top. No caption (the strip is left blank, like a fresh print). */
+[data-archetype="korean"] .inv-hero {
+  position: relative;
+  width: min(66%, 250px);
+  margin: 16px 0 22px;
+  padding: 10px 10px 42px;
+  background: var(--inv-surface);
+  box-shadow: var(--inv-print);
+  transform: rotate(-2.2deg);
+}
+[data-archetype="korean"] .inv-hero img {
+  aspect-ratio: 4 / 5;
+  border-radius: 2px;
+}
+[data-archetype="korean"] .inv-hero::before {
+  content: "";
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 96px;
+  height: 26px;
+  transform: translateX(-50%) rotate(3deg);
+  background: color-mix(in oklab, var(--inv-sage) 62%, var(--inv-surface));
+  opacity: 0.86;
+  clip-path: polygon(0 0, 100% 0, 97% 25%, 100% 50%, 97% 75%, 100% 100%, 0 100%, 3% 75%, 0 50%, 3% 25%);
+}
+
+/* no photo yet: the drawn arch with its branch, same as the botanical family so a fresh draft is never empty */
+[data-archetype="korean"] .inv-orn--arch {
+  position: relative;
+  order: -2;
+  width: min(50%, 188px);
+  height: auto;
+  margin: 10px 0 14px;
+}
+
+[data-archetype="korean"] .inv-names {
+  font-size: clamp(54px, 17.5cqi, 80px);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: 0.01em;
+}
+[data-archetype="korean"] .inv-amp {
+  font-family: var(--inv-font-script), cursive;
+  font-style: normal;
+  font-size: 1.05em;
+  line-height: 0.95;
+}
+[data-archetype="korean"] .inv-date {
+  margin-top: 10px;
+}
+[data-archetype="korean"] .inv-date__num {
+  font-size: 23px;
+  letter-spacing: 0.16em;
+}
+[data-archetype="korean"] .inv-date__sep {
+  color: var(--inv-sage);
+}
+[data-archetype="korean"] .inv-date__day {
+  font-size: 11px;
+}
+[data-archetype="korean"] .inv-scroll {
+  bottom: 30px;
+  font-size: 10px;
+}
+
+/* sections: centred, three sage dots above a script title */
+[data-archetype="korean"] .inv-section {
+  padding: 64px 30px 68px;
+  text-align: center;
+}
+[data-archetype="korean"] .inv-section::before {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 8px;
+  margin: 0 auto 22px;
+  background: radial-gradient(circle at 8px 4px, var(--inv-sage) 2.4px, transparent 3px) 0 0 / 16px 8px repeat-x;
+}
+[data-archetype="korean"] .inv-label {
+  margin-bottom: 26px;
+  font-family: var(--inv-font-script), cursive;
+  font-size: 36px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-transform: none;
+}
+[data-archetype="korean"] .inv-lead,
+[data-archetype="korean"] .inv-countdown__lead {
+  margin-inline: auto;
+  max-width: 32ch;
+}
+[data-archetype="korean"] .inv-message,
+[data-archetype="korean"] .inv-thanks__msg {
+  font-size: clamp(23px, 6.6cqi, 30px);
+  font-style: italic;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+[data-archetype="korean"] .inv-pair > div,
+[data-archetype="korean"] .inv-side {
+  align-items: center;
+}
+[data-archetype="korean"] .inv-pair__name {
+  font-size: clamp(30px, 9cqi, 40px);
+}
+[data-archetype="korean"] .inv-role,
+[data-archetype="korean"] .inv-side__title {
+  font-size: 11px;
+}
+[data-archetype="korean"] .inv-side__name {
+  font-size: 19px;
+  text-wrap: balance;
+}
+
+/* events: a rounded calendar card with a sage head */
+[data-archetype="korean"] .inv-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 30px 0;
+  border: 0;
+}
+[data-archetype="korean"] .inv-event + .inv-event {
+  border-top: 1px dashed var(--inv-line);
+}
+[data-archetype="korean"] .inv-event:last-child {
+  border-bottom: 0;
+}
+[data-archetype="korean"] .inv-leaf {
+  min-width: 124px;
+  border-color: var(--inv-line);
+  border-radius: 20px;
+  box-shadow: var(--inv-print);
+}
+[data-archetype="korean"] .inv-leaf__month {
+  padding: 8px 4px 6px;
+  background: var(--inv-sage-soft);
+  color: var(--inv-ink);
+  font-size: 10.5px;
+}
+[data-archetype="korean"] .inv-leaf__day {
+  font-size: 58px;
+  font-weight: 400;
+}
+[data-archetype="korean"] .inv-event__title {
+  font-size: 30px;
+  font-weight: 400;
+}
+[data-archetype="korean"] .inv-actions {
+  justify-content: center;
+}
+[data-archetype="korean"] .inv-btn {
+  min-height: 46px;
+  padding: 12px 24px;
+  border-radius: var(--inv-pill);
+  letter-spacing: 0.02em;
+}
+
+/* countdown: soft sage capsules */
+[data-archetype="korean"] .inv-clock__cell {
+  padding: 18px 4px 14px;
+  border-color: transparent;
+  border-radius: 40px;
+  background: var(--inv-sage-soft);
+}
+[data-archetype="korean"] .inv-clock__num {
+  font-size: clamp(32px, 10cqi, 44px);
+  font-weight: 500;
+}
+
+/* album: a scatter of small prints */
+[data-archetype="korean"] .inv-album {
+  gap: 20px 14px;
+  padding: 6px 4px;
+}
+[data-archetype="korean"] .inv-album li:nth-child(odd) {
+  transform: rotate(-1.4deg);
+}
+[data-archetype="korean"] .inv-album li:nth-child(even) {
+  transform: rotate(1.2deg);
+}
+[data-archetype="korean"] .inv-album li:nth-child(3n) {
+  transform: rotate(-0.6deg);
+}
+[data-archetype="korean"] .inv-photo {
+  padding: 8px 8px 28px;
+  border-radius: 2px;
+  background: var(--inv-surface);
+  box-shadow: var(--inv-print);
+}
+[data-archetype="korean"] .inv-photo img {
+  aspect-ratio: 1 / 1.08;
+  border-radius: 1px;
+}
+[data-archetype="korean"] .inv-album li:first-child .inv-photo img,
+[data-archetype="korean"] .inv-album li:last-child:nth-child(even) .inv-photo img {
+  aspect-ratio: 4 / 3;
+}
+
+/* thanks: the couple's names in script */
+[data-archetype="korean"] .inv-thanks__names {
+  font-family: var(--inv-font-script), cursive;
+  font-size: clamp(46px, 14cqi, 64px);
+  font-weight: 400;
+}

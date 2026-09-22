@@ -1,0 +1,693 @@
+/* Traditional (Lụa Son, Thanh Ngọc, Thủy Mặc): modern luxury with a touch of classical Chinese-Vietnamese wedding
+   tradition. Lacquer or jade ground, hairline metal, a window lattice that fades out before it reaches any text,
+   hồi văn corners, cloud-scroll dividers, and 囍 used sparingly as a seal.
+   Signature (and the one risk): the photo is a moon gate, a perfect circle in two hairline rings, and the whole
+   cover is built around that void. With no photo the gate frames a lotus instead, so it never looks empty.
+   "Metal" is --inv-metal: gold on lacquer and jade (the palette accent), ink on rice paper. The accent itself stays
+   for the seal, the calendar band and focus rings, so on Thủy Mặc vermilion appears only as a stamp. */
+
+[data-archetype="traditional"] {
+  --inv-radius: 3px;
+  --inv-label-tracking: 0.28em;
+  --inv-metal: var(--inv-accent);
+  --inv-hair: color-mix(in oklab, var(--inv-metal) 66%, transparent);
+  --inv-line: color-mix(in oklab, var(--inv-metal) 34%, transparent);
+  --inv-foil: linear-gradient(
+    100deg,
+    var(--inv-metal) 0%,
+    color-mix(in oklab, var(--inv-metal) 58%, var(--inv-ink)) 36%,
+    var(--inv-metal) 58%,
+    color-mix(in oklab, var(--inv-metal) 78%, var(--inv-ink)) 100%
+  );
+  --inv-field: color-mix(in oklab, var(--inv-bg) 68%, var(--inv-accent-ink));
+  --inv-lattice-tint: 0.11;
+  --inv-lattice-size: 26px;
+  /* diamond window lattice, one tile (used as a mask, so it takes the metal colour) */
+  --inv-lattice: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M13 0 26 13 13 26 0 13Z' fill='none' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E");
+  /* cloud-scroll: two curls facing a diamond */
+  --inv-cloud: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24'%3E%3Cdefs%3E%3Cpath id='h' d='M2 12C10 12 14 9 21 9C27 9 29 13 34 13C39 13 42 10 42 7.5C42 4.5 38.5 3.5 36.5 5.5C35 7 36 9.500 38.500 9.200M42 7.500C46 7.500 49 10 52 12'/%3E%3C/defs%3E%3Cg fill='none' stroke='%23000' stroke-width='1.1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cuse href='%23h'/%3E%3Cuse href='%23h' transform='translate(120 0) scale(-1 1)'/%3E%3Cpath d='M60 8.400 63.600 12 60 15.600 56.400 12Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ---------- cover ---------- */
+/* lacquer: a warm bloom behind the gate, a faint diagonal sheen like silk, darker edges. The last layer hands the
+   ground back to plain --inv-bg at the bottom so there is no seam where the cover meets the first section. */
+[data-archetype="traditional"] .inv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 74%, var(--inv-bg) 100%),
+    radial-gradient(130% 95% at 50% 40%, transparent 46%, color-mix(in oklab, var(--inv-accent-ink) 58%, transparent) 100%),
+    linear-gradient(115deg, transparent 32%, color-mix(in oklab, var(--inv-metal) 9%, transparent) 49%, transparent 66%),
+    radial-gradient(72% 38% at 50% 30%, color-mix(in oklab, var(--inv-surface) 92%, transparent), transparent 76%);
+}
+[data-archetype="traditional"] .inv-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--inv-metal);
+  opacity: var(--inv-lattice-tint);
+  -webkit-mask-image: var(--inv-lattice), radial-gradient(74% 52% at 50% 44%, transparent 32%, var(--inv-ink) 100%), linear-gradient(180deg, var(--inv-ink) 62%, transparent 96%);
+  mask-image: var(--inv-lattice), radial-gradient(74% 52% at 50% 44%, transparent 32%, var(--inv-ink) 100%), linear-gradient(180deg, var(--inv-ink) 62%, transparent 96%);
+  -webkit-mask-size: var(--inv-lattice-size) var(--inv-lattice-size), 100% 100%, 100% 100%;
+  mask-size: var(--inv-lattice-size) var(--inv-lattice-size), 100% 100%, 100% 100%;
+  -webkit-mask-repeat: repeat, no-repeat, no-repeat;
+  mask-repeat: repeat, no-repeat, no-repeat;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+[data-archetype="traditional"] .inv-cover__frame {
+  z-index: 1;
+  gap: 14px;
+  padding: 54px 40px 84px;
+}
+/* double frame: 1px metal, a 6px gap, then a fainter 1px */
+[data-archetype="traditional"] .inv-cover__frame::before,
+[data-archetype="traditional"] .inv-cover__frame::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+[data-archetype="traditional"] .inv-cover__frame::before {
+  inset: 16px;
+  border: 1px solid var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-cover__frame::after {
+  inset: 23px;
+  border: 1px solid var(--inv-line);
+}
+[data-archetype="traditional"] .inv-orn--corner {
+  width: 32px;
+  height: 32px;
+  top: 27px;
+  left: 27px;
+  color: var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-orn--tr {
+  left: auto;
+  right: 27px;
+  transform: scaleX(-1);
+}
+[data-archetype="traditional"] .inv-orn--bl {
+  top: auto;
+  bottom: 27px;
+  transform: scaleY(-1);
+}
+[data-archetype="traditional"] .inv-orn--br {
+  top: auto;
+  left: auto;
+  right: 27px;
+  bottom: 27px;
+  transform: scale(-1);
+}
+
+/* the seal: the one solid shape on the page */
+[data-archetype="traditional"] .inv-orn--seal {
+  position: relative;
+  order: -4;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--inv-accent);
+  color: var(--inv-accent-ink);
+  font-size: 20px;
+  outline: 1px solid var(--inv-hair);
+  outline-offset: 4px;
+}
+[data-archetype="traditional"] .inv-kicker {
+  order: -3;
+  padding-inline-start: 0.28em;
+  font-size: 11.5px;
+  background: var(--inv-foil);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* the moon gate */
+[data-archetype="traditional"] .inv-hero {
+  position: relative;
+  width: 196px;
+  margin: 16px 0 14px;
+}
+[data-archetype="traditional"] .inv-hero img {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  outline: 1px solid var(--inv-hair);
+  outline-offset: 7px;
+}
+[data-archetype="traditional"] .inv-hero::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border: 1px solid var(--inv-line);
+  border-radius: 50%;
+  pointer-events: none;
+}
+[data-archetype="traditional"] .inv-orn--lotus {
+  position: relative;
+  order: -2;
+  width: 196px;
+  height: 196px;
+  margin: 16px 0 14px;
+  padding: 46px 36px 52px;
+  border: 1px solid var(--inv-hair);
+  border-radius: 50%;
+  outline: 1px solid var(--inv-line);
+  outline-offset: 7px;
+  color: var(--inv-metal);
+}
+
+[data-archetype="traditional"] .inv-names {
+  font-size: clamp(50px, 16.5cqi, 72px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: 0.005em;
+  color: var(--inv-ink);
+}
+[data-archetype="traditional"] .inv-amp {
+  margin: 0.06em 0;
+  font-size: 0.5em;
+  font-weight: 400;
+  line-height: 1.1;
+  background: var(--inv-foil);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+[data-archetype="traditional"] .inv-date::before {
+  content: "";
+  display: block;
+  width: 88px;
+  height: 1px;
+  margin: 0 auto 14px;
+  background: linear-gradient(90deg, transparent, var(--inv-metal), transparent);
+}
+[data-archetype="traditional"] .inv-date__num {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+[data-archetype="traditional"] .inv-date__sep {
+  color: var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-date__day {
+  padding-inline-start: 0.28em;
+  font-size: 11px;
+}
+[data-archetype="traditional"] .inv-scroll {
+  bottom: 36px;
+  font-size: 10px;
+}
+
+/* ---------- sections: a hairline with a cloud-scroll in a gap, above every label ---------- */
+[data-archetype="traditional"] .inv-section {
+  padding: 96px 30px 64px;
+  text-align: center;
+}
+[data-archetype="traditional"] .inv-section::before,
+[data-archetype="traditional"] .inv-section::after {
+  content: "";
+  position: absolute;
+  top: 34px;
+  pointer-events: none;
+}
+[data-archetype="traditional"] .inv-section::before {
+  left: 30px;
+  right: 30px;
+  height: 1px;
+  margin-top: 10px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--inv-hair) 12%,
+    var(--inv-hair) calc(50% - 60px),
+    transparent calc(50% - 60px),
+    transparent calc(50% + 60px),
+    var(--inv-hair) calc(50% + 60px),
+    var(--inv-hair) 88%,
+    transparent
+  );
+}
+[data-archetype="traditional"] .inv-section::after {
+  left: 50%;
+  width: 104px;
+  height: 21px;
+  margin-left: -52px;
+  background: var(--inv-metal);
+  -webkit-mask: var(--inv-cloud) center / contain no-repeat;
+  mask: var(--inv-cloud) center / contain no-repeat;
+}
+[data-archetype="traditional"] .inv-label {
+  margin-bottom: 28px;
+  padding-inline-start: 0.28em;
+  font-size: 11.5px;
+  color: var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-lead,
+[data-archetype="traditional"] .inv-countdown__lead {
+  margin-inline: auto;
+  max-width: 32ch;
+}
+[data-archetype="traditional"] .inv-message {
+  font-size: clamp(21px, 6cqi, 27px);
+  font-weight: 400;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+[data-archetype="traditional"] .inv-pair,
+[data-archetype="traditional"] .inv-sides {
+  gap: 0;
+}
+[data-archetype="traditional"] .inv-pair > div,
+[data-archetype="traditional"] .inv-side {
+  align-items: center;
+  padding-inline: 10px;
+}
+[data-archetype="traditional"] .inv-pair > div + div,
+[data-archetype="traditional"] .inv-side + .inv-side {
+  border-inline-start: 1px solid var(--inv-line);
+}
+[data-archetype="traditional"] .inv-pair__name {
+  font-size: clamp(26px, 8cqi, 34px);
+  font-weight: 600;
+}
+[data-archetype="traditional"] .inv-role,
+[data-archetype="traditional"] .inv-side__title {
+  font-size: 11px;
+}
+[data-archetype="traditional"] .inv-side__name {
+  font-size: 17px;
+  text-wrap: balance;
+}
+[data-archetype="traditional"] .inv-side__addr {
+  font-size: 13px;
+}
+
+/* events: a cream leaf of the wall calendar, red numerals, in a metal keyline */
+[data-archetype="traditional"] .inv-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 0;
+  border: 0;
+}
+[data-archetype="traditional"] .inv-event + .inv-event {
+  border-top: 1px solid var(--inv-line);
+}
+[data-archetype="traditional"] .inv-event:last-child {
+  border-bottom: 0;
+}
+[data-archetype="traditional"] .inv-leaf {
+  min-width: 140px;
+  margin: 5px;
+  background: var(--inv-ink);
+  border: 0;
+  border-radius: 2px;
+  color: var(--inv-accent-ink);
+  outline: 1px solid var(--inv-hair);
+  outline-offset: 5px;
+}
+[data-archetype="traditional"] .inv-leaf__month {
+  padding: 6px 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+}
+[data-archetype="traditional"] .inv-leaf__day {
+  font-size: 58px;
+  font-weight: 700;
+  color: var(--inv-accent-ink);
+}
+[data-archetype="traditional"] .inv-leaf__weekday,
+[data-archetype="traditional"] .inv-leaf__lunar {
+  color: color-mix(in oklab, var(--inv-accent-ink) 80%, var(--inv-ink));
+}
+[data-archetype="traditional"] .inv-leaf__lunar {
+  border-top-color: color-mix(in oklab, var(--inv-accent-ink) 30%, transparent);
+}
+[data-archetype="traditional"] .inv-event__title {
+  font-size: 26px;
+  font-weight: 600;
+}
+[data-archetype="traditional"] .inv-event__time {
+  color: var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-actions {
+  justify-content: center;
+}
+
+/* buttons: foil, square-ish, small caps */
+[data-archetype="traditional"] .inv-btn {
+  min-height: 46px;
+  padding: 12px 22px;
+  border-color: var(--inv-metal);
+  border-radius: 2px;
+  background: var(--inv-foil);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+[data-archetype="traditional"] a.inv-btn--ghost,
+[data-archetype="traditional"] .inv-btn--ghost {
+  border-color: var(--inv-hair);
+  background: transparent;
+  color: var(--inv-ink);
+}
+[data-archetype="traditional"] .inv-btn--small {
+  min-height: 44px;
+}
+
+/* cards: panels with a metal keyline and a second, fainter one inside */
+[data-archetype="traditional"] .inv-clock__cell,
+[data-archetype="traditional"] .inv-card,
+[data-archetype="traditional"] .inv-wish,
+[data-archetype="traditional"] .inv-account {
+  border-color: var(--inv-hair);
+  outline: 1px solid var(--inv-line);
+  outline-offset: -5px;
+}
+[data-archetype="traditional"] .inv-clock__num {
+  font-size: clamp(30px, 9.6cqi, 42px);
+  font-weight: 600;
+}
+[data-archetype="traditional"] .inv-clock__cell {
+  padding: 18px 4px 14px;
+}
+[data-archetype="traditional"] .inv-clock__label {
+  font-size: 10.5px;
+}
+[data-archetype="traditional"] .inv-card,
+[data-archetype="traditional"] .inv-account {
+  padding: 30px 24px;
+}
+[data-archetype="traditional"] .inv-wish__by,
+[data-archetype="traditional"] .inv-success {
+  color: var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-account__title,
+[data-archetype="traditional"] .inv-done__title {
+  font-size: 24px;
+  font-weight: 600;
+}
+[data-archetype="traditional"] .inv-account__info div {
+  border-bottom-style: solid;
+  border-bottom-color: var(--inv-line);
+}
+
+/* album: prints on a metal-keyline mat */
+[data-archetype="traditional"] .inv-album {
+  gap: 10px;
+}
+[data-archetype="traditional"] .inv-photo {
+  padding: 5px;
+  border: 1px solid var(--inv-hair);
+  background: transparent;
+  border-radius: 2px;
+}
+[data-archetype="traditional"] .inv-photo img {
+  border-radius: 1px;
+}
+
+/* forms */
+[data-archetype="traditional"] .inv-form,
+[data-archetype="traditional"] .inv-wishlist {
+  text-align: left;
+}
+[data-archetype="traditional"] .inv-field input:not([type="radio"]),
+[data-archetype="traditional"] .inv-field textarea,
+[data-archetype="traditional"] .inv-field .inv-choice {
+  border-color: var(--inv-line);
+  background: var(--inv-field);
+}
+[data-archetype="traditional"] .inv-field > span,
+[data-archetype="traditional"] .inv-field > label > span {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+[data-archetype="traditional"] .inv-choice:has(input:checked) {
+  border-color: var(--inv-metal);
+}
+
+/* thanks: the names in foil */
+[data-archetype="traditional"] .inv-thanks__msg {
+  font-size: clamp(21px, 5.8cqi, 26px);
+  text-wrap: pretty;
+}
+[data-archetype="traditional"] .inv-thanks__names {
+  font-size: clamp(38px, 12cqi, 52px);
+  font-weight: 700;
+  background: var(--inv-foil);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ---------- envelope gate: a red packet with a seal ---------- */
+[data-archetype="traditional"] .inv-gate__kicker {
+  padding-inline-start: 0.28em;
+}
+[data-archetype="traditional"] .inv-envelope {
+  --inv-fold: var(--inv-metal);
+  filter: drop-shadow(0 16px 26px color-mix(in oklab, var(--inv-accent-ink) 70%, transparent));
+}
+[data-archetype="traditional"] .inv-envelope__back {
+  background: color-mix(in oklab, var(--inv-bg) 62%, var(--inv-accent-ink));
+}
+[data-archetype="traditional"] .inv-envelope__card {
+  background: var(--inv-ink);
+  border-color: var(--inv-metal);
+}
+[data-archetype="traditional"] .inv-envelope__kicker,
+[data-archetype="traditional"] .inv-envelope__guest {
+  color: var(--inv-accent-ink);
+}
+[data-archetype="traditional"] .inv-envelope__front {
+  border: 1px solid var(--inv-hair);
+  background: linear-gradient(160deg, color-mix(in oklab, var(--inv-surface) 88%, var(--inv-accent)), var(--inv-surface));
+}
+[data-archetype="traditional"] .inv-envelope__flap {
+  border-top: 1px solid var(--inv-hair);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--inv-surface) 78%, var(--inv-accent)), color-mix(in oklab, var(--inv-surface) 92%, var(--inv-accent)));
+}
+[data-archetype="traditional"] .inv-envelope__seal {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--inv-surface) 60%, transparent), 0 0 0 4px var(--inv-accent);
+  color: var(--inv-accent-ink);
+}
+[data-archetype="traditional"] .inv-envelope__glyph {
+  display: block;
+  font-size: 21px;
+}
+
+/* =====================================================================================================
+   Thanh Ngọc: deep jade. Same bones as Lụa Son; the window is a lattice of overlapping circles (shippo, calm and
+   watery instead of sharp diamonds), the gate gets a soft gold aura, and Cormorant replaces the lacquer serif.
+   ===================================================================================================== */
+[data-template="thanh-ngoc"] {
+  --inv-lattice-tint: 0.13;
+  --inv-lattice-size: 28px;
+  --inv-lattice: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Ccircle cx='0' cy='0' r='14'/%3E%3Ccircle cx='28' cy='0' r='14'/%3E%3Ccircle cx='0' cy='28' r='14'/%3E%3Ccircle cx='28' cy='28' r='14'/%3E%3Ccircle cx='14' cy='14' r='14'/%3E%3C/g%3E%3C/svg%3E");
+}
+[data-template="thanh-ngoc"] .inv-hero::before {
+  content: "";
+  position: absolute;
+  inset: -52px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--inv-accent) 22%, transparent), transparent 72%);
+  pointer-events: none;
+}
+[data-template="thanh-ngoc"] .inv-names {
+  font-size: clamp(56px, 18.5cqi, 82px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+[data-template="thanh-ngoc"] .inv-message {
+  font-size: clamp(23px, 6.6cqi, 30px);
+}
+[data-template="thanh-ngoc"] .inv-pair__name {
+  font-size: clamp(30px, 9.2cqi, 40px);
+}
+[data-template="thanh-ngoc"] .inv-side__name {
+  font-size: 19px;
+}
+[data-template="thanh-ngoc"] .inv-event__title {
+  font-size: 30px;
+}
+[data-template="thanh-ngoc"] .inv-leaf__day {
+  font-size: 64px;
+}
+[data-template="thanh-ngoc"] .inv-clock__num {
+  font-size: clamp(34px, 10.6cqi, 46px);
+}
+[data-template="thanh-ngoc"] .inv-date__num {
+  font-size: 26px;
+}
+[data-template="thanh-ngoc"] .inv-account__title,
+[data-template="thanh-ngoc"] .inv-done__title {
+  font-size: 27px;
+}
+[data-template="thanh-ngoc"] .inv-thanks__msg {
+  font-size: clamp(23px, 6.2cqi, 28px);
+}
+[data-template="thanh-ngoc"] .inv-thanks__names {
+  font-size: clamp(44px, 13.6cqi, 60px);
+}
+[data-template="thanh-ngoc"] .inv-envelope__back {
+  background: color-mix(in oklab, var(--inv-bg) 80%, var(--inv-accent-ink));
+}
+
+/* =====================================================================================================
+   Thủy Mặc: ivory rice paper, ink type, mist and mountains in pale wash, one vermilion seal.
+   Everything the base built for a dark ground is turned over here: no frame, no lattice, ink instead of foil, an
+   ink-black calendar leaf, an ink-black envelope, and the moon gate is ringed by a brush stroke (ensō).
+   ===================================================================================================== */
+[data-template="thuy-mac"] {
+  --inv-metal: var(--inv-ink);
+  --inv-hair: color-mix(in oklab, var(--inv-ink) 38%, transparent);
+  --inv-line: color-mix(in oklab, var(--inv-ink) 16%, transparent);
+  --inv-foil: var(--inv-ink);
+  --inv-field: var(--inv-surface);
+  --inv-lattice-tint: 0.13;
+  /* three ridges of pale wash, each fading into mist toward the bottom; soft-edged by a small blur */
+  --inv-mountains: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 260'%3E%3Cdefs%3E%3Cfilter id='b' x='-5%25' y='-5%25' width='110%25' height='110%25'%3E%3CfeGaussianBlur stdDeviation='2.4'/%3E%3C/filter%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23000'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg filter='url(%23b)' fill='url(%23g)'%3E%3Cpath d='M0 120C40 92 70 70 112 92C150 112 176 52 222 66C264 80 292 116 332 84C356 66 376 76 390 84V260H0Z' opacity='.38'/%3E%3Cpath d='M0 170C52 138 92 128 132 150C172 172 202 116 252 128C302 140 334 172 390 146V260H0Z' opacity='.62'/%3E%3Cpath d='M0 214C60 196 100 190 152 204C204 218 262 186 322 194C352 198 376 206 390 202V260H0Z'/%3E%3C/g%3E%3C/svg%3E");
+  /* one brush ring, open at the top left, roughened by a displacement filter */
+  --inv-enso: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cdefs%3E%3Cfilter id='r' x='-15%25' y='-15%25' width='130%25' height='130%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.05' numOctaves='3' seed='7' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='5'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke='%23000' stroke-linecap='round' filter='url(%23r)'%3E%3Cpath d='M104 14A106 106 0 1 1 30 66' stroke-width='4.6'/%3E%3Cpath d='M112 15A105 105 0 1 1 26 80' stroke-width='2' opacity='.6'/%3E%3C/g%3E%3C/svg%3E");
+}
+[data-template="thuy-mac"] .inv-cover::before {
+  background:
+    linear-gradient(180deg, transparent 78%, var(--inv-bg) 100%),
+    radial-gradient(64% 40% at 50% 34%, var(--inv-surface), transparent 76%);
+}
+[data-template="thuy-mac"] .inv-cover::after {
+  top: auto;
+  height: 340px;
+  opacity: 0.14;
+  background: var(--inv-ink);
+  -webkit-mask-image: var(--inv-mountains);
+  mask-image: var(--inv-mountains);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-position: center bottom;
+  mask-position: center bottom;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-composite: source-over;
+  mask-composite: add;
+}
+[data-template="thuy-mac"] .inv-cover__frame {
+  padding: 64px 40px 96px;
+}
+[data-template="thuy-mac"] .inv-cover__frame::before,
+[data-template="thuy-mac"] .inv-cover__frame::after,
+[data-template="thuy-mac"] .inv-orn--corner {
+  display: none;
+}
+/* the stamp: stamped last, at the right, like the seal on a scroll painting */
+[data-template="thuy-mac"] .inv-orn--seal {
+  order: 5;
+  align-self: flex-end;
+  width: 46px;
+  height: 46px;
+  margin: 10px 2px 0 0;
+  border-radius: 3px;
+  outline: 0;
+  font-size: 21px;
+  transform: rotate(-5deg);
+  box-shadow: inset 0 0 0 3px var(--inv-accent), inset 0 0 0 4px color-mix(in oklab, var(--inv-accent-ink) 62%, transparent);
+}
+[data-template="thuy-mac"] .inv-hero img {
+  outline: 0;
+}
+[data-template="thuy-mac"] .inv-hero::after {
+  inset: -22px;
+  border: 0;
+  border-radius: 0;
+  background: var(--inv-ink);
+  opacity: 0.85;
+  -webkit-mask: var(--inv-enso) center / 100% 100% no-repeat;
+  mask: var(--inv-enso) center / 100% 100% no-repeat;
+}
+[data-template="thuy-mac"] .inv-orn--lotus {
+  outline: 0;
+}
+[data-template="thuy-mac"] .inv-names {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+[data-template="thuy-mac"] .inv-amp {
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  color: var(--inv-muted);
+  font-style: italic;
+}
+[data-template="thuy-mac"] .inv-section::after {
+  opacity: 0.7;
+}
+[data-template="thuy-mac"] .inv-label,
+[data-template="thuy-mac"] .inv-kicker {
+  font-weight: 600;
+}
+[data-template="thuy-mac"] .inv-label {
+  color: var(--inv-muted);
+}
+[data-template="thuy-mac"] .inv-pair__name,
+[data-template="thuy-mac"] .inv-event__title,
+[data-template="thuy-mac"] .inv-clock__num,
+[data-template="thuy-mac"] .inv-account__title,
+[data-template="thuy-mac"] .inv-done__title {
+  font-weight: 500;
+}
+[data-template="thuy-mac"] .inv-thanks__names {
+  font-weight: 500;
+}
+[data-template="thuy-mac"] .inv-gate__kicker {
+  color: var(--inv-muted);
+}
+/* envelope: ink-black, ivory card, vermilion stamp */
+[data-template="thuy-mac"] .inv-envelope {
+  --inv-fold: color-mix(in oklab, var(--inv-bg) 40%, transparent);
+  filter: drop-shadow(0 16px 26px color-mix(in oklab, var(--inv-ink) 30%, transparent));
+}
+[data-template="thuy-mac"] .inv-envelope__back {
+  background: color-mix(in oklab, var(--inv-ink) 92%, var(--inv-bg));
+}
+[data-template="thuy-mac"] .inv-envelope__card {
+  background: var(--inv-bg);
+  border-color: var(--inv-hair);
+}
+[data-template="thuy-mac"] .inv-envelope__kicker,
+[data-template="thuy-mac"] .inv-envelope__guest {
+  color: var(--inv-ink);
+}
+[data-template="thuy-mac"] .inv-envelope__front {
+  border: 0;
+  background: linear-gradient(160deg, color-mix(in oklab, var(--inv-ink) 86%, var(--inv-bg)), var(--inv-ink));
+}
+[data-template="thuy-mac"] .inv-envelope__flap {
+  border-top: 0;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--inv-ink) 78%, var(--inv-bg)), color-mix(in oklab, var(--inv-ink) 88%, var(--inv-bg)));
+}
+[data-template="thuy-mac"] .inv-envelope__seal {
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  border-radius: 3px;
+  background: var(--inv-accent);
+  transform: rotate(-6deg);
+  box-shadow: inset 0 0 0 3px var(--inv-accent), inset 0 0 0 4px color-mix(in oklab, var(--inv-accent-ink) 62%, transparent);
+}

@@ -1,0 +1,105 @@
+/* /templates gallery. Cards are links; thumbnails are the real cover component scaled down (ScaledFrame). */
+
+.tpl-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 36px 0 32px;
+}
+.tpl-chip {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font: 600 14px/1 var(--sans);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.tpl-chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.tpl-chip[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+.tpl-grid {
+  display: grid;
+  gap: 36px 24px;
+  grid-template-columns: repeat(3, 1fr);
+}
+.tpl-grid[data-filter="editorial"] .tpl-card:not([data-archetype="editorial"]),
+.tpl-grid[data-filter="minimal"] .tpl-card:not([data-archetype="minimal"]),
+.tpl-grid[data-filter="classic"] .tpl-card:not([data-archetype="classic"]),
+.tpl-grid[data-filter="botanical"] .tpl-card:not([data-archetype="botanical"]),
+.tpl-grid[data-filter="traditional"] .tpl-card:not([data-archetype="traditional"]) {
+  display: none;
+}
+.tpl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-radius: var(--radius);
+  color: inherit;
+}
+.tpl-thumb {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--line);
+  box-shadow: var(--shadow);
+  transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s;
+}
+.tpl-card:hover .tpl-thumb {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lift);
+}
+.tpl-thumb .inv-cover {
+  min-height: 520px;
+}
+.tpl-card__meta {
+  display: grid;
+  gap: 4px;
+  padding: 0 4px;
+}
+.tpl-card__meta strong {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.tpl-card__tag {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.tpl-card__meta p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+@media (max-width: 900px) {
+  .tpl-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px 14px;
+  }
+  .tpl-card__meta strong {
+    font-size: 18px;
+  }
+  .tpl-card__meta p {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tpl-thumb {
+    transition: none;
+  }
+}

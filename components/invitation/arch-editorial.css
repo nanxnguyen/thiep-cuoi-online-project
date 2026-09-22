@@ -1,0 +1,164 @@
+/* Editorial (Gallery Noir, Afterglow): type-led, flat, left-aligned like a magazine cover.
+   Signature: the wedding day as a giant italic numeral, and an album numbered like a contact sheet. */
+
+[data-archetype="editorial"] {
+  --inv-radius: 0px;
+  --inv-label-tracking: 0.2em;
+}
+
+/* cover */
+[data-archetype="editorial"] .inv-cover__frame {
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 44px 28px 88px;
+  text-align: left;
+}
+[data-archetype="editorial"] .inv-cover__frame::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid var(--inv-line);
+  pointer-events: none;
+}
+[data-archetype="editorial"] .inv-kicker {
+  order: -3;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: auto;
+}
+[data-archetype="editorial"] .inv-kicker::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--inv-line);
+}
+[data-archetype="editorial"] .inv-hero {
+  order: -2;
+  width: 100%;
+  margin-bottom: 8px;
+}
+[data-archetype="editorial"] .inv-hero img {
+  aspect-ratio: auto;
+  width: 100%;
+  height: clamp(200px, 32svh, 300px);
+  filter: saturate(0.92) contrast(1.03);
+}
+[data-archetype="editorial"] .inv-date {
+  order: -1;
+}
+[data-archetype="editorial"] .inv-date time {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 0;
+}
+[data-archetype="editorial"] .inv-date__num {
+  display: flex;
+  align-items: baseline;
+}
+[data-archetype="editorial"] .inv-date__d {
+  font-size: clamp(96px, 38cqi, 160px);
+  font-style: italic;
+  line-height: 0.8;
+  color: var(--inv-accent);
+}
+[data-archetype="editorial"] .inv-date__m,
+[data-archetype="editorial"] .inv-date__y,
+[data-archetype="editorial"] .inv-date__sep {
+  font-size: clamp(18px, 6cqi, 26px);
+  letter-spacing: 0.04em;
+}
+[data-archetype="editorial"] .inv-date__day {
+  flex-basis: 100%;
+  margin-top: 10px;
+}
+[data-archetype="editorial"] .inv-names {
+  align-items: flex-start;
+  font-size: clamp(60px, 25cqi, 112px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+[data-archetype="editorial"] .inv-names .inv-name:last-child {
+  font-style: italic;
+}
+[data-archetype="editorial"] .inv-amp {
+  margin-left: 0.25em;
+}
+[data-archetype="editorial"] .inv-scroll {
+  text-align: left;
+  padding-left: 28px;
+}
+
+/* sections */
+[data-archetype="editorial"] .inv-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+[data-archetype="editorial"] .inv-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--inv-line);
+}
+[data-archetype="editorial"] .inv-message {
+  font-size: clamp(22px, 6.4cqi, 30px);
+  letter-spacing: -0.005em;
+}
+[data-archetype="editorial"] .inv-btn {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* contact-sheet album: every frame carries its number, like a strip of film */
+[data-archetype="editorial"] .inv-album {
+  counter-reset: frame;
+  gap: 4px;
+}
+[data-archetype="editorial"] .inv-album li {
+  counter-increment: frame;
+}
+[data-archetype="editorial"] .inv-photo {
+  position: relative;
+}
+[data-archetype="editorial"] .inv-photo::after {
+  content: counter(frame, decimal-leading-zero) "A";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 3px 7px;
+  background: var(--inv-accent);
+  color: var(--inv-accent-ink);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+/* Afterglow: a low sun over the cover, on a warm sky with a little grain */
+[data-template="afterglow"] .inv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 80% 18%, color-mix(in oklab, var(--inv-accent) 60%, var(--inv-bg)) 0 13%, transparent 13.4%),
+    radial-gradient(circle at 80% 18%, color-mix(in oklab, var(--inv-accent) 22%, transparent) 0 30%, transparent 62%),
+    linear-gradient(180deg, color-mix(in oklab, var(--inv-accent) 16%, var(--inv-bg)), var(--inv-bg) 72%);
+}
+[data-template="afterglow"] .inv-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-template="afterglow"] .inv-cover__frame {
+  z-index: 1;
+}

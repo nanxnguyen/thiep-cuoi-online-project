@@ -1,0 +1,379 @@
+/* Classic (Maison Blanc): symmetric, centred, near-white and navy with hairline gold. Restrained luxury, thinned
+   out so it reads modern: 2px + 1px double frame, champagne wash, air.
+   Signature: the initials medallion hangs from the top of the double frame and cuts through both lines,
+   like a seal pressed into a stationery border. That is the one risk; the rest is italic Cormorant and hairlines. */
+
+[data-archetype="classic"] {
+  --inv-radius: 0px;
+  --inv-label-tracking: 0.3em;
+  --inv-line: color-mix(in oklab, var(--inv-accent) 46%, transparent);
+  --inv-hair: color-mix(in oklab, var(--inv-accent) 70%, transparent);
+  /* the flourish under every section label: rule, dot, diamond, dot, rule (used as a mask, so it takes the gold) */
+  --inv-flourish: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14'%3E%3Cg fill='none' stroke='%23000' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M2 7H44M76 7H118'/%3E%3Cpath d='M60 1.6 65.4 7 60 12.4 54.6 7Z'/%3E%3C/g%3E%3Ccircle cx='49' cy='7' r='1.4'/%3E%3Ccircle cx='71' cy='7' r='1.4'/%3E%3C/svg%3E");
+}
+
+/* cover: champagne wash (faded back to plain ground at the bottom edge, so no seam), double frame, medallion */
+[data-archetype="classic"] .inv-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 80%, var(--inv-bg) 100%),
+    radial-gradient(70% 30% at 50% 46%, color-mix(in oklab, var(--inv-accent) 9%, transparent), transparent 74%),
+    radial-gradient(70% 30% at 50% 96%, color-mix(in oklab, var(--inv-accent) 8%, transparent), transparent 72%);
+}
+[data-archetype="classic"] .inv-cover__frame {
+  z-index: 1;
+  gap: 18px;
+  padding: 118px 46px 84px;
+}
+[data-archetype="classic"] .inv-cover__frame::before,
+[data-archetype="classic"] .inv-cover__frame::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+[data-archetype="classic"] .inv-cover__frame::before {
+  inset: 50px 20px 20px;
+  border: 2px solid var(--inv-accent);
+}
+[data-archetype="classic"] .inv-cover__frame::after {
+  inset: 57px 27px 27px;
+  border: 1px solid var(--inv-hair);
+}
+[data-archetype="classic"] .inv-orn--monogram {
+  z-index: 2;
+  top: 50px;
+  left: 50%;
+  width: 84px;
+  height: 84px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--inv-bg);
+}
+[data-archetype="classic"] .inv-kicker {
+  max-width: 17em;
+  font-family: var(--inv-font-display), Georgia, serif;
+  font-size: 20px;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+  text-transform: none;
+  color: var(--inv-muted);
+}
+[data-archetype="classic"] .inv-hero {
+  width: min(58%, 200px);
+  margin: 6px 0;
+}
+[data-archetype="classic"] .inv-hero img {
+  aspect-ratio: 4 / 5;
+  border-radius: 50%; /* an oval cameo with a hairline ring */
+  outline: 1px solid var(--inv-hair);
+  outline-offset: 7px;
+}
+[data-archetype="classic"] .inv-names {
+  font-size: clamp(54px, 18cqi, 88px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+}
+[data-archetype="classic"] .inv-amp {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0.12em 0;
+  font-size: 0.5em;
+  font-weight: 500;
+  line-height: 1;
+}
+[data-archetype="classic"] .inv-amp::before,
+[data-archetype="classic"] .inv-amp::after {
+  content: "";
+  width: 46px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--inv-accent));
+}
+[data-archetype="classic"] .inv-amp::after {
+  transform: scaleX(-1);
+}
+[data-archetype="classic"] .inv-date {
+  padding: 12px 22px;
+  border-block: 1px solid var(--inv-line);
+}
+[data-archetype="classic"] .inv-date__num {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+[data-archetype="classic"] .inv-date__day {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  padding-inline-start: 0.3em;
+}
+[data-archetype="classic"] .inv-scroll {
+  bottom: 38px;
+  font-size: 10px;
+}
+
+/* sections: centred, each label with its flourish */
+[data-archetype="classic"] .inv-section {
+  padding: 72px 32px;
+  text-align: center;
+}
+[data-archetype="classic"] .inv-label {
+  margin-bottom: 30px;
+  padding-inline-start: 0.3em;
+  font-size: 11.5px;
+}
+[data-archetype="classic"] .inv-label::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 14px;
+  margin: 16px auto 0;
+  background: var(--inv-accent);
+  -webkit-mask: var(--inv-flourish) center / contain no-repeat;
+  mask: var(--inv-flourish) center / contain no-repeat;
+}
+[data-archetype="classic"] .inv-lead,
+[data-archetype="classic"] .inv-countdown__lead {
+  margin-inline: auto;
+  max-width: 32ch;
+}
+[data-archetype="classic"] .inv-message {
+  font-size: clamp(23px, 6.6cqi, 30px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.42;
+}
+[data-archetype="classic"] .inv-pair,
+[data-archetype="classic"] .inv-sides {
+  gap: 0;
+}
+[data-archetype="classic"] .inv-pair > div,
+[data-archetype="classic"] .inv-side {
+  align-items: center;
+  padding-inline: 12px;
+}
+[data-archetype="classic"] .inv-pair > div + div,
+[data-archetype="classic"] .inv-side + .inv-side {
+  border-inline-start: 1px solid var(--inv-line);
+}
+[data-archetype="classic"] .inv-pair__name {
+  font-size: clamp(30px, 9.6cqi, 40px);
+  font-style: italic;
+  font-weight: 500;
+}
+[data-archetype="classic"] .inv-role,
+[data-archetype="classic"] .inv-side__title {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+}
+[data-archetype="classic"] .inv-side__name {
+  font-size: 20px;
+  font-weight: 500;
+}
+[data-archetype="classic"] .inv-side__addr {
+  font-size: 13px;
+}
+
+/* events: a stationery card per date */
+[data-archetype="classic"] .inv-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 36px 0;
+  border: 0;
+}
+[data-archetype="classic"] .inv-event + .inv-event {
+  border-top: 1px solid var(--inv-line);
+}
+[data-archetype="classic"] .inv-event:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+[data-archetype="classic"] .inv-leaf {
+  min-width: 156px;
+  padding: 14px 14px 16px;
+  border-color: var(--inv-hair);
+  border-radius: 0;
+  outline: 1px solid var(--inv-line);
+  outline-offset: -6px;
+  overflow: visible;
+}
+[data-archetype="classic"] .inv-leaf__month {
+  padding: 0 0 8px;
+  background: none;
+  border-bottom: 1px solid var(--inv-line);
+  color: var(--inv-accent);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+}
+[data-archetype="classic"] .inv-leaf__day {
+  padding-top: 10px;
+  font-size: 60px;
+  font-weight: 500;
+  line-height: 1;
+}
+[data-archetype="classic"] .inv-leaf__weekday {
+  padding-inline-start: 0.08em;
+}
+[data-archetype="classic"] .inv-leaf__lunar {
+  border-top-style: solid;
+  border-top-color: var(--inv-line);
+}
+[data-archetype="classic"] .inv-event__title {
+  font-size: 32px;
+  font-style: italic;
+  font-weight: 500;
+}
+[data-archetype="classic"] .inv-event__time {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+[data-archetype="classic"] .inv-actions {
+  justify-content: center;
+}
+
+/* buttons: square, small caps, gold */
+[data-archetype="classic"] .inv-btn {
+  min-height: 46px;
+  padding: 12px 22px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+[data-archetype="classic"] a.inv-btn--ghost,
+[data-archetype="classic"] .inv-btn--ghost {
+  border-color: var(--inv-hair);
+  background: transparent;
+  color: var(--inv-ink);
+}
+[data-archetype="classic"] .inv-btn--small {
+  min-height: 44px;
+}
+
+/* cards: white, hairline gold, and an inner hairline that echoes the cover's double frame */
+[data-archetype="classic"] .inv-clock__cell,
+[data-archetype="classic"] .inv-card,
+[data-archetype="classic"] .inv-wish,
+[data-archetype="classic"] .inv-account {
+  border-color: var(--inv-hair);
+  outline: 1px solid var(--inv-line);
+  outline-offset: -5px;
+}
+[data-archetype="classic"] .inv-clock__num {
+  font-size: clamp(30px, 10cqi, 44px);
+  font-weight: 500;
+}
+[data-archetype="classic"] .inv-clock__cell {
+  padding: 18px 4px 14px;
+}
+[data-archetype="classic"] .inv-clock__label {
+  font-size: 10.5px;
+}
+[data-archetype="classic"] .inv-card,
+[data-archetype="classic"] .inv-account {
+  padding: 30px 24px;
+}
+[data-archetype="classic"] .inv-wish {
+  padding: 22px 22px;
+}
+[data-archetype="classic"] .inv-wish__by {
+  color: var(--inv-accent);
+}
+[data-archetype="classic"] .inv-account__title,
+[data-archetype="classic"] .inv-done__title {
+  font-size: 26px;
+  font-style: italic;
+}
+[data-archetype="classic"] .inv-account__qr {
+  border-radius: 0;
+  outline: 1px solid var(--inv-line);
+  outline-offset: 0;
+}
+[data-archetype="classic"] .inv-account__info div {
+  border-bottom-style: solid;
+  border-bottom-color: var(--inv-line);
+}
+
+/* album: prints on a white mat */
+[data-archetype="classic"] .inv-album {
+  gap: 10px;
+}
+[data-archetype="classic"] .inv-photo {
+  padding: 6px;
+  border: 1px solid var(--inv-line);
+}
+
+/* forms */
+[data-archetype="classic"] .inv-form,
+[data-archetype="classic"] .inv-wishlist {
+  text-align: left;
+}
+[data-archetype="classic"] .inv-field input:not([type="radio"]),
+[data-archetype="classic"] .inv-field textarea,
+[data-archetype="classic"] .inv-field .inv-choice {
+  border-color: var(--inv-line);
+}
+[data-archetype="classic"] .inv-field > span,
+[data-archetype="classic"] .inv-field > label > span {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* thanks: names in gold italic under the same flourish */
+[data-archetype="classic"] .inv-thanks::before {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 14px;
+  margin: 0 auto 30px;
+  background: var(--inv-accent);
+  -webkit-mask: var(--inv-flourish) center / contain no-repeat;
+  mask: var(--inv-flourish) center / contain no-repeat;
+}
+[data-archetype="classic"] .inv-thanks__msg {
+  font-size: clamp(22px, 6cqi, 27px);
+  font-style: italic;
+  font-weight: 500;
+}
+[data-archetype="classic"] .inv-thanks__names {
+  font-size: clamp(38px, 12cqi, 52px);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* envelope gate: ivory stationery with gold hairlines, navy type */
+[data-archetype="classic"] .inv-envelope {
+  --inv-fold: var(--inv-accent);
+}
+[data-archetype="classic"] .inv-envelope__back {
+  background: color-mix(in oklab, var(--inv-accent) 16%, var(--inv-surface));
+}
+[data-archetype="classic"] .inv-envelope__card {
+  border-color: var(--inv-hair);
+}
+[data-archetype="classic"] .inv-envelope__front {
+  border: 1px solid var(--inv-hair);
+  background: color-mix(in oklab, var(--inv-accent) 5%, var(--inv-surface));
+}
+[data-archetype="classic"] .inv-envelope__flap {
+  border-top: 1px solid var(--inv-hair);
+  background: color-mix(in oklab, var(--inv-accent) 9%, var(--inv-surface));
+}
+[data-archetype="classic"] .inv-envelope__seal {
+  box-shadow: 0 0 0 3px var(--inv-surface), 0 0 0 4px var(--inv-accent);
+}
+[data-archetype="classic"] .inv-gate__kicker {
+  padding-inline-start: 0.3em;
+}
+[data-archetype="classic"] .inv-gate__guest {
+  font-style: italic;
+  font-weight: 500;
+}
