@@ -35,6 +35,9 @@ export const contentSchema = z.object({
     groom: z.object({ name: text(60) }),
     bride: z.object({ name: text(60) }),
     message: text(500),
+    // Bản tiếng Anh tuỳ chọn của "message" (Phase 5, đa ngôn ngữ) — "" khi chủ thiệp chưa gõ, trang khách
+    // fallback về "message". Không dịch tên/địa chỉ/ngày — xem docs/superpowers/specs/2026-09-23-i18n-phase5-design.md.
+    messageEn: text(500),
     heroPhoto: optionalUrl,
   }),
   family: z.object({ groomSide: side, brideSide: side }),
@@ -45,13 +48,14 @@ export const contentSchema = z.object({
     enabled: z.boolean(),
     deadline: dateStr,
     questions: z
-      .array(z.object({ id, label: text(120), type: z.enum(["text", "yesno"]) }))
+      .array(z.object({ id, label: text(120), labelEn: text(120), type: z.enum(["text", "yesno"]) }))
       .max(MAX_QUESTIONS),
   }),
   guestbook: z.object({ enabled: z.boolean() }),
   gift: z.object({
     enabled: z.boolean(),
     note: text(300),
+    noteEn: text(300),
     accounts: z
       .array(
         z.object({
@@ -63,7 +67,7 @@ export const contentSchema = z.object({
       )
       .max(MAX_ACCOUNTS),
   }),
-  thanks: z.object({ message: text(500) }),
+  thanks: z.object({ message: text(500), messageEn: text(500) }),
 });
 
 export type Content = z.infer<typeof contentSchema>;
@@ -83,6 +87,7 @@ export function defaultContent(now: Date = new Date()): Content {
       bride: { name: SAMPLE_NAMES.bride },
       message:
         "Chúng mình sắp về chung một nhà. Rất mong bạn đến chung vui và chúc phúc cho ngày trọng đại của hai đứa.",
+      messageEn: "",
       heroPhoto: "",
     },
     family: {
@@ -97,8 +102,8 @@ export function defaultContent(now: Date = new Date()): Content {
     music: null,
     rsvp: { enabled: true, deadline: "", questions: [] },
     guestbook: { enabled: true },
-    gift: { enabled: false, note: "Sự hiện diện của bạn là niềm vui lớn nhất của chúng mình.", accounts: [] },
-    thanks: { message: "Cảm ơn bạn đã dành thời gian và tình cảm cho chúng mình." },
+    gift: { enabled: false, note: "Sự hiện diện của bạn là niềm vui lớn nhất của chúng mình.", noteEn: "", accounts: [] },
+    thanks: { message: "Cảm ơn bạn đã dành thời gian và tình cảm cho chúng mình.", messageEn: "" },
   };
 }
 
@@ -110,10 +115,11 @@ export function sampleContent(now: Date = new Date()): Content {
     ...base,
     couple: { ...base.couple, heroPhoto: "/sample/photo-1.svg" },
     album: [1, 2, 3, 4, 5, 6].map((n) => ({ url: `/sample/photo-${n}.svg`, alt: `Ảnh cưới ${n}` })),
-    rsvp: { enabled: true, deadline: "", questions: [{ id: "q1", label: "Bạn có cần chỗ đậu xe không?", type: "yesno" }] },
+    rsvp: { enabled: true, deadline: "", questions: [{ id: "q1", label: "Bạn có cần chỗ đậu xe không?", labelEn: "Do you need parking?", type: "yesno" }] },
     gift: {
       enabled: true,
       note: base.gift.note,
+      noteEn: base.gift.noteEn,
       accounts: [
         { holder: "groom", bankCode: "970436", accountNumber: "0123456789", accountName: "NGUYEN VAN MINH" },
         { holder: "bride", bankCode: "970407", accountNumber: "9876543210", accountName: "LE THI AN" },

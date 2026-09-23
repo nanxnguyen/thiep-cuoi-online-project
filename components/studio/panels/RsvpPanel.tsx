@@ -22,7 +22,7 @@ export function RsvpPanel({ content, onChange }: PanelProps) {
   const setQuestions = (questions: Question[]) => setRsvp({ questions });
 
   function add() {
-    const q: Question = { id: newId(), label: "", type: "text" };
+    const q: Question = { id: newId(), label: "", labelEn: "", type: "text" };
     setFreshId(q.id);
     setQuestions([...rsvp.questions, q]);
   }
@@ -59,6 +59,7 @@ export function RsvpPanel({ content, onChange }: PanelProps) {
                   </div>
                   <div className="pn-item__body">
                     <TextField label="Nội dung câu hỏi" hint="Nhập nội dung, hoặc xóa câu hỏi nếu bạn không dùng." value={q.label} onChange={(label) => setQuestions(updateAt(rsvp.questions, i, { label }))} maxLength={120} placeholder="Bạn có ăn chay không?" autoFocus={q.id === freshId} />
+                    <TextField label="Bản Anh (tuỳ chọn)" hint="Hiện khi khách xem thiệp bằng tiếng Anh. Để trống nếu không cần." value={q.labelEn} onChange={(labelEn) => setQuestions(updateAt(rsvp.questions, i, { labelEn }))} maxLength={120} placeholder="Do you eat vegetarian food?" />
                     <SelectField label="Kiểu trả lời" value={q.type} onChange={(v) => setQuestions(updateAt(rsvp.questions, i, { type: asType(v) }))} options={TYPE_OPTIONS} />
                   </div>
                 </li>

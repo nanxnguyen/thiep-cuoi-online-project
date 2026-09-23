@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { t, type Locale } from "@/lib/i18n";
 
 type Props = {
   gate: boolean;
@@ -9,13 +10,15 @@ type Props = {
   bride: string;
   music: { url: string; title: string } | null;
   children: ReactNode;
+  locale?: Locale;
 };
 
 const OPEN_MS = 1100; // flap opens, card rises, overlay fades: keep in sync with .inv-gate[data-phase="opening"] in CSS
 
 // Holds the two pieces of state that need a user gesture: the envelope that gates the page and the
 // background music (browsers only allow audio to start after a tap, so the tap on "Mở thiệp" starts it).
-export function InvitationShell({ gate, guestName, groom, bride, music, children }: Props) {
+export function InvitationShell({ gate, guestName, groom, bride, music, children, locale = "vi" }: Props) {
+  const dict = t(locale);
   const [phase, setPhase] = useState<"closed" | "opening" | "open">(gate ? "closed" : "open");
   const [playing, setPlaying] = useState(false);
   const audio = useRef<HTMLAudioElement>(null);
@@ -65,7 +68,7 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
     }
   }
 
-  const who = guestName || "Quý khách";
+  const who = guestName || dict.defaultGuest;
 
   return (
     <>
@@ -74,14 +77,14 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
           <div className="inv-envelope" aria-hidden="true">
             <div className="inv-envelope__back" />
             <div className="inv-envelope__card">
-              <span className="inv-envelope__kicker">Trân trọng kính mời</span>
+              <span className="inv-envelope__kicker">{dict.kindlyInvites}</span>
               <span className="inv-envelope__guest">{who}</span>
             </div>
             <div className="inv-envelope__front" />
             <div className="inv-envelope__flap" />
             <div className="inv-envelope__seal" />
           </div>
-          <p className="inv-gate__kicker">Trân trọng kính mời</p>
+          <p className="inv-gate__kicker">{dict.kindlyInvites}</p>
           <h2 className="inv-gate__guest" id="inv-gate-title">
             {who}
           </h2>
@@ -89,7 +92,7 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
             {groom} &amp; {bride}
           </p>
           <button type="button" className="inv-btn inv-gate__open" ref={openButton} onClick={openEnvelope} disabled={phase === "opening"}>
-            Mở thiệp
+            {dict.openInvitation}
           </button>
         </div>
       )}
@@ -108,7 +111,7 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
               data-playing={playing}
               onClick={toggleMusic}
               aria-pressed={playing}
-              aria-label={playing ? `Tắt nhạc nền: ${music.title}` : `Bật nhạc nền: ${music.title}`}
+              aria-label={playing ? dict.muteMusic(music.title) : dict.playMusic(music.title)}
             >
               <span className="inv-music__bars" aria-hidden="true">
                 <i />

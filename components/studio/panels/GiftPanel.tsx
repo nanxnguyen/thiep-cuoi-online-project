@@ -106,6 +106,7 @@ export function GiftPanel({ content, onChange }: PanelProps) {
         {gift.enabled ? (
           <>
             <TextAreaField label="Lời nhắn" hint="Hiện phía trên mã QR." value={gift.note} onChange={(note) => setGift({ note })} maxLength={300} rows={3} />
+            <TextAreaField label="Bản Anh (tuỳ chọn)" hint="Hiện khi khách xem thiệp bằng tiếng Anh." value={gift.noteEn} onChange={(noteEn) => setGift({ noteEn })} maxLength={300} rows={3} />
             <div className="pn-subhead">
               <h4>Tài khoản nhận mừng</h4>
               <span className="pn-count">

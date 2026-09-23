@@ -52,6 +52,14 @@ export function CouplePanel({ content, onChange, media }: PanelProps & { media: 
 
       <PanelSection title="Lời mời" description="Vài dòng gửi tới khách mời.">
         <TextAreaField label="Nội dung lời mời" value={couple.message} onChange={(message) => setCouple({ message })} maxLength={500} rows={5} />
+        <TextAreaField
+          label="Bản Anh (tuỳ chọn)"
+          hint="Hiện khi khách xem thiệp bằng tiếng Anh (?lang=en). Để trống thì khách xem tiếng Anh vẫn thấy bản tiếng Việt."
+          value={couple.messageEn}
+          onChange={(messageEn) => setCouple({ messageEn })}
+          maxLength={500}
+          rows={5}
+        />
       </PanelSection>
 
       <PanelSection title="Ảnh bìa" description="Chọn tấm ảnh đẹp nhất của hai bạn. Ảnh được tự thu nhỏ trước khi tải lên.">
@@ -99,7 +107,15 @@ export function CouplePanel({ content, onChange, media }: PanelProps & { media: 
       </PanelSection>
 
       <PanelSection title="Lời cảm ơn" description="Hiện ở cuối thiệp.">
-        <TextAreaField label="Nội dung lời cảm ơn" value={thanks.message} onChange={(message) => onChange({ ...content, thanks: { message } })} maxLength={500} rows={4} />
+        <TextAreaField label="Nội dung lời cảm ơn" value={thanks.message} onChange={(message) => onChange({ ...content, thanks: { ...thanks, message } })} maxLength={500} rows={4} />
+        <TextAreaField
+          label="Bản Anh (tuỳ chọn)"
+          hint="Hiện khi khách xem thiệp bằng tiếng Anh."
+          value={thanks.messageEn}
+          onChange={(messageEn) => onChange({ ...content, thanks: { ...thanks, messageEn } })}
+          maxLength={500}
+          rows={4}
+        />
       </PanelSection>
     </div>
   );

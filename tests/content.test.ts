@@ -11,6 +11,13 @@ test("defaultContent passes the schema and has future events", () => {
   for (const e of c.events) assert.ok(e.date > "2026-09-20", e.date);
 });
 
+test("defaultContent leaves Phase 5 bilingual fields empty (no English copy until the owner types one)", () => {
+  const c = defaultContent(NOW);
+  assert.equal(c.couple.messageEn, "");
+  assert.equal(c.thanks.messageEn, "");
+  assert.equal(c.gift.noteEn, "");
+});
+
 test("schema rejects non-http(s) urls", () => {
   const c = defaultContent(NOW);
   c.couple.heroPhoto = "javascript:alert(1)";

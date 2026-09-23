@@ -30,6 +30,7 @@ export function SiteHeader() {
           <Link className="nav-cta" href="/studio">
             Tạo thiệp
           </Link>
+          <Link href="/account">Tài khoản</Link>
           <MobileMenu links={NAV_LINKS} />
         </nav>
       </div>

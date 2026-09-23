@@ -97,6 +97,9 @@ export type GuestInput = {
   note?: string;
 };
 export type GuestImportResult = { created: number; errors: { index: number; message: string }[] };
+export type AccountUser = { id: string; email: string };
+export type AuthResponse = { accessToken: string; user: AccountUser };
+export type AccountInvitation = { id: string; slug: string; templateId: string; published: boolean; updatedAt: string };
 
 export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => fetch(...a)) {
   async function call<T>(path: string, init: RequestInit = {}, key?: string): Promise<T> {
@@ -125,6 +128,11 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
   const json = (method: string, body: unknown): RequestInit => ({ method, body: JSON.stringify(body) });
 
   return {
+    register: (email: string, password: string) => call<AuthResponse>("/api/auth/register", json("POST", { email, password })),
+    login: (email: string, password: string) => call<AuthResponse>("/api/auth/login", json("POST", { email, password })),
+    me: (token: string) => call<AccountUser>("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } }),
+    listAccountInvitations: (token: string) => call<AccountInvitation[]>("/api/account/invitations", { headers: { Authorization: `Bearer ${token}` } }),
+    claimInvitation: (token: string, id: string, key: string) => call<AccountInvitation>("/api/account/invitations/claim", { ...json("POST", { id, key }), headers: { Authorization: `Bearer ${token}` } }),
     createInvitation: (templateId: string, content: Content) =>
       call<CreatedInvitation>("/api/invitations", json("POST", { templateId, content })),
     getInvitation: (id: string, key: string) => call<InvitationDto>(`/api/invitations/${id}`, {}, key),

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { t, type Locale } from "@/lib/i18n";
 
-export function CopyButton({ value, label }: { value: string; label: string }) {
+export function CopyButton({ value, label, locale = "vi" }: { value: string; label: string; locale?: Locale }) {
+  const dict = t(locale);
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -23,7 +25,7 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
 
   return (
     <button type="button" className="inv-btn inv-btn--ghost inv-btn--small" onClick={copy} aria-label={label}>
-      <span aria-live="polite">{copied ? "Đã chép" : "Chép số"}</span>
+      <span aria-live="polite">{copied ? dict.copied : dict.copyNumber}</span>
     </button>
   );
 }

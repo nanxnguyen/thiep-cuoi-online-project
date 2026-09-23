@@ -3,10 +3,12 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useState, type FormEvent } from "react";
 import { api, type PublicWish } from "@/lib/api";
+import { t, type Locale } from "@/lib/i18n";
 
-type Props = { slug?: string; preview: boolean; guestName: string; initial: PublicWish[] };
+type Props = { slug?: string; preview: boolean; guestName: string; initial: PublicWish[]; locale?: Locale };
 
-export function WishesPanel({ slug, preview, guestName, initial }: Props) {
+export function WishesPanel({ slug, preview, guestName, initial, locale = "vi" }: Props) {
+  const dict = t(locale);
   const [listRef] = useAutoAnimate<HTMLUListElement>();
   const [wishes, setWishes] = useState(initial);
   const [name, setName] = useState(guestName);
@@ -19,7 +21,7 @@ export function WishesPanel({ slug, preview, guestName, initial }: Props) {
     e.preventDefault();
     if (preview || !slug) return;
     if (!name.trim() || !message.trim()) {
-      setError("Hãy nhập tên và lời chúc của bạn.");
+      setError(dict.errWishRequired);
       setStatus("error");
       return;
     }
@@ -30,7 +32,7 @@ export function WishesPanel({ slug, preview, guestName, initial }: Props) {
       setMessage("");
       setStatus("sent");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Chưa gửi được, bạn thử lại nhé.");
+      setError(err instanceof Error ? err.message : dict.errGeneric);
       setStatus("error");
     }
   }
@@ -39,13 +41,13 @@ export function WishesPanel({ slug, preview, guestName, initial }: Props) {
     <div className="inv-wishes">
       <form className="inv-form" onSubmit={submit} noValidate>
         <fieldset disabled={preview || status === "sending"}>
-          <legend className="inv-sr-only">Gửi lời chúc</legend>
+          <legend className="inv-sr-only">{dict.wishLegend}</legend>
           <label className="inv-field">
-            <span>Tên của bạn</span>
+            <span>{dict.yourName}</span>
             <input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} autoComplete="name" />
           </label>
           <label className="inv-field">
-            <span>Lời chúc</span>
+            <span>{dict.wishLabel}</span>
             <textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} rows={4} />
             <small className="inv-count">{message.length}/500</small>
           </label>
@@ -62,13 +64,13 @@ export function WishesPanel({ slug, preview, guestName, initial }: Props) {
           )}
           {status === "sent" && (
             <p className="inv-success" role="status">
-              Lời chúc của bạn đã được gửi. Cảm ơn bạn!
+              {dict.wishSentMsg}
             </p>
           )}
           <button type="submit" className="inv-btn inv-btn--block">
-            {status === "sending" ? "Đang gửi…" : "Gửi lời chúc"}
+            {status === "sending" ? dict.sending : dict.submitWish}
           </button>
-          {preview && <p className="inv-hint">Chế độ xem thử: lời chúc chưa gửi được.</p>}
+          {preview && <p className="inv-hint">{dict.wishPreviewHint}</p>}
         </fieldset>
       </form>
 
@@ -82,7 +84,7 @@ export function WishesPanel({ slug, preview, guestName, initial }: Props) {
           ))}
         </ul>
       ) : (
-        <p className="inv-hint">Chưa có lời chúc nào. Bạn là người đầu tiên nhé.</p>
+        <p className="inv-hint">{dict.wishEmpty}</p>
       )}
     </div>
   );

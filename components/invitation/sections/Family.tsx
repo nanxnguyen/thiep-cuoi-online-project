@@ -1,4 +1,5 @@
 import type { Content } from "@/lib/content";
+import { t, type Locale } from "@/lib/i18n";
 import { Reveal } from "../client/Reveal";
 
 type Side = Content["family"]["groomSide"];
@@ -7,10 +8,11 @@ const lines = (s: Side) => [s.father, s.mother].map((v) => v.trim()).filter(Bool
 const hasContent = (s: Side) => lines(s).length > 0 || s.address.trim() !== "";
 
 // "Nhà trai" is listed first, as on a printed Vietnamese invitation. A side with nothing typed is skipped.
-export function Family({ content }: { content: Content }) {
+export function Family({ content, locale = "vi" }: { content: Content; locale?: Locale }) {
+  const dict = t(locale);
   const sides = [
-    { title: "Nhà trai", side: content.family.groomSide },
-    { title: "Nhà gái", side: content.family.brideSide },
+    { title: dict.groomSideTitle, side: content.family.groomSide },
+    { title: dict.brideSideTitle, side: content.family.brideSide },
   ].filter((s) => hasContent(s.side));
   if (sides.length === 0) return null;
 
@@ -18,7 +20,7 @@ export function Family({ content }: { content: Content }) {
     <section className="inv-section inv-family" aria-labelledby="inv-family-h">
       <Reveal>
         <h2 className="inv-label" id="inv-family-h">
-          Hai họ
+          {dict.familyTitle}
         </h2>
         <div className="inv-sides">
           {sides.map(({ title, side }) => (

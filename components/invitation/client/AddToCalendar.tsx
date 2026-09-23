@@ -1,8 +1,10 @@
 "use client";
 
 import { toIcs, googleCalendarUrl, type CalendarEvent } from "@/lib/ics";
+import { t, type Locale } from "@/lib/i18n";
 
-export function AddToCalendar({ event, uid }: { event: CalendarEvent; uid: string }) {
+export function AddToCalendar({ event, uid, locale = "vi" }: { event: CalendarEvent; uid: string; locale?: Locale }) {
+  const dict = t(locale);
   const google = googleCalendarUrl(event);
 
   function downloadIcs() {
@@ -20,11 +22,11 @@ export function AddToCalendar({ event, uid }: { event: CalendarEvent; uid: strin
     <div className="inv-actions">
       {google && (
         <a className="inv-btn" href={google} target="_blank" rel="noopener noreferrer">
-          Thêm vào Google Calendar
+          {dict.addGoogleCal}
         </a>
       )}
       <button type="button" className="inv-btn inv-btn--ghost" onClick={downloadIcs}>
-        Tải lịch (.ics)
+        {dict.downloadIcs}
       </button>
     </div>
   );

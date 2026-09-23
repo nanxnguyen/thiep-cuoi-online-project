@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { eventStart, nextEvent, remaining, formatDateVi } from "../lib/datetime.ts";
+import { eventStart, nextEvent, remaining, formatDateVi, formatDateEn } from "../lib/datetime.ts";
 
 test("eventStart reads wall-clock time as +07:00", () => {
   assert.equal(eventStart({ date: "2026-11-08", time: "10:00" })?.toISOString(), "2026-11-08T03:00:00.000Z");
@@ -31,4 +31,11 @@ test("formatDateVi gives weekday + dd/mm/yyyy, empty for bad input", () => {
   assert.equal(formatDateVi("2026-11-09"), "Thứ hai, 09/11/2026");
   assert.equal(formatDateVi(""), "");
   assert.equal(formatDateVi("2026-02-31"), "");
+});
+
+test("formatDateEn gives weekday + d Month yyyy, empty for bad input (Phase 5)", () => {
+  assert.equal(formatDateEn("2026-11-08"), "Sunday, 8 November 2026");
+  assert.equal(formatDateEn("2026-11-09"), "Monday, 9 November 2026");
+  assert.equal(formatDateEn(""), "");
+  assert.equal(formatDateEn("2026-02-31"), "");
 });

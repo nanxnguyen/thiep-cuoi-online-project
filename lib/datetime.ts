@@ -1,6 +1,8 @@
 // Phase 1 is Vietnam-only: wall-clock times are always +07:00 (no DST there).
 export const TZ_OFFSET = "+07:00";
 const WEEKDAYS = ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy"];
+const WEEKDAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export function eventStart(ev: { date: string; time: string }): Date | null {
   if (!ev.date) return null;
@@ -53,4 +55,13 @@ export function formatDateVi(date: string): string {
   const utc = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
   if (utc.getUTCMonth() !== Number(m[2]) - 1) return "";
   return `${WEEKDAYS[utc.getUTCDay()]}, ${m[3]}/${m[2]}/${m[1]}`;
+}
+
+// "2026-11-08" -> "Sunday, 8 November 2026" (Phase 5, trang khách ở ?lang=en). Cùng khuôn với formatDateVi.
+export function formatDateEn(date: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!m) return "";
+  const utc = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+  if (utc.getUTCMonth() !== Number(m[2]) - 1) return "";
+  return `${WEEKDAYS_EN[utc.getUTCDay()]}, ${Number(m[3])} ${MONTHS_EN[Number(m[2]) - 1]} ${m[1]}`;
 }
