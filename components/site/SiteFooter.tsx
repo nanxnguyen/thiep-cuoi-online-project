@@ -8,6 +8,7 @@ const columns = [
       { href: "/tinh-nang", label: "Tính năng" },
       { href: "/bang-gia", label: "Bảng giá" },
       { href: "/studio", label: "Tạo thiệp" },
+      { href: "/ung-ho", label: "Ủng hộ dự án" },
     ],
   },
   {

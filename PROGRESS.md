@@ -6,7 +6,7 @@ Repo FE: `/Users/nguyenanhnhut/Desktop/Projects/thiep-cuoi-online-project` (nhá
 
 ## ▶ BẮT ĐẦU PHIÊN MỚI Ở ĐÂY
 
-**Tình trạng:** Phase 1-5 và Phase 6A XONG về code; cả dự án ≈ **81%**. QA local account đã sửa lỗi CSS và kiểm chứng bằng Playwright. Còn: deploy thật, QA URL production, rà soát pháp lý, và Donate (chờ 4 thông tin ngân hàng thật). BE account đã có JWT + claim invitation; chưa tự commit theo quy ước.
+**Tình trạng:** Phase 1-5 và Phase 6A XONG về code; cả dự án ≈ **81%**. QA local bằng Playwright đã quét 43 URL trong sitemap và luồng tạo → xuất bản → mở thiệp Anh → RSVP → lời chúc. Còn: deploy thật, QA URL production, rà soát pháp lý, và Donate (chờ 4 thông tin ngân hàng thật). BE account đã có JWT + claim invitation; chưa tự commit theo quy ước.
 - **Phase 5:** chỉ vi+en (không thêm ngôn ngữ khác).
 - **Phase 6:** bỏ hẳn thanh toán thật — chỉ tài khoản (đăng nhập, gom thiệp cũ, KHÔNG trial vì không có gói trả phí) + tính năng **Donate** mới (hiện QR ngân hàng thật của chủ dự án, tái dùng `lib/vietqr.ts`). **Cần hỏi chủ dự án 4 thứ trước khi làm Donate: tên ngân hàng, số tài khoản, tên chủ tài khoản, lời nhắn cạnh QR** — chưa có, đừng bịa.
 
@@ -258,9 +258,17 @@ Cách khác: cho phép `git commit`/`git remote` trong permissions của Claude 
 
 ## 2e. Trạng thái Phase 5 (ĐÃ XONG)
 
-I5/I8/I10 hoàn tất. Trang khách đọc `?lang=vi|en`, truyền locale xuyên renderer, toggle giữ `to/g`, metadata có `alternates.languages`. Full gate 2026-09-23: FE `npm test` 101/101, `npm run typecheck` sạch, `npm run build` thành công; BE `./mvnw test` 67/67. QA trình duyệt cuối phase còn chờ chủ dự án cung cấp URL thiệp thật.
+I5/I8/I10 hoàn tất. Trang khách đọc `?lang=vi|en`, truyền locale xuyên renderer, toggle giữ `to/g`, metadata có `alternates.languages`. Full gate 2026-09-24: FE `npm test` 101/101, `npm run typecheck` sạch, `npm run build` thành công; BE `./mvnw test` 70/70. Playwright QA local: 43 URL trong sitemap đều HTTP 200, không page error/tràn ngang; test tương tác QR, tin nhắn mời, Save-the-Date, danh sách khách, sơ đồ chỗ ngồi, account validation, menu mobile; E2E tạo → sửa → xuất bản → mở `?lang=en` → RSVP → lời chúc đạt. Đã sửa lỗi console `/favicon.ico` 404 bằng metadata icon `/icon.svg`. QA production vẫn chờ URL thật.
 
 ## 5. Nhật ký (mới nhất ở trên)
+
+- **2026-09-25 (retest upload media):** Playwright tạo thiệp mới `1b9405e1-61e0-4601-9b9a-72f4e67f6c61`, upload `public/og.png` và MP3 test. Cả hai request `POST /api/invitations/{id}/media` trả **201**; ảnh trả URL `.webp`, nhạc trả URL `.mp3` trên Supabase bucket `media`. Reload Studio xác nhận lại được 2 ảnh preview và 2 audio source, không còn lỗi `Kho lưu trữ chưa sẵn sàng`.
+
+- **2026-09-25 (fix cấu hình Supabase Storage):** Root cause của `503 Chưa cấu hình Supabase Storage` là backend được chạy bằng `./mvnw` nhưng `.env` không được export vào process Spring; khi export toàn bộ `.env`, `DB_URL` lại trỏ database Supabase nên local migration fail. Chạy đúng cấu hình: source/export `.env` cho Supabase, đồng thời override `DB_URL/DB_USERNAME/DB_PASSWORD` về Postgres local. Playwright upload lại ảnh + MP3: cả hai request trả **201**, URL public trong bucket `media`, reload Studio vẫn thấy lại ảnh và audio. Không cần đổi logic upload.
+
+- **2026-09-25 (E2E upload media):** Playwright tạo thiệp Studio mới `47778a6b-93dc-4c3e-9988-212c63c3da27`, chọn tab Ảnh và nhạc, chọn `public/og.png` và MP3 test 1 giây; cả hai request đã đi tới `POST /api/invitations/{id}/media`. Case chưa pass vì backend trả `503 Chưa cấu hình Supabase Storage`; lần khởi động lại với `.env` làm backend fail ở bước kết nối/migration database local. Không sửa credentials hay dữ liệu thật.
+
+- **2026-09-24 (Playwright full local QA):** Cài bổ sung dependency `@opennextjs/cloudflare` bị thiếu trong lock/node_modules; typecheck và OpenNext build xanh. Playwright quét 43 URL trong sitemap ở cả route marketing, tool, blog, feature, template và pháp lý: tất cả 200, không page error/tràn ngang. Test thật các tool QR, tin nhắn mời, Save-the-Date, danh sách khách, sơ đồ chỗ ngồi, account validation, menu mobile; E2E Studio tạo bản nháp, đổi tên, xuất bản, mở thiệp `?lang=en` giữ `to/g`, gửi RSVP và lời chúc đều đạt. Phát hiện `/favicon.ico` 404 trong console, sửa bằng `metadata.icons` → `/icon.svg`; reload xác nhận link icon đúng. Còn blocker ngoài code: Postgres cần Docker khi khởi động backend, deploy production và QA URL thật.
 
 - **2026-09-23 (Phase 6A tiếp tục):** Thêm Spring Security resource server + JWT HS256, BCrypt password hashing, auth DTO/service/controller (`register/login/me`), migration owner và API account list/claim, cùng trang `/account` FE và API/session helpers. FE `npm test` 101/101, typecheck/build xanh; BE full test chạy qua sau khi thêm JWT config cho test profile. Claim UI/dashboard còn cần polish và test controller riêng trước khi đánh dấu Phase 6A hoàn tất.
 - **2026-09-23 (Phase 6A tiếp tục):** Hoàn thiện luồng dashboard: dán edit link → claim invitation → lưu key trong session → mở lại `/studio/{id}#k=...`; FE test 101/101, typecheck/build xanh. Còn bổ sung test riêng cho auth/claim và gate cuối phase.
