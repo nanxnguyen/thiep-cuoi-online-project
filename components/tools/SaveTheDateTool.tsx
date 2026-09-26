@@ -18,6 +18,16 @@ const family = (cssVar: string, fallback: string) => {
   return name ? `${name}, ${fallback}` : fallback;
 };
 
+function fittedFont(ctx: CanvasRenderingContext2D, make: (size: number) => string, text: string, maxWidth: number, base: number, min: number) {
+  let size = base;
+  ctx.font = make(size);
+  while (size > min && ctx.measureText(text).width > maxWidth) {
+    size -= 2;
+    ctx.font = make(size);
+  }
+  return size;
+}
+
 async function draw(canvas: HTMLCanvasElement, form: Form, photo: ImageBitmap | null) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -45,13 +55,29 @@ async function draw(canvas: HTMLCanvasElement, form: Form, photo: ImageBitmap | 
   const cx = W / 2;
   ctx.font = `${24 * K}px ${sans}`;
   ctx.fillText("SAVE THE DATE", cx, 210 * K);
-  ctx.font = `italic ${64 * K}px ${hand}`;
-  ctx.fillText(`${form.bride.trim() || "Cô dâu"} & ${form.groom.trim() || "Chú rể"}`, cx, 400 * K, W - 80);
+  const bride = form.bride.trim() || "Cô dâu";
+  const groom = form.groom.trim() || "Chú rể";
+  const handAt = (size: number) => `italic ${size}px ${hand}`;
+  const nameMax = W - 80;
+  // Tên dài: co font cho vừa, vẫn không vừa thì tách 2 dòng (dâu / & rể).
+  fittedFont(ctx, handAt, `${bride} & ${groom}`, nameMax, 64 * K, 30 * K);
+  let dateY = 470 * K;
+  let placeY = 510 * K;
+  if (ctx.measureText(`${bride} & ${groom}`).width > nameMax) {
+    fittedFont(ctx, handAt, bride, nameMax, 64 * K, 30 * K);
+    ctx.fillText(bride, cx, 360 * K);
+    fittedFont(ctx, handAt, `& ${groom}`, nameMax, 64 * K, 30 * K);
+    ctx.fillText(`& ${groom}`, cx, 445 * K);
+    dateY = 505 * K;
+    placeY = 545 * K;
+  } else {
+    ctx.fillText(`${bride} & ${groom}`, cx, 400 * K);
+  }
   const [y, m, d] = form.date.split("-");
   ctx.font = `${28 * K}px ${display}`;
-  ctx.fillText(form.date ? `${d}.${m}.${y}` : "Ngày cưới", cx, 470 * K);
-  ctx.font = `${18 * K}px ${sans}`;
-  ctx.fillText(form.place.trim().toUpperCase(), cx, 510 * K, W - 120);
+  ctx.fillText(form.date ? `${d}.${m}.${y}` : "Ngày cưới", cx, dateY);
+  fittedFont(ctx, (size) => `${size}px ${sans}`, form.place.trim().toUpperCase(), W - 120, 18 * K, 12 * K);
+  ctx.fillText(form.place.trim().toUpperCase() || "Địa điểm", cx, placeY);
 }
 
 export function SaveTheDateTool() {
