@@ -1,0 +1,102 @@
+/* MỘC design tokens — the one place raw colours live. Source: design/Wedding Design System.dc.html (FAM scales,
+   semantic tokens, type/space/radius) + design/design.md. Guarded by tests/design-system.test.ts.
+   Deviations from the source (AA contrast) are listed in docs/superpowers/plans/2026-09-26-design-system-core.md. */
+:root {
+  /* primitive scales */
+  --red-50: #fdf2f1; --red-100: #f9dfdd; --red-200: #f0b9b6; --red-300: #e08d88; --red-400: #c85a51; --red-500: #a3161c;
+  --red-600: #8e1319; --red-700: #7d0f14; --red-800: #5a1119; --red-900: #3d0a0d; --red-950: #280608;
+  --gold-50: #fbf6ea; --gold-100: #f5ead0; --gold-200: #e9d4a3; --gold-300: #dfbf80; --gold-400: #d3a862; --gold-500: #c9a86a;
+  --gold-600: #b8893e; --gold-700: #8a6425; --gold-800: #6b4a1a; --gold-900: #4d3512; --gold-950: #2e1f0b;
+  --ink-50: #f8f4ee; --ink-100: #f4f0e9; --ink-200: #e8dfd3; --ink-300: #ddd2c4; --ink-400: #b0a498; --ink-500: #8a7d72;
+  --ink-600: #6b5f57; --ink-700: #5e534b; --ink-800: #3d342e; --ink-900: #1c1012; --ink-950: #0d0908;
+
+  /* semantic: grounds, text, lines */
+  --paper: #f8f4ee;
+  --paper-alt: #efe6d9;
+  --paper-soft: #f4f0e9;
+  --surface: #ffffff;
+  --ink: #1a1412;
+  --muted: #5e534b;
+  --faint: #6b5f57; /* design #8a7d72 fails AA as text; kept below for non-text */
+  --faint-deco: #8a7d72;
+  --line: #e8dfd3;
+  --line-strong: #ddd2c4;
+
+  /* brand */
+  --accent: #a3161c;
+  --accent-hover: #7d0f14;
+  --accent-deep: #8e1b1f;
+  --accent-soft: var(--red-100);
+  --accent-ink: #fbf3df;
+  --gold: #c9a86a; /* ornaments + text on dark only (2:1 on ivory) */
+  --gold-deep: #8a6425; /* text-safe gold on light grounds */
+  --gold-light: #e0bb74;
+  --jade: #24493a;
+  --night: #1c1012;
+  --oxblood: #4b0e14;
+  --on-dark: #f1e7d6;
+  --on-dark-muted: #a8998c;
+  --line-on-dark: #4a3a36;
+  /* footer / dark band text ladder (design/Site Footer.dc.html) */
+  --on-dark-body: #d8cbbb;
+  --on-dark-soft: #b8ab9b;
+  --on-dark-faint: #8f8277; /* design #7d7067 fails AA on --night (3.9:1) */
+  --line-on-dark-soft: #2e2522;
+  --accent-bright: #c01d24; /* CTA hover on dark grounds */
+
+  /* status (guest badges, RSVP) */
+  --ok-bg: #e7eee6; --ok-fg: #24493a;
+  --warn-bg: #f5efe0; --warn-fg: #7a5a22;
+  --neutral-bg: #efe6d9; --neutral-fg: var(--faint);
+  --danger-bg: #f5e3e1; --danger-fg: #8e1b1f;
+
+  /* legacy tint names still read by existing CSS */
+  --tint-gold: #f1e4c3;
+  --tint-rose: #f3d9d2;
+  --tint-jade: #d8e7de;
+  --tint-ink: #e9e2d6;
+  --lilac: var(--tint-gold);
+  --peach: var(--tint-rose);
+  --mint: var(--tint-jade);
+  --sky: var(--tint-ink);
+
+  /* shape + space */
+  --radius-s: 8px;
+  --radius: 14px;
+  --radius-l: 24px;
+  --radius-full: 999px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-7: 32px; --space-8: 48px; --space-9: 64px;
+  --wrap: 1280px;
+  --wrap-read: 1180px;
+  --wrap-narrow: 720px;
+
+  /* elevation */
+  --shadow-card: 0 12px 32px -14px rgb(26 20 18 / 0.3);
+  --shadow-card-hover: 0 30px 50px -24px rgb(26 20 18 / 0.45);
+  --shadow-float: 0 18px 36px -18px rgb(26 20 18 / 0.35);
+  --shadow-deep: 0 40px 80px -40px rgb(0 0 0 / 0.8);
+  --shadow: var(--shadow-card);
+  --shadow-lift: var(--shadow-card-hover);
+
+  /* type */
+  --display: var(--font-display), "Times New Roman", serif;
+  --sans: var(--font-sans), system-ui, sans-serif;
+  --serif: var(--font-display), Georgia, serif;
+  --script: var(--font-script), Georgia, serif;
+  --hand: var(--font-hand), cursive;
+  --fs-h1: clamp(38px, 5.6vw, 96px);
+  --fs-h2: clamp(32px, 4.4vw, 60px);
+  --fs-h3: 22px;
+  --fw-display: 400;
+
+  /* motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 200ms;
+  --dur: 300ms;
+  --dur-reveal: 900ms;
+
+  /* ornaments (gold lattice, drawn for MỘC) */
+  --lattice-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 0 56 28 28 56 0 28Z' fill='none' stroke='%23b8892f' stroke-opacity='.16'/%3E%3Cpath d='M28 14 42 28 28 42 14 28Z' fill='none' stroke='%23b8892f' stroke-opacity='.09'/%3E%3C/svg%3E");
+  --lattice: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 0 56 28 28 56 0 28Z' fill='none' stroke='%23c9a86a' stroke-opacity='.2'/%3E%3Cpath d='M28 14 42 28 28 42 14 28Z' fill='none' stroke='%23c9a86a' stroke-opacity='.12'/%3E%3C/svg%3E");
+}

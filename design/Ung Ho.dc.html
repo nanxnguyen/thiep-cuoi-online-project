@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(28px)}100%{opacity:1;transform:none}}
+@keyframes heart{0%,100%{transform:scale(1)}15%{transform:scale(1.2)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.8}100%{transform:translateY(-420px) scale(1.1);opacity:0}}
+@keyframes cardIn{0%{opacity:0;transform:translateY(40px) rotate(-3deg)}100%{opacity:1;transform:rotate(-1.5deg)}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}15%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-6px)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="position:relative;overflow:hidden;background:#a3161c;color:#fff">
+    <div style="position:absolute;inset:0;pointer-events:none">{{ hearts }}</div>
+    <div style="max-width:1280px;margin:0 auto;padding:96px 32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px;align-items:center;position:relative">
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <span style="font-size:44px;display:inline-block;animation:heart 1.6s ease-in-out infinite;align-self:flex-start">♥</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(46px,6vw,84px);line-height:1;animation:fadeUp .9s .1s both">Ủng hộ <em style="color:#f3d9a6">Mộc</em></h1>
+        <p style="margin:0;font-size:17px;line-height:1.75;color:#fbe3e3;max-width:460px;animation:fadeUp .9s .25s both">Mộc miễn phí cho tất cả mọi người. Nếu tấm thiệp giúp ngày cưới của bạn nhẹ nhàng hơn, một khoản ủng hộ nhỏ sẽ giúp dự án tiếp tục.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;animation:fadeUp .9s .4s both">
+          <sc-for list="{{ uses }}" as="u" hint-placeholder-count="3">
+            <div style="display:flex;gap:14px;align-items:center;font-size:15px"><span style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:12px;flex:none">{{ u.n }}</span>{{ u.t }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="justify-self:center;width:100%;max-width:400px;background:#fff;color:#1a1412;border-radius:24px;padding:32px;box-shadow:0 40px 80px -30px rgba(0,0,0,.5);animation:cardIn 1s .3s cubic-bezier(.2,.8,.2,1) both;position:relative">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">CHUYỂN KHOẢN</span><span style="font-size:13px;font-weight:600;color:#6b2d8c">TPBank</span></div>
+        <div style="aspect-ratio:1;border-radius:16px;overflow:hidden;position:relative;background:#f4efe8;border:1px solid #efe6d9"><image-slot id="ungho-qr" shape="rect" fit="contain" placeholder="Thả ảnh mã QR TPBank"></image-slot></div>
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:22px">
+          <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #efe6d9">
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#8a7d72">{{ f.label }}</span><span style="font-size:15px;font-weight:500">{{ f.value }}</span></div>
+              <button onClick="{{ f.copy }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid #ddd2c4;background:transparent;cursor:pointer;color:#3d342e" style-hover="background:#1a1412;color:#fff">Sao chép</button>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ copied }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:50%;bottom:-18px;background:#1a1412;color:#fff;font-size:13px;padding:9px 16px;border-radius:999px;animation:toast 1.8s both;white-space:nowrap">Đã sao chép {{ copied }}</div></sc-if>
+      </div>
+    </div>
+  </section>
+  <section style="max-width:880px;margin:0 auto;padding:96px 32px;text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center">
+    <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(28px,3.4vw,40px);line-height:1.35">“Không ủng hộ cũng không sao. Hãy dùng Mộc, và kể cho một cặp đôi khác nghe.”</span>
+    <a href="Studio.dc.html" style="margin-top:12px;background:#1a1412;color:#fff;padding:15px 26px;border-radius:999px;font-size:15px" style-hover="background:#3a2e28;color:#fff">Tạo thiệp miễn phí</a>
+  </section>
+  <dc-import name="Site Footer" show-cta="{{ false }}" hint-size="100%,360px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { copied: null };
+  hearts() {
+    if (this._h) return this._h;
+    this._h = Array.from({ length: 16 }, (_, i) => { const r = n => { const x = Math.sin(i * 71.3 + n * 9.1) * 1e4; return x - Math.floor(x); }; const d = 6 + r(1) * 6;
+      return React.createElement('span', { key: i, style: { position: 'absolute', left: `${r(2) * 100}%`, bottom: -30, fontSize: 12 + r(3) * 18, color: 'rgba(255,255,255,.35)', animation: `rise ${d}s ease-in ${-r(4) * d}s infinite` } }, '♥'); });
+    return this._h;
+  }
+  renderVals() {
+    const fields = [['Ngân hàng', 'TPBank'], ['Chủ tài khoản', 'Điền tên chủ tài khoản'], ['Số tài khoản', 'Điền số tài khoản'], ['Nội dung', 'Ung ho Moc']];
+    return {
+      hearts: this.hearts(), copied: this.state.copied,
+      uses: [{ n: '1', t: 'Trả tiền máy chủ để thiệp luôn mở nhanh' }, { n: '2', t: 'Thiết kế thêm mẫu thiệp mới' }, { n: '3', t: 'Giữ Mộc miễn phí cho mọi người' }],
+      fields: fields.map(([label, value]) => ({ label, value, copy: () => { navigator.clipboard && navigator.clipboard.writeText(value); this.setState({ copied: null }, () => this.setState({ copied: label.toLowerCase() })); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: null }), 1800); } })),
+    };
+  }
+}
+</script>
+</body>
+</html>

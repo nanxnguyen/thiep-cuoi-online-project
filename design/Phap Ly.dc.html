@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:720px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">PHÁP LÝ</span>
+      <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(34px,4.6vw,52px)">{{ doc.title }}</h1>
+      <span style="font-size:13px;color:#8a7d72">Cập nhật lần cuối: 25.09.2026</span>
+      <div style="background:#efe6d9;border-radius:12px;padding:16px 20px;font-size:14px;line-height:1.6;color:#6b5237">Đây là bản nháp nội bộ, chưa được luật sư rà soát. Nội dung có thể thay đổi trước khi phát hành chính thức.</div>
+    </div>
+    <div style="display:flex;gap:8px;border-bottom:1px solid #e0d5c6;padding-bottom:16px">
+      <a href="Phap Ly.dc.html?doc=dieu-khoan" style="font-size:14px;padding:9px 14px;border-radius:999px;border:1px solid {{ tabTerms }};color:#1a1412">Điều khoản sử dụng</a>
+      <a href="Phap Ly.dc.html?doc=quyen-rieng-tu" style="font-size:14px;padding:9px 14px;border-radius:999px;border:1px solid {{ tabPriv }};color:#1a1412">Quyền riêng tư</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px;font-size:15px;line-height:1.8;color:#3d342e">
+      <sc-for list="{{ doc.sections }}" as="s" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-family:'Playfair Display',serif;font-size:21px;color:#1a1412">{{ s.h }}</span><p style="margin:0">{{ s.t }}</p></div>
+      </sc-for>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DOCS = {
+  'dieu-khoan': { title: 'Điều khoản sử dụng', sections: [
+    ['1. Phạm vi dịch vụ', 'Mộc cung cấp công cụ tạo thiệp cưới online và các công cụ đám cưới miễn phí đi kèm. Việc sử dụng dịch vụ đồng nghĩa bạn chấp nhận các điều khoản này.'],
+    ['2. Tài khoản', 'Bạn có thể tạo thiệp mà không cần tài khoản. Tài khoản là tùy chọn để quản lý nhiều thiệp ở một nơi. Bạn chịu trách nhiệm giữ bí mật link sửa thiệp và thông tin đăng nhập.'],
+    ['3. Nội dung của bạn', 'Bạn giữ toàn quyền với nội dung, ảnh và nhạc mình tải lên. Mộc chỉ lưu trữ để hiển thị thiệp theo yêu cầu của bạn.'],
+    ['4. Mừng cưới QR', 'Mộc chỉ hiển thị mã QR do bạn cung cấp. Mọi giao dịch chuyển khoản diễn ra trực tiếp giữa khách và tài khoản ngân hàng của bạn, Mộc không thu giữ hay xử lý khoản tiền này.'],
+    ['5. Miễn phí và ủng hộ', 'Toàn bộ tính năng hiện tại miễn phí. Mộc có thể nhận ủng hộ tự nguyện nhưng không ràng buộc quyền sử dụng dịch vụ.'],
+    ['6. Thay đổi điều khoản', 'Mộc có thể cập nhật điều khoản này. Thay đổi quan trọng sẽ được thông báo trên trang này.'],
+  ]},
+  'quyen-rieng-tu': { title: 'Quyền riêng tư', sections: [
+    ['1. Dữ liệu chúng tôi lưu trữ', 'Thông tin thiệp (tên, ngày, địa điểm, ảnh, nhạc), danh sách khách bạn nhập, và lời chúc, xác nhận tham dự của khách.'],
+    ['2. Ai xem được thiệp', 'Chỉ người có đường link thiệp. Thiệp không được đưa lên công cụ tìm kiếm và không noindex công khai.'],
+    ['3. Công cụ chạy trên trình duyệt', 'Các công cụ như nén ảnh, nén video, danh sách khách, sơ đồ chỗ ngồi xử lý hoàn toàn trên máy của bạn. Dữ liệu này không được gửi lên máy chủ của Mộc.'],
+    ['4. Chia sẻ với bên thứ ba', 'Mộc không bán dữ liệu người dùng. Một số dịch vụ kỹ thuật (như tạo mã QR) có thể xử lý đường link bạn cung nhập để tạo hình ảnh QR.'],
+    ['5. Quyền của bạn', 'Bạn có thể xoá thiệp và dữ liệu liên quan bất cứ lúc nào từ trang Tài khoản hoặc trình chỉnh sửa.'],
+  ]},
+};
+class Component extends DCLogic {
+  renderVals() {
+    const p = new URLSearchParams(location.search);
+    const key = p.get('doc') === 'quyen-rieng-tu' ? 'quyen-rieng-tu' : 'dieu-khoan';
+    const d = DOCS[key];
+    return { doc: { title: d.title, sections: d.sections.map(([h, t]) => ({ h, t })) },
+      tabTerms: key === 'dieu-khoan' ? '#1a1412' : '#ddd2c4', tabPriv: key === 'quyen-rieng-tu' ? '#1a1412' : '#ddd2c4' };
+  }
+}
+</script>
+</body>
+</html>

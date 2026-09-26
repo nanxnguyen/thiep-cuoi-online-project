@@ -1,0 +1,1 @@
+- Mọi thay đổi trong dự án phải được cập nhật vào README.md (bảng trang + mục "Nhật ký thay đổi").

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#f4f0e9;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pulseSave{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(110vh) rotate(320deg)}}
+@keyframes popIn{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes eq{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;scroll-behavior:auto !important}}
+</style>
+</helmet>
+<div style="height:100vh;display:flex;flex-direction:column;overflow:hidden">
+
+  <header style="background:#fff;border-bottom:1px solid #e8dfd3;flex:none;position:relative;z-index:30">
+    <div style="padding:10px 16px;display:flex;align-items:center;gap:14px">
+      <a href="Studio.dc.html" style="color:#1a1412;font-size:14px;display:flex;align-items:center;gap:8px;flex:none"><span>←</span><span style="font-family:'Playfair Display',serif;letter-spacing:.2em">MỘC</span></a>
+      <span style="width:1px;height:22px;background:#e8dfd3;flex:none"></span>
+      <div style="display:flex;flex-direction:column;min-width:0;flex:1">
+        <span style="font-family:'Playfair Display',serif;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ b }} &amp; {{ a }}</span>
+        <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8a7d72"><span style="width:6px;height:6px;border-radius:50%;background:#2f6b45;animation:pulseSave 2s infinite"></span>Đã lưu tự động</span>
+      </div>
+      <div title="Mức độ hoàn thiện" style="display:flex;align-items:center;gap:8px;flex:none">
+        <svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="14" fill="none" stroke="#efe6d9" stroke-width="3"></circle><circle cx="17" cy="17" r="14" fill="none" stroke="#a3161c" stroke-width="3" stroke-linecap="round" stroke-dasharray="88" stroke-dashoffset="{{ ringOffset }}" transform="rotate(-90 17 17)" style="transition:stroke-dashoffset .5s"></circle><text x="17" y="21" text-anchor="middle" font-size="10" font-weight="600" fill="#1a1412">{{ pct }}</text></svg>
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;color:#5e534b;line-height:1.3">{{ doneCount }}/{{ totalCount }} mục<br><span style="color:#8a7d72">đã hoàn thiện</span></span></sc-if>
+      </div>
+      <div style="display:flex;padding:3px;background:#f4f0e9;border-radius:999px;flex:none">
+        <button onClick="{{ setEdit }}" style="font-family:inherit;font-size:12px;padding:8px 14px;border:0;border-radius:999px;cursor:pointer;background:{{ modeEdit.bg }};color:{{ modeEdit.fg }};box-shadow:{{ modeEdit.sh }}">Chỉnh sửa</button>
+        <button onClick="{{ setGuest }}" style="font-family:inherit;font-size:12px;padding:8px 14px;border:0;border-radius:999px;cursor:pointer;background:{{ modeGuest.bg }};color:{{ modeGuest.fg }};box-shadow:{{ modeGuest.sh }}">Xem như khách</button>
+      </div>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;padding:3px;background:#f4f0e9;border-radius:999px;flex:none">
+          <button onClick="{{ setMobile }}" title="Điện thoại" style="font-family:inherit;padding:7px 10px;border:0;border-radius:999px;cursor:pointer;display:flex;background:{{ devM.bg }};color:{{ devM.fg }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"></rect><path d="M11 18h2"></path></svg></button>
+          <button onClick="{{ setDesktop }}" title="Máy tính" style="font-family:inherit;padding:7px 10px;border:0;border-radius:999px;cursor:pointer;display:flex;background:{{ devD.bg }};color:{{ devD.fg }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="1"></rect><path d="M8 20h8M12 16v4"></path></svg></button>
+        </div>
+      </sc-if>
+      <button onClick="{{ openPublish }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:10px 18px;border-radius:999px;border:0;background:#a3161c;color:#fff;cursor:pointer;flex:none;white-space:nowrap" style-hover="background:#7d0f14">Xuất bản</button>
+    </div>
+    <div style="height:2px;background:#f4f0e9"><div style="height:100%;width:{{ pctW }};background:linear-gradient(90deg,#c9a86a,#a3161c);transition:width .5s"></div></div>
+  </header>
+
+  <div style="flex:1;min-height:0;display:grid;grid-template-columns:{{ gridCols }};position:relative">
+
+    <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:rgba(26,20,18,.45);z-index:39"></div>
+    </sc-if>
+
+    <nav style="display:{{ ol.display }};position:{{ ol.pos }};left:0;right:0;bottom:0;top:{{ ol.top }};z-index:{{ ol.z }};border-radius:{{ ol.rad }};flex-direction:column;background:#faf7f2;border-right:1px solid #e8dfd3;overflow-y:auto;animation:{{ ol.anim }}">
+      <div style="padding:20px 18px 8px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;letter-spacing:.2em;color:#8a7d72;font-weight:600">CÁC PHẦN CỦA THIỆP</span>
+        <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeSheet }}" style="font-family:inherit;border:0;background:transparent;font-size:18px;cursor:pointer;color:#5e534b">×</button></sc-if>
+      </div>
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;padding:10px 10px 6px">
+          <span style="font-size:11px;color:#8a7d72;padding:4px 8px 6px">{{ g.title }}</span>
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+            <div onClick="{{ it.pick }}" style="display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;background:{{ it.bg }};box-shadow:{{ it.sh }};transition:background .15s" style-hover="background:#fff">
+              <span style="width:8px;height:8px;border-radius:50%;background:{{ it.dot }};flex:none"></span>
+              <div style="display:flex;flex-direction:column;min-width:0;flex:1">
+                <span style="font-size:13px;color:{{ it.fg }};font-weight:{{ it.fw }}">{{ it.label }}</span>
+                <sc-if value="{{ it.note }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:{{ it.noteFg }}">{{ it.note }}</span></sc-if>
+              </div>
+              <sc-if value="{{ it.opt }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ it.toggle }}" title="Bật/tắt phần này" style="width:32px;height:18px;border-radius:999px;border:0;padding:2px;background:{{ it.swBg }};cursor:pointer;display:flex;flex:none;transition:background .2s"><span style="width:14px;height:14px;border-radius:50%;background:#fff;transform:translateX({{ it.kx }});transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <aside style="display:{{ fm.display }};position:{{ fm.pos }};left:0;right:0;bottom:0;top:{{ fm.top }};z-index:{{ fm.z }};border-radius:{{ fm.rad }};flex-direction:column;background:#fff;border-right:1px solid #e8dfd3;min-height:0;animation:{{ fm.anim }}">
+      <div style="padding:20px 24px 16px;border-bottom:1px solid #efe6d9;display:flex;flex-direction:column;gap:8px;flex:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toOutline }}" style="font-family:inherit;font-size:12px;border:0;background:#f4f0e9;border-radius:999px;padding:6px 12px;cursor:pointer;color:#5e534b">← Các phần</button></sc-if>
+          <span style="font-size:11px;letter-spacing:.2em;color:#a3161c;font-weight:600">BƯỚC {{ cur.n }} / {{ totalSteps }}</span>
+          <sc-if value="{{ cur.opt }}" hint-placeholder-val="{{ false }}">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#5e534b;cursor:pointer">{{ cur.onText }}<button onClick="{{ cur.toggle }}" style="width:36px;height:20px;border-radius:999px;border:0;padding:2px;background:{{ cur.swBg }};cursor:pointer;display:flex;transition:background .2s"><span style="width:16px;height:16px;border-radius:50%;background:#fff;transform:translateX({{ cur.kx }});transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></span></button></label>
+          </sc-if>
+        </div>
+        <span style="font-family:'Playfair Display',serif;font-size:24px;line-height:1.2">{{ cur.label }}</span>
+        <span style="font-size:13px;color:#5e534b;line-height:1.55;text-wrap:pretty">{{ cur.desc }}</span>
+      </div>
+
+      <div key="{{ sec }}" style="flex:1;min-height:0;overflow-y:auto;padding:22px 24px 28px;display:flex;flex-direction:column;gap:18px;animation:fadeIn .3s both;opacity:{{ cur.bodyOp }}">
+
+        <sc-if value="{{ is.envelope }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#5e534b;font-weight:500">Lời mời trên phong bì</span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ greetOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+            <input value="{{ greet }}" onInput="{{ on_.greet }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#5e534b;font-weight:500">Xem thử với tên khách</span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ guestOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+          </div>
+          <div style="padding:14px 16px;border-radius:12px;background:#f5efe0;font-size:13px;line-height:1.6;color:#5e534b">Mỗi khách nhận một đường link riêng, tên của họ hiện ngay trên phong bì khi mở thiệp.</div>
+        </sc-if>
+
+        <sc-if value="{{ is.template }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+            <sc-for list="{{ tpls }}" as="t" hint-placeholder-count="9">
+              <button onClick="{{ t.pick }}" style="font-family:inherit;padding:0;border:0;background:transparent;cursor:pointer;border-radius:8px;box-shadow:0 0 0 {{ t.ring }} #a3161c;transition:box-shadow .2s;display:flex;flex-direction:column;gap:6px">
+                <dc-import name="Thiep Preview" family="{{ t.family }}" deep="{{ t.deep }}" paper="{{ t.paper }}" gold="{{ t.gold }}" tint="{{ t.tint }}" a="{{ a }}" b="{{ b }}" date="{{ dateFmt }}" place="{{ t.place }}" slot="{{ t.slot }}" fit="{{ true }}" max-w="100%" radius="8px" hint-size="100%,160px"></dc-import>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#5e534b;font-weight:500">Kiểu chữ tiêu đề</span>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><sc-for list="{{ fontOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="font-family:{{ o.font }};font-size:20px;padding:12px 6px;border-radius:10px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:#1a1412;cursor:pointer">Aa</button></sc-for></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ is.couple }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Chú rể<input value="{{ b }}" onInput="{{ on_.b }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ ranksB }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div></div>
+          <div style="display:flex;flex-direction:column;gap:8px"><label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Cô dâu<input value="{{ a }}" onInput="{{ on_.a }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ ranksA }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div></div>
+          <div style="padding:14px 16px;border-radius:12px;background:#f5efe0;font-size:13px;line-height:1.6;color:#5e534b">Kéo thả ảnh cô dâu, chú rể trực tiếp vào khung ảnh trên thiệp bên cạnh.</div>
+        </sc-if>
+
+        <sc-if value="{{ is.family }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid #efe6d9;border-radius:14px">
+            <span style="font-size:11px;letter-spacing:.2em;color:#8a7d72;font-weight:600">NHÀ TRAI</span>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Bố<input value="{{ gFa }}" onInput="{{ on_.gFa }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Mẹ<input value="{{ gMo }}" onInput="{{ on_.gMo }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Địa chỉ<input value="{{ gAddr }}" onInput="{{ on_.gAddr }}" placeholder="Không bắt buộc" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid #efe6d9;border-radius:14px">
+            <span style="font-size:11px;letter-spacing:.2em;color:#8a7d72;font-weight:600">NHÀ GÁI</span>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Bố<input value="{{ bFa }}" onInput="{{ on_.bFa }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Mẹ<input value="{{ bMo }}" onInput="{{ on_.bMo }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Địa chỉ<input value="{{ bAddr }}" onInput="{{ on_.bAddr }}" placeholder="Không bắt buộc" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ is.ceremony }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#5e534b;font-weight:500">Loại lễ</span>
+            <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ cTypeOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+          </div>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Ngày<input type="date" value="{{ cDate }}" onInput="{{ on_.cDate }}" style="font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Giờ<input type="time" value="{{ cTime }}" onInput="{{ on_.cTime }}" style="font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Ngày âm lịch<input value="{{ lunar }}" onInput="{{ on_.lunar }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Địa điểm làm lễ<input value="{{ cPlace }}" onInput="{{ on_.cPlace }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+        </sc-if>
+
+        <sc-if value="{{ is.party }}" hint-placeholder-val="{{ false }}">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Ngày tiệc<input type="date" value="{{ pDate }}" onInput="{{ on_.pDate }}" style="font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%"></label>
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Đón khách<input type="time" value="{{ pWelcome }}" onInput="{{ on_.pWelcome }}" style="font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Khai tiệc<input type="time" value="{{ pDinner }}" onInput="{{ on_.pDinner }}" style="font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Nhà hàng<input value="{{ pPlace }}" onInput="{{ on_.pPlace }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Địa chỉ<input value="{{ pAddr }}" onInput="{{ on_.pAddr }}" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Link Google Maps<input value="{{ map }}" onInput="{{ on_.map }}" placeholder="Dán link để khách bấm Chỉ đường" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c"></label>
+        </sc-if>
+
+        <sc-if value="{{ is.schedule }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ sched }}" as="s" hint-placeholder-count="4">
+              <div style="display:grid;grid-template-columns:92px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px;border:1px solid #efe6d9;border-radius:12px;background:#fff">
+                <input type="time" value="{{ s.t }}" onInput="{{ s.onT }}" style="font-family:inherit;font-size:13px;padding:8px;border-radius:8px;border:1px solid #efe6d9;outline:none;width:100%">
+                <input value="{{ s.n }}" onInput="{{ s.onN }}" style="font-family:inherit;font-size:14px;padding:8px 10px;border-radius:8px;border:0;outline:none;width:100%" style-focus="background:#faf7f2">
+                <div style="display:flex;gap:2px">
+                  <button onClick="{{ s.up }}" title="Lên" style="font-family:inherit;width:28px;height:28px;border:0;border-radius:8px;background:transparent;cursor:pointer;color:#8a7d72" style-hover="background:#f4f0e9">↑</button>
+                  <button onClick="{{ s.down }}" title="Xuống" style="font-family:inherit;width:28px;height:28px;border:0;border-radius:8px;background:transparent;cursor:pointer;color:#8a7d72" style-hover="background:#f4f0e9">↓</button>
+                  <button onClick="{{ s.del }}" title="Xoá" style="font-family:inherit;width:28px;height:28px;border:0;border-radius:8px;background:transparent;cursor:pointer;color:#a3161c" style-hover="background:#fbeaea">×</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <button onClick="{{ addSched }}" style="font-family:inherit;font-size:13px;padding:12px;border-radius:12px;border:1px dashed #c9b8a4;background:transparent;color:#5e534b;cursor:pointer" style-hover="border-color:#a3161c;color:#a3161c">+ Thêm mốc thời gian</button>
+        </sc-if>
+
+        <sc-if value="{{ is.countdown }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid #efe6d9;border-radius:12px">
+            <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:14px">Nút thêm vào lịch</span><span style="font-size:12px;color:#8a7d72">Google Calendar và Apple Calendar</span></div>
+            <button onClick="{{ tgCal.fn }}" style="width:36px;height:20px;border-radius:999px;border:0;padding:2px;background:{{ tgCal.bg }};cursor:pointer;display:flex;flex:none;transition:background .2s"><span style="width:16px;height:16px;border-radius:50%;background:#fff;transform:translateX({{ tgCal.kx }});transition:transform .2s"></span></button>
+          </div>
+          <div style="padding:14px 16px;border-radius:12px;background:#f5efe0;font-size:13px;line-height:1.6;color:#5e534b">Đồng hồ đếm đến giờ đón khách của tiệc cưới ({{ pWelcome }}, {{ pDateFmt }}).</div>
+        </sc-if>
+
+        <sc-if value="{{ is.album }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;color:#5e534b;font-weight:500">Số ảnh hiển thị</span>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><sc-for list="{{ albumOpts }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:14px;padding:10px;border-radius:10px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+          </div>
+          <div style="padding:14px 16px;border-radius:12px;background:#f5efe0;font-size:13px;line-height:1.6;color:#5e534b">Kéo thả ảnh vào từng ô trên thiệp. Khách bấm vào ảnh để xem toàn màn hình.</div>
+        </sc-if>
+
+        <sc-if value="{{ is.music }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;border:1px solid #efe6d9;border-radius:14px;overflow:hidden">
+            <sc-for list="{{ tracks }}" as="t" hint-placeholder-count="5">
+              <button onClick="{{ t.pick }}" style="font-family:inherit;display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-bottom:1px solid #efe6d9;background:{{ t.bg }};cursor:pointer;text-align:left" style-hover="background:#faf7f2">
+                <span style="width:32px;height:32px;border-radius:50%;background:{{ t.iconBg }};color:{{ t.iconFg }};display:flex;align-items:center;justify-content:center;flex:none;font-size:11px">{{ t.icon }}</span>
+                <span style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:14px;color:#1a1412">{{ t.name }}</span><span style="font-size:12px;color:#8a7d72">{{ t.mood }} · {{ t.len }}</span></span>
+              </button>
+            </sc-for>
+          </div>
+          <span style="font-size:12px;color:#8a7d72;line-height:1.6">Nhạc tự phát khi khách mở phong bì. Khách có thể tắt bằng nút ở góc thiệp.</span>
+        </sc-if>
+
+        <sc-if value="{{ is.rsvp }}" hint-placeholder-val="{{ false }}">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Hạn phản hồi<input type="date" value="{{ deadline }}" onInput="{{ on_.deadline }}" style="font-family:inherit;font-size:14px;padding:10px 12px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%"></label>
+          <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;color:#5e534b;font-weight:500">Câu hỏi thêm</span>
+            <div style="display:flex;flex-direction:column;border:1px solid #efe6d9;border-radius:12px">
+              <sc-for list="{{ qOpts }}" as="q" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #efe6d9"><span style="font-size:14px">{{ q.label }}</span><button onClick="{{ q.fn }}" style="width:36px;height:20px;border-radius:999px;border:0;padding:2px;background:{{ q.bg }};cursor:pointer;display:flex;flex:none;transition:background .2s"><span style="width:16px;height:16px;border-radius:50%;background:#fff;transform:translateX({{ q.kx }});transition:transform .2s"></span></button></div>
+              </sc-for>
+            </div>
+          </div>
+          <a href="Cong Cu.dc.html" style="font-size:13px">Xem danh sách phản hồi →</a>
+        </sc-if>
+
+        <sc-if value="{{ is.guestbook }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid #efe6d9;border-radius:12px">
+            <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:14px">Duyệt trước khi hiển thị</span><span style="font-size:12px;color:#8a7d72">Lời chúc chỉ hiện sau khi bạn đồng ý</span></div>
+            <button onClick="{{ tgMod.fn }}" style="width:36px;height:20px;border-radius:999px;border:0;padding:2px;background:{{ tgMod.bg }};cursor:pointer;display:flex;flex:none;transition:background .2s"><span style="width:16px;height:16px;border-radius:50%;background:#fff;transform:translateX({{ tgMod.kx }});transition:transform .2s"></span></button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ is.gift }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid #efe6d9;border-radius:14px">
+            <span style="font-size:11px;letter-spacing:.2em;color:#8a7d72;font-weight:600">CHÚ RỂ</span>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ banksG }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+            <input value="{{ gAcc }}" onInput="{{ on_.gAcc }}" placeholder="Số tài khoản" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid {{ gAccBd }};outline:none;width:100%" style-focus="border-color:#a3161c">
+            <input value="{{ gName }}" onInput="{{ on_.gName }}" placeholder="Tên chủ tài khoản" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%;text-transform:uppercase" style-focus="border-color:#a3161c">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid #efe6d9;border-radius:14px">
+            <span style="font-size:11px;letter-spacing:.2em;color:#8a7d72;font-weight:600">CÔ DÂU</span>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ banksB }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+            <input value="{{ bAcc }}" onInput="{{ on_.bAcc }}" placeholder="Số tài khoản" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%" style-focus="border-color:#a3161c">
+            <input value="{{ bName }}" onInput="{{ on_.bName }}" placeholder="Tên chủ tài khoản" style="font-family:inherit;font-size:14px;padding:11px 13px;border-radius:10px;border:1px solid #ddd2c4;outline:none;width:100%;text-transform:uppercase" style-focus="border-color:#a3161c">
+          </div>
+          <span style="font-size:12px;color:#8a7d72;line-height:1.6">Mã VietQR được tạo tự động từ số tài khoản khi xuất bản.</span>
+        </sc-if>
+
+        <sc-if value="{{ is.thanks }}" hint-placeholder-val="{{ false }}">
+          <textarea value="{{ thanks }}" onInput="{{ on_.thanks }}" rows="6" style="font-family:inherit;font-size:14px;line-height:1.6;padding:13px 14px;border-radius:12px;border:1px solid #ddd2c4;outline:none;width:100%;resize:vertical" style-focus="border-color:#a3161c"></textarea>
+          <button onClick="{{ aiThanks }}" disabled="{{ aiLoading }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:11px 16px;border-radius:999px;border:1px solid #c9a86a;background:#fbf6ea;color:#7a5a22;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px" style-hover="background:#f5ecd6">
+            <sc-if value="{{ aiLoading }}" hint-placeholder-val="{{ false }}"><span style="width:12px;height:12px;border-radius:50%;border:2px solid #c9a86a;border-top-color:transparent;animation:spin .8s linear infinite"></span></sc-if>
+            {{ aiLabel }}
+          </button>
+        </sc-if>
+      </div>
+
+      <div style="flex:none;padding:14px 24px;border-top:1px solid #efe6d9;display:flex;justify-content:space-between;gap:10px;background:#fff">
+        <button onClick="{{ prev }}" disabled="{{ isFirst }}" style="font-family:inherit;font-size:13px;padding:11px 16px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;color:#1a1412;cursor:pointer;opacity:{{ prevOp }}">← Trước</button>
+        <button onClick="{{ next }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:11px 18px;border-radius:999px;border:0;background:#1a1412;color:#fff;cursor:pointer" style-hover="background:#a3161c">{{ nextLabel }}</button>
+      </div>
+    </aside>
+
+    <main style="background:#e9e2d6;background-image:radial-gradient(circle at 1px 1px,rgba(26,20,18,.07) 1px,transparent 0);background-size:18px 18px;display:flex;flex-direction:column;align-items:center;justify-content:safe center;padding:{{ mainPad }};min-width:0;min-height:0;overflow-y:auto;position:relative;gap:12px">
+
+      <sc-if value="{{ guestMode }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 6px 6px 14px;border-radius:999px;background:#fff;box-shadow:0 6px 20px -10px rgba(0,0,0,.25);font-size:12px;color:#5e534b;flex:none;flex-wrap:wrap;justify-content:center">
+          <span>Đang xem với tên</span>
+          <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ guestOpts }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer">{{ o.label }}</button></sc-for></div>
+          <button onClick="{{ setEdit }}" style="font-family:inherit;font-size:12px;padding:6px 12px;border-radius:999px;border:0;background:#1a1412;color:#fff;cursor:pointer">Quay lại chỉnh sửa</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+        <span style="font-size:12px;color:#5e534b;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.7);flex:none">Bấm vào bất kỳ phần nào trên thiệp để sửa</span>
+      </sc-if>
+
+      <div style="width:{{ fr.w }};height:{{ fr.h }};max-width:100%;border-radius:{{ fr.r }};padding:{{ fr.p }};background:#1a1412;display:flex;flex-direction:column;position:relative;box-shadow:0 40px 80px -30px rgba(26,20,18,.55);transition:width .35s cubic-bezier(.2,.8,.2,1),border-radius .35s;flex:none;min-height:0">
+        <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#d8cfc0;border-radius:12px 12px 0 0;padding:9px 14px;display:flex;align-items:center;gap:6px;flex:none">
+            <span style="width:10px;height:10px;border-radius:50%;background:#e5978f"></span><span style="width:10px;height:10px;border-radius:50%;background:#e8c98a"></span><span style="width:10px;height:10px;border-radius:50%;background:#9fc5a0"></span>
+            <span style="flex:1;text-align:center;font-size:11px;color:#8a7d72;background:#f4f0e9;border-radius:6px;padding:4px 10px;margin:0 40px">moc.vn/i/{{ slug }}?to={{ guestSlug }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isPhone }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:18px;left:50%;transform:translateX(-50%);width:84px;height:22px;border-radius:12px;background:#1a1412;z-index:5"></div></sc-if>
+
+        <div style="flex:1;min-height:0;position:relative;border-radius:{{ fr.ir }};overflow:hidden;background:{{ fr.bg }}">
+          <div ref="{{ pv }}" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:thin">
+            <div style="max-width:430px;margin:0 auto;background:{{ c.paper }};color:{{ c.deep }};min-height:100%;box-shadow:{{ fr.colSh }};font-family:'Be Vietnam Pro',sans-serif">
+
+              <sc-if value="{{ on.envelope }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="envelope" onClick="{{ sel.envelope }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.envelope }};outline-offset:-3px;background:{{ c.deep }};color:{{ c.paper }};padding:64px 28px 44px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+                  <sc-if value="{{ act.envelope }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff;letter-spacing:.05em">ĐANG SỬA</span></sc-if>
+                  <span style="font-size:10px;letter-spacing:.35em;color:{{ c.gold }};text-transform:uppercase">{{ greet }}</span>
+                  <span style="font-family:'Great Vibes',cursive;font-size:38px;line-height:1.2">{{ guestName }}</span>
+                  <span style="font-size:12px;opacity:.8">tới dự {{ cTypeLower }} của</span>
+                  <span style="font-family:{{ hf }};font-size:22px">{{ b }} &amp; {{ a }}</span>
+                  <span style="margin-top:10px;width:58px;height:58px;border-radius:50%;background:{{ c.gold }};color:{{ c.deep }};display:flex;align-items:center;justify-content:center;font-family:serif;font-size:26px;box-shadow:0 0 0 4px {{ c.deep }},0 0 0 5px {{ c.gold }}">囍</span>
+                </section>
+              </sc-if>
+
+              <section data-sec="template" onClick="{{ sel.template }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.template }};outline-offset:-3px">
+                <sc-if value="{{ act.template }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;z-index:3;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                <dc-import name="Thiep Preview" family="{{ c.family }}" deep="{{ c.deep }}" paper="{{ c.paper }}" gold="{{ c.gold }}" tint="{{ c.tint }}" a="{{ a }}" b="{{ b }}" date="{{ dateFmt }}" place="{{ c.place }}" slot="ed3-cover" fit="{{ true }}" max-w="100%" radius="0" hint-size="100%,600px"></dc-import>
+              </section>
+
+              <section data-sec="couple" onClick="{{ sel.couple }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.couple }};outline-offset:-3px;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:26px;text-align:center">
+                <sc-if value="{{ act.couple }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                <span style="font-size:10px;letter-spacing:.35em;opacity:.7">CÔ DÂU &amp; CHÚ RỂ</span>
+                <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;width:100%">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="width:112px;height:140px;border-radius:56px 56px 8px 8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="ed3-groom" shape="rect" placeholder="Chú rể"></image-slot></div><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:.75">{{ rankB }}</span><span style="font-family:{{ hf }};font-size:21px;line-height:1.2">{{ b }}</span></div>
+                  <span style="font-family:'Great Vibes',cursive;font-size:34px;color:{{ c.gold }}">&amp;</span>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="width:112px;height:140px;border-radius:56px 56px 8px 8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="ed3-bride" shape="rect" placeholder="Cô dâu"></image-slot></div><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:.75">{{ rankA }}</span><span style="font-family:{{ hf }};font-size:21px;line-height:1.2">{{ a }}</span></div>
+                </div>
+              </section>
+
+              <section data-sec="family" onClick="{{ sel.family }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.family }};outline-offset:-3px;padding:40px 24px;display:grid;grid-template-columns:1fr 1px 1fr;gap:18px;text-align:center;background:{{ c.tint }}">
+                <sc-if value="{{ act.family }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:10px;letter-spacing:.3em;opacity:.7;margin-bottom:4px">NHÀ TRAI</span><span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500">{{ gFa }}</span><span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500">{{ gMo }}</span><sc-if value="{{ gAddr }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;opacity:.7;line-height:1.5;margin-top:4px">{{ gAddr }}</span></sc-if></div>
+                <div style="background:{{ c.deep }};opacity:.25"></div>
+                <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:10px;letter-spacing:.3em;opacity:.7;margin-bottom:4px">NHÀ GÁI</span><span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500">{{ bFa }}</span><span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500">{{ bMo }}</span><sc-if value="{{ bAddr }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;opacity:.7;line-height:1.5;margin-top:4px">{{ bAddr }}</span></sc-if></div>
+              </section>
+
+              <section data-sec="ceremony" onClick="{{ sel.ceremony }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.ceremony }};outline-offset:-3px;padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
+                <sc-if value="{{ act.ceremony }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                <span style="font-size:10px;letter-spacing:.35em;opacity:.7">TRÂN TRỌNG BÁO TIN</span>
+                <span style="font-family:{{ hf }};font-size:28px;color:{{ c.deep }}">{{ cType }}</span>
+                <span style="font-size:13px;margin-top:6px">Vào lúc {{ cTime }} · {{ cWeekday }}</span>
+                <div style="display:flex;align-items:center;gap:18px;margin:6px 0">
+                  <span style="width:56px;height:1px;background:{{ c.deep }};opacity:.35"></span>
+                  <div style="display:flex;flex-direction:column;align-items:center"><span style="font-family:'Cormorant Garamond',serif;font-size:62px;line-height:1">{{ cDay }}</span><span style="font-size:11px;letter-spacing:.3em">THÁNG {{ cMonth }} · {{ cYear }}</span></div>
+                  <span style="width:56px;height:1px;background:{{ c.deep }};opacity:.35"></span>
+                </div>
+                <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;opacity:.8">{{ lunar }}</span>
+                <span style="font-size:13px;margin-top:6px">Tại {{ cPlace }}</span>
+              </section>
+
+              <section data-sec="party" onClick="{{ sel.party }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.party }};outline-offset:-3px;padding:44px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;background:{{ c.deep }};color:{{ c.paper }}">
+                <sc-if value="{{ act.party }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                <span style="font-size:10px;letter-spacing:.35em;color:{{ c.gold }}">TIỆC CƯỚI</span>
+                <span style="font-family:{{ hf }};font-size:22px;line-height:1.3">{{ pPlace }}</span>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:280px">
+                  <div style="padding:12px;border:1px solid {{ c.gold }};border-radius:10px;display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;letter-spacing:.2em;opacity:.75">ĐÓN KHÁCH</span><span style="font-family:'Cormorant Garamond',serif;font-size:24px">{{ pWelcome }}</span></div>
+                  <div style="padding:12px;border:1px solid {{ c.gold }};border-radius:10px;display:flex;flex-direction:column;gap:2px"><span style="font-size:10px;letter-spacing:.2em;opacity:.75">KHAI TIỆC</span><span style="font-family:'Cormorant Garamond',serif;font-size:24px">{{ pDinner }}</span></div>
+                </div>
+                <span style="font-size:12px;opacity:.85">{{ pDateLong }}</span>
+                <span style="font-size:12px;opacity:.75;line-height:1.5;max-width:280px">{{ pAddr }}</span>
+                <span style="font-size:12px;padding:10px 20px;border-radius:999px;background:{{ c.gold }};color:{{ c.deep }};font-weight:500">Chỉ đường</span>
+              </section>
+
+              <sc-if value="{{ on.schedule }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="schedule" onClick="{{ sel.schedule }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.schedule }};outline-offset:-3px;padding:44px 32px;display:flex;flex-direction:column;gap:20px">
+                  <sc-if value="{{ act.schedule }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-size:10px;letter-spacing:.35em;opacity:.7;text-align:center">LỊCH TRÌNH</span>
+                  <div style="display:flex;flex-direction:column;border-left:1px solid {{ c.gold }};margin-left:56px">
+                    <sc-for list="{{ sched }}" as="s" hint-placeholder-count="4">
+                      <div style="position:relative;padding:0 0 22px 20px;display:flex;flex-direction:column;gap:2px">
+                        <span style="position:absolute;left:-5px;top:5px;width:9px;height:9px;border-radius:50%;background:{{ c.gold }}"></span>
+                        <span style="position:absolute;left:-60px;top:1px;width:46px;text-align:right;font-family:'Cormorant Garamond',serif;font-size:16px">{{ s.t }}</span>
+                        <span style="font-size:14px">{{ s.n }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </section>
+              </sc-if>
+
+              <sc-if value="{{ on.countdown }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="countdown" onClick="{{ sel.countdown }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.countdown }};outline-offset:-3px;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:18px;background:{{ c.tint }}">
+                  <sc-if value="{{ act.countdown }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-size:10px;letter-spacing:.35em;opacity:.7">CÒN LẠI</span>
+                  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:320px">
+                    <sc-for list="{{ cd }}" as="u" hint-placeholder-count="4">
+                      <div style="background:{{ c.paper }};border-radius:10px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:2px"><span style="font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1;font-variant-numeric:tabular-nums">{{ u.v }}</span><span style="font-size:10px;opacity:.7">{{ u.l }}</span></div>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{ calendar }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;gap:8px"><span style="font-size:12px;padding:9px 14px;border-radius:999px;border:1px solid {{ c.deep }}">+ Google Calendar</span><span style="font-size:12px;padding:9px 14px;border-radius:999px;border:1px solid {{ c.deep }}">+ Apple Calendar</span></div>
+                  </sc-if>
+                </section>
+              </sc-if>
+
+              <sc-if value="{{ on.album }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="album" onClick="{{ sel.album }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.album }};outline-offset:-3px;padding:44px 16px;display:flex;flex-direction:column;gap:18px">
+                  <sc-if value="{{ act.album }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-family:{{ hf }};font-size:26px;text-align:center">Khoảnh khắc</span>
+                  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:104px;gap:6px">
+                    <sc-for list="{{ album }}" as="p" hint-placeholder-count="6"><div style="grid-column:{{ p.span }};grid-row:{{ p.span }};border-radius:8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="{{ p.id }}" shape="rect" placeholder="Ảnh"></image-slot></div></sc-for>
+                  </div>
+                </section>
+              </sc-if>
+
+              <sc-if value="{{ on.rsvp }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="rsvp" onClick="{{ sel.rsvp }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.rsvp }};outline-offset:-3px;padding:44px 24px;display:flex;flex-direction:column;gap:14px;background:{{ c.deep }};color:{{ c.paper }}">
+                  <sc-if value="{{ act.rsvp }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-size:10px;letter-spacing:.35em;color:{{ c.gold }};text-align:center">XÁC NHẬN THAM DỰ</span>
+                  <span style="font-size:12px;opacity:.8;text-align:center">Vui lòng phản hồi trước ngày {{ deadlineFmt }}</span>
+                  <div style="padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.08);font-size:13px">{{ guestName }}</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span style="text-align:center;font-size:13px;padding:12px;border-radius:10px;background:{{ c.gold }};color:{{ c.deep }};font-weight:500">Sẽ tham dự</span><span style="text-align:center;font-size:13px;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.3)">Rất tiếc</span></div>
+                  <sc-for list="{{ qShown }}" as="q" hint-placeholder-count="2">
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.06);font-size:13px"><span>{{ q.label }}</span><span style="opacity:.7">{{ q.ctl }}</span></div>
+                  </sc-for>
+                </section>
+              </sc-if>
+
+              <sc-if value="{{ on.guestbook }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="guestbook" onClick="{{ sel.guestbook }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.guestbook }};outline-offset:-3px;padding:44px 24px;display:flex;flex-direction:column;gap:12px">
+                  <sc-if value="{{ act.guestbook }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-family:{{ hf }};font-size:26px;text-align:center">Sổ lưu bút</span>
+                  <sc-for list="{{ wishes }}" as="w" hint-placeholder-count="2">
+                    <div style="padding:14px 16px;border-radius:12px;background:{{ c.tint }};display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;line-height:1.55">{{ w.t }}</span><span style="font-size:11px;opacity:.65">— {{ w.n }}</span></div>
+                  </sc-for>
+                  <div style="padding:12px 14px;border-radius:10px;border:1px solid {{ c.tint }};font-size:13px;opacity:.6">Gửi lời chúc đến {{ b }} &amp; {{ a }}…</div>
+                </section>
+              </sc-if>
+
+              <sc-if value="{{ on.gift }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="gift" onClick="{{ sel.gift }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.gift }};outline-offset:-3px;padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:16px;background:{{ c.tint }}">
+                  <sc-if value="{{ act.gift }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-size:10px;letter-spacing:.35em;opacity:.7">HỘP MỪNG CƯỚI</span>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%">
+                    <sc-for list="{{ giftCards }}" as="g" hint-placeholder-count="2">
+                      <div style="background:{{ c.paper }};border-radius:12px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">
+                        <span style="font-size:10px;letter-spacing:.2em;opacity:.7">{{ g.who }}</span>
+                        <div style="width:84px;height:84px;border-radius:8px;border:1px dashed {{ c.deep }};opacity:.5;display:flex;align-items:center;justify-content:center;font-size:10px">VietQR</div>
+                        <span style="font-size:12px;font-weight:500">{{ g.bank }}</span>
+                        <span style="font-size:12px;font-variant-numeric:tabular-nums;opacity:{{ g.accOp }}">{{ g.acc }}</span>
+                        <span style="font-size:10px;opacity:.7;text-transform:uppercase">{{ g.name }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </section>
+              </sc-if>
+
+              <sc-if value="{{ on.thanks }}" hint-placeholder-val="{{ true }}">
+                <section data-sec="thanks" onClick="{{ sel.thanks }}" style="position:relative;cursor:{{ cursor }};outline:{{ ring.thanks }};outline-offset:-3px;padding:52px 32px 44px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center">
+                  <sc-if value="{{ act.thanks }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
+                  <span style="font-family:'Great Vibes',cursive;font-size:40px;color:{{ c.gold }}">Thank you</span>
+                  <span style="font-size:13px;line-height:1.7;text-wrap:pretty">{{ thanks }}</span>
+                  <span style="font-family:{{ hf }};font-size:17px;margin-top:6px">{{ b }} &amp; {{ a }}</span>
+                </section>
+              </sc-if>
+              <div style="padding:16px;text-align:center;font-size:10px;letter-spacing:.2em;opacity:.45">TẠO BẰNG MỘC</div>
+            </div>
+          </div>
+
+          <sc-if value="{{ on.music }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ sel.music }}" title="Nhạc nền" style="position:absolute;top:{{ fr.musicTop }};right:14px;width:40px;height:40px;border-radius:50%;border:0;background:{{ c.deep }};color:{{ c.gold }};display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 0 {{ musicRing }} #a3161c,0 6px 16px -6px rgba(0,0,0,.5);z-index:4">{{ eqEl }}</button>
+          </sc-if>
+        </div>
+      </div>
+
+      <sc-if value="{{ showMobileBar }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:12px;right:12px;bottom:14px;display:flex;gap:8px;z-index:20">
+          <button onClick="{{ openOutline }}" style="font-family:inherit;font-size:13px;padding:13px 16px;border-radius:999px;border:0;background:#fff;color:#1a1412;cursor:pointer;box-shadow:0 10px 24px -10px rgba(0,0,0,.35)">☰ Các phần</button>
+          <button onClick="{{ openForm }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:13px 16px;border-radius:999px;border:0;background:#a3161c;color:#fff;cursor:pointer;flex:1;box-shadow:0 10px 24px -10px rgba(163,22,28,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Sửa: {{ cur.label }}</button>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+
+  <sc-if value="{{ pubOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:100;background:rgba(26,20,18,.55);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s both">
+      <sc-if value="{{ pubDone }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">{{ confettiEls }}</div></sc-if>
+      <div style="width:100%;max-width:460px;max-height:100%;overflow-y:auto;background:#fff;border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:18px;position:relative;box-shadow:0 40px 80px -20px rgba(0,0,0,.4)">
+        <button onClick="{{ closePublish }}" style="position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:0;background:#f4f0e9;cursor:pointer;font-size:16px;color:#5e534b">×</button>
+
+        <sc-if value="{{ pubCheck }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'Playfair Display',serif;font-size:24px">Sẵn sàng xuất bản?</span><span style="font-size:13px;color:#5e534b">Thiệp đã hoàn thiện {{ pct }}%. Bạn vẫn có thể sửa sau khi xuất bản, link giữ nguyên.</span></div>
+          <div style="height:6px;border-radius:3px;background:#f4f0e9;overflow:hidden"><div style="height:100%;width:{{ pctW }};background:linear-gradient(90deg,#c9a86a,#a3161c)"></div></div>
+          <sc-if value="{{ hasMissing }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;border:1px solid #efe6d9;border-radius:12px">
+              <sc-for list="{{ missing }}" as="m" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid #efe6d9">
+                  <span style="width:20px;height:20px;border-radius:50%;background:#f5efe0;color:#7a5a22;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none">!</span>
+                  <div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:13px">{{ m.label }}</span><span style="font-size:12px;color:#8a7d72">{{ m.why }}</span></div>
+                  <button onClick="{{ m.go }}" style="font-family:inherit;font-size:12px;border:0;background:transparent;color:#a3161c;cursor:pointer">Bổ sung</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#5e534b;font-weight:500">Đường link thiệp
+            <div style="display:flex;align-items:center;border:1px solid #ddd2c4;border-radius:10px;overflow:hidden"><span style="padding:11px 0 11px 13px;font-size:14px;color:#8a7d72">moc.vn/i/</span><input value="{{ slug }}" onInput="{{ on_.slug }}" style="font-family:inherit;font-size:14px;padding:11px 13px 11px 2px;border:0;outline:none;flex:1;min-width:0"></div>
+          </label>
+          <button onClick="{{ doPublish }}" style="font-family:inherit;font-size:14px;font-weight:500;padding:14px;border-radius:999px;border:0;background:#a3161c;color:#fff;cursor:pointer" style-hover="background:#7d0f14">{{ pubLabel }}</button>
+        </sc-if>
+
+        <sc-if value="{{ pubDone }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding-top:6px">
+            <span style="width:72px;height:72px;border-radius:50%;background:#a3161c;color:#e0bb74;display:flex;align-items:center;justify-content:center;font-family:serif;font-size:32px;box-shadow:0 0 0 5px #fff,0 0 0 6px #e0bb74;animation:popIn .6s cubic-bezier(.2,.8,.2,1) both">囍</span>
+            <span style="font-family:'Playfair Display',serif;font-size:24px">Thiệp đã được xuất bản</span>
+            <span style="font-size:13px;color:#5e534b;line-height:1.6">Gửi link cho khách qua Zalo, Messenger hoặc tin nhắn.</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 6px 6px 14px;border-radius:999px;background:#f4f0e9"><span style="flex:1;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">moc.vn/i/{{ slug }}</span><button onClick="{{ copyLink }}" style="font-family:inherit;font-size:12px;font-weight:500;padding:9px 14px;border-radius:999px;border:0;background:#1a1412;color:#fff;cursor:pointer">{{ copyLabel }}</button></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <sc-for list="{{ shareOpts }}" as="s" hint-placeholder-count="3"><span style="font-size:12px;padding:12px 6px;border-radius:12px;border:1px solid #e8dfd3;text-align:center;cursor:pointer" style-hover="border-color:#a3161c">{{ s }}</span></sc-for>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px"><a href="Cong Cu.dc.html">Gửi link riêng cho từng khách →</a><a href="Thiep Khach.dc.html">Mở thiệp</a></div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PAL = { do:['#8e1b1f','#f7efe3','#e0bb74'], dodam:['#5a1119','#f5ece2','#d4ac6a'], lam:['#1f3a5f','#eef1f4','#c9ab72'], xanh:['#24493a','#eef1ea','#c9a86a'], hong:['#a4505f','#fbf1ef','#d8a977'], vang:['#7a5a22','#f7f0e0','#e3c27e'], oliu:['#5a6636','#f2f1e6','#c8b07a'], muc:['#1a1412','#f4f1ec','#c9a86a'], tim:['#4b3566','#f2eff5','#c7a878'] };
+const TPL = [['lua-son','A','do'],['so-xuan','H','dodam'],['thanh-ngoc','J','xanh'],['maison-blanc','D','vang'],['wild-garden','C','xanh'],['afterglow','E','hong'],['soft-type','B','tim'],['olive-story','G','oliu'],['thuy-mac','I','lam']];
+const SECS = [
+  ['Mở đầu', [['envelope','Phong bì',1],['template','Mẫu & kiểu chữ',0]]],
+  ['Thông tin chính', [['couple','Cô dâu & chú rể',0],['family','Gia đình hai bên',0],['ceremony','Lễ cưới',0],['party','Tiệc cưới',0],['schedule','Lịch trình trong ngày',1],['countdown','Đếm ngược',1]]],
+  ['Ảnh & âm nhạc', [['album','Album ảnh',1],['music','Nhạc nền',1]]],
+  ['Tương tác với khách', [['rsvp','Xác nhận tham dự',1],['guestbook','Sổ lưu bút',1],['gift','Hộp mừng cưới',1],['thanks','Lời cảm ơn',1]]],
+];
+const ORDER = SECS.flatMap(g => g[1]);
+const DESC = {
+  envelope: 'Màn hình đầu tiên khách thấy. Tên khách hiện trên phong bì theo link riêng.',
+  template: 'Đổi mẫu bất cứ lúc nào, nội dung đã nhập được giữ nguyên.',
+  couple: 'Tên hiển thị trên bìa, phong bì và lời cảm ơn.',
+  family: 'Tên bố mẹ hai bên, in trang trọng như thiệp giấy.',
+  ceremony: 'Lễ Vu Quy, Thành Hôn hoặc Tân Hôn — ngày, giờ và nơi làm lễ.',
+  party: 'Giờ đón khách, giờ khai tiệc và địa chỉ nhà hàng có chỉ đường.',
+  schedule: 'Các mốc trong ngày để khách biết khi nào đến và khi nào có phần chính.',
+  countdown: 'Đồng hồ đếm ngược và nút lưu ngày cưới vào lịch điện thoại.',
+  album: 'Ảnh cưới hiển thị dạng lưới, bấm để phóng to.',
+  music: 'Chọn bản nhạc phát khi khách mở thiệp.',
+  rsvp: 'Khách xác nhận ngay trên thiệp. Thêm câu hỏi để chuẩn bị chu đáo.',
+  guestbook: 'Khách để lại lời chúc trực tiếp trên thiệp.',
+  gift: 'Số tài khoản hai bên, mã QR được tạo tự động.',
+  thanks: 'Lời nhắn cuối thiệp gửi tới khách mời.',
+};
+const MISS = { envelope:'Chưa có lời mời', couple:'Thiếu tên cô dâu hoặc chú rể', family:'Thiếu tên bố mẹ', ceremony:'Thiếu ngày hoặc nơi làm lễ', party:'Thiếu nhà hàng hoặc địa chỉ', schedule:'Chưa có mốc thời gian', rsvp:'Chưa đặt hạn phản hồi', gift:'Chưa đủ số tài khoản hai bên', thanks:'Chưa có lời cảm ơn' };
+const GUESTS = [['Bạn thân mến','ban'],['Cô Lan & gia đình','co-lan'],['Anh Tuấn','anh-tuan'],['Chú Hải','chu-hai']];
+const TRACKS = [['A Thousand Years','Piano','3:45'],['Canon in D','Cổ điển','4:10'],['Beautiful in White','Acoustic','3:52'],['Perfect','Nhạc không lời','4:23'],['Nắm lấy tay anh','Piano','4:02']];
+const FONTS = ["'Playfair Display',serif", "'Cormorant Garamond',serif", "'Great Vibes',cursive"];
+const BANKS = ['Vietcombank', 'Techcombank', 'TPBank', 'MB Bank', 'VietinBank', 'BIDV', 'ACB', 'VPBank'];
+const WD = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+const THANKS_PRE = [
+  'Cảm ơn bạn đã dành thời gian quý báu để chung vui cùng chúng mình. Sự hiện diện của bạn là món quà ý nghĩa nhất.',
+  'Hành trình mới của chúng mình trọn vẹn hơn khi có bạn bên cạnh. Hẹn gặp bạn trong ngày vui nhé!',
+  'Từ tận đáy lòng, hai gia đình xin gửi lời cảm ơn chân thành vì đã đến và chúc phúc cho chúng mình.',
+];
+class Component extends DCLogic {
+  state = {
+    sec: 'couple', mode: 'edit', device: 'mobile', w: 1400, sheet: null, pub: null, copied: false, aiLoading: false, now: Date.now(),
+    a: 'Hạ Vy', b: 'Minh Khôi', rankA: 'Út nữ', rankB: 'Trưởng nam',
+    gFa: 'Ông Trần Văn Tuấn', gMo: 'Bà Nguyễn Thị Mai', gAddr: 'Số 8 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội',
+    bFa: 'Ông Lê Văn Hùng', bMo: 'Bà Hồ Thị Lan', bAddr: '',
+    cType: 'Lễ Thành Hôn', cDate: '2026-11-09', cTime: '09:00', cPlace: 'Tư gia nhà trai', lunar: 'Tức ngày 19 tháng 9 năm Bính Ngọ',
+    pDate: '2026-11-09', pWelcome: '17:30', pDinner: '18:30', pPlace: 'Trung tâm tiệc cưới Riverside', pAddr: '12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh', map: '',
+    sched: [['17:30','Đón khách'],['18:30','Làm lễ & khai tiệc'],['19:30','Cắt bánh, nâng ly'],['21:00','Tiễn khách']],
+    calendar: true, albumN: 6, track: 0, deadline: '2026-10-30', qs: { plus: true, veg: false, bus: true }, moderate: false,
+    gBank: 'Vietcombank', gAcc: '', gName: 'TRAN MINH KHOI', bBank: 'TPBank', bAcc: '0123 4567 890', bName: 'LE HA VY',
+    thanks: THANKS_PRE[0], greet: 'Trân trọng kính mời', guest: 0, sel: 0, hf: 0, slug: 'vy-khoi',
+    on: { envelope: true, schedule: true, countdown: true, album: true, music: true, rsvp: true, guestbook: true, gift: true, thanks: true },
+  };
+  pv = React.createRef();
+  componentDidMount() {
+    this.rs = () => this.setState({ w: window.innerWidth }); this.rs(); window.addEventListener('resize', this.rs);
+    this.tk = setInterval(() => this.setState({ now: Date.now() }), 1000);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.rs); clearInterval(this.tk); }
+  componentDidUpdate() {
+    if (this._lastSec !== this.state.sec && this.pv.current) {
+      this._lastSec = this.state.sec;
+      const c = this.pv.current, el = c.querySelector(`[data-sec="${this.state.sec}"]`);
+      if (el) c.scrollTo({ top: el.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop - 16, behavior: 'smooth' });
+    }
+  }
+  done(k) {
+    const s = this.state;
+    return ({ envelope: !!s.greet.trim(), couple: !!(s.a && s.b), family: !!(s.gFa && s.gMo && s.bFa && s.bMo), ceremony: !!(s.cDate && s.cPlace),
+      party: !!(s.pPlace && s.pAddr), schedule: s.sched.length > 0, rsvp: !!s.deadline, gift: !!(s.gAcc && s.bAcc), thanks: !!s.thanks.trim() })[k] ?? true;
+  }
+  sw(v) { return { bg: v ? '#a3161c' : '#ddd2c4', kx: v ? '16px' : '0px' }; }
+  chips(list, curV, key, label = x => x) { return list.map(v => { const a = v === curV; return { label: label(v), bg: a ? '#1a1412' : '#fff', fg: a ? '#fff' : '#1a1412', bd: a ? '#1a1412' : '#ddd2c4', pick: () => this.setState({ [key]: v }) }; }); }
+  go(k) { this.setState(s => ({ sec: k, mode: 'edit', pub: null, sheet: s.w < 1024 ? 'form' : null })); }
+  toggleOn(k) { this.setState(s => ({ on: { ...s.on, [k]: !s.on[k] } })); }
+  eq() {
+    if (this._eq) return this._eq;
+    this._eq = React.createElement('span', { style: { display: 'flex', gap: 2, alignItems: 'flex-end', height: 14 } },
+      [0, 1, 2].map(i => React.createElement('span', { key: i, style: { width: 3, height: 14, background: 'currentColor', borderRadius: 1, transformOrigin: 'bottom', animation: `eq ${.7 + i * .15}s ease-in-out ${i * .12}s infinite` } })));
+    return this._eq;
+  }
+  confetti() {
+    if (this._c) return this._c;
+    const cols = ['#a3161c', '#c9a86a', '#e8b4b0', '#24493a', '#e0bb74'];
+    this._c = Array.from({ length: 40 }, (_, i) => { const r = n => { const x = Math.sin(i * 91 + n * 7) * 1e4; return x - Math.floor(x); }; const sz = 6 + r(1) * 7;
+      return React.createElement('span', { key: i, style: { position: 'absolute', left: `${r(3) * 100}%`, top: -20, width: sz, height: sz * .5, borderRadius: 2, background: cols[i % cols.length], animation: `fall ${2.6 + r(4) * 2}s linear ${r(5) * .8}s infinite` } }); });
+    return this._c;
+  }
+  async aiThanks() {
+    const s = this.state; this.setState({ aiLoading: true });
+    try {
+      const t = await window.claude.complete(`Viết một lời cảm ơn ngắn (2 câu, tiếng Việt, ấm áp, trang trọng, xưng "chúng mình") gửi khách mời đám cưới của ${s.b} và ${s.a}. Chỉ trả về lời cảm ơn, không kèm dấu ngoặc kép.`);
+      this.setState({ thanks: String(t).trim().replace(/^["“]|["”]$/g, ''), aiLoading: false });
+    } catch (e) { this._pi = ((this._pi ?? 0) + 1) % THANKS_PRE.length; this.setState({ thanks: THANKS_PRE[this._pi], aiLoading: false }); }
+  }
+  renderVals() {
+    const s = this.state, narrow = s.w < 1024, edit = s.mode === 'edit';
+    const mk = k => e => this.setState({ [k]: e.target.value });
+    const on_ = {}; ['a','b','rankA','rankB','gFa','gMo','gAddr','bFa','bMo','bAddr','cDate','cTime','cPlace','lunar','pDate','pWelcome','pDinner','pPlace','pAddr','map','deadline','gBank','gAcc','gName','bBank','bAcc','bName','thanks','greet','slug'].forEach(k => on_[k] = mk(k));
+    const optK = k => ORDER.find(o => o[0] === k)[2] === 1;
+    const enabled = ORDER.filter(([k, , o]) => !o || s.on[k]);
+    const doneList = enabled.filter(([k]) => this.done(k));
+    const pct = Math.round(doneList.length / enabled.length * 100);
+    const idx = ORDER.findIndex(o => o[0] === s.sec), curO = ORDER[idx];
+    const sp = (d) => { const [y, m, dd] = (d || '').split('-'); return { y, m, dd }; };
+    const cd_ = sp(s.cDate), pd_ = sp(s.pDate), dl = sp(s.deadline);
+    const wd = d => { const { y, m, dd } = sp(d); return y ? WD[new Date(+y, +m - 1, +dd).getDay()] : ''; };
+    const tpls = TPL.map(([id, family, pal], i) => { const [deep, paper, gold] = PAL[pal]; return { id, family, deep, paper, gold, tint: deep + '14', place: 'HÀ NỘI', slot: `ed3-tpl-${id}`, ring: i === s.sel ? '3px' : '0px', pick: () => this.setState({ sel: i }) }; });
+    const c = tpls[s.sel];
+    const target = new Date(`${s.pDate}T${s.pWelcome || '00:00'}`).getTime();
+    let diff = Math.max(0, Math.floor((target - s.now) / 1000)); if (isNaN(diff)) diff = 0;
+    const pad = n => String(n).padStart(2, '0');
+    const sel = {}, ring = {}, act = {}, is = {};
+    ORDER.forEach(([k]) => { sel[k] = edit ? (e => { e.stopPropagation(); this.go(k); }) : undefined; const a = edit && s.sec === k; ring[k] = a ? '2px solid #a3161c' : 'none'; act[k] = a; is[k] = s.sec === k; });
+    const moveS = (i, d) => this.setState(st => { const l = [...st.sched], j = i + d; if (j < 0 || j >= l.length) return null; [l[i], l[j]] = [l[j], l[i]]; return { sched: l }; });
+    const setS = (i, p) => e => { const v = e.target.value; this.setState(st => ({ sched: st.sched.map((x, xi) => xi === i ? (p ? [x[0], v] : [v, x[1]]) : x) })); };
+    const isDesk = s.device === 'desktop' && !narrow;
+    const fr = isDesk
+      ? { w: 'min(960px,100%)', h: '100%', r: '12px', p: '0', ir: '0 0 12px 12px', bg: '#d9d1c4', colSh: '0 0 60px rgba(0,0,0,.15)', musicTop: '14px' }
+      : { w: narrow ? 'min(380px,100%)' : '360px', h: narrow ? '100%' : 'min(740px,100%)', r: '46px', p: '12px', ir: '34px', bg: c.paper, colSh: 'none', musicTop: '52px' };
+    const panel = (show) => narrow
+      ? { display: show ? 'flex' : 'none', pos: 'absolute', top: '18%', z: 40, rad: '20px 20px 0 0', anim: 'slideUp .3s cubic-bezier(.2,.8,.2,1) both' }
+      : { display: edit ? 'flex' : 'none', pos: 'relative', top: 'auto', z: 'auto', rad: '0', anim: 'none' };
+    const missing = enabled.filter(([k]) => !this.done(k)).map(([k, label]) => ({ label, why: MISS[k] ?? '', go: () => this.go(k) }));
+    const Q = [['plus', 'Số người đi cùng', '− 1 +'], ['veg', 'Ăn chay / dị ứng', '☐'], ['bus', 'Cần xe đưa đón', '☐']];
+    const curOn = curO[2] ? s.on[curO[0]] : true;
+    return {
+      ...s, on_, on: s.on, is, sel, ring, act, c, tpls,
+      narrow, wide: !narrow, guestMode: !edit, cursor: edit ? 'pointer' : 'default', showHint: edit && !narrow,
+      gridCols: narrow || !edit ? 'minmax(0,1fr)' : '232px 380px minmax(0,1fr)',
+      ol: panel(s.sheet === 'outline'), fm: panel(s.sheet === 'form'), sheetOpen: narrow && !!s.sheet,
+      closeSheet: () => this.setState({ sheet: null }), toOutline: () => this.setState({ sheet: 'outline' }),
+      openOutline: () => this.setState({ sheet: 'outline' }), openForm: () => this.setState({ sheet: 'form' }),
+      showMobileBar: narrow && edit && !s.sheet, mainPad: narrow ? '14px 14px 80px' : '24px',
+      pct, pctW: pct + '%', ringOffset: 88 * (1 - pct / 100), doneCount: doneList.length, totalCount: enabled.length,
+      modeEdit: edit ? { bg: '#fff', fg: '#1a1412', sh: '0 1px 3px rgba(0,0,0,.1)' } : { bg: 'transparent', fg: '#8a7d72', sh: 'none' },
+      modeGuest: !edit ? { bg: '#fff', fg: '#1a1412', sh: '0 1px 3px rgba(0,0,0,.1)' } : { bg: 'transparent', fg: '#8a7d72', sh: 'none' },
+      setEdit: () => this.setState({ mode: 'edit' }), setGuest: () => this.setState({ mode: 'guest', sheet: null }),
+      devM: { bg: isDesk ? 'transparent' : '#fff', fg: isDesk ? '#8a7d72' : '#1a1412' }, devD: { bg: isDesk ? '#fff' : 'transparent', fg: isDesk ? '#1a1412' : '#8a7d72' },
+      setMobile: () => this.setState({ device: 'mobile' }), setDesktop: () => this.setState({ device: 'desktop' }), isDesk, isPhone: !isDesk, fr,
+      groups: SECS.map(([title, items]) => ({ title, items: items.map(([k, label, o]) => { const a = s.sec === k, isOn = !o || s.on[k], d = this.done(k), w = this.sw(isOn);
+        return { label, opt: !!o, pick: () => this.go(k), bg: a ? '#fff' : 'transparent', sh: a ? '0 1px 0 #e8dfd3, 0 0 0 1px #e8dfd3' : 'none', fg: isOn ? '#1a1412' : '#8a7d72', fw: a ? '600' : '400',
+          dot: !isOn ? '#ddd2c4' : d ? '#2f6b45' : '#c9a86a', note: !isOn ? 'Đang ẩn' : d ? '' : 'Cần bổ sung', noteFg: !isOn ? '#8a7d72' : '#7a5a22',
+          swBg: w.bg, kx: w.kx, toggle: e => { e.stopPropagation(); this.toggleOn(k); } }; }) })),
+      cur: { n: idx + 1, label: curO[1], desc: DESC[curO[0]], opt: !!curO[2], onText: curOn ? 'Đang hiện' : 'Đang ẩn', swBg: this.sw(curOn).bg, kx: this.sw(curOn).kx, toggle: () => this.toggleOn(curO[0]), bodyOp: curOn ? 1 : .45 },
+      totalSteps: ORDER.length, isFirst: idx === 0, prevOp: idx === 0 ? .4 : 1,
+      prev: () => idx > 0 && this.go(ORDER[idx - 1][0]),
+      next: () => idx < ORDER.length - 1 ? this.go(ORDER[idx + 1][0]) : this.setState({ pub: 'check' }),
+      nextLabel: idx < ORDER.length - 1 ? `Tiếp: ${ORDER[idx + 1][1]} →` : 'Xem lại & xuất bản',
+      greetOpts: this.chips(['Trân trọng kính mời', 'Thân mời', 'Hân hạnh được đón tiếp'], s.greet, 'greet'),
+      guestOpts: GUESTS.map(([label], i) => { const a = i === s.guest; return { i, label, bg: a ? '#1a1412' : '#fff', fg: a ? '#fff' : '#1a1412', bd: a ? '#1a1412' : '#ddd2c4', pick: () => this.setState({ guest: i }) }; }),
+      guestName: GUESTS[s.guest][0], guestSlug: GUESTS[s.guest][1], 
+      fontOpts: FONTS.map((font, i) => ({ font, bg: i === s.hf ? '#faf7f2' : '#fff', bd: i === s.hf ? '#a3161c' : '#ddd2c4', pick: () => this.setState({ hf: i }) })), hf: FONTS[s.hf],
+      ranksA: this.chips(['Trưởng nữ', 'Thứ nữ', 'Út nữ', 'Con gái'], s.rankA, 'rankA'), ranksB: this.chips(['Trưởng nam', 'Thứ nam', 'Út nam', 'Con trai'], s.rankB, 'rankB'),
+      cTypeOpts: this.chips(['Lễ Vu Quy', 'Lễ Thành Hôn', 'Lễ Tân Hôn', 'Lễ Đính Hôn'], s.cType, 'cType'), cTypeLower: s.cType.toLowerCase(),
+      dateFmt: pd_.y ? `${pd_.dd} · ${pd_.m} · ${pd_.y}` : '', cDay: cd_.dd, cMonth: cd_.m, cYear: cd_.y, cWeekday: wd(s.cDate),
+      pDateFmt: pd_.y ? `${pd_.dd}/${pd_.m}/${pd_.y}` : '', pDateLong: pd_.y ? `${wd(s.pDate)}, ngày ${pd_.dd} tháng ${pd_.m} năm ${pd_.y}` : '',
+      deadlineFmt: dl.y ? `${dl.dd}/${dl.m}` : '—',
+      sched: s.sched.map(([t, n], i) => ({ t, n, onT: setS(i, 0), onN: setS(i, 1), up: () => moveS(i, -1), down: () => moveS(i, 1), del: () => this.setState(st => ({ sched: st.sched.filter((_, xi) => xi !== i) })) })),
+      addSched: () => this.setState(st => ({ sched: [...st.sched, ['22:00', 'Mốc mới']] })),
+      tgCal: { ...this.sw(s.calendar), fn: () => this.setState(st => ({ calendar: !st.calendar })) },
+      tgMod: { ...this.sw(s.moderate), fn: () => this.setState(st => ({ moderate: !st.moderate })) },
+      cd: [[Math.floor(diff / 86400), 'Ngày'], [Math.floor(diff % 86400 / 3600), 'Giờ'], [Math.floor(diff % 3600 / 60), 'Phút'], [diff % 60, 'Giây']].map(([v, l]) => ({ v: pad(v), l })),
+      albumOpts: [3, 6, 9].map(n => { const a = n === s.albumN; return { label: `${n} ảnh`, bg: a ? '#1a1412' : '#fff', fg: a ? '#fff' : '#1a1412', bd: a ? '#1a1412' : '#ddd2c4', pick: () => this.setState({ albumN: n }) }; }),
+      album: Array.from({ length: s.albumN }, (_, i) => ({ id: `ed3-album-${i}`, span: i === 0 && s.albumN > 3 ? 'span 2' : 'auto' })),
+      tracks: TRACKS.map(([name, mood, len], i) => { const a = i === s.track; return { name, mood, len, bg: a ? '#faf7f2' : '#fff', iconBg: a ? '#a3161c' : '#f4f0e9', iconFg: a ? '#fff' : '#5e534b', icon: a ? '❚❚' : '▶', pick: () => this.setState({ track: i }) }; }),
+      eqEl: this.eq(), musicRing: edit && s.sec === 'music' ? '3px' : '0px',
+      qOpts: Q.map(([k, label]) => ({ label, ...this.sw(s.qs[k]), fn: () => this.setState(st => ({ qs: { ...st.qs, [k]: !st.qs[k] } })) })),
+      qShown: Q.filter(([k]) => s.qs[k]).map(([, label, ctl]) => ({ label, ctl })),
+      wishes: [['Chúc hai bạn trăm năm hạnh phúc, sớm có tin vui nhé!', 'Thư'], ['Mừng cho Khôi và Vy, hẹn gặp ở tiệc!', 'Anh Tuấn']].map(([t, n]) => ({ t, n })),
+      banksG: this.chips(BANKS, s.gBank, 'gBank'), banksB: this.chips(BANKS, s.bBank, 'bBank'),
+      gAccBd: s.gAcc ? '#ddd2c4' : '#c9a86a',
+      giftCards: [['CHÚ RỂ', s.gBank, s.gAcc, s.gName], ['CÔ DÂU', s.bBank, s.bAcc, s.bName]].map(([who, bank, acc, name]) => ({ who, bank, acc: acc || 'Chưa nhập số TK', accOp: acc ? 1 : .5, name })),
+      aiThanks: () => this.aiThanks(), aiLabel: s.aiLoading ? 'Đang viết…' : '✦ Gợi ý lời khác bằng AI',
+      pubOpen: !!s.pub, pubCheck: s.pub === 'check', pubDone: s.pub === 'done', missing, hasMissing: missing.length > 0,
+      pubLabel: missing.length ? `Vẫn xuất bản (còn ${missing.length} mục)` : 'Xuất bản thiệp',
+      openPublish: () => this.setState({ pub: 'check', sheet: null }), closePublish: () => this.setState({ pub: null }),
+      doPublish: () => this.setState({ pub: 'done' }), confettiEls: this.confetti(),
+      copyLink: () => { navigator.clipboard?.writeText(`https://moc.vn/i/${s.slug}`); this.setState({ copied: true }); clearTimeout(this._ct); this._ct = setTimeout(() => this.setState({ copied: false }), 1800); },
+      copyLabel: s.copied ? 'Đã sao chép' : 'Sao chép', shareOpts: ['Zalo', 'Messenger', 'Tải mã QR'],
+    };
+  }
+}
+</script>
+</body>
+</html>

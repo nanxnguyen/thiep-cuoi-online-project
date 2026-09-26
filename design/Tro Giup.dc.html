@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+@keyframes openA{0%{opacity:0;transform:translateY(-6px)}100%{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="help" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="background:#1c1012;color:#f1e7d6;padding:96px 32px 88px;text-align:center;position:relative;overflow:hidden">
+    <div style="position:absolute;left:50%;top:-300px;width:900px;height:600px;margin-left:-450px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,106,.2),transparent 65%)"></div>
+    <div style="position:relative;max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:24px;align-items:center">
+      <span style="font-size:12px;letter-spacing:.24em;color:#c9a86a;font-weight:600;animation:fadeUp .8s both">TRỢ GIÚP · 25 CÂU HỎI</span>
+      <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(44px,6vw,80px);line-height:1;animation:fadeUp .9s .15s both">Mộc có thể <em style="color:#c9a86a">giúp gì?</em></h1>
+      <div style="width:100%;max-width:560px;position:relative;animation:fadeUp .9s .3s both">
+        <input value="{{ q }}" onInput="{{ onQ }}" placeholder="Tìm câu hỏi, ví dụ: đổi mẫu, QR, link khách…" style="width:100%;font-family:inherit;font-size:16px;padding:18px 24px;border-radius:999px;border:1px solid #4a3a36;background:#2a1a1c;color:#f1e7d6;outline:none">
+      </div>
+    </div>
+  </section>
+  <main style="max-width:1280px;margin:0 auto;padding:72px 32px 120px;display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:64px">
+    <aside style="position:sticky;top:100px;align-self:start;display:flex;flex-direction:column;gap:4px">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="6">
+        <button onClick="{{ g.pick }}" style="text-align:left;font-family:inherit;font-size:15px;padding:12px 16px;border-radius:12px;border:0;cursor:pointer;display:flex;justify-content:space-between;background:{{ g.bg }};color:{{ g.fg }};transition:all .2s">{{ g.name }}<span style="opacity:.5;font-size:13px">{{ g.count }}</span></button>
+      </sc-for>
+      <div style="margin-top:28px;padding:22px;border-radius:16px;background:#efe6d9;display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:'Playfair Display',serif;font-size:19px">Vẫn chưa rõ?</span>
+        <span style="font-size:13px;line-height:1.6;color:#5e534b">Xem điều khoản và chính sách quyền riêng tư của Mộc.</span>
+        <a href="Phap Ly.dc.html?doc=dieu-khoan" style="font-size:13px;font-weight:500">Điều khoản →</a>
+        <a href="Phap Ly.dc.html?doc=quyen-rieng-tu" style="font-size:13px;font-weight:500">Quyền riêng tư →</a>
+      </div>
+    </aside>
+    <div style="display:flex;flex-direction:column;gap:56px">
+      <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><div style="padding:64px;text-align:center;border:1px dashed #d8ccbc;border-radius:16px;font-family:'Playfair Display',serif;font-size:24px">Chưa tìm thấy câu hỏi phù hợp</div></sc-if>
+      <sc-for list="{{ shown }}" as="g" hint-placeholder-count="2">
+        <section style="display:flex;flex-direction:column;animation:fadeUp .6s both">
+          <h2 style="margin:0 0 16px;font-family:'Playfair Display',serif;font-weight:400;font-size:34px">{{ g.name }}</h2>
+          <div style="border-top:1px solid #1a1412">
+            <sc-for list="{{ g.qs }}" as="x" hint-placeholder-count="4">
+              <div style="border-bottom:1px solid #e0d5c6">
+                <button onClick="{{ x.toggle }}" style="width:100%;display:flex;gap:16px;align-items:center;padding:22px 0;background:transparent;border:0;cursor:pointer;font-family:inherit;font-size:17px;font-weight:500;color:#1a1412;text-align:left"><span style="flex:1">{{ x.q }}</span><span style="width:30px;height:30px;border-radius:50%;border:1px solid #d8ccbc;display:grid;place-items:center;flex:none;transition:transform .3s;transform:{{ x.rot }};color:#8a6425">+</span></button>
+                <sc-if value="{{ x.open }}" hint-placeholder-val="{{ false }}"><p style="margin:0;padding:0 56px 24px 0;font-size:15px;line-height:1.75;color:#5e534b;animation:openA .35s both">{{ x.a }}</p></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const G = [
+ ['Bắt đầu', [
+  ['Mộc có thật sự miễn phí không?','Có. Mọi mẫu thiệp, tính năng và công cụ đều miễn phí. Mộc được duy trì nhờ ủng hộ tự nguyện.'],
+  ['Tôi có cần tạo tài khoản không?','Không bắt buộc. Bạn có thể tạo thiệp ngay, Mộc cấp một đường link sửa riêng. Tạo tài khoản giúp bạn giữ thiệp ở một nơi và mở trên nhiều thiết bị.'],
+  ['Làm thiệp mất bao lâu?','Thường khoảng 15 đến 30 phút nếu bạn đã có sẵn ảnh và thông tin sự kiện.'],
+  ['Tôi làm trên điện thoại được không?','Được. Trình chỉnh sửa chạy tốt trên điện thoại, dù màn hình máy tính sẽ thoải mái hơn khi sắp xếp ảnh.']]],
+ ['Mẫu thiệp', [
+  ['Có bao nhiêu mẫu?','Hiện có 10 mẫu thuộc sáu phong cách: editorial, tối giản, cổ điển, botanical, truyền thống và phong cách Hàn.'],
+  ['Đổi mẫu có mất nội dung không?','Không. Tên, ngày, địa điểm, ảnh và nhạc được giữ nguyên khi bạn chuyển sang mẫu khác.'],
+  ['Tôi có đổi được màu, phông chữ không?','Mỗi mẫu có bảng màu và kiểu chữ được chọn sẵn cho hài hoà. Bạn chọn giữa các phiên bản màu có sẵn của mẫu.'],
+  ['Xem trước mẫu thế nào?','Mở trang mẫu thiệp và bấm "Xem thử". Bản xem trước dùng đúng giao diện khách sẽ thấy.']]],
+ ['Chỉnh sửa & lưu', [
+  ['Thiệp có tự lưu không?','Có. Mộc tự lưu sau mỗi thay đổi. Bạn sẽ thấy trạng thái "Đã lưu" ở góc trình chỉnh sửa.'],
+  ['Link sửa thiệp là gì?','Là đường link có mã khoá riêng (phần sau dấu #k=). Ai có link này đều sửa được thiệp, nên hãy giữ kín.'],
+  ['Tôi lỡ mất link sửa thì sao?','Nếu thiệp đã được nhận vào tài khoản, bạn đăng nhập để mở lại. Nếu chưa, hãy tìm lại link trong tin nhắn hoặc lịch sử trình duyệt.'],
+  ['Làm sao nhận thiệp cũ vào tài khoản?','Đăng nhập, vào trang Tài khoản và dán link sửa có #k= vào ô "Nhận thiệp". Thiệp sẽ xuất hiện trong danh sách của bạn.'],
+  ['Ảnh tải lên có bị giới hạn không?','Ảnh được tự nén về tối đa 1600px để thiệp mở nhanh. Bạn có thể nén trước bằng công cụ Nén ảnh.']]],
+ ['Gửi thiệp & khách mời', [
+  ['Gửi thiệp cho khách thế nào?','Sao chép link thiệp và gửi qua Zalo, Messenger, SMS hoặc email. Khách không cần cài gì để xem.'],
+  ['Link riêng cho từng khách là gì?','Mỗi khách có một link mang tên họ, thiệp sẽ hiện "Kính mời" kèm tên ngay khi mở.'],
+  ['Thiệp có tiếng Anh không?','Có. Thiệp hiển thị được tiếng Việt và tiếng Anh, phù hợp khi có khách nước ngoài.'],
+  ['Tôi in QR lên thiệp giấy được không?','Được. Dùng công cụ Tạo QR, dán link thiệp và tải mã về để in.']]],
+ ['Tham dự & lời chúc', [
+  ['Xem ai xác nhận tham dự ở đâu?','Trong tab Tham dự của trình chỉnh sửa, kèm số người đi cùng và ghi chú của khách.'],
+  ['Tôi ẩn một lời chúc được không?','Được. Trong tab Khách mời, bạn có thể ẩn hoặc xoá bất kỳ lời chúc nào.'],
+  ['Khách sửa câu trả lời được không?','Được, khách mở lại link của mình và cập nhật xác nhận tham dự.'],
+  ['Xuất danh sách khách thế nào?','Trong tab Khách mời, bấm "Xuất CSV" để tải về và mở bằng Excel hoặc Google Sheets.']]],
+ ['Mừng cưới & quyền riêng tư', [
+  ['Mộc có giữ tiền mừng cưới không?','Không. Mã QR chuyển thẳng vào tài khoản ngân hàng của bạn, Mộc không đứng giữa giao dịch.'],
+  ['Ai xem được thiệp của tôi?','Chỉ những người có link. Thiệp không được đưa lên công cụ tìm kiếm.'],
+  ['Tôi xoá thiệp được không?','Được. Xoá trong trang Tài khoản hoặc từ trình chỉnh sửa, dữ liệu sẽ bị xoá khỏi máy chủ.']]],
+];
+class Component extends DCLogic {
+  state = { q: '', group: null, open: '0-0' };
+  renderVals() {
+    const q = this.state.q.trim().toLowerCase();
+    const all = G.map(([name, qs], gi) => ({ name, gi, qs: qs.map(([qq, a], qi) => ({ q: qq, a, id: `${gi}-${qi}` })) }));
+    let shown = all.map(g => ({ ...g, qs: g.qs.filter(x => !q || (x.q + ' ' + x.a).toLowerCase().includes(q)) })).filter(g => g.qs.length);
+    if (this.state.group !== null && !q) shown = shown.filter(g => g.gi === this.state.group);
+    shown = shown.map(g => ({ ...g, qs: g.qs.map(x => { const open = !!q || this.state.open === x.id; return { ...x, open, rot: open ? 'rotate(45deg)' : 'none', toggle: () => this.setState(s => ({ open: s.open === x.id ? null : x.id })) }; }) }));
+    return {
+      q: this.state.q, onQ: e => this.setState({ q: e.target.value }), shown, empty: shown.length === 0,
+      groups: [{ name: 'Tất cả', count: 25, gi: null }, ...all.map(g => ({ name: g.name, count: g.qs.length, gi: g.gi }))].map(g => { const on = this.state.group === g.gi; return { ...g, bg: on ? '#1a1412' : 'transparent', fg: on ? '#f8f4ee' : '#3d342e', pick: () => this.setState({ group: g.gi, q: '' }) }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

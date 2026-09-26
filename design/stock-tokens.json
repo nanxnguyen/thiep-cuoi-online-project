@@ -1,0 +1,48 @@
+{
+  "color": {
+    "brand": { "50": "#eef4ff", "100": "#dce8ff", "200": "#b9d1ff", "300": "#8fb3ff", "400": "#5c8fff", "500": "#0B5FFF", "600": "#0a4fd6", "700": "#083faa", "800": "#0a3384", "900": "#0d2b66", "950": "#081a3d" },
+    "neutral": { "50": "#f8fafc", "100": "#f1f5f9", "200": "#e2e8f0", "300": "#cbd5e1", "400": "#94a3b8", "500": "#64748b", "600": "#475569", "700": "#334155", "800": "#1e293b", "900": "#0f172a", "950": "#020617" },
+    "success": { "50": "#ecfdf3", "100": "#d1fadf", "200": "#a6f3c7", "300": "#6ee7a8", "400": "#34d17f", "500": "#12b76a", "600": "#0e9457", "700": "#0b7444", "800": "#0a5c37", "900": "#08492c", "950": "#042a19" },
+    "danger": { "50": "#fef2f2", "100": "#fee2e2", "200": "#fecaca", "300": "#fca5a5", "400": "#f87171", "500": "#ef4444", "600": "#dc2626", "700": "#b91c1c", "800": "#991b1b", "900": "#7f1d1d", "950": "#450a0a" },
+    "warning": { "50": "#fffbeb", "100": "#fef3c7", "200": "#fde68a", "300": "#fcd34d", "400": "#fbbf24", "500": "#f59e0b", "600": "#d97706", "700": "#b45309", "800": "#92400e", "900": "#78350f", "950": "#451a03" },
+    "info": { "50": "#ecfeff", "100": "#cffafe", "200": "#a5f3fc", "300": "#67e8f9", "400": "#22d3ee", "500": "#06b6d4", "600": "#0891b2", "700": "#0e7490", "800": "#155e75", "900": "#164e63", "950": "#083344" },
+    "purple": { "50": "#faf5ff", "100": "#f3e8ff", "200": "#e9d5ff", "300": "#d8b4fe", "400": "#c084fc", "500": "#a855f7", "600": "#9333ea", "700": "#7e22ce", "800": "#6b21a8", "900": "#581c87", "950": "#3b0764" },
+    "semantic": {
+      "light": { "bg": "#f8fafc", "surface": "#ffffff", "surface-alt": "#f1f5f9", "text-primary": "#0f172a", "text-secondary": "#475569", "text-disabled": "#94a3b8", "border": "#e2e8f0", "focus": "#0B5FFF" },
+      "dark": { "bg": "#020617", "surface": "#0f172a", "surface-alt": "#1e293b", "text-primary": "#f8fafc", "text-secondary": "#94a3b8", "text-disabled": "#475569", "border": "#1e293b", "focus": "#5c8fff" }
+    },
+    "finance": {
+      "light": { "up": "#0e9457", "down": "#dc2626", "reference": "#d97706", "ceiling": "#9333ea", "floor": "#0891b2" },
+      "dark": { "up": "#34d17f", "down": "#f87171", "reference": "#fbbf24", "ceiling": "#c084fc", "floor": "#22d3ee" }
+    }
+  },
+  "space": { "0": 0, "2": 2, "4": 4, "8": 8, "12": 12, "16": 16, "20": 20, "24": 24, "32": 32, "40": 40, "48": 48, "64": 64 },
+  "radius": { "sm": "6px", "md": "10px", "lg": "16px", "full": "999px" },
+  "font": {
+    "family": { "base": "'Be Vietnam Pro', sans-serif" },
+    "size": { "h1": 32, "h2": 28, "h3": 24, "h4": 20, "h5": 18, "h6": 16, "body-lg": 16, "body-md": 14, "body-sm": 13, "caption": 12 },
+    "lineHeight": { "h1": 40, "h2": 36, "h3": 32, "h4": 28, "h5": 26, "h6": 24, "body-lg": 24, "body-md": 20, "body-sm": 18, "caption": 16 },
+    "weight": { "regular": 400, "medium": 500, "semibold": 600, "bold": 700 },
+    "letterSpacing": { "h1": "-0.01em", "h2": "-0.01em", "h3": "-0.005em", "h4": "0em", "h5": "0em", "h6": "0em", "body": "0em", "caption": "0.02em" }
+  },
+  "typography": {
+    "h1": { "fontSize": 32, "lineHeight": 40, "fontWeight": 700, "letterSpacing": "-0.01em" },
+    "h2": { "fontSize": 28, "lineHeight": 36, "fontWeight": 700, "letterSpacing": "-0.01em" },
+    "h3": { "fontSize": 24, "lineHeight": 32, "fontWeight": 600, "letterSpacing": "-0.005em" },
+    "h4": { "fontSize": 20, "lineHeight": 28, "fontWeight": 600, "letterSpacing": "0em" },
+    "h5": { "fontSize": 18, "lineHeight": 26, "fontWeight": 600, "letterSpacing": "0em" },
+    "h6": { "fontSize": 16, "lineHeight": 24, "fontWeight": 600, "letterSpacing": "0em" },
+    "body-lg": { "fontSize": 16, "lineHeight": 24, "fontWeight": 400, "letterSpacing": "0em" },
+    "body-md": { "fontSize": 14, "lineHeight": 20, "fontWeight": 400, "letterSpacing": "0em" },
+    "body-sm": { "fontSize": 13, "lineHeight": 18, "fontWeight": 400, "letterSpacing": "0em" },
+    "caption": { "fontSize": 12, "lineHeight": 16, "fontWeight": 400, "letterSpacing": "0.02em" }
+  },
+  "typography.mobile": {
+    "h1": { "fontSize": 26, "lineHeight": 34 },
+    "h2": { "fontSize": 22, "lineHeight": 30 },
+    "h3": { "fontSize": 20, "lineHeight": 28 },
+    "h4": { "fontSize": 18, "lineHeight": 26 },
+    "h5": { "fontSize": 16, "lineHeight": 24 },
+    "h6": { "fontSize": 15, "lineHeight": 22 }
+  }
+}

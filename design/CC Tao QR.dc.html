@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif}a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:none}}</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:760px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Cong Cu.dc.html" style="font-size:13px;color:#8a7d72">Công cụ</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">Tạo mã QR</span></div>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,48px)">Tạo mã QR từ link thiệp</h1>
+    <p style="margin:0;font-size:15px;line-height:1.7;color:#5e534b;max-width:520px">Dán link thiệp hoặc bất kỳ đường link nào, nhận mã QR để in lên thiệp giấy hoặc bảng chào.</p>
+    <label style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#5e534b">Link cần tạo mã
+      <input value="{{ url }}" onInput="{{ onUrl }}" placeholder="https://moc.vn/invite/vy-khoi" style="font-family:inherit;font-size:15px;padding:14px 16px;border-radius:12px;border:1px solid {{ urlBorder }};outline:none">
+      <sc-if value="{{ urlErr }}" hint-placeholder-val="{{ false }}"><span style="color:#a3161c;font-size:13px">Link cần bắt đầu bằng http:// hoặc https://</span></sc-if>
+    </label>
+    <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:center">
+      <div style="width:220px;height:220px;border-radius:16px;background:#fff;border:1px solid #efe6d9;display:grid;place-items:center;overflow:hidden;animation:fadeUp .4s both">
+        <sc-if value="{{ hasQr }}" hint-placeholder-val="{{ false }}"><img src="{{ qrSrc }}" alt="Mã QR" style="width:100%;height:100%;object-fit:contain"></sc-if>
+        <sc-if value="{{ !hasQr }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;color:#b0a498;padding:0 20px;text-align:center">Nhập link để xem mã QR</span></sc-if>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <a href="{{ qrSrc }}" download="ma-qr-moc.png" style="pointer-events:{{ dlPointer }};opacity:{{ dlOpacity }};text-align:center;background:#a3161c;color:#fff;padding:13px 22px;border-radius:999px;font-size:14px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Tải mã QR (PNG)</a>
+        <span style="font-size:12px;color:#8a7d72;max-width:220px">Mã được tạo qua dịch vụ QR miễn phí, không lưu lại link của bạn.</span>
+      </div>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { url: 'https://moc.vn/invite/vy-khoi' };
+  renderVals() {
+    const url = this.state.url.trim();
+    const valid = /^https?:\/\/.+/.test(url);
+    const err = url.length > 0 && !valid;
+    return {
+      url: this.state.url, onUrl: e => this.setState({ url: e.target.value }),
+      urlErr: err, urlBorder: err ? '#a3161c' : '#ddd2c4',
+      hasQr: valid, qrSrc: valid ? `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(url)}` : '',
+      dlPointer: valid ? 'auto' : 'none', dlOpacity: valid ? 1 : 0.4,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+.template-detail { max-width:1180px; margin:auto; padding:64px 32px 120px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:56px; align-items:start; }
+.template-detail__preview { position:sticky; top:96px; display:flex; justify-content:center; }
+.template-detail__cover { width:min(100%,320px); aspect-ratio:9/16; border-radius:14px; box-shadow:0 40px 70px -30px color-mix(in srgb, var(--ink) 40%, transparent); }
+.template-detail__info { display:flex; flex-direction:column; gap:28px; }
+.template-detail__info nav { display:flex; gap:10px; align-items:center; color:var(--faint); font-size:13px; }
+.template-detail__info nav a { color:var(--faint); }
+.template-detail__info nav span { color:var(--gold); }
+.template-detail__eyebrow { margin:0 0 12px; font-size:12px; letter-spacing:.2em; color:var(--gold-deep); font-weight:600; }
+.template-detail h1 { margin:0; font:400 clamp(38px,5vw,58px)/1.05 var(--display),serif; }
+.template-detail__desc { max-width:440px; margin:12px 0 0; color:var(--muted); line-height:1.75; }
+.template-detail__info>div>p:first-child:not(.template-detail__eyebrow) { color:var(--faint); font-size:13px; }
+.template-detail__swatches { display:flex; gap:10px; }
+.template-detail__swatches a { width:32px; height:32px; border-radius:50%; border:2px solid var(--paper); box-shadow:0 0 0 2px transparent; }
+.template-detail__swatches a[aria-current=true] { box-shadow:0 0 0 2px var(--ink); }
+.template-detail__includes { padding:24px; border-radius:16px; background:var(--paper-alt); }
+.template-detail__includes h2 { margin:0 0 14px; font:400 19px var(--display),serif; }
+.template-detail__includes p { display:flex; gap:10px; align-items:center; margin:0 0 10px; font-size:14px; }
+.template-detail__includes p:last-child { margin-bottom:0; }
+.template-detail__includes i { width:6px; height:6px; border-radius:50%; background:var(--accent); }
+.template-detail__actions { display:flex; flex-wrap:wrap; gap:12px; }
+.template-detail__actions>a { display:inline-flex; align-items:center; padding:16px 24px; border-radius:999px; font-size:15px; }
+.template-detail__secondary { border:1px solid var(--ink); color:var(--ink); }
+.template-detail__full { color:var(--accent); }
+@media(max-width:760px) { .template-detail { grid-template-columns:1fr; gap:40px; padding:40px 22px 80px; } .template-detail__preview { position:static; } }
+@media(prefers-reduced-motion:no-preference) { .template-detail__cover { animation:floaty 6s ease-in-out infinite; } }

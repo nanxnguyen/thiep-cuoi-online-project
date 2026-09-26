@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+@keyframes slideIn{0%{opacity:0;transform:translateX(20px)}100%{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-14px) rotate(-2deg)}}
+@keyframes floaty2{0%,100%{transform:translateY(0) rotate(6deg)}50%{transform:translateY(-10px) rotate(8deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="account" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <sc-if value="{{ guest }}" hint-placeholder-val="{{ true }}">
+    <section style="min-height:calc(100vh - 64px);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))">
+      <div style="background:#1c1012;color:#f1e7d6;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:64px 56px;min-height:520px">
+        <div style="position:absolute;right:12%;top:18%;width:200px;height:300px;border-radius:10px;background:#8e1b1f;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);animation:floaty 7s ease-in-out infinite;display:grid;place-items:center;color:#e6c47a;font-family:serif;font-size:80px">囍</div>
+        <div style="position:absolute;right:34%;top:38%;width:170px;height:250px;border-radius:10px;background:#f7efe3;box-shadow:0 30px 60px -20px rgba(0,0,0,.6);animation:floaty2 8s ease-in-out infinite;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#8e1b1f"><span style="font-size:9px;letter-spacing:.3em">SAVE THE DATE</span><span style="font-family:'Great Vibes',cursive;font-size:34px">Vy &amp; Khôi</span></div>
+        <span style="font-size:12px;letter-spacing:.24em;color:#c9a86a;font-weight:600;position:relative">TÀI KHOẢN MỘC</span>
+        <div style="position:relative;display:flex;flex-direction:column;gap:18px;max-width:420px">
+          <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(40px,4.6vw,60px);line-height:1.04">Giữ mọi tấm thiệp <em style="color:#c9a86a">ở một nơi.</em></h1>
+          <p style="margin:0;font-size:15px;line-height:1.7;color:#b8ab9b">Không bắt buộc. Tài khoản giúp bạn mở thiệp trên nhiều thiết bị và không lo mất link sửa.</p>
+        </div>
+      </div>
+      <div style="display:grid;place-items:center;padding:56px 32px">
+        <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:28px;animation:fadeUp .7s both">
+          <div style="display:flex;padding:4px;background:#efe8de;border-radius:999px">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+              <button onClick="{{ t.pick }}" style="flex:1;font-family:inherit;font-size:14px;padding:11px;border:0;border-radius:999px;cursor:pointer;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.sh }};transition:all .25s">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px"><h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:34px">{{ title }}</h2><span style="font-size:14px;color:#8a7d72">{{ subtitle }}</span></div>
+          <form onSubmit="{{ submit }}" style="display:flex;flex-direction:column;gap:14px">
+            <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}"><label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b;animation:slideIn .4s both">Tên của bạn<input placeholder="Hạ Vy" style="font-family:inherit;font-size:15px;padding:14px 16px;border-radius:12px;border:1px solid #ddd2c4;background:#fff;outline:none"></label></sc-if>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Email<input type="email" required="{{ true }}" placeholder="ban@email.com" style="font-family:inherit;font-size:15px;padding:14px 16px;border-radius:12px;border:1px solid #ddd2c4;background:#fff;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Mật khẩu<input type="password" required="{{ true }}" placeholder="Ít nhất 8 ký tự" style="font-family:inherit;font-size:15px;padding:14px 16px;border-radius:12px;border:1px solid #ddd2c4;background:#fff;outline:none"></label>
+            <button type="submit" style="margin-top:6px;font-family:inherit;font-size:15px;font-weight:500;padding:16px;border-radius:999px;border:0;background:#a3161c;color:#fff;cursor:pointer;display:flex;justify-content:center;align-items:center;gap:10px" style-hover="background:#7d0f14"><sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite"></span></sc-if>{{ cta }}</button>
+          </form>
+          <span style="font-size:13px;color:#8a7d72;text-align:center">Chưa muốn đăng ký? <a href="Studio.dc.html">Tạo thiệp không cần tài khoản</a></span>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+  <sc-if value="{{ authed }}" hint-placeholder-val="{{ false }}">
+    <main style="max-width:1180px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:48px;animation:fadeUp .6s both">
+      <div style="display:flex;align-items:end;gap:24px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600">XIN CHÀO</span><h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(40px,5vw,64px);line-height:1">Thiệp của bạn</h1></div>
+        <div style="margin-left:auto;display:flex;gap:10px"><button onClick="{{ logout }}" style="font-family:inherit;font-size:14px;padding:12px 18px;border-radius:999px;border:1px solid #ddd2c4;background:transparent;cursor:pointer">Đăng xuất</button><a href="Studio.dc.html" style="background:#a3161c;color:#fff;font-size:14px;font-weight:500;padding:12px 20px;border-radius:999px" style-hover="background:#7d0f14;color:#fff">+ Tạo thiệp mới</a></div>
+      </div>
+      <div style="background:#efe6d9;border-radius:20px;padding:32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:24px">Nhận thiệp cũ vào tài khoản</span><span style="font-size:14px;line-height:1.6;color:#5e534b">Dán link sửa có dạng <code style="background:#f8f4ee;padding:2px 6px;border-radius:4px">…#k=…</code> để thiệp hiện trong danh sách.</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><input value="{{ claim }}" onInput="{{ onClaim }}" placeholder="https://moc.vn/studio/abc#k=…" style="flex:1;min-width:200px;font-family:inherit;font-size:14px;padding:14px 18px;border-radius:999px;border:1px solid #d8ccbc;background:#f8f4ee;outline:none"><button onClick="{{ doClaim }}" style="font-family:inherit;font-size:14px;font-weight:500;padding:14px 22px;border-radius:999px;border:0;background:#1a1412;color:#fff;cursor:pointer">Nhận thiệp</button></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:24px">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+          <div style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 40px -30px rgba(26,20,18,.4);display:flex;flex-direction:column;animation:fadeUp .5s both;transition:transform .3s" style-hover="transform:translateY(-4px)">
+            <div style="height:180px;background:{{ c.bg }};display:grid;place-items:center;position:relative"><span style="font-family:'Great Vibes',cursive;font-size:40px;color:{{ c.ink }}">{{ c.names }}</span><span style="position:absolute;top:14px;right:14px;font-size:11px;font-weight:600;padding:5px 10px;border-radius:999px;background:{{ c.stBg }};color:{{ c.stFg }}">{{ c.status }}</span></div>
+            <div style="padding:22px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:20px">{{ c.tpl }}</span><span style="font-size:13px;color:#8a7d72">{{ c.date }}</span></div>
+              <div style="display:flex;gap:18px;font-size:13px;color:#5e534b"><span><b style="color:#1a1412">{{ c.rsvp }}</b> xác nhận</span><span><b style="color:#1a1412">{{ c.wish }}</b> lời chúc</span></div>
+              <div style="display:flex;gap:8px"><a href="Studio Editor v3.dc.html" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:#1a1412;color:#fff;font-size:13px" style-hover="color:#fff;background:#3a2e28">Chỉnh sửa</a><a href="Thiep Khach.dc.html" style="flex:1;text-align:center;padding:11px;border-radius:999px;border:1px solid #ddd2c4;color:#1a1412;font-size:13px" style-hover="color:#1a1412;border-color:#1a1412">Xem thiệp</a></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </main>
+  </sc-if>
+  <dc-import name="Site Footer" show-cta="{{ false }}" hint-size="100%,360px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { mode: 'login', authed: false, loading: false, claim: '', cards: [
+    { names: 'Vy & Khôi', tpl: 'Lụa Son', date: '09.11.2026', rsvp: 96, wish: 41, bg: '#8e1b1f', ink: '#e6c47a', status: 'Đang gửi', stBg: '#e7eee6', stFg: '#24493a' },
+    { names: 'An & Bảo', tpl: 'Soft Type', date: 'Chưa đặt ngày', rsvp: 0, wish: 0, bg: '#f2eff5', ink: '#4b3566', status: 'Bản nháp', stBg: '#efe6d9', stFg: '#6b4a33' }] };
+  renderVals() {
+    const s = this.state, su = s.mode === 'signup';
+    return {
+      guest: !s.authed, authed: s.authed, isSignup: su, loading: s.loading,
+      title: su ? 'Tạo tài khoản' : 'Chào mừng trở lại', subtitle: su ? 'Chỉ cần email và mật khẩu.' : 'Đăng nhập để xem thiệp của bạn.',
+      cta: s.loading ? 'Đang xử lý…' : (su ? 'Tạo tài khoản' : 'Đăng nhập'),
+      tabs: [['login','Đăng nhập'],['signup','Đăng ký']].map(([k,l]) => ({ label: l, bg: s.mode===k?'#fff':'transparent', fg: s.mode===k?'#1a1412':'#8a7d72', sh: s.mode===k?'0 1px 3px rgba(26,20,18,.12)':'none', pick: () => this.setState({ mode: k }) })),
+      submit: e => { e.preventDefault(); this.setState({ loading: true }); setTimeout(() => this.setState({ loading: false, authed: true }), 900); },
+      logout: () => this.setState({ authed: false }),
+      claim: s.claim, onClaim: e => this.setState({ claim: e.target.value }),
+      doClaim: () => { if (!s.claim.includes('#k=')) return; this.setState(st => ({ claim: '', cards: [{ names: 'Hà & Long', tpl: 'Wild Garden', date: '14.12.2026', rsvp: 0, wish: 0, bg: '#eef1ea', ink: '#24493a', status: 'Vừa nhận', stBg: '#f5e3e1', stFg: '#8e1b1f' }, ...st.cards] })); },
+      cards: s.cards,
+    };
+  }
+}
+</script>
+</body>
+</html>

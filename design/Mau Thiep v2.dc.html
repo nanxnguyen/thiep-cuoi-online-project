@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
+*{box-sizing:border-box}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#f8f4ee">
+  <dc-import name="Site Header" active="templates" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+
+  <section style="max-width:1280px;margin:0 auto;padding:88px 32px 72px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:48px;align-items:end">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:0.24em;color:#8a6425;font-weight:600;margin-bottom:28px"><span style="width:28px;height:1px;background:#8a6425"></span>BỘ SƯU TẬP MẪU THIỆP</div>
+      <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(52px,7.2vw,104px);line-height:.98;letter-spacing:-0.025em">Chọn cảm giác<br><em style="color:#8a6425;font-weight:400">đúng là mình.</em></h1>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px;padding-bottom:12px;max-width:440px">
+      <p style="margin:0;font-size:17px;line-height:1.75;color:#5e534b;font-weight:300;text-wrap:pretty">Mỗi mẫu có một nhịp điệu riêng. Đổi mẫu lúc nào cũng được, nội dung của bạn vẫn còn nguyên.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #1a1412">
+        <div style="padding:16px 12px 0 0;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">Miễn phí</span><span style="font-size:12px;color:#8a7d72">khi tạo thiệp</span></div>
+        <div style="padding:16px 12px 0;border-left:1px solid #e0d5c6;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">3 ngày</span><span style="font-size:12px;color:#8a7d72">dùng thử đủ tính năng</span></div>
+        <div style="padding:16px 0 0 12px;border-left:1px solid #e0d5c6;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">Ưng mới trả</span><span style="font-size:12px;color:#8a7d72">thanh toán sau</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#1c1012;color:#f1e7d6;padding:88px 0 96px;overflow:hidden">
+    <div style="max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:44px">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span style="font-size:12px;letter-spacing:.24em;color:#c9a86a;font-weight:600">BẢNG XẾP HẠNG · THÁNG 9</span>
+        <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(36px,4.4vw,56px);line-height:1.02">Được các cặp đôi<br><em style="color:#c9a86a">chọn nhiều nhất</em></h2>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+        <button onClick="{{ scrollPrev }}" style="width:52px;height:52px;border-radius:50%;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;font-size:18px;cursor:pointer;transition:all .2s" style-hover="background:#f1e7d6;color:#1c1012;border-color:#f1e7d6">←</button>
+        <button onClick="{{ scrollNext }}" style="width:52px;height:52px;border-radius:50%;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;font-size:18px;cursor:pointer;transition:all .2s" style-hover="background:#f1e7d6;color:#1c1012;border-color:#f1e7d6">→</button>
+      </div>
+    </div>
+    <div ref="{{ railRef }}" style="display:flex;gap:28px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 max(32px,calc((100vw - 1216px) / 2));padding:24px max(40px,calc((100vw - 1216px) / 2 + 8px)) 8px;scrollbar-width:none">
+      <sc-for list="{{ ranking }}" as="r" hint-placeholder-count="6">
+        <a href="Studio.dc.html" style="flex:0 0 264px;scroll-snap-align:start;display:flex;flex-direction:column;gap:18px;color:#f1e7d6">
+          <div style="position:relative;border-radius:12px;box-shadow:0 30px 50px -24px rgba(0,0,0,.8);transition:transform .4s" style-hover="transform:translateY(-8px)">
+            <dc-import name="Thiep Preview" family="{{ r.family }}" deep="{{ r.deep }}" paper="{{ r.paper }}" gold="{{ r.gold }}" tint="{{ r.tint }}" a="{{ r.a }}" b="{{ r.b }}" date="{{ r.date }}" place="{{ r.place }}" slot="{{ r.slot }}" radius="12px" hint-size="100%,469px"></dc-import>
+            <span style="position:absolute;top:-20px;left:-20px;width:44px;height:44px;border-radius:50%;background:#e6c47a;color:#1c1012;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:22px;box-shadow:0 6px 16px rgba(0,0,0,.4)">{{ r.rank }}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-family:'Playfair Display',serif;font-size:22px">{{ r.title }}</span>
+            <span style="font-size:13px;color:#a8998c">{{ r.meta }}</span>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <div style="position:sticky;top:63px;z-index:20;background:rgba(248,244,238,0.94);backdrop-filter:blur(14px);border-bottom:1px solid #e8dfd3">
+    <div style="max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="7">
+          <button onClick="{{ chip.onClick }}" style="font-family:inherit;font-size:14px;padding:9px 16px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:8px;border:1px solid {{ chip.border }};background:{{ chip.bg }};color:{{ chip.fg }};transition:all .2s">{{ chip.label }}<span style="font-size:11px;opacity:0.55">{{ chip.count }}</span></button>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+        <span style="font-size:13px;color:#8a7d72;margin-right:4px">Màu</span>
+        <sc-for list="{{ colorDots }}" as="d" hint-placeholder-count="7">
+          <button onClick="{{ d.onClick }}" title="{{ d.label }}" style="width:26px;height:26px;border-radius:50%;cursor:pointer;background:{{ d.color }};border:2px solid #f8f4ee;box-shadow:0 0 0 1.5px {{ d.ring }};padding:0"></button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <main style="max-width:1280px;margin:0 auto;padding:56px 32px 112px">
+    <div style="display:flex;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:44px">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:40px;line-height:1.05">{{ gridTitle }}</h2>
+        <p style="margin:0;font-size:14px;color:#8a7d72">{{ countText }}</p>
+      </div>
+      <div style="margin-left:auto;display:flex;padding:4px;background:#efe8de;border-radius:999px">
+        <sc-for list="{{ sorts }}" as="s" hint-placeholder-count="2">
+          <button onClick="{{ s.onClick }}" style="font-family:inherit;font-size:13px;padding:8px 16px;border:0;border-radius:999px;cursor:pointer;background:{{ s.bg }};color:{{ s.fg }};box-shadow:{{ s.shadow }}">{{ s.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:80px 24px;text-align:center;border:1px dashed #d8ccbc;border-radius:16px;display:flex;flex-direction:column;gap:14px;align-items:center">
+        <span style="font-family:'Playfair Display',serif;font-size:26px">Chưa có mẫu phù hợp bộ lọc này</span>
+        <button onClick="{{ reset }}" style="font-family:inherit;font-size:14px;padding:10px 18px;border-radius:999px;border:1px solid #1a1412;background:transparent;cursor:pointer">Xoá bộ lọc</button>
+      </div>
+    </sc-if>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,{{ minCol }}),1fr));gap:56px 28px">
+      <sc-for list="{{ cards }}" as="t" hint-placeholder-count="8">
+        <article onMouseEnter="{{ t.enter }}" onMouseLeave="{{ leave }}" style="display:flex;flex-direction:column;gap:18px">
+          <div style="position:relative;border-radius:10px;box-shadow:{{ t.shadow }};transform:{{ t.lift }};transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s">
+            <dc-import name="Thiep Preview" family="{{ t.family }}" deep="{{ t.deep }}" paper="{{ t.paper }}" gold="{{ t.gold }}" tint="{{ t.tint }}" a="{{ t.a }}" b="{{ t.b }}" date="{{ t.date }}" place="{{ t.place }}" slot="{{ t.slot }}" hint-size="100%,520px"></dc-import>
+            <sc-if value="{{ t.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:600;letter-spacing:.12em;padding:5px 10px;border-radius:999px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};pointer-events:none">{{ t.badge }}</span></sc-if>
+            <sc-if value="{{ t.hover }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;left:0;right:0;bottom:0;padding:48px 14px 14px;border-radius:0 0 10px 10px;display:flex;gap:8px;background:linear-gradient(to top,rgba(20,14,12,.82),rgba(20,14,12,0))">
+                <a href="Studio.dc.html" style="flex:1;text-align:center;padding:12px;border-radius:999px;background:rgba(255,255,255,.95);color:#1a1412;font-size:13px;font-weight:500" style-hover="background:#fff;color:#1a1412">Xem thử</a>
+                <a href="Studio.dc.html" style="flex:1;text-align:center;padding:12px;border-radius:999px;background:#a3161c;color:#fff;font-size:13px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Dùng mẫu</a>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+              <span style="font-family:'Playfair Display',serif;font-size:23px;line-height:1.1">{{ t.name }}</span>
+              <span style="font-size:14px;color:#8a7d72">{{ t.variantLabel }}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="display:flex;gap:6px">
+                <sc-for list="{{ t.swatches }}" as="w" hint-placeholder-count="3">
+                  <button onClick="{{ w.onClick }}" title="{{ w.label }}" style="width:18px;height:18px;border-radius:50%;padding:0;cursor:pointer;background:{{ w.color }};border:2px solid #f8f4ee;box-shadow:0 0 0 1px {{ w.ring }}"></button>
+                </sc-for>
+              </div>
+              <span style="width:1px;height:14px;background:#ddd2c4"></span>
+              <span style="font-size:13px;color:#8a7d72">{{ t.tags }}</span>
+            </div>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+  </main>
+
+  <section style="max-width:1280px;margin:0 auto;padding:0 32px 112px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:28px">
+    <div style="background:#efe6d9;border-radius:20px;padding:48px;display:flex;flex-direction:column;gap:20px">
+      <span style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600">GỢI Ý MẪU</span>
+      <h3 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:34px;line-height:1.1">Chưa thấy mẫu ưng ý?</h3>
+      <p style="margin:0;font-size:15px;line-height:1.7;color:#5e534b;max-width:440px">Kể cho Mộc nghe bạn đang tìm gì: màu chủ đạo, không khí buổi tiệc, một hình ảnh bạn thích. Mẫu mới được thiết kế mỗi tháng theo gợi ý của các cặp đôi.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <input placeholder="Ví dụ: tông xanh rêu, tiệc sân vườn ở Đà Lạt" style="flex:1;min-width:220px;font-family:inherit;font-size:14px;padding:14px 18px;border-radius:999px;border:1px solid #d8ccbc;background:#f8f4ee;color:#1a1412;outline:none">
+        <button style="font-family:inherit;font-size:14px;font-weight:500;padding:14px 22px;border-radius:999px;border:0;background:#1a1412;color:#f8f4ee;cursor:pointer" style-hover="background:#3a2e28">Gửi gợi ý</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-rows:auto 1fr;gap:28px">
+      <div style="display:flex;flex-direction:column;gap:18px;padding:8px 4px">
+        <span style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600">BỘ SƯU TẬP</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ collections }}" as="c" hint-placeholder-count="10">
+            <a href="Studio.dc.html" style="display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid #ddd2c4;color:#3d342e;font-size:14px;transition:all .2s" style-hover="border-color:#1a1412;color:#1a1412">
+              <span style="width:10px;height:10px;border-radius:50%;background:{{ c.color }}"></span>{{ c.label }}
+            </a>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <a href="Studio.dc.html" style="border:1px solid #e0d5c6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:8px;color:#1a1412;transition:all .2s" style-hover="border-color:#1a1412;color:#1a1412">
+          <span style="font-size:12px;color:#8a7d72">Hướng dẫn</span>
+          <span style="font-family:'Playfair Display',serif;font-size:21px;line-height:1.2">Tạo thiệp trong 10 phút</span>
+          <span style="margin-top:auto;padding-top:12px;font-size:13px;color:#a3161c">Xem từng bước →</span>
+        </a>
+        <a href="Studio.dc.html" style="border:1px solid #e0d5c6;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:8px;color:#1a1412;transition:all .2s" style-hover="border-color:#1a1412;color:#1a1412">
+          <span style="font-size:12px;color:#8a7d72">Bảng giá</span>
+          <span style="font-family:'Playfair Display',serif;font-size:21px;line-height:1.2">Một giá cho mọi mẫu</span>
+          <span style="margin-top:auto;padding-top:12px;font-size:13px;color:#a3161c">Xem bảng giá →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section style="border-top:1px solid #e8dfd3">
+    <div style="max-width:1280px;margin:0 auto;padding:96px 32px;display:flex;flex-wrap:wrap;gap:48px">
+      <div style="flex:1 1 300px;display:flex;flex-direction:column;gap:16px">
+        <span style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600">HỎI ĐÁP</span>
+        <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:44px;line-height:1.05">Trước khi<br><em style="color:#8a6425">bạn chọn</em></h2>
+      </div>
+      <div style="display:flex;flex-direction:column;border-top:1px solid #1a1412;flex:2 1 520px">
+        <sc-for list="{{ faqs }}" as="q" hint-placeholder-count="4">
+          <div style="border-bottom:1px solid #e0d5c6">
+            <button onClick="{{ q.onClick }}" style="width:100%;display:flex;align-items:center;gap:16px;padding:24px 0;background:transparent;border:0;cursor:pointer;font-family:'Playfair Display',serif;font-size:21px;color:#1a1412;text-align:left">
+              <span style="flex:1">{{ q.q }}</span>
+              <span style="font-family:'Be Vietnam Pro',sans-serif;font-size:22px;font-weight:300;color:#8a6425">{{ q.icon }}</span>
+            </button>
+            <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}"><p style="margin:0;padding:0 48px 26px 0;font-size:15px;line-height:1.75;color:#5e534b;max-width:640px">{{ q.a }}</p></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Thoáng&quot;,&quot;Gọn&quot;],&quot;default&quot;:&quot;Thoáng&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const PAL = {
+  do:    { label:'Đỏ',       deep:'#8e1b1f', paper:'#f7efe3', gold:'#e0bb74' },
+  dodam: { label:'Đỏ đậm',   deep:'#5a1119', paper:'#f5ece2', gold:'#d4ac6a' },
+  nau:   { label:'Nâu',      deep:'#6b4a33', paper:'#f3ece2', gold:'#b88a55' },
+  lam:   { label:'Lam',      deep:'#1f3a5f', paper:'#eef1f4', gold:'#c9ab72' },
+  tim:   { label:'Tím',      deep:'#4b3566', paper:'#f2eff5', gold:'#c7a878' },
+  xanh:  { label:'Xanh rêu', deep:'#24493a', paper:'#eef1ea', gold:'#c9a86a' },
+  hong:  { label:'Hồng',     deep:'#a4505f', paper:'#fbf1ef', gold:'#d8a977' },
+  vang:  { label:'Vàng kim', deep:'#7a5a22', paper:'#f7f0e0', gold:'#e3c27e' },
+  oliu:  { label:'Ô liu',    deep:'#5a6636', paper:'#f2f1e6', gold:'#c8b07a' },
+  cam:   { label:'Cam đất',  deep:'#a4552a', paper:'#f8efe6', gold:'#e0b27a' },
+  muc:   { label:'Mực',      deep:'#1a1412', paper:'#f4f1ec', gold:'#c9a86a' },
+};
+const COLOR_GROUPS = [
+  { key:'red', label:'Đỏ', color:'#8e1b1f', pals:['do','dodam'] },
+  { key:'green', label:'Xanh', color:'#24493a', pals:['xanh','oliu'] },
+  { key:'blue', label:'Lam', color:'#1f3a5f', pals:['lam'] },
+  { key:'pink', label:'Hồng', color:'#a4505f', pals:['hong','tim'] },
+  { key:'brown', label:'Nâu', color:'#6b4a33', pals:['nau','cam'] },
+  { key:'gold', label:'Vàng kim', color:'#c9a86a', pals:['vang'] },
+  { key:'ink', label:'Mực', color:'#1a1412', pals:['muc'] },
+];
+const T = [
+  { id:1,  name:'Song Hỷ',   family:'A', style:'Truyền thống', motif:'Chữ Hỷ',     v:['do','xanh'],            badge:'HOT', pop:98, isNew:0, a:'Ngọc Hân', b:'Đức Huy',  date:'20 · 11 · 2026', place:'TƯ GIA · NAM ĐỊNH' },
+  { id:2,  name:'Nét Mực',   family:'B', style:'Tối giản',     motif:'Typography', v:['dodam','nau','lam','tim'], badge:'MỚI', pop:80, isNew:1, a:'An', b:'Bảo', date:'09 · 11 · 2026', place:'HÀ NỘI' },
+  { id:3,  name:'Hoa Nhài',  family:'C', style:'Hoa',          motif:'Vòm hoa',    v:['xanh','hong','nau'],    badge:'',    pop:86, isNew:0, a:'Thu Hà', b:'Văn Long', date:'14 · 12 · 2026', place:'ĐÀ LẠT' },
+  { id:4,  name:'Hoàng Gia', family:'D', style:'Cổ điển',      motif:'Khung vàng', v:['vang','dodam','lam'],   badge:'HOT', pop:95, isNew:0, a:'Phương Thảo', b:'Trung Kiên', date:'06 · 12 · 2026', place:'KHÁCH SẠN METROPOLE' },
+  { id:5,  name:'Phong Thư', family:'E', style:'Lãng mạn',     motif:'Phong bì',   v:['do','oliu'],            badge:'MỚI', pop:88, isNew:1, a:'Hoàng Long', b:'Bảo Ngọc', date:'28 · 09 · 2027', place:'ĐÀ NẴNG' },
+  { id:6,  name:'Bìa Báo',   family:'F', style:'Hiện đại',     motif:'Tạp chí',    v:['muc','hong'],           badge:'',    pop:72, isNew:0, a:'Linh', b:'Tuấn', date:'SÀI GÒN · 11.2026', place:'Một ngày cuối thu' },
+  { id:7,  name:'Hỷ Sự',     family:'A', style:'Truyền thống', motif:'Chữ Hỷ',     v:['dodam','lam'],          badge:'',    pop:90, isNew:0, a:'Quỳnh Anh', b:'Gia Khánh', date:'15 · 01 · 2027', place:'TƯ GIA · HUẾ' },
+  { id:8,  name:'Giấy Dó',   family:'B', style:'Tối giản',     motif:'Giấy kem',   v:['nau','xanh'],           badge:'',    pop:70, isNew:0, a:'Hương', b:'Nam', date:'03 · 10 · 2026', place:'HỘI AN' },
+  { id:9,  name:'Vườn Ươm',  family:'C', style:'Hoa',          motif:'Sân vườn',   v:['oliu','cam'],           badge:'MỚI', pop:76, isNew:1, a:'Mai', b:'Phong', date:'21 · 03 · 2027', place:'TAM ĐẢO' },
+  { id:10, name:'Nhung Lam', family:'D', style:'Cổ điển',      motif:'Nhung',      v:['lam','do'],             badge:'',    pop:74, isNew:0, a:'Thanh Trúc', b:'Quốc Anh', date:'12 · 12 · 2026', place:'NHÀ HÁT LỚN' },
+  { id:11, name:'Thư Tình',  family:'E', style:'Lãng mạn',     motif:'Sáp niêm',   v:['hong','dodam'],         badge:'',    pop:82, isNew:0, a:'Minh Ánh', b:'Thế Bảo', date:'14 · 02 · 2027', place:'CẦN THƠ' },
+  { id:12, name:'Chân Dung', family:'F', style:'Hiện đại',     motif:'Ảnh lớn',    v:['muc','xanh'],           badge:'HOT', pop:92, isNew:0, a:'Hạ Vy', b:'Minh Khôi', date:'HÀ NỘI · 11.2026', place:'Chủ nhật, 5 giờ chiều' },
+  { id:13, name:'Song Phụng', family:'I', style:'Truyền thống', motif:'Chữ Hỷ lớn', v:['do','dodam','lam'], badge:'HOT', pop:97, isNew:0, a:'Ngọc Ánh', b:'Thế Bảo', date:'08 · 12 · 2026', place:'TƯ GIA · BẮC NINH' },
+  { id:14, name:'Báo Hỷ',     family:'H', style:'Truyền thống', motif:'Thông tin lễ', v:['do','lam'],       badge:'MỚI', pop:89, isNew:1, a:'Thanh Tú', b:'Hoàng Nam', date:'NGÀY 22 · 11 · 2026', place:'' },
+  { id:15, name:'Đôi Khung',  family:'G', style:'Lãng mạn',     motif:'Ảnh đôi',     v:['xanh','hong','nau'],  badge:'MỚI', pop:85, isNew:1, a:'Thu Hà', b:'Minh Quân', date:'19 · 10 · 2026', place:'' },
+  { id:16, name:'Song Cửa',   family:'J', style:'Truyền thống', motif:'Khung vòm',   v:['dodam','do','xanh'], badge:'HOT', pop:96, isNew:0, a:'Thanh Hà', b:'Tuấn Kiệt', date:'05 · 01 · 2027', place:'TRUNG TÂM TIỆC CƯỚI · HÀ NỘI' },
+];
+const STYLES = ['Tất cả','Truyền thống','Tối giản','Hoa','Cổ điển','Lãng mạn','Hiện đại'];
+const FAQ = [
+  ['Tạo xong rồi có đổi mẫu được không?', 'Được. Bạn đổi mẫu bất cứ lúc nào trong trang quản lý. Tên, ngày, địa điểm và ảnh đã nhập được giữ nguyên khi chuyển sang mẫu mới.'],
+  ['Có được dùng thử miễn phí không?', 'Mọi mẫu đều tạo miễn phí và dùng thử đầy đủ tính năng trong 3 ngày. Bạn chỉ thanh toán khi đã hài lòng với tấm thiệp của mình.'],
+  ['Mẫu nào hợp với đám cưới của tôi?', 'Tiệc truyền thống hợp Song Hỷ hoặc Hỷ Sự. Tiệc sân vườn hợp Hoa Nhài, Vườn Ươm. Tiệc hiện đại hợp Nét Mực, Bìa Báo. Bạn có thể xem thử từng mẫu trước khi quyết định.'],
+  ['Mỗi mẫu có bao nhiêu màu?', 'Mỗi mẫu có từ 2 đến 4 phiên bản màu. Bấm vào chấm màu dưới mỗi thẻ để xem trước ngay.'],
+];
+
+class Component extends DCLogic {
+  state = { cat:'Tất cả', color:null, sort:'pop', hover:null, v:{}, faq:0 };
+  railRef = React.createRef();
+  scroll(dir) { const el = this.railRef.current; if (el) el.scrollBy({ left: dir * 292 * 2, behavior:'smooth' }); }
+  vals(t, key) {
+    const p = PAL[key];
+    return { deep:p.deep, paper:p.paper, gold:p.gold, tint: p.deep + '1f', slot:`tpl-${t.id}-${key}` };
+  }
+  renderVals() {
+    const { cat, color, sort, hover, faq } = this.state;
+    const grp = COLOR_GROUPS.find(g => g.key === color);
+    let list = T.filter(t => (cat === 'Tất cả' || t.style === cat) && (!grp || t.v.some(k => grp.pals.includes(k))));
+    list = [...list].sort((x, y) => sort === 'new' ? (y.isNew - x.isNew) || (y.pop - x.pop) : y.pop - x.pop);
+    const cards = list.map(t => {
+      let key = this.state.v[t.id] ?? (grp ? t.v.find(k => grp.pals.includes(k)) : t.v[0]);
+      if (!t.v.includes(key)) key = t.v[0];
+      const on = hover === t.id;
+      return { ...t, ...this.vals(t, key),
+        variantLabel: '— ' + PAL[key].label, tags: `${t.style} · ${t.motif}`,
+        hasBadge: !!t.badge, badgeBg: t.badge === 'HOT' ? '#a3161c' : '#1a1412', badgeFg: '#fff',
+        hover: on, lift: on ? 'translateY(-8px)' : 'none',
+        shadow: on ? '0 36px 60px -28px rgba(26,20,18,.55)' : '0 18px 40px -24px rgba(26,20,18,.4)',
+        enter: () => this.setState({ hover: t.id }),
+        swatches: t.v.map(k => ({ label: PAL[k].label, color: PAL[k].deep, ring: k === key ? '#1a1412' : 'transparent',
+          onClick: () => this.setState(s => ({ v: { ...s.v, [t.id]: k } })) })) };
+    });
+    const ranking = [...T].sort((x, y) => y.pop - x.pop).slice(0, 7).map((t, i) => ({ ...t, ...this.vals(t, t.v[0]),
+      slot: `rank-${t.id}`, rank: i + 1, title: t.name, meta: `${t.style} · ${t.v.length} màu` }));
+    const chips = STYLES.map(c => { const on = c === cat; return { label:c,
+      count: c === 'Tất cả' ? T.length : T.filter(t => t.style === c).length,
+      bg: on ? '#1a1412' : 'transparent', fg: on ? '#f8f4ee' : '#3d342e', border: on ? '#1a1412' : '#ddd2c4',
+      onClick: () => this.setState({ cat:c, v:{} }) }; });
+    const colorDots = COLOR_GROUPS.map(g => ({ label:g.label, color:g.color, ring: g.key === color ? '#1a1412' : '#ddd2c4',
+      onClick: () => this.setState(s => ({ color: s.color === g.key ? null : g.key, v:{} })) }));
+    const sorts = [['pop','Phổ biến'],['new','Mới nhất']].map(([k, l]) => ({ label:l,
+      bg: sort === k ? '#fff' : 'transparent', fg: sort === k ? '#1a1412' : '#8a7d72',
+      shadow: sort === k ? '0 1px 3px rgba(26,20,18,.12)' : 'none', onClick: () => this.setState({ sort:k }) }));
+    const titleBits = [cat === 'Tất cả' ? 'Tất cả mẫu thiệp' : cat, grp ? `tông ${grp.label.toLowerCase()}` : ''].filter(Boolean);
+    return {
+      railRef: this.railRef, scrollPrev: () => this.scroll(-1), scrollNext: () => this.scroll(1),
+      ranking, chips, colorDots, sorts, cards, empty: cards.length === 0,
+      gridTitle: titleBits.join(', '), countText: `${cards.length} mẫu · bấm chấm màu để đổi phiên bản`,
+      leave: () => this.setState({ hover:null }), reset: () => this.setState({ cat:'Tất cả', color:null, v:{} }),
+      minCol: (this.props.density ?? 'Thoáng') === 'Gọn' ? '220px' : '270px',
+      collections: [['Màu đỏ','#8e1b1f'],['Xanh rêu','#24493a'],['Lam','#1f3a5f'],['Vàng kim','#c9a86a'],['Chữ Hỷ','#a3161c'],['Truyền thống','#5a1119'],['Tối giản','#1a1412'],['Hoa','#a4505f'],['Sân vườn','#5a6636'],['Châu Âu','#7a5a22']].map(([label, c]) => ({ label, color:c })),
+      faqs: FAQ.map(([q, a], i) => ({ q, a, open: faq === i, icon: faq === i ? '−' : '+',
+        onClick: () => this.setState(s => ({ faq: s.faq === i ? -1 : i })) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

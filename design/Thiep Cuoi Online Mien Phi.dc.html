@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="max-width:1000px;margin:0 auto;padding:96px 32px 64px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px">
+    <span style="font-size:12px;letter-spacing:.22em;color:#8a6425;font-weight:600;animation:fadeUp .8s both">THIỆP CƯỚI ONLINE MIỄN PHÍ</span>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(38px,5.6vw,64px);line-height:1.08;animation:fadeUp .9s .1s both">Không mất một đồng nào, <span style="background:linear-gradient(90deg,#a3161c,#c9a86a,#a3161c);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 6s linear infinite">không giới hạn</span> tính năng</h1>
+    <p style="margin:0;font-size:16px;line-height:1.75;color:#5e534b;max-width:560px;animation:fadeUp .9s .2s both">Trong khi nhiều nền tảng khác thu phí theo lượt xem hay tính năng, Mộc để mọi thứ miễn phí ngay từ đầu.</p>
+    <a href="Studio.dc.html" style="background:#a3161c;color:#fff;padding:16px 28px;border-radius:999px;font-size:15px;font-weight:500;animation:fadeUp .9s .3s both" style-hover="background:#7d0f14;color:#fff">Bắt đầu miễn phí</a>
+  </section>
+  <section style="max-width:900px;margin:0 auto;padding:48px 32px 96px">
+    <div style="display:flex;flex-direction:column;border-top:1px solid #1a1412">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8"><div style="display:flex;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid #e0d5c6;font-size:15px"><span style="width:22px;height:22px;border-radius:50%;background:#24493a;color:#fff;display:grid;place-items:center;font-size:11px;flex:none">✓</span>{{ r }}</div></sc-for>
+    </div>
+  </section>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { rows: ['10 mẫu thiệp, mọi phong cách','Đổi mẫu không mất nội dung','Xác nhận tham dự không giới hạn khách','Sổ lưu bút và mừng cưới QR','Bản đồ, đếm ngược, album, nhạc nền','Link riêng cho từng khách, không tính phí thêm','Tài khoản lưu nhiều thiệp','7 công cụ đám cưới chạy trên trình duyệt'] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif}a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:1000px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Cong Cu.dc.html" style="font-size:13px;color:#8a7d72">Công cụ</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">Danh sách khách</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:16px">
+      <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,48px)">Danh sách khách</h1>
+      <div style="display:flex;gap:8px">
+        <button onClick="{{ exportCsv }}" style="font-family:inherit;font-size:13px;padding:11px 16px;border-radius:999px;border:1px solid #ddd2c4;background:transparent;cursor:pointer">Xuất CSV</button>
+        <label style="font-family:inherit;font-size:13px;padding:11px 16px;border-radius:999px;border:1px solid #ddd2c4;cursor:pointer">Nhập CSV<input type="file" accept=".csv" onChange="{{ importCsv }}" style="display:none"></label>
+      </div>
+    </div>
+    <p style="margin:0;font-size:13px;color:#8a7d72">Lưu tự động trên máy của bạn ({{ total }} khách · {{ yes }} đã xác nhận).</p>
+    <form onSubmit="{{ add }}" style="display:flex;gap:8px;flex-wrap:wrap">
+      <input value="{{ name }}" onInput="{{ onName }}" placeholder="Tên khách" style="flex:2;min-width:180px;font-family:inherit;font-size:14px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none">
+      <input value="{{ group }}" onInput="{{ onGroup }}" placeholder="Nhóm (nhà trai, bạn bè…)" style="flex:1;min-width:150px;font-family:inherit;font-size:14px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none">
+      <button type="submit" style="font-family:inherit;font-size:14px;font-weight:500;padding:12px 20px;border-radius:10px;border:0;background:#a3161c;color:#fff;cursor:pointer" style-hover="background:#7d0f14">+ Thêm khách</button>
+    </form>
+    <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}"><div style="padding:56px;text-align:center;border:1px dashed #d8ccbc;border-radius:14px;color:#8a7d72;font-size:14px">Chưa có khách nào, thêm khách đầu tiên ở trên.</div></sc-if>
+    <div style="display:flex;flex-direction:column;border-top:1px solid #1a1412">
+      <sc-for list="{{ guests }}" as="g" hint-placeholder-count="0">
+        <div style="display:flex;align-items:center;gap:14px;padding:13px 4px;border-bottom:1px solid #efe6d9;animation:fadeUp .3s both">
+          <span style="flex:2;font-size:14px">{{ g.name }}</span>
+          <span style="flex:1;font-size:13px;color:#8a7d72">{{ g.group }}</span>
+          <select value="{{ g.status }}" onChange="{{ g.onStatus }}" style="font-family:inherit;font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid #ddd2c4;background:{{ g.bg }};color:{{ g.fg }}">
+            <option value="pending">Chưa trả lời</option><option value="yes">Tham dự</option><option value="no">Vắng mặt</option>
+          </select>
+          <span style="font-size:12px;color:#8a7d72;flex:none">…?to={{ g.slug }}</span>
+          <button onClick="{{ g.remove }}" style="border:0;background:transparent;color:#a3161c;cursor:pointer;font-size:13px">Xoá</button>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY = 'moc-cc-guests';
+const STATUS_STYLE = { pending: ['#efe6d9','#8a7d72'], yes: ['#e7eee6','#24493a'], no: ['#f5e3e1','#8e1b1f'] };
+const slugify = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+class Component extends DCLogic {
+  state = { guests: [], name: '', group: '' };
+  componentDidMount() { try { this.setState({ guests: JSON.parse(localStorage.getItem(KEY) || '[]') }); } catch (e) {} }
+  save(guests) { this.setState({ guests }); try { localStorage.setItem(KEY, JSON.stringify(guests)); } catch (e) {} }
+  renderVals() {
+    const s = this.state;
+    return {
+      name: s.name, group: s.group, onName: e => this.setState({ name: e.target.value }), onGroup: e => this.setState({ group: e.target.value }),
+      add: e => { e.preventDefault(); if (!s.name.trim()) return; this.save([...s.guests, { id: Date.now(), name: s.name, group: s.group || 'Chưa phân nhóm', status: 'pending', slug: slugify(s.name) }]); this.setState({ name: '', group: '' }); },
+      empty: s.guests.length === 0, total: s.guests.length, yes: s.guests.filter(g => g.status === 'yes').length,
+      guests: s.guests.map(g => { const [bg, fg] = STATUS_STYLE[g.status]; return { ...g, bg, fg,
+        onStatus: e => this.save(s.guests.map(x => x.id === g.id ? { ...x, status: e.target.value } : x)),
+        remove: () => this.save(s.guests.filter(x => x.id !== g.id)) }; }),
+      exportCsv: () => {
+        const rows = [['Tên','Nhóm','Trạng thái'], ...s.guests.map(g => [g.name, g.group, g.status])];
+        const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'danh-sach-khach.csv'; a.click();
+      },
+      importCsv: e => { const file = e.target.files[0]; if (!file) return; const r = new FileReader();
+        r.onload = () => { const lines = r.result.split(/\r?\n/).slice(1).filter(Boolean);
+          const parsed = lines.map(l => { const m = l.match(/"([^"]*)","([^"]*)","([^"]*)"/); if (!m) return null; return { id: Date.now() + Math.random(), name: m[1], group: m[2] || 'Chưa phân nhóm', status: m[3] || 'pending', slug: slugify(m[1]) }; }).filter(Boolean);
+          this.save([...s.guests, ...parsed]); }; r.readAsText(file); },
+    };
+  }
+}
+</script>
+</body>
+</html>

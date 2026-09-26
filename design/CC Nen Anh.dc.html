@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif}a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:900px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Cong Cu.dc.html" style="font-size:13px;color:#8a7d72">Công cụ</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">Nén ảnh</span></div>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,48px)">Nén ảnh cưới</h1>
+    <p style="margin:0;font-size:15px;line-height:1.7;color:#5e534b;max-width:560px">Giảm ảnh về tối đa 1600px, chất lượng vẫn đẹp trên điện thoại. Xử lý ngay trên máy của bạn, không tải lên đâu cả.</p>
+    <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1.5px dashed #d8ccbc;border-radius:16px;padding:44px;cursor:pointer;text-align:center;transition:border-color .2s" style-hover="border-color:#a3161c">
+      <span style="font-size:15px;color:#3d342e">Chọn hoặc thả ảnh vào đây</span><span style="font-size:12px;color:#8a7d72">JPG, PNG — nhiều ảnh một lúc</span>
+      <input type="file" accept="image/*" multiple="{{ true }}" onChange="{{ onFiles }}" style="display:none">
+    </label>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:20px">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="0">
+        <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 26px -18px rgba(26,20,18,.3);animation:fadeUp .4s both">
+          <div style="aspect-ratio:4/3;background:#efe6d9;position:relative"><img src="{{ it.src }}" style="width:100%;height:100%;object-fit:cover"></div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:13px;font-weight:500">{{ it.name }}</span>
+            <sc-if value="{{ it.done }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#8a7d72"><span>{{ it.before }}</span><span style="color:#24493a;font-weight:600">→ {{ it.after }}</span></div>
+              <a href="{{ it.outSrc }}" download="{{ it.outName }}" style="text-align:center;font-size:13px;padding:9px;border-radius:999px;background:#1a1412;color:#fff" style-hover="background:#3a2e28;color:#fff">Tải ảnh đã nén</a>
+            </sc-if>
+            <sc-if value="{{ it.loading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid #efe6d9;border-top-color:#a3161c;animation:spin .7s linear infinite;align-self:center"></span></sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { items: [] };
+  process(file, idx) {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1600;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { const r = Math.min(MAX / w, MAX / h); w = Math.round(w * r); h = Math.round(h * r); }
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => {
+        const outSrc = URL.createObjectURL(blob);
+        this.setState(s => ({ items: s.items.map((it, i) => i === idx ? { ...it, loading: false, done: true, outSrc,
+          outName: 'nen-' + it.name, before: (file.size / 1024).toFixed(0) + ' KB', after: (blob.size / 1024).toFixed(0) + ' KB' } : it) }));
+      }, 'image/jpeg', 0.82);
+    };
+    img.src = url;
+    return url;
+  }
+  renderVals() {
+    return {
+      items: this.state.items,
+      onFiles: e => {
+        const files = [...e.target.files];
+        const start = this.state.items.length;
+        const news = files.map(f => ({ name: f.name, src: URL.createObjectURL(f), loading: true, done: false }));
+        this.setState(s => ({ items: [...s.items, ...news] }), () => files.forEach((f, i) => this.process(f, start + i)));
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

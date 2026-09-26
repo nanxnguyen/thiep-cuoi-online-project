@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+@keyframes swapIn{0%{opacity:0;transform:translateY(20px) rotate(-3deg) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:1320px;margin:0 auto;padding:56px 32px 96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:40px;min-width:0">
+      <div style="display:flex;flex-direction:column;gap:18px;animation:fadeUp .7s both">
+        <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:#8a7d72"><span style="width:26px;height:26px;border-radius:50%;background:#1a1412;color:#fff;display:grid;place-items:center;font-size:12px">1</span>Chọn mẫu<span style="width:24px;height:1px;background:#d8ccbc"></span><span style="width:26px;height:26px;border-radius:50%;border:1px solid #d8ccbc;display:grid;place-items:center;font-size:12px">2</span>Tên hai bạn<span style="width:24px;height:1px;background:#d8ccbc"></span><span style="width:26px;height:26px;border-radius:50%;border:1px solid #d8ccbc;display:grid;place-items:center;font-size:12px">3</span>Chỉnh sửa</div>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(40px,4.8vw,64px);line-height:1.02">Tạo thiệp mới</h1>
+        <p style="margin:0;font-size:16px;line-height:1.7;color:#5e534b;max-width:520px">Chọn một mẫu để bắt đầu. Bạn đổi mẫu lúc nào cũng được mà không mất nội dung.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px">
+        <sc-for list="{{ tpls }}" as="t" hint-placeholder-count="10">
+          <button onClick="{{ t.pick }}" style="font-family:inherit;padding:0;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;gap:10px;text-align:left;animation:fadeUp .5s both;animation-delay:{{ t.delay }}">
+            <div style="border-radius:8px;box-shadow:0 0 0 {{ t.ring }} #a3161c,0 14px 26px -18px rgba(26,20,18,.5);transform:{{ t.lift }};transition:all .3s cubic-bezier(.2,.7,.2,1);position:relative">
+              <dc-import name="Thiep Preview" family="{{ t.family }}" deep="{{ t.deep }}" paper="{{ t.paper }}" gold="{{ t.gold }}" tint="{{ t.tint }}" a="{{ t.a }}" b="{{ t.b }}" date="{{ t.date }}" place="{{ t.place }}" slot="{{ t.slot }}" radius="8px" hint-size="100%,267px"></dc-import>
+              <sc-if value="{{ t.on }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:#a3161c;color:#fff;display:grid;place-items:center;font-size:13px;animation:swapIn .3s both">✓</span></sc-if>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-family:'Playfair Display',serif;font-size:17px;color:#1a1412">{{ t.name }}</span><span style="font-size:12px;color:#8a7d72">{{ t.style }}</span></div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+    <aside style="position:sticky;top:96px;display:flex;flex-direction:column;gap:24px;background:#fff;border-radius:28px;padding:32px;box-shadow:0 40px 80px -50px rgba(26,20,18,.45);animation:fadeUp .8s .2s both">
+      <div style="display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:28px;align-items:center">
+        <div style="animation:bob 5s ease-in-out infinite">
+          <div style="animation:swapIn .6s cubic-bezier(.2,.8,.2,1) both;border-radius:10px;box-shadow:0 24px 40px -20px rgba(26,20,18,.5)"><dc-import name="Thiep Preview" family="{{ cur.family }}" deep="{{ cur.deep }}" paper="{{ cur.paper }}" gold="{{ cur.gold }}" tint="{{ cur.tint }}" a="{{ cur.a }}" b="{{ cur.b }}" date="{{ cur.date }}" place="HÀ NỘI" slot="studio-big" hint-size="200px,356px"></dc-import></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">ĐÃ CHỌN</span><span style="font-family:'Playfair Display',serif;font-size:30px;line-height:1.1">{{ cur.name }}</span><span style="font-size:14px;color:#8a7d72">{{ cur.style }}</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Cô dâu<input value="{{ a }}" onInput="{{ onA }}" style="font-family:inherit;font-size:15px;padding:13px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Chú rể<input value="{{ b }}" onInput="{{ onB }}" style="font-family:inherit;font-size:15px;padding:13px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+        <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Ngày cưới<input type="date" value="{{ date }}" onInput="{{ onDate }}" style="font-family:inherit;font-size:15px;padding:13px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+      </div>
+      <a href="Studio Editor v3.dc.html" onClick="{{ go }}" style="text-align:center;background:#a3161c;color:#fff;padding:17px;border-radius:999px;font-size:15px;font-weight:500;display:flex;gap:10px;justify-content:center;align-items:center;box-shadow:0 14px 28px -14px rgba(163,22,28,.7)" style-hover="background:#7d0f14;color:#fff"><sc-if value="{{ going }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite"></span></sc-if>{{ goLabel }}</a>
+      <span style="font-size:12px;line-height:1.6;color:#8a7d72;text-align:center">Không cần đăng nhập. Mộc sẽ cấp một link sửa riêng, hãy lưu lại link đó.</span>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PAL = { do:['#8e1b1f','#f7efe3','#e0bb74'], dodam:['#5a1119','#f5ece2','#d4ac6a'], lam:['#1f3a5f','#eef1f4','#c9ab72'], xanh:['#24493a','#eef1ea','#c9a86a'], hong:['#a4505f','#fbf1ef','#d8a977'], vang:['#7a5a22','#f7f0e0','#e3c27e'], oliu:['#5a6636','#f2f1e6','#c8b07a'], muc:['#1a1412','#f4f1ec','#c9a86a'], tim:['#4b3566','#f2eff5','#c7a878'] };
+const TPL = [['gallery-noir','Gallery Noir','Editorial','F','muc'],['afterglow','Afterglow','Editorial','E','hong'],['soft-type','Soft Type','Tối giản','B','tim'],['maison-blanc','Maison Blanc','Tối giản','D','vang'],['wild-garden','Wild Garden','Botanical','C','xanh'],['olive-story','Olive Story','Botanical','G','oliu'],['lua-son','Lụa Son','Truyền thống','A','do'],['thanh-ngoc','Thanh Ngọc','Cổ điển','J','xanh'],['thuy-mac','Thủy Mặc','Truyền thống','I','lam'],['so-xuan','Sơ Xuân','Phong cách Hàn','H','dodam']];
+class Component extends DCLogic {
+  state = { sel: 6, a: 'Hạ Vy', b: 'Minh Khôi', date: '2026-11-09', going: false };
+  fmt(d) { const [y, m, dd] = (d || '').split('-'); return y ? `${dd} · ${m} · ${y}` : ''; }
+  renderVals() {
+    const s = this.state, date = this.fmt(s.date);
+    const tpls = TPL.map(([id, name, style, family, pal], i) => { const [deep, paper, gold] = PAL[pal]; const on = i === s.sel;
+      return { id, name, style, family, deep, paper, gold, tint: deep + '1f', a: s.a || 'Cô dâu', b: s.b || 'Chú rể', date, place: 'HÀ NỘI', slot: `studio-${id}`, on, ring: on ? '3px' : '0px', lift: on ? 'translateY(-4px)' : 'none', delay: `${i * .04}s`, pick: () => this.setState({ sel: i }) }; });
+    const cur = tpls[s.sel];
+    return { tpls, cur, a: s.a, b: s.b, date: s.date,
+      onA: e => this.setState({ a: e.target.value }), onB: e => this.setState({ b: e.target.value }), onDate: e => this.setState({ date: e.target.value }),
+      going: s.going, goLabel: s.going ? 'Đang tạo thiệp…' : 'Bắt đầu chỉnh sửa →',
+      go: e => { e.preventDefault(); this.setState({ going: true }); setTimeout(() => { location.href = 'Studio Editor v3.dc.html'; }, 900); } };
+  }
+}
+</script>
+</body>
+</html>

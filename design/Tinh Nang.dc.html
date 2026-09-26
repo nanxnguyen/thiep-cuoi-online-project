@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(28px)}100%{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="features" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="max-width:1280px;margin:0 auto;padding:96px 32px 80px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:48px;align-items:end">
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600;animation:fadeUp .8s both"><span style="width:28px;height:1px;background:#8a6425"></span>8 TÍNH NĂNG</div>
+      <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(50px,6.6vw,92px);line-height:1;letter-spacing:-.02em;animation:fadeUp .9s .15s both">Không chỉ là<br><em style="color:#8a6425">một tấm thiệp.</em></h1>
+    </div>
+    <p style="margin:0;font-size:17px;line-height:1.75;color:#5e534b;font-weight:300;max-width:440px;padding-bottom:10px;animation:fadeUp .9s .3s both">Từ lúc khách mở phong bì đến khi gửi lời chúc, mọi thứ diễn ra trong cùng một đường link. Bạn không cần thêm ứng dụng nào khác.</p>
+  </section>
+
+  <div style="position:sticky;top:63px;z-index:20;background:rgba(248,244,238,.94);backdrop-filter:blur(12px);border-top:1px solid #e8dfd3;border-bottom:1px solid #e8dfd3">
+    <div style="max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none">
+      <sc-for list="{{ features }}" as="f" hint-placeholder-count="8">
+        <a href="#{{ f.slug }}" style="flex:none;font-size:13px;padding:8px 14px;border-radius:999px;color:#3d342e;border:1px solid #ddd2c4;white-space:nowrap;transition:all .2s" style-hover="background:#1a1412;color:#f8f4ee;border-color:#1a1412">{{ f.title }}</a>
+      </sc-for>
+    </div>
+  </div>
+
+  <main style="max-width:1280px;margin:0 auto;padding:40px 32px 120px;display:flex;flex-direction:column">
+    <sc-for list="{{ features }}" as="f" hint-placeholder-count="4">
+      <section id="{{ f.slug }}" data-reveal="1" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px;align-items:center;padding:72px 0;border-bottom:1px solid #e8dfd3;scroll-margin-top:130px">
+        <div style="order:{{ f.order }};display:flex;flex-direction:column;gap:20px">
+          <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:64px;line-height:.8;color:#c9a86a">{{ f.n }}</span>
+          <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,3.6vw,46px);line-height:1.08">{{ f.title }}</h2>
+          <p style="margin:0;font-size:16px;line-height:1.75;color:#5e534b;max-width:480px">{{ f.desc }}</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <sc-for list="{{ f.points }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;align-items:baseline;font-size:15px;color:#3d342e"><span style="width:6px;height:6px;border-radius:50%;background:#a3161c;flex:none;transform:translateY(-2px)"></span>{{ p }}</div>
+            </sc-for>
+          </div>
+          <a href="Tinh Nang Chi Tiet.dc.html?slug={{ f.slug }}" style="align-self:flex-start;margin-top:8px;font-size:14px;font-weight:500;color:#1a1412;border-bottom:1px solid #1a1412;padding-bottom:3px" style-hover="color:#a3161c;border-color:#a3161c">Tìm hiểu thêm →</a>
+        </div>
+        <div style="order:{{ f.vorder }};aspect-ratio:5/4;border-radius:24px;background:{{ f.bg }};position:relative;overflow:hidden;display:grid;place-items:center">
+          <div style="position:absolute;width:70%;aspect-ratio:1;border-radius:50%;border:1px dashed {{ f.ink }};opacity:.25;animation:spinSlow 40s linear infinite"></div>
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;animation:floaty 6s ease-in-out infinite;text-align:center;padding:24px">
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(56px,7vw,96px);line-height:1;color:{{ f.ink }}">{{ f.glyph }}</span>
+            <span style="font-size:12px;letter-spacing:.3em;color:{{ f.ink }};opacity:.8">{{ f.caption }}</span>
+          </div>
+        </div>
+      </section>
+    </sc-for>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const F = [
+  ['xac-nhan-tham-du','Xác nhận tham dự','Khách bấm xác nhận ngay trên thiệp, chọn số người đi cùng và để lại ghi chú. Bạn xem tổng số theo thời gian thực để báo nhà hàng.',['Chọn số người đi cùng','Xuất danh sách ra CSV','Nhắc khách chưa trả lời'],'96/128','KHÁCH ĐÃ XÁC NHẬN','#e7eee6','#24493a'],
+  ['so-luu-but','Sổ lưu bút','Lời chúc của khách hiện ngay trên thiệp và được giữ lại thành một cuốn sổ nhỏ. Bạn có thể ẩn những lời chúc không muốn công khai.',['Duyệt trước khi hiển thị','Ghim lời chúc yêu thích','Tải về làm kỷ niệm'],'“…”','LỜI CHÚC MỚI','#f3e7df','#8a4a3a'],
+  ['mung-cuoi-qr','Mừng cưới QR','Mã QR chuyển khoản của cô dâu, chú rể hoặc gia đình hiện trong một phong bì nhỏ. Khách ở xa gửi mừng chỉ với một lần quét.',['Nhiều tài khoản cho hai nhà','Ẩn hoặc hiện tuỳ khách','Không thu phí giao dịch'],'QR','QUÉT ĐỂ MỪNG','#f5e3e1','#8e1b1f'],
+  ['ban-do-chi-duong','Bản đồ chỉ đường','Mỗi sự kiện (lễ gia tiên, lễ cưới, tiệc) có địa chỉ riêng và một nút mở chỉ đường trên điện thoại.',['Nhiều địa điểm cho nhiều lễ','Mở thẳng ứng dụng bản đồ','Ghi chú chỗ đỗ xe'],'→','CHỈ ĐƯỜNG','#e6ebef','#1f3a5f'],
+  ['dem-nguoc-lich','Đếm ngược & lịch','Đồng hồ đếm ngược tới giờ làm lễ và nút thêm sự kiện vào lịch điện thoại để khách không quên.',['Thêm vào lịch Google, Apple','Hiển thị cả ngày âm lịch','Tự đổi lời chào sau ngày cưới'],'45','NGÀY NỮA','#1c1012','#e6c47a'],
+  ['album-anh','Album ảnh','Đưa những tấm ảnh cưới đẹp nhất vào thiệp. Ảnh được nén sẵn để khách mở nhanh trên điện thoại.',['Tự nén ảnh khi tải lên','Sắp xếp bằng kéo thả','Xem toàn màn hình'],'✦','ẢNH CƯỚI','#efe6d9','#6b4a33'],
+  ['nhac-nen','Nhạc nền','Chọn bài hát của hai bạn để phát khi khách mở thiệp. Khách có thể tắt bất cứ lúc nào.',['Tải nhạc của bạn lên','Chọn đoạn bắt đầu','Nút tắt tiếng rõ ràng'],'♪','ĐANG PHÁT','#ece6f0','#4b3566'],
+  ['phong-bi-loi-moi','Phong bì lời mời','Thiệp mở ra từ một phong bì có tên khách, giống như nhận một tấm thiệp giấy được trao tận tay.',['Tên khách trên phong bì','Màu phong bì theo mẫu','Hiệu ứng mở nhẹ nhàng'],'✉','CHẠM ĐỂ MỞ','#f7efe3','#a3161c'],
+];
+class Component extends DCLogic {
+  componentDidMount() { setTimeout(() => {
+    this.io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const el = e.target; el.style.transition = 'opacity .9s cubic-bezier(.2,.7,.2,1), translate .9s cubic-bezier(.2,.7,.2,1)'; el.style.opacity = '1'; el.style.translate = '0 0'; this.io.unobserve(el); }), { threshold: .12 });
+    document.querySelectorAll('[data-reveal]').forEach(el => { if (el.getBoundingClientRect().top < innerHeight * .9) return; el.style.opacity = '0'; el.style.translate = '0 40px'; this.io.observe(el); });
+  }, 80); }
+  componentWillUnmount() { this.io && this.io.disconnect(); }
+  renderVals() {
+    return { features: F.map(([slug,title,desc,points,glyph,caption,bg,ink], i) => ({ slug, title, desc, points, glyph, caption, bg, ink, n: String(i+1).padStart(2,'0'), order: i % 2 ? 2 : 1, vorder: i % 2 ? 1 : 2 })) };
+  }
+}
+</script>
+</body>
+</html>

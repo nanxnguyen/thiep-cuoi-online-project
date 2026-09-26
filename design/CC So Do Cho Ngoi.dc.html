@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif}a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:1100px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Cong Cu.dc.html" style="font-size:13px;color:#8a7d72">Công cụ</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">Sơ đồ chỗ ngồi</span></div>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,48px)">Sơ đồ chỗ ngồi</h1>
+    <p style="margin:0;font-size:14px;color:#8a7d72">Chạm hoặc nhấn giữ để chọn khách, rồi bấm vào bàn để xếp chỗ.</p>
+    <div style="display:grid;grid-template-columns:260px 1fr;gap:24px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-family:'Playfair Display',serif;font-size:18px">Khách chưa xếp bàn</span>
+        <div style="display:flex;flex-direction:column;gap:6px;max-height:520px;overflow-y:auto">
+          <sc-for list="{{ unassigned }}" as="g" hint-placeholder-count="0">
+            <button onClick="{{ g.pick }}" style="text-align:left;font-family:inherit;font-size:14px;padding:12px 14px;border-radius:10px;cursor:pointer;background:{{ g.bg }};color:{{ g.fg }};border:1px solid {{ g.border }}">{{ g.name }}</button>
+          </sc-for>
+          <sc-if value="{{ noneUnassigned }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#8a7d72;padding:8px">Mọi khách đã có bàn.</span></sc-if>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:20px;align-content:start">
+        <sc-for list="{{ tables }}" as="t" hint-placeholder-count="0">
+          <div onClick="{{ t.onClick }}" style="border-radius:16px;border:2px solid {{ t.border }};background:#fff;padding:18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;min-height:180px">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'Playfair Display',serif;font-size:18px">{{ t.name }}</span><span style="font-size:12px;color:#8a7d72">{{ t.count }}/{{ t.cap }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <sc-for list="{{ t.seated }}" as="s" hint-placeholder-count="0"><div style="display:flex;justify-content:space-between;font-size:13px;background:#efe6d9;border-radius:8px;padding:8px 10px"><span>{{ s.name }}</span><button onClick="{{ s.remove }}" style="border:0;background:transparent;color:#a3161c;cursor:pointer;font-size:12px">✕</button></div></sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAMES = ['Cô Lan','Anh Tuấn','Bạn Thư','Chú Hải','Cô Hoa','Dì Sáu','Chị Mai','Bạn Nam','Bạn Linh','Anh Đức'];
+class Component extends DCLogic {
+  state = { picked: null, seats: {}, tables: Array.from({ length: 6 }, (_, i) => ({ id: i, name: `Bàn ${i + 1}`, cap: 8 })) };
+  renderVals() {
+    const s = this.state;
+    const seated = new Set(Object.values(s.seats).flat());
+    const unassigned = NAMES.filter(n => !seated.has(n)).map(n => ({ name: n, bg: s.picked === n ? '#a3161c' : '#fff', fg: s.picked === n ? '#fff' : '#1a1412', border: s.picked === n ? '#a3161c' : '#ddd2c4', pick: () => this.setState({ picked: s.picked === n ? null : n }) }));
+    const tables = s.tables.map(t => { const names = s.seats[t.id] || []; return { ...t, count: names.length, border: s.picked ? '#c9a86a' : '#efe6d9',
+      seated: names.map(n => ({ name: n, remove: () => this.setState(st => ({ seats: { ...st.seats, [t.id]: (st.seats[t.id] || []).filter(x => x !== n) } })) })),
+      onClick: () => { if (!s.picked) return; if (names.length >= t.cap) return; this.setState(st => ({ seats: { ...st.seats, [t.id]: [...(st.seats[t.id] || []), s.picked] }, picked: null })); } }; });
+    return { unassigned, noneUnassigned: unassigned.length === 0, tables };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+</helmet>
+<header style="background:rgba(248,244,238,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid #e8dfd3;font-family:'Be Vietnam Pro',sans-serif">
+  <div style="max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;gap:32px;flex-wrap:wrap">
+    <a href="Trang Chu.dc.html" style="display:flex;align-items:center;gap:12px;color:#1a1412;text-decoration:none">
+      <span style="width:34px;height:34px;border-radius:8px;background:#a3161c;color:#f8f4ee;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:600">M</span>
+      <span style="font-family:'Playfair Display',serif;font-size:19px;letter-spacing:0.28em;font-weight:500">MỘC</span>
+    </a>
+    <nav style="display:flex;gap:26px;margin-left:auto;flex-wrap:wrap;font-size:14px">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+        <a href="{{ it.href }}" style="color:{{ it.color }};font-weight:{{ it.weight }};text-decoration:none;padding:4px 0;border-bottom:1px solid {{ it.line }};transition:color .2s" style-hover="color:#1a1412">{{ it.label }}</a>
+      </sc-for>
+    </nav>
+    <div style="display:flex;gap:6px;align-items:center">
+      <a href="Ung Ho.dc.html" style="color:{{ donateColor }};font-size:14px;padding:9px 14px;text-decoration:none">Ủng hộ</a>
+      <a href="Tai Khoan.dc.html" style="color:{{ accColor }};font-size:14px;padding:9px 14px;text-decoration:none">Tài khoản</a>
+      <a href="Studio.dc.html" style="background:#a3161c;color:#fff;font-size:14px;font-weight:500;padding:10px 20px;border-radius:999px;text-decoration:none;transition:background .2s" style-hover="background:#7d0f14;color:#fff">Tạo thiệp</a>
+    </div>
+  </div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:64},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;templates&quot;,&quot;features&quot;,&quot;tools&quot;,&quot;help&quot;,&quot;account&quot;,&quot;donate&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const a = this.props.active ?? '';
+    const items = [['templates','Mẫu thiệp','Mau Thiep v2.dc.html'],['features','Tính năng','Tinh Nang.dc.html'],['tools','Công cụ','Cong Cu.dc.html']]
+      .map(([k,label,href]) => ({ label, href, color: k===a?'#1a1412':'#5e534b', weight: k===a?500:400, line: k===a?'#1a1412':'transparent' }));
+    return { items, accColor: a==='account' ? '#a3161c' : '#1a1412', donateColor: a==='donate' ? '#a3161c' : '#1a1412' };
+  }
+}
+</script>
+</body>
+</html>

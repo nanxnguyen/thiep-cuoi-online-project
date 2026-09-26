@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(28px)}100%{opacity:1;transform:none}}
+@keyframes zeroIn{0%{opacity:0;transform:scale(.6) rotate(-8deg);filter:blur(12px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes heart{0%,100%{transform:scale(1)}15%{transform:scale(1.2)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(201,168,106,.6)}50%{box-shadow:0 0 0 6px rgba(201,168,106,0)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="max-width:1280px;margin:0 auto;padding:96px 32px 64px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:24px">
+    <div style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600;animation:fadeUp .8s both">BẢNG GIÁ</div>
+    <div style="font-family:'Playfair Display',serif;font-size:clamp(140px,22vw,300px);line-height:.85;letter-spacing:-.04em;animation:zeroIn 1.2s .2s cubic-bezier(.2,.8,.2,1) both"><span style="background:linear-gradient(90deg,#a3161c 0%,#c9a86a 30%,#a3161c 60%,#c9a86a 90%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 8s linear infinite">0</span><span style="font-size:.3em;vertical-align:top;color:#8a6425">đ</span></div>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4vw,52px);line-height:1.1;animation:fadeUp .9s .6s both">Miễn phí cho mọi cặp đôi, <em style="color:#8a6425">mọi tính năng.</em></h1>
+    <p style="margin:0;font-size:16px;line-height:1.75;color:#5e534b;max-width:560px;animation:fadeUp .9s .75s both">Không có gói trả phí, không giới hạn số khách, không cần thẻ ngân hàng. Mộc được duy trì nhờ sự ủng hộ tự nguyện.</p>
+  </section>
+
+  <section style="max-width:1080px;margin:0 auto;padding:0 32px 120px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px">
+    <div data-reveal="1" style="background:#fff;border-radius:24px;padding:44px;box-shadow:0 30px 60px -40px rgba(26,20,18,.35);display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:30px">Đã có</span><span style="font-size:14px;color:#8a7d72">Dùng ngay hôm nay</span></div>
+        <span style="font-size:12px;font-weight:600;letter-spacing:.1em;background:#e7eee6;color:#24493a;padding:6px 12px;border-radius:999px">{{ incCount }} MỤC</span>
+      </div>
+      <div style="display:flex;flex-direction:column;border-top:1px solid #efe6d9">
+        <sc-for list="{{ included }}" as="i" hint-placeholder-count="10">
+          <div style="display:flex;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #efe6d9;font-size:15px"><span style="width:22px;height:22px;border-radius:50%;background:#24493a;color:#fff;display:grid;place-items:center;font-size:11px;flex:none">✓</span>{{ i }}</div>
+        </sc-for>
+      </div>
+      <a href="Studio.dc.html" style="text-align:center;background:#a3161c;color:#fff;padding:16px;border-radius:999px;font-size:15px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Tạo thiệp miễn phí</a>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div data-reveal="1" data-delay="120" style="background:#1c1012;color:#f1e7d6;border-radius:24px;padding:44px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:30px">Đang làm</span><span style="font-size:14px;color:#a8998c">Sẽ có trong các bản cập nhật tới</span></div>
+        <sc-for list="{{ planned }}" as="p" hint-placeholder-count="1">
+          <div style="display:flex;gap:14px;align-items:center;font-size:15px"><span style="width:10px;height:10px;border-radius:50%;background:#c9a86a;animation:pulseDot 2s infinite;flex:none"></span>{{ p }}</div>
+        </sc-for>
+      </div>
+      <div data-reveal="1" data-delay="220" style="background:#a3161c;color:#fff;border-radius:24px;padding:44px;display:flex;flex-direction:column;gap:18px;flex:1">
+        <span style="font-size:34px;display:inline-block;animation:heart 1.6s ease-in-out infinite;align-self:flex-start">♥</span>
+        <span style="font-family:'Playfair Display',serif;font-size:28px;line-height:1.2">Thấy Mộc có ích?</span>
+        <span style="font-size:15px;line-height:1.7;color:#fbe3e3">Một khoản ủng hộ nhỏ giúp trả tiền máy chủ và làm thêm mẫu mới.</span>
+        <a href="Ung Ho.dc.html" style="align-self:flex-start;margin-top:auto;background:#fff;color:#a3161c;padding:13px 22px;border-radius:999px;font-size:14px;font-weight:500" style-hover="color:#7d0f14">Ủng hộ dự án</a>
+      </div>
+    </div>
+  </section>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { setTimeout(() => {
+    this.io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const el = e.target, d = +(el.dataset.delay||0); el.style.transition = `opacity .9s ${d}ms, translate .9s ${d}ms cubic-bezier(.2,.7,.2,1)`; el.style.opacity = '1'; el.style.translate = '0 0'; this.io.unobserve(el); }), { threshold: .12 });
+    document.querySelectorAll('[data-reveal]').forEach(el => { if (el.getBoundingClientRect().top < innerHeight * .9) return; el.style.opacity = '0'; el.style.translate = '0 40px'; this.io.observe(el); });
+  }, 80); }
+  componentWillUnmount() { this.io && this.io.disconnect(); }
+  renderVals() {
+    const included = ['10 mẫu thiệp, đổi mẫu không mất nội dung','Xác nhận tham dự và sổ lưu bút','Mừng cưới QR','Bản đồ, đếm ngược, thêm vào lịch','Album ảnh và nhạc nền','Link riêng cho từng khách','Tài khoản lưu và quản lý thiệp','Thiệp song ngữ Việt · Anh','7 công cụ đám cưới miễn phí'];
+    return { included, incCount: included.length, planned: ['Video trong thiệp'] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="max-width:1000px;margin:0 auto;padding:96px 32px 64px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:22px">
+    <span style="font-size:12px;letter-spacing:.22em;color:#8a6425;font-weight:600;animation:fadeUp .8s both">TẠO THIỆP CƯỚI ONLINE</span>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(38px,5.6vw,64px);line-height:1.08;animation:fadeUp .9s .1s both">Tạo thiệp cưới trong 15 phút, <em style="color:#8a6425">miễn phí hoàn toàn</em></h1>
+    <p style="margin:0;font-size:16px;line-height:1.75;color:#5e534b;max-width:560px;animation:fadeUp .9s .2s both">Chọn mẫu, điền tên và ngày cưới, gửi link cho khách. Không cần thiết kế, không cần đăng nhập để bắt đầu.</p>
+    <a href="Studio.dc.html" style="background:#a3161c;color:#fff;padding:16px 28px;border-radius:999px;font-size:15px;font-weight:500;animation:fadeUp .9s .3s both" style-hover="background:#7d0f14;color:#fff">Tạo thiệp cưới ngay</a>
+  </section>
+  <section style="max-width:1080px;margin:0 auto;padding:48px 32px 96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:28px;text-align:center">
+    <sc-for list="{{ steps }}" as="s" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:10px;align-items:center"><span style="font-family:'Playfair Display',serif;font-style:italic;font-size:44px;color:#c9a86a">{{ s.n }}</span><span style="font-family:'Playfair Display',serif;font-size:19px">{{ s.t }}</span><span style="font-size:14px;color:#6b5237">{{ s.d }}</span></div></sc-for>
+  </section>
+  <section style="background:#efe6d9;padding:80px 0">
+    <div style="max-width:900px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;gap:24px">
+      <span style="font-family:'Playfair Display',serif;font-size:30px;text-align:center">Vì sao chọn Mộc</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:20px">
+        <sc-for list="{{ why }}" as="w" hint-placeholder-count="4"><div style="background:#f8f4ee;border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:18px">{{ w.t }}</span><span style="font-size:13px;color:#6b5237;line-height:1.6">{{ w.d }}</span></div></sc-for>
+      </div>
+    </div>
+  </section>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      steps: [['1','Chọn mẫu','10 mẫu, 6 phong cách khác nhau'],['2','Điền nội dung','Tên, ngày, địa điểm, ảnh và nhạc'],['3','Gửi link','Chia sẻ qua Zalo, Messenger hay SMS']].map(([n,t,d]) => ({n,t,d})),
+      why: [['Không mất tiền','Mọi mẫu và tính năng đều miễn phí, không giới hạn khách.'],['Tự lưu','Không lo mất dữ liệu, Mộc lưu lại mỗi khi bạn gõ.'],['Đổi mẫu tự do','Đổi mẫu bất cứ lúc nào, nội dung vẫn còn nguyên.'],['Link riêng từng khách','Mỗi khách một link mang tên họ.']].map(([t,d]) => ({t,d})),
+    };
+  }
+}
+</script>
+</body>
+</html>

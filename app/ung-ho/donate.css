@@ -1,0 +1,31 @@
+/* design/Ung Ho.dc.html */
+.donate-hero { position:relative; overflow:hidden; background:var(--accent); color:var(--surface); }
+.donate-hearts { position:absolute; inset:0; pointer-events:none; }
+.donate-hearts span { position:absolute; bottom:-30px; color:rgb(255 255 255 / .35); animation:donateRise 9s ease-in infinite; }
+@keyframes donateRise { 0% { transform:translateY(0) scale(.6); opacity:0; } 15% { opacity:.8; } 100% { transform:translateY(-420px) scale(1.1); opacity:0; } }
+.donate-hero__inner { position:relative; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr)); align-items:center; gap:56px; max-width:var(--wrap); margin:0 auto; padding:96px 32px; }
+.donate-hero__copy { display:flex; flex-direction:column; gap:24px; }
+.donate-hero__copy > span { align-self:flex-start; font-size:44px; }
+.donate-hero h1 { font-size:clamp(46px,6vw,84px); line-height:1; }
+.donate-hero h1 em { color:var(--gold-200); }
+.donate-hero__copy > p { max-width:460px; margin:0; color:var(--red-100); font-size:17px; line-height:1.75; }
+.donate-hero__copy ol { display:flex; flex-direction:column; gap:12px; margin:8px 0 0; padding:0; list-style:none; }
+.donate-hero__copy li { display:flex; align-items:center; gap:14px; font-size:15px; }
+.donate-hero__copy li span { display:grid; flex:none; place-items:center; width:28px; height:28px; border:1px solid rgb(255 255 255 / .4); border-radius:50%; font-size:12px; }
+.donate-card { position:relative; justify-self:center; width:100%; max-width:400px; padding:32px; border-radius:var(--radius-l); background:var(--surface); color:var(--ink); box-shadow:0 40px 80px -30px rgb(0 0 0 / .5); }
+.donate-card__head { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.donate-card__head span { color:var(--gold-deep); font-size:12px; font-weight:600; letter-spacing:.2em; text-transform:uppercase; }
+.donate-card__head strong { font-size:13px; font-weight:600; }
+.donate-card__qr { aspect-ratio:1; overflow:hidden; border:1px solid var(--paper-alt); border-radius:16px; background:var(--paper-soft); }
+.donate-card__qr img { width:100%; height:100%; object-fit:contain; }
+.donate-rows { display:flex; flex-direction:column; gap:2px; margin:22px 0 0; }
+.donate-rows > div { display:flex; flex-wrap:wrap; align-items:center; gap:0 12px; padding:12px 0; border-bottom:1px solid var(--paper-alt); }
+.donate-rows dt { flex-basis:100%; color:var(--faint); font-size:12px; }
+.donate-rows dd { flex:1; margin:0; font-size:15px; font-weight:500; }
+.donate-rows .tool-copy { align-self:center; }
+.donate-toast { position:absolute; bottom:-18px; left:50%; margin:0; transform:translateX(-50%); pointer-events:none; }
+.donate-toast span { display:block; padding:9px 16px; border-radius:var(--radius-full); background:var(--ink); color:var(--surface); font-size:13px; white-space:nowrap; animation:toastIn 1.8s both; }
+.donate-quote { display:flex; flex-direction:column; align-items:center; gap:18px; max-width:880px; margin:0 auto; padding:96px 32px; text-align:center; }
+.donate-quote p { margin:0; font:italic 400 clamp(28px,3.4vw,40px)/1.35 var(--display); }
+.donate-quote .tool-dark-pill { margin-top:12px; padding:15px 26px; font-size:15px; }
+@media (max-width:640px) { .donate-hero__inner { padding:64px 20px; } .donate-card { padding:24px; } }

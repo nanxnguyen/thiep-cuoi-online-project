@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="templates" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:1180px;margin:0 auto;padding:64px 32px 120px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:56px;align-items:start">
+    <div style="display:flex;justify-content:center;position:sticky;top:96px">
+      <div style="width:320px;animation:bob 6s ease-in-out infinite;border-radius:14px;box-shadow:0 40px 70px -30px rgba(26,20,18,.4)">
+        <dc-import name="Thiep Preview" family="{{ t.family }}" deep="{{ t.deep }}" paper="{{ t.paper }}" gold="{{ t.gold }}" tint="{{ t.tint }}" a="{{ t.a }}" b="{{ t.b }}" date="{{ t.date }}" place="{{ t.place }}" slot="detail" radius="14px" hint-size="320px,569px"></dc-import>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px;animation:fadeUp .7s .1s both">
+      <div style="display:flex;align-items:center;gap:10px"><a href="Mau Thiep v2.dc.html" style="font-size:13px;color:#8a7d72">Mẫu thiệp</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">{{ t.name }}</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">{{ t.style }} · {{ t.motif }}</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(38px,5vw,58px);line-height:1.05">{{ t.name }}</h1>
+        <p style="margin:0;font-size:16px;line-height:1.75;color:#5e534b;max-width:440px">{{ t.desc }}</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:13px;color:#8a7d72">Chọn màu để xem trước</span>
+        <div style="display:flex;gap:8px">
+          <sc-for list="{{ swatches }}" as="w" hint-placeholder-count="3"><button onClick="{{ w.onClick }}" title="{{ w.label }}" style="width:32px;height:32px;border-radius:50%;padding:0;cursor:pointer;background:{{ w.color }};border:2px solid #f8f4ee;box-shadow:0 0 0 2px {{ w.ring }}"></button></sc-for>
+        </div>
+      </div>
+      <div style="display:flex flex-direction:column;gap:12px;background:#efe6d9;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px">
+        <span style="font-family:'Playfair Display',serif;font-size:19px">Mẫu này bao gồm</span>
+        <sc-for list="{{ incl }}" as="i" hint-placeholder-count="6"><div style="display:flex;gap:10px;align-items:center;font-size:14px"><span style="width:6px;height:6px;border-radius:50%;background:#a3161c"></span>{{ i }}</div></sc-for>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="Studio.dc.html" style="background:#a3161c;color:#fff;padding:16px 26px;border-radius:999px;font-size:15px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Dùng mẫu này</a>
+        <a href="Mau Thiep v2.dc.html" style="color:#1a1412;padding:16px 22px;border-radius:999px;font-size:15px;border:1px solid #1a1412" style-hover="background:#1a1412;color:#f8f4ee">Xem các mẫu khác</a>
+      </div>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PAL = { do:['#8e1b1f','#f7efe3','#e0bb74','Đỏ'], dodam:['#5a1119','#f5ece2','#d4ac6a','Đỏ đậm'], nau:['#6b4a33','#f3ece2','#b88a55','Nâu'], lam:['#1f3a5f','#eef1f4','#c9ab72','Lam'], xanh:['#24493a','#eef1ea','#c9a86a','Xanh rêu'], hong:['#a4505f','#fbf1ef','#d8a977','Hồng'], vang:['#7a5a22','#f7f0e0','#e3c27e','Vàng kim'], oliu:['#5a6636','#f2f1e6','#c8b07a','Ô liu'], muc:['#1a1412','#f4f1ec','#c9a86a','Mực'], tim:['#4b3566','#f2eff5','#c7a878','Tím'] };
+const D = {
+  'gallery-noir': ['Gallery Noir','F',['muc','hong'],'Hạ Vy','Minh Khôi','HÀ NỘI · 11.2026','Chủ nhật, 5 giờ chiều','Hiện đại','Tạp chí','Nền chữ lớn kiểu bìa tạp chí, ảnh cưới nằm giữa như một trang biên tập.'],
+  'afterglow': ['Afterglow','E',['hong','oliu'],'Hoàng Long','Bảo Ngọc','28 · 09 · 2027','ĐÀ NẴNG','Lãng mạn','Phong bì','Ảnh dán trong phong thư nghiêng, gợi cảm giác một lá thư tay.'],
+  'soft-type': ['Soft Type','B',['tim','dodam','nau','lam'],'An','Bảo','09 · 11 · 2026','HÀ NỘI','Tối giản','Typography','Chỉ có chữ, không ảnh. Con số ngày cưới làm điểm nhấn duy nhất.'],
+  'maison-blanc': ['Maison Blanc','D',['vang','dodam','lam'],'Phương Thảo','Trung Kiên','06 · 12 · 2026','KHÁCH SẠN METROPOLE','Cổ điển','Khung vàng','Khung ảnh cong viền vàng, chữ viết tay kiểu Pháp cổ.'],
+  'wild-garden': ['Wild Garden','C',['xanh','hong','nau'],'Thu Hà','Văn Long','14 · 12 · 2026','ĐÀ LẠT','Botanical','Vòm hoa','Ảnh tròn dưới vòm cổng chạm khắc, gợi không khí sân vườn.'],
+  'olive-story': ['Olive Story','G',['oliu','cam'],'Thu Hà','Minh Quân','19 · 10 · 2026','','Botanical','Ảnh đôi','Hai khung ảnh polaroid so le cho cô dâu và chú rể.'],
+  'lua-son': ['Lụa Son','A',['do','xanh'],'Ngọc Hân','Đức Huy','20 · 11 · 2026','NAM ĐỊNH','Truyền thống','Chữ Hỷ','Dải màu cong ôm chữ Hỷ lớn, ảnh cưới hình vòm phía dưới.'],
+  'thanh-ngoc': ['Thanh Ngọc','J',['xanh','dodam','do'],'Thanh Hà','Tuấn Kiệt','05 · 01 · 2027','HÀ NỘI','Cổ điển','Khung vòm','Khung vòm viền vàng ôm ảnh cưới, nền đậm sang trọng.'],
+  'thuy-mac': ['Thủy Mặc','I',['lam','dodam'],'Ngọc Ánh','Thế Bảo','08 · 12 · 2026','BẮC NINH','Truyền thống','Hoa văn','Nhánh hoa vẽ tay mảnh, tên hai bên theo chiều dọc.'],
+  'so-xuan': ['Sơ Xuân','H',['dodam','lam'],'Thanh Tú','Hoàng Nam','22 · 11 · 2026','','Phong cách Hàn','Thông tin lễ','Bố cục hai ảnh tròn và bảng thông tin lễ cưới đầy đủ hai họ.'],
+};
+class Component extends DCLogic {
+  state = { pal: null };
+  renderVals() {
+    const p = new URLSearchParams(location.search);
+    const slug = p.get('id') || location.hash.replace('#','') || 'lua-son';
+    const row = D[slug] || D['lua-son'];
+    const [name, family, pals, a, b, date, place, style, motif, desc] = row;
+    const pal = this.state.pal && pals.includes(this.state.pal) ? this.state.pal : pals[0];
+    const [deep, paper, gold] = PAL[pal];
+    return {
+      t: { name, family, deep, paper, gold, tint: deep + '1f', a, b, date, place, style, motif, desc },
+      swatches: pals.map(k => ({ label: PAL[k][3], color: PAL[k][0], ring: k === pal ? '#1a1412' : 'transparent', onClick: () => this.setState({ pal: k }) })),
+      incl: ['Trang bìa và đếm ngược','Ảnh và nhạc nền','Xác nhận tham dự','Sổ lưu bút','Mừng cưới QR','Link riêng cho khách'],
+    };
+  }
+}
+</script>
+</body>
+</html>

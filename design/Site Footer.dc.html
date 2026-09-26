@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<footer style="background:#1c1012;color:#b8ab9b;font-family:'Be Vietnam Pro',sans-serif">
+  <div style="max-width:1280px;margin:0 auto;padding:96px 32px 56px;display:flex;flex-direction:column;gap:72px">
+    <sc-if value="{{ showCta }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-wrap:wrap;gap:32px;align-items:end;justify-content:space-between">
+        <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(44px,6vw,84px);line-height:1;color:#f1e7d6">Bắt đầu tấm thiệp<br><em style="color:#c9a86a">của hai bạn.</em></h2>
+        <a href="Studio.dc.html" style="background:#a3161c;color:#fff;padding:18px 32px;border-radius:999px;font-size:16px;font-weight:500;text-decoration:none;transition:all .25s" style-hover="background:#c01d24;color:#fff;transform:translateY(-2px)">Tạo thiệp miễn phí</a>
+      </div>
+    </sc-if>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:32px;border-top:1px solid #2e2522;padding-top:48px">
+      <div style="display:flex;flex-direction:column;gap:14px"><span style="font-family:'Playfair Display',serif;font-size:20px;letter-spacing:.28em;color:#f1e7d6">MỘC</span><span style="font-size:13px;line-height:1.7">Thiệp cưới online miễn phí.</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:14px"><span style="font-size:12px;letter-spacing:.18em;color:#7d7067">SẢN PHẨM</span><a href="Mau Thiep v2.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Mẫu thiệp</a><a href="Tinh Nang.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Tính năng</a><a href="Bang Gia.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Bảng giá</a><a href="Studio.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Tạo thiệp</a><a href="Tai Khoan.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Tài khoản</a></div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:14px"><span style="font-size:12px;letter-spacing:.18em;color:#7d7067">CÔNG CỤ</span><a href="Cong Cu.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Tất cả công cụ</a><a href="Cong Cu.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Danh sách khách</a><a href="Cong Cu.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Sơ đồ chỗ ngồi</a><a href="Cong Cu.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Save the date</a></div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:14px"><span style="font-size:12px;letter-spacing:.18em;color:#7d7067">HỖ TRỢ</span><a href="Tro Giup.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Trợ giúp</a><a href="Ung Ho.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Ủng hộ</a></div>
+      <div style="display:flex;flex-direction:column;gap:12px;font-size:14px"><span style="font-size:12px;letter-spacing:.18em;color:#7d7067">PHÁP LÝ</span><a href="Tro Giup.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Điều khoản</a><a href="Tro Giup.dc.html" style="color:#d8cbbb;text-decoration:none" style-hover="color:#fff">Quyền riêng tư</a></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:#7d7067"><span>© 2026 Mộc</span><span>Làm bằng ♥ tại Việt Nam</span></div>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:600},&quot;showCta&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() { return { showCta: this.props.showCta ?? true }; }
+}
+</script>
+</body>
+</html>

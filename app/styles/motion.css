@@ -1,0 +1,164 @@
+/* MỘC shared motion: the design system's keyframe set (design/design.md §6) in one place. Page CSS reuses these
+   names instead of declaring its own; a local @keyframes is only for a curve that exists nowhere else.
+   Invitation-only motion (inv-*) stays with the invitation renderer. */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+@keyframes floaty {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes heart {
+  20% {
+    transform: scale(1.2);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes spinSlow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes marqueeL {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marqueeR {
+  from {
+    transform: translateX(-50%);
+  }
+}
+/* scanning line over a QR code: animate `top` inside a positioned box */
+@keyframes scan {
+  0%,
+  100% {
+    top: 8%;
+  }
+  50% {
+    top: 90%;
+  }
+}
+/* toast pill: fade/slide in, hold, fade out (1.8s) */
+@keyframes toastIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  12%,
+  80% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes foil {
+  to {
+    background-position: -220% 0;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* gold foil: a gradient clipped to the text, with a slow sheen. Falls back to flat gold without background-clip. */
+.foil,
+h1 em.foil {
+  background: linear-gradient(100deg, var(--gold-700) 0%, var(--gold-400) 32%, var(--gold-600) 52%, var(--gold-200) 74%, var(--gold-700) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--gold-deep);
+  animation: foil 9s linear infinite;
+}
+/* staggered entrance for hero content: set --i (0,1,2…) on each element */
+.rise {
+  animation: rise var(--dur-reveal) var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 110ms);
+}
+.anim-fade-up {
+  animation: fadeUp var(--dur-reveal) var(--ease) both;
+}
+.anim-pop {
+  animation: popIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.anim-floaty {
+  animation: floaty 6s ease-in-out infinite;
+}
+.anim-heart {
+  animation: heart 1.6s ease-in-out infinite;
+}
+.anim-spin-slow {
+  animation: spinSlow 30s linear infinite;
+}
+/* text shimmer ("Miễn phí", big 0đ): set the gradient colours on the element, this adds the sweep */
+.anim-shimmer {
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 7s linear infinite;
+}
+/* horizontal marquee: the track holds its items twice; pauses under the pointer */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeL 40s linear infinite;
+}
+.marquee--reverse {
+  animation-name: marqueeR;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .foil,
+  h1 em.foil,
+  .anim-shimmer,
+  .marquee {
+    animation: none;
+  }
+}

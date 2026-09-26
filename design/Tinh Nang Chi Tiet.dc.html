@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(28px)}100%{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+@keyframes spinSlow{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="features" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:1080px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:56px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Tinh Nang.dc.html" style="font-size:13px;color:#8a7d72">Tính năng</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">{{ f.title }}</span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:48px;align-items:center;animation:fadeUp .7s both">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">TÍNH NĂNG {{ f.n }}/8</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(38px,5vw,58px);line-height:1.05">{{ f.title }}</h1>
+        <p style="margin:0;font-size:16px;line-height:1.75;color:#5e534b;max-width:440px">{{ f.desc }}</p>
+        <a href="Studio.dc.html" style="align-self:flex-start;margin-top:8px;background:#a3161c;color:#fff;padding:15px 24px;border-radius:999px;font-size:15px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Tạo thiệp có {{ f.titleLower }}</a>
+      </div>
+      <div style="aspect-ratio:5/4;border-radius:24px;background:{{ f.bg }};position:relative;overflow:hidden;display:grid;place-items:center">
+        <div style="position:absolute;width:70%;aspect-ratio:1;border-radius:50%;border:1px dashed {{ f.ink }};opacity:.25;animation:spinSlow 40s linear infinite"></div>
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;animation:floaty 6s ease-in-out infinite;text-align:center;padding:24px">
+          <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(56px,7vw,96px);line-height:1;color:{{ f.ink }}">{{ f.glyph }}</span>
+          <span style="font-size:12px;letter-spacing:.3em;color:{{ f.ink }};opacity:.8">{{ f.caption }}</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span style="font-family:'Playfair Display',serif;font-size:26px">Hoạt động thế nào</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:20px">
+        <sc-for list="{{ f.points }}" as="p" hint-placeholder-count="3">
+          <div style="border-top:1px solid #1a1412;padding-top:16px;display:flex;flex-direction:column;gap:8px"><span style="font-size:13px;color:#8a7d72">{{ p.n }}</span><span style="font-size:15px;line-height:1.6;color:#3d342e">{{ p.t }}</span></div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;border-top:1px solid #e0d5c6;padding-top:24px">
+      <a href="Tinh Nang Chi Tiet.dc.html?slug={{ f.prev }}" style="font-size:14px;color:#1a1412">← Tính năng trước</a>
+      <a href="Tinh Nang Chi Tiet.dc.html?slug={{ f.next }}" style="font-size:14px;color:#1a1412">Tính năng sau →</a>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const F = [
+  ['xac-nhan-tham-du','Xác nhận tham dự','Khách bấm xác nhận ngay trên thiệp, chọn số người đi cùng và để lại ghi chú. Bạn xem tổng số theo thời gian thực để báo nhà hàng.',['Khách mở thiệp và bấm "Sẽ tham dự" hoặc "Xin phép vắng"','Số người đi cùng và ghi chú được lưu lại ngay','Bạn xem tổng số trong tab Tham dự của trình chỉnh sửa'],'96/128','KHÁCH ĐÃ XÁC NHẬN','#e7eee6','#24493a'],
+  ['so-luu-but','Sổ lưu bút','Lời chúc của khách hiện ngay trên thiệp và được giữ lại thành một cuốn sổ nhỏ.',['Khách viết lời chúc ngay dưới phần xác nhận tham dự','Lời chúc hiện công khai hoặc chờ bạn duyệt','Bạn có thể ẩn hoặc ghim lời chúc yêu thích'],'“…”','LỜI CHÚC MỚI','#f3e7df','#8a4a3a'],
+  ['mung-cuoi-qr','Mừng cưới QR','Mã QR chuyển khoản hiện trong một phong bì nhỏ trên thiệp.',['Bạn nhập số tài khoản và tải ảnh QR lên','QR hiện trong phần "Mừng cưới" của thiệp','Khách quét bằng ứng dụng ngân hàng để chuyển ngay'],'QR','QUÉT ĐỂ MỪNG','#f5e3e1','#8e1b1f'],
+  ['ban-do-chi-duong','Bản đồ chỉ đường','Mỗi sự kiện có địa chỉ riêng và một nút mở chỉ đường trên điện thoại.',['Nhập địa chỉ chi tiết trong tab Sự kiện','Thiệp hiện nút "Chỉ đường" ngay bên dưới','Khách bấm để mở thẳng ứng dụng bản đồ trên máy'],'→','CHỈ ĐƯỜNG','#e6ebef','#1f3a5f'],
+  ['dem-nguoc-lich','Đếm ngược & lịch','Đồng hồ đếm ngược tới giờ làm lễ và nút thêm vào lịch điện thoại.',['Đồng hồ tự chạy dựa trên ngày giờ bạn đã nhập','Khách bấm "Thêm vào lịch" để lưu vào điện thoại','Đồng hồ tự đổi lời chào sau khi qua ngày cưới'],'45','NGÀY NỮA','#1c1012','#e6c47a'],
+  ['album-anh','Album ảnh','Đưa những tấm ảnh cưới đẹp nhất vào thiệp.',['Kéo thả ảnh vào tab Ảnh và nhạc','Ảnh được tự nén để mở nhanh trên điện thoại','Khách chạm vào ảnh để xem toàn màn hình'],'✦','ẢNH CƯỚI','#efe6d9','#6b4a33'],
+  ['nhac-nen','Nhạc nền','Chọn bài hát của hai bạn để phát khi khách mở thiệp.',['Dán link file nhạc trong tab Ảnh và nhạc','Nhạc tự phát nhẹ khi khách mở thiệp','Khách có thể tắt tiếng bất cứ lúc nào'],'♪','ĐANG PHÁT','#ece6f0','#4b3566'],
+  ['phong-bi-loi-moi','Phong bì lời mời','Thiệp mở ra từ một phong bì có tên khách.',['Khách mở link và thấy phong bì mang tên mình','Chạm vào phong bì để xem thiệp mở ra','Hiệu ứng đổi theo màu của mẫu thiệp đã chọn'],'✉','CHẠM ĐỂ MỞ','#f7efe3','#a3161c'],
+];
+class Component extends DCLogic {
+  renderVals() {
+    const p = new URLSearchParams(location.search);
+    const slug = p.get('slug') || 'xac-nhan-tham-du';
+    let i = F.findIndex(r => r[0] === slug); if (i < 0) i = 0;
+    const [s, title, desc, points, glyph, caption, bg, ink] = F[i];
+    return { f: { title, desc, glyph, caption, bg, ink, n: i + 1, titleLower: title.toLowerCase(),
+      points: points.map((t, j) => ({ t, n: String(j+1).padStart(2,'0') })),
+      prev: F[(i - 1 + F.length) % F.length][0], next: F[(i + 1) % F.length][0] } };
+  }
+}
+</script>
+</body>
+</html>

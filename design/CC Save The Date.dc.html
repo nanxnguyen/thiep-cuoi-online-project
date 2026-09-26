@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif}a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:1000px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Cong Cu.dc.html" style="font-size:13px;color:#8a7d72">Công cụ</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">Save the date</span></div>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,48px)">Ảnh báo ngày cưới</h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:40px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Tên cô dâu<input value="{{ a }}" onInput="{{ onA }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Tên chú rể<input value="{{ b }}" onInput="{{ onB }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Ngày cưới<input type="date" value="{{ date }}" onInput="{{ onDate }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Địa điểm<input value="{{ place }}" onInput="{{ onPlace }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Ảnh nền<input type="file" accept="image/*" onChange="{{ onImg }}" style="font-family:inherit;font-size:13px"></div>
+        <a href="{{ pngUrl }}" download="save-the-date.png" style="margin-top:8px;text-align:center;background:#a3161c;color:#fff;padding:14px;border-radius:999px;font-size:14px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Tải ảnh PNG</a>
+      </div>
+      <div style="display:flex;justify-content:center"><canvas ref="{{ canvasRef }}" width="640" height="800" style="width:100%;max-width:320px;border-radius:14px;box-shadow:0 30px 60px -30px rgba(26,20,18,.4)"></canvas></div>
+    </div>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { a: 'Hạ Vy', b: 'Minh Khôi', date: '2026-11-09', place: 'Hà Nội', img: null, pngUrl: '' };
+  canvasRef = React.createRef();
+  componentDidMount() { this.draw(); }
+  componentDidUpdate() { this.draw(); }
+  draw() {
+    const c = this.canvasRef.current; if (!c) return;
+    const ctx = c.getContext('2d'); const s = this.state;
+    ctx.clearRect(0, 0, c.width, c.height);
+    if (s.img) { const scale = Math.max(c.width / s.img.width, c.height / s.img.height); const w = s.img.width * scale, h = s.img.height * scale; ctx.drawImage(s.img, (c.width - w) / 2, (c.height - h) / 2, w, h); ctx.fillStyle = 'rgba(26,20,18,.42)'; ctx.fillRect(0, 0, c.width, c.height); }
+    else { ctx.fillStyle = '#8e1b1f'; ctx.fillRect(0, 0, c.width, c.height); }
+    ctx.textAlign = 'center'; ctx.fillStyle = '#f7efe3';
+    ctx.font = '24px "Be Vietnam Pro"'; ctx.fillText('SAVE THE DATE', c.width / 2, 210);
+    ctx.font = 'italic 64px "Great Vibes"'; ctx.fillText(`${s.a} & ${s.b}`, c.width / 2, 400);
+    const [y, m, d] = s.date.split('-'); ctx.font = '28px "Playfair Display"'; ctx.fillText(`${d}.${m}.${y}`, c.width / 2, 470);
+    ctx.font = '18px "Be Vietnam Pro"'; ctx.fillText(s.place.toUpperCase(), c.width / 2, 510);
+    c.toBlob(b => this.setState({ pngUrl: URL.createObjectURL(b) }));
+  }
+  renderVals() {
+    const s = this.state, mk = k => e => this.setState({ [k]: e.target.value });
+    return { a: s.a, b: s.b, date: s.date, place: s.place, canvasRef: this.canvasRef, pngUrl: s.pngUrl,
+      onA: mk('a'), onB: mk('b'), onDate: mk('date'), onPlace: mk('place'),
+      onImg: e => { const f = e.target.files[0]; if (!f) return; const img = new Image(); img.onload = () => this.setState({ img }); img.src = URL.createObjectURL(f); } };
+  }
+}
+</script>
+</body>
+</html>

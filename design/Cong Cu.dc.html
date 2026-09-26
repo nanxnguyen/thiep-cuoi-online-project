@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(28px)}100%{opacity:1;transform:none}}
+@keyframes bobble{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-4deg)}}
+@keyframes orbit{to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <section style="max-width:1280px;margin:0 auto;padding:96px 32px 72px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr));gap:48px;align-items:end">
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600;animation:fadeUp .8s both"><span style="width:28px;height:1px;background:#8a6425"></span>CÔNG CỤ ĐÁM CƯỚI</div>
+      <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(50px,6.6vw,92px);line-height:1;letter-spacing:-.02em;animation:fadeUp .9s .15s both">Bảy việc nhỏ,<br><em style="color:#8a6425">làm ngay tại đây.</em></h1>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:440px;padding-bottom:10px;animation:fadeUp .9s .3s both">
+      <p style="margin:0;font-size:17px;line-height:1.75;color:#5e534b;font-weight:300">Không cần đăng nhập. Mọi thứ chạy trên trình duyệt của bạn, dữ liệu không rời khỏi máy.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:#5e534b"><span style="padding:7px 14px;border:1px solid #e0d5c6;border-radius:999px">Không đăng nhập</span><span style="padding:7px 14px;border:1px solid #e0d5c6;border-radius:999px">Chạy offline được</span><span style="padding:7px 14px;border:1px solid #e0d5c6;border-radius:999px">Miễn phí</span></div>
+    </div>
+  </section>
+  <main style="max-width:1280px;margin:0 auto;padding:0 32px 120px;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,360px),1fr));gap:20px">
+    <sc-for list="{{ tools }}" as="t" hint-placeholder-count="7">
+      <a href="{{ t.href }}" data-reveal="1" data-delay="{{ t.delay }}" style="background:{{ t.bg }};color:{{ t.fg }};border-radius:22px;padding:32px;min-height:300px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s" style-hover="transform:translateY(-6px);box-shadow:0 30px 50px -30px rgba(26,20,18,.45);color:{{ t.fg }}">
+        <div style="position:absolute;right:-50px;top:-50px;width:200px;height:200px;border-radius:50%;border:1px dashed currentColor;opacity:.2;animation:orbit 30s linear infinite"></div>
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <span style="width:64px;height:64px;border-radius:18px;background:{{ t.chip }};display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:28px;animation:bobble 4s ease-in-out infinite;animation-delay:{{ t.adelay }}">{{ t.glyph }}</span>
+          <span style="font-size:12px;opacity:.6;font-variant-numeric:tabular-nums">{{ t.n }}</span>
+        </div>
+        <span style="margin-top:auto;font-family:'Playfair Display',serif;font-size:28px;line-height:1.1">{{ t.name }}</span>
+        <span style="font-size:14px;line-height:1.6;opacity:.8">{{ t.desc }}</span>
+        <span style="font-size:14px;font-weight:500">Mở công cụ →</span>
+      </a>
+    </sc-for>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TOOLS = [
+  ['Tạo mã QR','Dán link thiệp, nhận mã QR để in lên thiệp giấy hoặc bảng chào.','CC Tao QR.dc.html','▦','#fff','#1a1412','#f5e3e1'],
+  ['Nén ảnh','Giảm ảnh về tối đa 1600px, dưới 2MB, ngay trên máy của bạn.','CC Nen Anh.dc.html','◐','#efe6d9','#1a1412','#fff'],
+  ['Nén video','Thu nhỏ video phóng sự cưới trước khi đưa vào thiệp.','CC Nen Video.dc.html','▶','#1c1012','#f1e7d6','#3a2628'],
+  ['Tin nhắn mời','Gợi ý lời mời theo hai giọng điệu: trang trọng hoặc thân mật.','CC Tin Nhan.dc.html','✎','#fff','#1a1412','#e7eee6'],
+  ['Danh sách khách','Thêm, sửa, nhập và xuất danh sách khách bằng CSV.','CC Danh Sach Khach.dc.html','☰','#e7eee6','#1a1412','#fff'],
+  ['Sơ đồ chỗ ngồi','Kéo thả khách vào từng bàn tiệc, chạm để chọn trên điện thoại.','CC So Do Cho Ngoi.dc.html','◎','#a3161c','#fff','#8e1b1f'],
+  ['Save the date','Thiết kế ảnh báo ngày cưới và tải về PNG để đăng mạng xã hội.','CC Save The Date.dc.html','✦','#fff','#1a1412','#efe6d9'],
+];
+class Component extends DCLogic {
+  componentDidMount() { setTimeout(() => {
+    this.io = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const el = e.target, d = +(el.dataset.delay||0); el.style.transition = `opacity .9s ${d}ms, translate .9s ${d}ms cubic-bezier(.2,.7,.2,1)`; el.style.opacity = '1'; el.style.translate = '0 0'; this.io.unobserve(el); }), { threshold: .1 });
+    document.querySelectorAll('[data-reveal]').forEach(el => { el.style.opacity = '0'; el.style.translate = '0 40px'; this.io.observe(el); });
+  }, 80); }
+  componentWillUnmount() { this.io && this.io.disconnect(); }
+  renderVals() {
+    return { tools: TOOLS.map(([name, desc, href, glyph, bg, fg, chip], i) => ({ name, desc, href, glyph, bg, fg, chip, n: String(i+1).padStart(2,'0'), delay: (i % 3) * 100, adelay: `${i * .3}s` })) };
+  }
+}
+</script>
+</body>
+</html>

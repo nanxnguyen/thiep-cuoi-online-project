@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400&family=Playfair+Display:ital,wght@0,400;0,500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif}a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}15%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-4px)}}</style>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" active="tools" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="max-width:820px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:28px;position:relative">
+    <div style="display:flex;align-items:center;gap:10px"><a href="Cong Cu.dc.html" style="font-size:13px;color:#8a7d72">Công cụ</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">Tin nhắn mời</span></div>
+    <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,48px)">Sinh tin nhắn mời cưới</h1>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Tên cô dâu<input value="{{ a }}" onInput="{{ onA }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Tên chú rể<input value="{{ b }}" onInput="{{ onB }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+      <label style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Link thiệp<input value="{{ link }}" onInput="{{ onLink }}" style="font-family:inherit;font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid #ddd2c4;outline:none"></label>
+    </div>
+    <div style="display:flex;padding:4px;background:#efe8de;border-radius:999px;width:fit-content">
+      <sc-for list="{{ tones }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.pick }}" style="font-family:inherit;font-size:13px;padding:10px 18px;border:0;border-radius:999px;cursor:pointer;background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button></sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="3">
+        <div style="background:#fff;border-radius:16px;padding:22px;box-shadow:0 14px 28px -20px rgba(26,20,18,.3);display:flex;flex-direction:column;gap:12px;animation:fadeUp .4s both">
+          <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;line-height:1.6;color:#3d342e">{{ m.t }}</span>
+          <button onClick="{{ m.copy }}" style="align-self:flex-end;font-family:inherit;font-size:12px;padding:8px 14px;border-radius:999px;border:1px solid #ddd2c4;background:transparent;cursor:pointer" style-hover="background:#1a1412;color:#fff;border-color:#1a1412">Sao chép</button>
+        </div>
+      </sc-for>
+    </div>
+    <sc-if value="{{ copied }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;left:50%;bottom:32px;background:#1a1412;color:#fff;font-size:13px;padding:10px 18px;border-radius:999px;animation:toast 1.8s both">Đã sao chép tin nhắn</div></sc-if>
+  </main>
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const T = {
+  trang: [
+    (a,b,l) => `Kính mời anh/chị đến chung vui trong ngày trọng đại của ${a} và ${b}. Mọi thông tin chi tiết đã có trong thiệp mời: ${l}`,
+    (a,b,l) => `${a} và ${b} xin trân trọng thông báo lễ thành hôn. Kính mong quý anh/chị dành thời gian ghé chung vui, thiệp mời chi tiết: ${l}`,
+    (a,b,l) => `Con/cháu xin kính báo ngày vui của con/cháu. Kính mong đến chung vui, thông tin chi tiết trong link sau: ${l}`,
+  ],
+  than: [
+    (a,b,l) => `Ê, ${a} với ${b} cưới rồi nè! Ghé xem thiệp mời đi, nhớ xác nhận tham dự giúp bọn mình nha: ${l} 🥂`,
+    (a,b,l) => `Tin nóng: mình cưới rồi! Xem thiệp mời tại đây và đến chung vui với bọn mình nhé: ${l}`,
+    (a,b,l) => `Chỉ còn vài ngày nữa là đến ngày cưới của ${a} và ${b} rồi, xác nhận tham dự giúp mình nếu chưa xác nhận nha: ${l}`,
+  ],
+};
+class Component extends DCLogic {
+  state = { a: 'Hạ Vy', b: 'Minh Khôi', link: 'https://moc.vn/invite/vy-khoi', tone: 'trang', copied: false };
+  renderVals() {
+    const s = this.state;
+    const msgs = T[s.tone].map(f => f(s.a || 'cô dâu', s.b || 'chú rể', s.link || '[link thiệp]'));
+    return {
+      a: s.a, b: s.b, link: s.link, onA: e => this.setState({ a: e.target.value }), onB: e => this.setState({ b: e.target.value }), onLink: e => this.setState({ link: e.target.value }),
+      tones: [['trang','Trang trọng'],['than','Thân mật']].map(([k,label]) => ({ label, bg: s.tone===k?'#fff':'transparent', fg: s.tone===k?'#1a1412':'#8a7d72', pick: () => this.setState({ tone: k }) })),
+      msgs: msgs.map(t => ({ t, copy: () => { navigator.clipboard && navigator.clipboard.writeText(t); this.setState({ copied: false }, () => { this.setState({ copied: true }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: false }), 1800); }); } })),
+      copied: s.copied,
+    };
+  }
+}
+</script>
+</body>
+</html>
