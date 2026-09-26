@@ -10,3 +10,7 @@ dist
 
 # Local Netlify folder
 .netlify
+
+# Supabase CLI local state (secrets, machine-specific)
+supabase/.branches/
+supabase/.temp/
