@@ -2,7 +2,6 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { features, getFeature, featureDescription } from "../lib/marketing/features.ts";
 import { helpGroups, allHelpItems } from "../lib/marketing/help.ts";
-import { posts, getPost, postsByDate, formatPostDate } from "../lib/marketing/blog.ts";
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -27,23 +26,6 @@ test("help groups have unique ids and no empty question or answer", () => {
   for (const i of all) assert.ok(i.q.trim().length > 5 && i.a.trim().length > 20, i.q);
 });
 
-test("posts have unique slugs, valid dates, non-empty bodies and valid related features", () => {
-  assert.equal(new Set(posts.map((p) => p.slug)).size, posts.length);
-  for (const p of posts) {
-    assert.match(p.slug, SLUG);
-    assert.match(p.date, /^\d{4}-\d{2}-\d{2}$/);
-    assert.ok(!Number.isNaN(new Date(p.date).getTime()), p.slug);
-    assert.ok(p.title.length <= 90, `${p.slug} title too long for a search result`);
-    assert.ok(p.description.length >= 60 && p.description.length <= 200, `${p.slug} description length`);
-    assert.ok(p.blocks.length >= 5 && p.blocks.some((b) => b.type === "h2"), p.slug);
-    for (const r of p.related) assert.ok(getFeature(r), `${p.slug} -> ${r}`);
-  }
-  assert.ok(getPost(posts[0].slug));
-  assert.equal(getPost("nope"), undefined);
-  const dates = postsByDate().map((p) => p.date);
-  assert.deepEqual(dates, [...dates].sort().reverse());
-});
-
 test("feature meta descriptions fit a search result", () => {
   for (const f of features) {
     const d = featureDescription(f);
@@ -52,7 +34,8 @@ test("feature meta descriptions fit a search result", () => {
   }
 });
 
-test("post dates format in Vietnamese without shifting the day", () => {
-  assert.match(formatPostDate("2026-09-21"), /21 tháng 9,? 2026/);
-  assert.match(formatPostDate("2026-01-01"), /1 tháng 1,? 2026/);
+test("every feature has an illustration tile", async () => {
+  const { featureArt, features } = await import("../lib/marketing/features.ts");
+  for (const f of features) assert.ok(featureArt[f.slug], `featureArt missing for ${f.slug}`);
+  assert.equal(Object.keys(featureArt).length, features.length);
 });

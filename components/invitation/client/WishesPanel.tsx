@@ -1,13 +1,14 @@
 "use client";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { api, type PublicWish } from "@/lib/api";
 import { t, type Locale } from "@/lib/i18n";
+import { subscribeToWishes } from "@/lib/supabase-browser";
 
-type Props = { slug?: string; preview: boolean; guestName: string; initial: PublicWish[]; locale?: Locale };
+type Props = { slug?: string; invitationId?: string; preview: boolean; guestName: string; initial: PublicWish[]; locale?: Locale };
 
-export function WishesPanel({ slug, preview, guestName, initial, locale = "vi" }: Props) {
+export function WishesPanel({ slug, invitationId, preview, guestName, initial, locale = "vi" }: Props) {
   const dict = t(locale);
   const [listRef] = useAutoAnimate<HTMLUListElement>();
   const [wishes, setWishes] = useState(initial);
@@ -16,6 +17,13 @@ export function WishesPanel({ slug, preview, guestName, initial, locale = "vi" }
   const [website, setWebsite] = useState(""); // honeypot
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (preview || !slug || !invitationId) return;
+    return subscribeToWishes(invitationId, () => {
+      void api.getPublicInvitation(slug).then((dto) => { if (dto) setWishes(dto.wishes); });
+    });
+  }, [invitationId, preview, slug]);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -27,8 +35,7 @@ export function WishesPanel({ slug, preview, guestName, initial, locale = "vi" }
     }
     setStatus("sending");
     try {
-      const wish = await api.submitWish(slug, { name: name.trim(), message: message.trim(), website });
-      setWishes((list) => [wish, ...list]);
+      await api.submitWish(slug, { name: name.trim(), message: message.trim(), website });
       setMessage("");
       setStatus("sent");
     } catch (err) {

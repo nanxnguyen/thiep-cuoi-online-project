@@ -1,40 +1,24 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildInviteMessages } from "../lib/tools/inviteMessage.ts";
+import { inviteMessages } from "../lib/tools/inviteMessage.ts";
 
-const full = { groom: "Nam", bride: "Lan", date: "2026-11-08", link: "https://moc.wedding/invite/nam-lan", guestName: "Chú Ba" };
+const input = { bride: "Hạ Vy", groom: "Minh Khôi", link: "https://moc.vn/invite/vy-khoi" };
 
-test("buildInviteMessages includes date and link when given", () => {
-  const { friendly, formal } = buildInviteMessages(full);
-  assert.match(friendly, /Chú Ba ơi/);
-  assert.match(friendly, /Chủ nhật, 08\/11\/2026/);
-  assert.match(friendly, /https:\/\/moc\.wedding\/invite\/nam-lan/);
-  assert.match(formal, /Kính gửi Chú Ba/);
-  assert.match(formal, /Chủ nhật, 08\/11\/2026/);
+test("inviteMessages gives three messages per tone, each ending with the link", () => {
+  for (const tone of ["formal", "friendly"] as const) {
+    const list = inviteMessages(tone, input);
+    assert.equal(list.length, 3);
+    for (const m of list) assert.match(m, /https:\/\/moc\.vn\/invite\/vy-khoi/);
+  }
 });
 
-test("buildInviteMessages drops the link sentence entirely when link is empty", () => {
-  const { friendly, formal } = buildInviteMessages({ ...full, link: "" });
-  assert.doesNotMatch(friendly, /xem thiệp/);
-  assert.doesNotMatch(formal, /xem thiệp/);
-  assert.doesNotMatch(friendly, /tại:\s*\./);
+test("inviteMessages puts the bride first, like the design", () => {
+  assert.match(inviteMessages("formal", input)[0], /của Hạ Vy và Minh Khôi\./);
+  assert.match(inviteMessages("friendly", input)[0], /^Ê, Hạ Vy với Minh Khôi cưới rồi nè!/);
 });
 
-test("buildInviteMessages drops the date clause when date is empty or invalid", () => {
-  const { friendly } = buildInviteMessages({ ...full, date: "" });
-  assert.doesNotMatch(friendly, / vào \./);
-  assert.match(friendly, /tổ chức lễ cưới\./);
-  const { friendly: f2 } = buildInviteMessages({ ...full, date: "not-a-date" });
-  assert.doesNotMatch(f2, / vào \./);
-});
-
-test("buildInviteMessages falls back to a generic greeting when guestName is empty", () => {
-  const { friendly, formal } = buildInviteMessages({ ...full, guestName: "" });
-  assert.match(friendly, /^Cả nhà ơi, /);
-  assert.match(formal, /^Kính gửi,/);
-});
-
-test("buildInviteMessages falls back to generic couple names when both are empty", () => {
-  const { friendly } = buildInviteMessages({ ...full, groom: "", bride: "" });
-  assert.match(friendly, /chú rể và cô dâu tổ chức lễ cưới/);
+test("inviteMessages falls back to placeholders for blank fields", () => {
+  const [first] = inviteMessages("formal", { bride: " ", groom: "", link: "" });
+  assert.match(first, /của cô dâu và chú rể\./);
+  assert.match(first, /\[link thiệp\]$/);
 });

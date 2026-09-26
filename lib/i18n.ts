@@ -36,6 +36,8 @@ interface ChromeText {
 
   inviteTitle: string;
 
+  /** Sticky section nav on the guest page: family, events, album, rsvp, wishes, gift. */
+  nav: readonly [string, string, string, string, string, string];
   familyTitle: string;
   groomSideTitle: string;
   brideSideTitle: string;
@@ -133,6 +135,7 @@ const VI: ChromeText = {
 
   inviteTitle: "Lời mời",
 
+  nav: ["Gia đình", "Sự kiện", "Album", "Tham dự", "Lời chúc", "Mừng cưới"],
   familyTitle: "Hai họ",
   groomSideTitle: "Nhà trai",
   brideSideTitle: "Nhà gái",
@@ -230,6 +233,7 @@ const EN: ChromeText = {
 
   inviteTitle: "Invitation",
 
+  nav: ["Family", "Events", "Album", "RSVP", "Wishes", "Gift"],
   familyTitle: "Families",
   groomSideTitle: "Groom's Family",
   brideSideTitle: "Bride's Family",

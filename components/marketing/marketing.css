@@ -6,7 +6,7 @@
   overflow-x: clip; /* the glow behind the title reaches past the edges; clip (unlike hidden) does not add a scroll container */
   max-width: 920px;
   margin: 0 auto;
-  padding: 72px 24px 48px;
+  padding: 82px 24px 54px;
   text-align: center;
 }
 .mk-hero::before {
@@ -19,8 +19,8 @@
     radial-gradient(closest-side at 24% 40%, var(--tint-gold), transparent 72%),
     radial-gradient(closest-side at 78% 32%, var(--tint-rose), transparent 72%),
     var(--lattice-soft);
-  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
-  mask-image: linear-gradient(180deg, #000 55%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, black 55%, transparent);
+  mask-image: linear-gradient(180deg, black 55%, transparent);
   opacity: 0.9;
 }
 .mk-hero h1 {
@@ -116,9 +116,9 @@
   flex-direction: column;
   gap: 10px;
   height: 100%;
-  padding: 26px;
+  padding: 28px;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 16px;
   background: var(--surface);
   box-shadow: var(--shadow);
   transition: transform 0.25s, box-shadow 0.25s;
@@ -181,8 +181,8 @@ a.mk-card:hover {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(140deg, #f1e4c3, #d9b45f);
-  color: #4a3407;
+  background: linear-gradient(140deg, var(--tint-gold), var(--gold-light));
+  color: var(--gold-900);
   font-family: var(--display);
   font-size: 18px;
   font-weight: 700;
@@ -437,3 +437,21 @@ a.mk-card:hover {
     height: 40px;
   }
 }
+
+/* ---------- legal (design/Phap Ly.dc.html) ---------- */
+.legal { display:flex; flex-direction:column; gap:32px; max-width:var(--wrap-narrow); margin:0 auto; padding:72px 32px 120px; }
+.legal__head { display:flex; flex-direction:column; gap:14px; }
+.legal__head .eyebrow { letter-spacing:.2em; }
+.legal__head .eyebrow::before { display:none; }
+.legal__head h1 { font-size:clamp(34px,4.6vw,52px); }
+.legal__updated { margin:0; color:var(--faint); font-size:13px; }
+.legal__draft { margin:0; padding:16px 20px; border-radius:12px; background:var(--paper-alt); color:var(--ink-800); font-size:14px; line-height:1.6; }
+.legal__tabs { display:flex; flex-wrap:wrap; gap:8px; padding-bottom:16px; border-bottom:1px solid var(--line-strong); }
+.legal__tabs .chip { background:transparent; font-size:14px; font-weight:400; }
+.legal__tabs .chip[aria-current="page"] { border-color:var(--ink); background:transparent; color:var(--ink); }
+.legal__body { display:flex; flex-direction:column; gap:28px; color:var(--ink-800); font-size:15px; line-height:1.8; }
+.legal__body section { display:flex; flex-direction:column; gap:10px; }
+.legal__body h2 { color:var(--ink); font:400 21px/1.3 var(--display); letter-spacing:0; }
+.legal__body p, .legal__body ul { margin:0; }
+.legal__body ul { padding-left:20px; }
+@media (max-width:640px) { .legal { padding:48px 20px 96px; } }

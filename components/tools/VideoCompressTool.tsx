@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile, toBlobURL } from "@ffmpeg/util";
-import { Glyph, SelectField } from "@/components/studio/fields";
 
 // Lõi single-thread của @ffmpeg/core — không cần SharedArrayBuffer/COOP-COEP (khác bản -mt), nên không
 // phải bật header cách ly nguồn gốc cho cả site (sẽ phá Google Maps embed và 2 host ảnh QR đang dùng).
@@ -89,59 +88,51 @@ export function VideoCompressTool() {
 
   const busy = phase === "loading-core" || phase === "running";
 
+  // No design source for this tool (CC Nen Video is missing from design/): same language as CC Nen Anh.
   return (
-    <div className="card tool-result">
-      <div className="pn-drop">
-        <Glyph name="upload" size={28} />
-        <p>Video được xử lý ngay trên máy bạn, không tải lên máy chủ nào — có thể mất vài phút với video dài.</p>
-        <label className="button-ghost pn-compact" style={{ cursor: "pointer" }}>
-          <Glyph name="upload" size={18} />
-          {file ? file.name : "Chọn video"}
-          <input
-            type="file"
-            accept="video/*"
-            hidden
-            onChange={(e) => {
-              const picked = e.target.files?.[0];
-              e.target.value = "";
-              if (picked) pickFile(picked);
-            }}
-          />
-        </label>
-        {file && <small className="pn-hint">Dung lượng gốc: {fmtMb(file.size)}</small>}
+    <>
+      <label className="tool-drop">
+        <strong>{file ? file.name : "Chọn video cưới"}</strong>
+        <span>{file ? `Dung lượng gốc: ${fmtMb(file.size)}` : "MP4, MOV — xử lý ngay trên máy, video dài có thể mất vài phút"}</span>
+        <input
+          type="file"
+          accept="video/*"
+          className="tool-sr"
+          onChange={(e) => {
+            const picked = e.target.files?.[0];
+            e.target.value = "";
+            if (picked) pickFile(picked);
+          }}
+        />
+      </label>
+      <div className="tool-segment" role="group" aria-label="Mức nén">
+        {Object.entries(LEVELS).map(([value, l]) => (
+          <button key={value} type="button" aria-pressed={level === value} onClick={() => setLevel(value as LevelId)}>
+            {l.label}
+          </button>
+        ))}
       </div>
-
-      <SelectField
-        label="Mức nén"
-        value={level}
-        onChange={(v) => setLevel(v as LevelId)}
-        options={Object.entries(LEVELS).map(([value, l]) => ({ value, label: l.label }))}
-      />
-
       {error && (
-        <p className="form-error" role="alert">
+        <p className="tool-error" role="alert">
           {error}
         </p>
       )}
-
-      <button type="button" className="button-primary" onClick={run} disabled={!file || busy}>
+      <button type="button" className="button-primary tool-cta" onClick={run} disabled={!file || busy}>
         {phase === "loading-core" ? "Đang tải công cụ nén…" : phase === "running" ? `Đang nén… ${progress}%` : "Nén video"}
       </button>
-      {busy && <progress value={phase === "running" ? progress : undefined} max={100} style={{ width: "100%" }} />}
-
+      {busy && <progress className="tool-progress" value={phase === "running" ? progress : undefined} max={100} />}
       {result && (
-        <>
-          <video src={result.url} controls style={{ width: "100%", borderRadius: 12 }} />
-          <div className="tool-result__meta">
-            <span>
-              {fmtMb(file!.size)} → {fmtMb(result.size)}
-            </span>
-            <a className="button-ghost" href={result.url} download="video-da-nen.mp4">
-              Tải video
-            </a>
-          </div>
-        </>
+        <div className="tool-video">
+          <video src={result.url} controls />
+          <p className="tool-shots__size">
+            <span>{fmtMb(file!.size)}</span>
+            <b>→ {fmtMb(result.size)}</b>
+          </p>
+          <a className="tool-dark-pill" href={result.url} download="video-da-nen.mp4">
+            Tải video đã nén
+          </a>
+        </div>
       )}
-    </div>
+    </>
   );
 }

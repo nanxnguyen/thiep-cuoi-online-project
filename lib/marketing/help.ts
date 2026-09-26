@@ -14,7 +14,7 @@ export const helpGroups: readonly HelpGroup[] = [
       },
       {
         q: "Tôi có cần đăng ký tài khoản không?",
-        a: "Không. MỘC chưa có tài khoản. Quyền sửa thiệp nằm ở \"link chỉnh sửa\" mà hai bạn nhận khi tạo thiệp. Hãy lưu link này cẩn thận.",
+        a: "Không bắt buộc. Hai bạn có thể tạo thiệp ngay và lưu link chỉnh sửa. Nếu tạo tài khoản, bạn có thể nhận thiệp vào tài khoản để mở lại trên thiết bị khác.",
       },
       {
         q: "Dùng MỘC có mất phí không?",
@@ -36,7 +36,7 @@ export const helpGroups: readonly HelpGroup[] = [
       },
       {
         q: "Tôi làm mất link chỉnh sửa thì sao?",
-        a: "Nếu bạn vẫn dùng trình duyệt cũ, trang Studio nhớ thiệp của bạn trên máy đó và có nút chép lại link chỉnh sửa. Nếu mất cả link lẫn dữ liệu trình duyệt, MỘC không thể khôi phục vì không có tài khoản để đối chiếu, và bạn cần tạo thiệp mới. Vì vậy hãy lưu link vào ghi chú hoặc gửi cho chính mình qua email ngay sau khi tạo.",
+        a: "Nếu thiệp đã được nhận vào tài khoản, hãy đăng nhập để mở lại. Nếu không, trang Studio trên trình duyệt cũ có thể còn lưu link sửa. Nếu mất cả link lẫn dữ liệu trình duyệt và chưa nhận vào tài khoản, MỘC không thể khôi phục khóa sửa; hãy giữ link ở nơi riêng tư.",
       },
       {
         q: "Tôi có sửa thiệp từ máy khác được không?",
@@ -66,7 +66,7 @@ export const helpGroups: readonly HelpGroup[] = [
       },
       {
         q: "Làm sao để khách thấy phong bì ghi tên họ?",
-        a: "Thêm ?to= và tên khách vào cuối link, ví dụ /invite/minh-va-an?to=Chú Ba. Không có ?to= thì phong bì ghi \"Quý khách\".",
+        a: "Thêm khách vào tab Khách mời trong Studio rồi sao chép link riêng của từng hộ (dạng /invite/duong-dan?g=mã-riêng). Không có mã thì phong bì ghi \"Quý khách\".",
       },
       {
         q: "Thiệp của tôi có xuất hiện trên Google không?",

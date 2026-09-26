@@ -1,3 +1,5 @@
+import { colors } from "../templates.ts";
+
 // Feature pages of the marketing site. Pure data: every number below (6 events, 24 photos, 3 questions, 2 gift
 // accounts, 2 MB photos, 8 MB music) mirrors lib/content.ts and the backend rules, so change them together.
 export type Faq = { q: string; a: string };
@@ -185,24 +187,37 @@ export const features: readonly Feature[] = [
     name: "Phong bì và lời mời riêng",
     tagline: "Mỗi khách nhận một phong bì ghi đúng tên của họ.",
     intro:
-      "Thiệp giấy có tên người nhận viết tay. Thiệp online cũng thế: thêm ?to=Tên vào cuối link, khách sẽ thấy phong bì ghi tên mình rồi chạm để mở.",
+      "Thiệp giấy có tên người nhận viết tay. Thiệp online cũng thế: mỗi khách có một link riêng, mở ra thấy phong bì ghi đúng tên hộ của mình.",
     steps: [
-      "Sau khi xuất bản, chép link thiệp của hai bạn.",
-      "Thêm ?to= và tên người nhận, ví dụ: ...?to=Chú Ba. Tên có dấu và khoảng trắng đều dùng được.",
-      "Gửi qua Zalo, Messenger hay tin nhắn. Người nhận thấy phong bì mang tên họ.",
+      "Trong Studio, mở tab Khách mời và thêm từng hộ (hoặc nhập CSV).",
+      "Sao chép link riêng của từng hộ, dạng .../invite/duong-dan?g=mã-riêng. Mỗi link gắn đúng một hộ trong danh sách.",
+      "Gửi qua Zalo, Messenger hay tin nhắn. Người nhận thấy phong bì mang tên hộ của họ.",
     ],
     points: [
-      { title: "Không có tên vẫn đẹp", body: "Nếu link không có ?to=, phong bì ghi Quý khách." },
-      { title: "Phong bì hợp từng mẫu", body: "Mỗi mẫu có phong bì riêng: nâu tối cho Gallery Noir, đỏ son vàng ánh cho Lụa Son, hồng phấn cho Sơ Xuân, mực đen với con dấu son cho Thủy Mặc." },
-      { title: "Chào khách, điền sẵn tên", body: "Tên trong link dùng để ghi lên phong bì và điền sẵn vào ô tên khi khách trả lời. MỘC không ghi lại lượt mở link; tên chỉ được lưu khi khách gửi xác nhận tham dự." },
+      { title: "Không có link riêng vẫn đẹp", body: "Nếu khách mở link chung không có mã, phong bì ghi Quý khách." },
+      { title: "Phong bì hợp từng mẫu", body: "Màu phong bì và họa tiết đi cùng bảng màu của mẫu thiệp hai bạn đã chọn." },
+      { title: "Chào khách, điền sẵn tên", body: "Tên hộ trong danh sách dùng để ghi lên phong bì và điền sẵn vào ô tên khi khách trả lời. MỘC không ghi lại lượt mở link; tên chỉ được lưu khi khách gửi xác nhận tham dự." },
     ],
     faq: [
-      { q: "Có công cụ tạo link hàng loạt không?", a: "Hiện hai bạn tự thêm ?to= cho từng người. Quản lý danh sách khách và tạo link hàng loạt nằm trong kế hoạch tiếp theo." },
+      { q: "Có công cụ tạo link hàng loạt không?", a: "Có. Tab Khách mời trong Studio cho phép nhập danh sách CSV và sao chép link riêng cho từng khách hoặc cả danh sách." },
       { q: "Khách mở lại thiệp có thấy phong bì nữa không?", a: "Có. Mỗi lần mở link mới, phong bì hiện lại để chào." },
     ],
     related: ["xac-nhan-tham-du", "nhac-nen", "album-anh"],
   },
 ];
+
+// Illustration tile per feature (design/Tinh Nang + Tinh Nang Chi Tiet): big glyph, caption, and colours taken from the
+// invitation palettes and site tokens so they follow the design system.
+export const featureArt: Record<string, { glyph: string; caption: string; bg: string; ink: string }> = {
+  "xac-nhan-tham-du": { glyph: "96/128", caption: "KHÁCH ĐÃ XÁC NHẬN", bg: "var(--ok-bg)", ink: "var(--ok-fg)" },
+  "so-luu-but": { glyph: "“…”", caption: "LỜI CHÚC MỚI", bg: colors.cam.paper, ink: colors.cam.deep },
+  "mung-cuoi-qr": { glyph: "QR", caption: "QUÉT ĐỂ MỪNG", bg: "var(--danger-bg)", ink: "var(--danger-fg)" },
+  "ban-do-chi-duong": { glyph: "→", caption: "CHỈ ĐƯỜNG", bg: colors.lam.paper, ink: colors.lam.deep },
+  "dem-nguoc-lich": { glyph: "45", caption: "NGÀY NỮA", bg: "var(--night)", ink: "var(--gold-light)" },
+  "album-anh": { glyph: "✦", caption: "ẢNH CƯỚI", bg: "var(--paper-alt)", ink: colors.nau.deep },
+  "nhac-nen": { glyph: "♪", caption: "ĐANG PHÁT", bg: colors.tim.paper, ink: colors.tim.deep },
+  "phong-bi-loi-moi": { glyph: "✉", caption: "CHẠM ĐỂ MỞ", bg: colors.do.paper, ink: "var(--accent)" },
+};
 
 export const getFeature = (slug: string): Feature | undefined => features.find((f) => f.slug === slug);
 

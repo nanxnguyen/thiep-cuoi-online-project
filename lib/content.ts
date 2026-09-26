@@ -4,6 +4,7 @@ export const MAX_EVENTS = 6;
 export const MAX_ALBUM = 24;
 export const MAX_QUESTIONS = 3;
 export const MAX_ACCOUNTS = 2;
+export const MAX_SCHEDULE_ITEMS = 8;
 export const EVENT_KINDS = ["engagement", "ceremony", "reception", "custom"] as const;
 
 // Mirrors the backend record `InvitationContent` field for field (spec 6.2).
@@ -16,6 +17,7 @@ const timeStr = z.string().regex(/^(\d{2}:\d{2})?$/);
 const id = z.string().min(1).max(40);
 
 const side = z.object({ father: text(60), mother: text(60), address: text(200) });
+const person = z.object({ name: text(60), rank: text(30).default("") });
 
 export const eventSchema = z.object({
   id,
@@ -23,6 +25,7 @@ export const eventSchema = z.object({
   title: text(80),
   date: dateStr,
   time: timeStr,
+  arrivalTime: timeStr.default(""),
   lunar: text(60),
   venue: text(120),
   address: text(200),
@@ -31,9 +34,11 @@ export const eventSchema = z.object({
 
 export const contentSchema = z.object({
   v: z.literal(1),
+  paletteKey: z.string().max(20).regex(/^[a-z]*$/).default(""),
+  envelope: z.object({ greeting: text(120) }).default({ greeting: "Trân trọng kính mời" }),
   couple: z.object({
-    groom: z.object({ name: text(60) }),
-    bride: z.object({ name: text(60) }),
+    groom: person,
+    bride: person,
     message: text(500),
     // Bản tiếng Anh tuỳ chọn của "message" (Phase 5, đa ngôn ngữ) — "" khi chủ thiệp chưa gõ, trang khách
     // fallback về "message". Không dịch tên/địa chỉ/ngày — xem docs/superpowers/specs/2026-09-23-i18n-phase5-design.md.
@@ -42,7 +47,9 @@ export const contentSchema = z.object({
   }),
   family: z.object({ groomSide: side, brideSide: side }),
   events: z.array(eventSchema).max(MAX_EVENTS),
+  schedule: z.array(z.object({ id, time: timeStr, title: text(80) })).max(MAX_SCHEDULE_ITEMS).default([]),
   album: z.array(z.object({ url: httpUrl, alt: text(120) })).max(MAX_ALBUM),
+  albumLayout: z.enum(["grid", "masonry", "filmstrip"]).default("grid"),
   music: z.object({ url: httpUrl, title: text(80) }).nullable(),
   rsvp: z.object({
     enabled: z.boolean(),
@@ -68,6 +75,18 @@ export const contentSchema = z.object({
       .max(MAX_ACCOUNTS),
   }),
   thanks: z.object({ message: text(500), messageEn: text(500) }),
+  sections: z.object({
+    couple: z.boolean().default(true),
+    family: z.boolean().default(true),
+    events: z.boolean().default(true),
+    schedule: z.boolean().default(false),
+    countdown: z.boolean().default(true),
+    album: z.boolean().default(true),
+    rsvp: z.boolean().default(true),
+    guestbook: z.boolean().default(true),
+    gift: z.boolean().default(true),
+    thanks: z.boolean().default(true),
+  }).default({ couple: true, family: true, events: true, schedule: false, countdown: true, album: true, rsvp: true, guestbook: true, gift: true, thanks: true }),
 });
 
 export type Content = z.infer<typeof contentSchema>;
@@ -82,9 +101,11 @@ export function defaultContent(now: Date = new Date()): Content {
   const day = isoDate(daysFrom(now, 75));
   return {
     v: 1,
+    paletteKey: "",
+    envelope: { greeting: "Trân trọng kính mời" },
     couple: {
-      groom: { name: SAMPLE_NAMES.groom },
-      bride: { name: SAMPLE_NAMES.bride },
+      groom: { name: SAMPLE_NAMES.groom, rank: "" },
+      bride: { name: SAMPLE_NAMES.bride, rank: "" },
       message:
         "Chúng mình sắp về chung một nhà. Rất mong bạn đến chung vui và chúc phúc cho ngày trọng đại của hai đứa.",
       messageEn: "",
@@ -95,16 +116,23 @@ export function defaultContent(now: Date = new Date()): Content {
       brideSide: { father: "Ông Lê Quang Minh", mother: "Bà Phạm Thị Thu", address: "Quận 3, TP. Hồ Chí Minh" },
     },
     events: [
-      { id: "ceremony", kind: "ceremony", title: "Lễ thành hôn", date: day, time: "10:00", lunar: "", venue: "Tư gia nhà trai", address: "12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh", mapUrl: "" },
-      { id: "reception", kind: "reception", title: "Tiệc cưới", date: day, time: "18:00", lunar: "", venue: "Nhà hàng Hoa Sen", address: "45 Lê Lợi, Quận 1, TP. Hồ Chí Minh", mapUrl: "" },
+      { id: "ceremony", kind: "ceremony", title: "Lễ thành hôn", date: day, time: "10:00", arrivalTime: "", lunar: "", venue: "Tư gia nhà trai", address: "12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh", mapUrl: "" },
+      { id: "reception", kind: "reception", title: "Tiệc cưới", date: day, time: "18:00", arrivalTime: "17:30", lunar: "", venue: "Nhà hàng Hoa Sen", address: "45 Lê Lợi, Quận 1, TP. Hồ Chí Minh", mapUrl: "" },
     ],
+    schedule: [],
     album: [],
+    albumLayout: "grid",
     music: null,
     rsvp: { enabled: true, deadline: "", questions: [] },
     guestbook: { enabled: true },
     gift: { enabled: false, note: "Sự hiện diện của bạn là niềm vui lớn nhất của chúng mình.", noteEn: "", accounts: [] },
     thanks: { message: "Cảm ơn bạn đã dành thời gian và tình cảm cho chúng mình.", messageEn: "" },
+    sections: { couple: true, family: true, events: true, schedule: false, countdown: true, album: true, rsvp: true, guestbook: true, gift: true, thanks: true },
   };
+}
+
+export function normalizeContent(input: unknown): Content {
+  return contentSchema.parse(input);
 }
 
 // Preview data for /templates/[id]. Album paths are root-relative, so this is intentionally

@@ -13,6 +13,13 @@ type Props = {
   locale?: Locale;
 };
 
+// Deterministic petals behind the envelope and a burst of confetti when it opens (design/Thiep Khach.dc.html).
+const rnd = (i: number, n: number) => {
+  const x = Math.sin(i * 97.13 + n * 13.7) * 10000;
+  return x - Math.floor(x);
+};
+const PETALS = Array.from({ length: 14 }, (_, i) => ({ left: `${rnd(i, 3) * 100}%`, size: 8 + rnd(i, 1) * 10, dur: 10 + rnd(i, 2) * 8, delay: -rnd(i, 4) * 18 }));
+const BURST = Array.from({ length: 24 }, (_, i) => ({ angle: (i / 24) * 360 + rnd(i, 5) * 12, dist: 90 + rnd(i, 6) * 120, tone: i % 3 }));
 const OPEN_MS = 1100; // flap opens, card rises, overlay fades: keep in sync with .inv-gate[data-phase="opening"] in CSS
 
 // Holds the two pieces of state that need a user gesture: the envelope that gates the page and the
@@ -21,6 +28,10 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
   const dict = t(locale);
   const [phase, setPhase] = useState<"closed" | "opening" | "open">(gate ? "closed" : "open");
   const [playing, setPlaying] = useState(false);
+  // Cánh hoa trang trí: chỉ render sau mount để HTML server và client khớp nhau
+  // (tránh hydration mismatch làm liệt nút Mở thiệp).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const audio = useRef<HTMLAudioElement>(null);
   const openButton = useRef<HTMLButtonElement>(null);
   const content = useRef<HTMLDivElement>(null);
@@ -74,6 +85,20 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
     <>
       {phase !== "open" && (
         <div className="inv-gate" data-phase={phase} role="dialog" aria-modal="true" aria-labelledby="inv-gate-title">
+          {mounted && (
+            <div className="inv-gate__petals" aria-hidden="true">
+              {PETALS.map((p, i) => (
+                <i key={i} style={{ left: p.left, width: p.size, height: p.size * 0.8, animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s` }} />
+              ))}
+            </div>
+          )}
+          {phase === "opening" && (
+            <div className="inv-gate__burst" aria-hidden="true">
+              {BURST.map((b, i) => (
+                <i key={i} data-tone={b.tone} style={{ "--a": `${b.angle}deg`, "--d": `${b.dist}px` } as React.CSSProperties} />
+              ))}
+            </div>
+          )}
           <div className="inv-envelope" aria-hidden="true">
             <div className="inv-envelope__back" />
             <div className="inv-envelope__card">

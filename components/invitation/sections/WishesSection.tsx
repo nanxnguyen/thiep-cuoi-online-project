@@ -7,6 +7,7 @@ import { WishesPanel } from "../client/WishesPanel";
 export function WishesSection({
   content,
   slug,
+  invitationId,
   preview,
   guestName,
   wishes,
@@ -14,6 +15,7 @@ export function WishesSection({
 }: {
   content: Content;
   slug?: string;
+  invitationId?: string;
   preview: boolean;
   guestName: string;
   wishes: PublicWish[];
@@ -22,12 +24,12 @@ export function WishesSection({
   if (!content.guestbook.enabled) return null;
   const dict = t(locale);
   return (
-    <section className="inv-section inv-wishsec" aria-labelledby="inv-wish-h">
+    <section id="loi-chuc" className="inv-section inv-wishsec" aria-labelledby="inv-wish-h">
       <Reveal>
         <h2 className="inv-label" id="inv-wish-h">
           {dict.wishesTitle}
         </h2>
-        <WishesPanel slug={slug} preview={preview} guestName={guestName} initial={wishes} locale={locale} />
+        <WishesPanel slug={slug} invitationId={invitationId} preview={preview} guestName={guestName} initial={wishes} locale={locale} />
       </Reveal>
     </section>
   );

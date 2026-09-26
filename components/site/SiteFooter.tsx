@@ -1,38 +1,11 @@
 import Link from "next/link";
+import { FOOTER_COLUMNS as columns } from "@/lib/navigation";
 
-const columns = [
-  {
-    title: "Khám phá",
-    links: [
-      { href: "/templates", label: "Mẫu thiệp" },
-      { href: "/tinh-nang", label: "Tính năng" },
-      { href: "/bang-gia", label: "Bảng giá" },
-      { href: "/studio", label: "Tạo thiệp" },
-      { href: "/ung-ho", label: "Ủng hộ dự án" },
-    ],
-  },
-  {
-    title: "Hướng dẫn",
-    links: [
-      { href: "/tao-thiep-cuoi", label: "Cách tạo thiệp cưới" },
-      { href: "/thiep-cuoi-online-mien-phi", label: "Thiệp cưới online miễn phí" },
-      { href: "/tro-giup", label: "Trợ giúp" },
-      { href: "/blog", label: "Blog" },
-    ],
-  },
-  {
-    title: "Công cụ",
-    links: [
-      { href: "/qr-tien-mung", label: "QR tiền mừng" },
-      { href: "/tin-nhan-moi-cuoi", label: "Tin nhắn mời cưới" },
-      { href: "/cong-cu-dam-cuoi", label: "Tất cả công cụ" },
-    ],
-  },
-];
-
-export function SiteFooter() {
+// `cta={false}` hides the closing call-to-action band (design: Site Footer show-cta, off on the account page).
+export function SiteFooter({ cta = true }: { cta?: boolean }) {
   return (
     <footer className="footer">
+      {cta && <div className="footer__cta"><h2>Bắt đầu tấm thiệp<br /><em>của hai bạn.</em></h2><Link href="/studio">Tạo thiệp miễn phí</Link></div>}
       <div className="footer__inner">
         <div>
           <Link className="brand" href="/">
@@ -41,7 +14,7 @@ export function SiteFooter() {
             </span>
             MỘC
           </Link>
-          <p>Thiệp cưới online nhẹ nhàng và hiện đại. Gửi qua Zalo, khách xác nhận và mừng cưới ngay trên thiệp.</p>
+          <p>Thiệp cưới online miễn phí.</p>
         </div>
         {columns.map((c) => (
           <nav key={c.title} aria-label={c.title}>
@@ -57,11 +30,7 @@ export function SiteFooter() {
         ))}
       </div>
       <div className="footer__legal">
-        <span>© 2026 MỘC Wedding. Làm với tình yêu cho những khởi đầu đáng nhớ.</span>
-        <nav aria-label="Pháp lý">
-          <Link href="/dieu-khoan">Điều khoản</Link>
-          <Link href="/quyen-rieng-tu">Quyền riêng tư</Link>
-        </nav>
+        <span>© 2026 MỘC</span><span>Làm bằng ♥ tại Việt Nam</span>
       </div>
     </footer>
   );

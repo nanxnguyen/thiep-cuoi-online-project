@@ -1,62 +1,68 @@
 "use client";
 
-import { useState } from "react";
-import { TextField } from "@/components/studio/fields";
-import { buildInviteMessages } from "@/lib/tools/inviteMessage";
+import { useRef, useState } from "react";
+import { inviteMessages, type InviteTone } from "@/lib/tools/inviteMessage";
 
-type Form = { groom: string; bride: string; date: string; link: string; guestName: string };
-const blank: Form = { groom: "", bride: "", date: "", link: "", guestName: "" };
+const TONES: [InviteTone, string][] = [
+  ["formal", "Trang trọng"],
+  ["friendly", "Thân mật"],
+];
 
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  async function copy() {
+// design/CC Tin Nhan.dc.html: bride/groom/link → tone switch → three ready-to-copy messages, with a toast.
+export function InviteMessageTool() {
+  const [form, setForm] = useState({ bride: "", groom: "", link: "" });
+  const [tone, setTone] = useState<InviteTone>("formal");
+  const [toast, setToast] = useState("");
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  async function copy(text: string) {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setToast("Đã sao chép tin nhắn");
     } catch {
-      setCopied(false);
+      setToast("Không sao chép được, hãy chọn chữ và sao chép tay");
     }
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setToast(""), 1800);
   }
-  return (
-    <button type="button" className="button-ghost pn-compact" onClick={copy}>
-      {copied ? "Đã sao chép" : "Sao chép"}
-    </button>
-  );
-}
-
-export function InviteMessageTool() {
-  const [form, setForm] = useState<Form>(blank);
-  const { friendly, formal } = buildInviteMessages(form);
 
   return (
-    <div className="card tool-result">
-      <div className="pn-row">
-        <TextField label="Tên chú rể" value={form.groom} onChange={(groom) => setForm((f) => ({ ...f, groom }))} maxLength={80} placeholder="Nam" />
-        <TextField label="Tên cô dâu" value={form.bride} onChange={(bride) => setForm((f) => ({ ...f, bride }))} maxLength={80} placeholder="Lan" />
+    <>
+      <div className="tool-form-grid">
+        <label className="tool-field">
+          Tên cô dâu
+          <input className="input" value={form.bride} onChange={set("bride")} maxLength={80} placeholder="Hạ Vy" />
+        </label>
+        <label className="tool-field">
+          Tên chú rể
+          <input className="input" value={form.groom} onChange={set("groom")} maxLength={80} placeholder="Minh Khôi" />
+        </label>
+        <label className="tool-field tool-field--full">
+          Link thiệp
+          <input className="input" value={form.link} onChange={set("link")} inputMode="url" maxLength={500} placeholder="https://moc.vn/invite/vy-khoi" />
+        </label>
       </div>
-      <div className="pn-row">
-        <TextField label="Ngày cưới" hint="Không bắt buộc." type="date" value={form.date} onChange={(date) => setForm((f) => ({ ...f, date }))} />
-        <TextField label="Tên người nhận" hint="Không bắt buộc." value={form.guestName} onChange={(guestName) => setForm((f) => ({ ...f, guestName }))} maxLength={80} placeholder="Chú Ba" />
+      <div className="tool-segment" role="group" aria-label="Giọng điệu">
+        {TONES.map(([key, label]) => (
+          <button key={key} type="button" aria-pressed={tone === key} onClick={() => setTone(key)}>
+            {label}
+          </button>
+        ))}
       </div>
-      <TextField label="Link thiệp" hint="Không bắt buộc." value={form.link} onChange={(link) => setForm((f) => ({ ...f, link }))} inputMode="url" maxLength={500} placeholder="https://" />
-
-      <div className="pn-stack">
-        <div className="pn-item">
-          <div className="pn-item__head">
-            <h3 className="pn-item__title">Gần gũi</h3>
-            <CopyButton text={friendly} />
-          </div>
-          <p>{friendly}</p>
-        </div>
-        <div className="pn-item">
-          <div className="pn-item__head">
-            <h3 className="pn-item__title">Trang trọng</h3>
-            <CopyButton text={formal} />
-          </div>
-          <p>{formal}</p>
-        </div>
+      <ul className="tool-messages">
+        {inviteMessages(tone, form).map((text) => (
+          <li key={text}>
+            <p className="script">{text}</p>
+            <button type="button" className="tool-copy" onClick={() => void copy(text)}>
+              Sao chép
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="tool-toast" role="status" aria-live="polite">
+        {toast && <span key={toast + Date.now()}>{toast}</span>}
       </div>
-    </div>
+    </>
   );
 }

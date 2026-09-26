@@ -2,7 +2,11 @@ node_modules
 .next
 .open-next
 dist
+.env*
 !.env.example
 *.tsbuildinfo
 .DS_Store
 .playwright-mcp/
+
+# Local Netlify folder
+.netlify

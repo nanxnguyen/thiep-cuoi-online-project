@@ -18,7 +18,7 @@ const asKind = (v: string): EventItem["kind"] => EVENT_KINDS.find((k) => k === v
 
 const mapUrlProblem = (v: string) => (v !== "" && !isHttpUrl(v) ? "Link cần bắt đầu bằng http:// hoặc https:// và không có khoảng trắng." : undefined);
 
-const blankEvent = (): EventItem => ({ id: newId(), kind: "custom", title: "", date: "", time: "", lunar: "", venue: "", address: "", mapUrl: "" });
+const blankEvent = (): EventItem => ({ id: newId(), kind: "custom", title: "", date: "", time: "", arrivalTime: "", lunar: "", venue: "", address: "", mapUrl: "" });
 
 export function EventsPanel({ content, onChange }: PanelProps) {
   const { events } = content;

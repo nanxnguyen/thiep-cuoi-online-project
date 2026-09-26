@@ -10,21 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage
-      eyebrow="Công cụ miễn phí"
-      title={
-        <>
-          Xếp chỗ ngồi
-          <br />
-          <em>cho từng bàn tiệc.</em>
-        </>
-      }
-      description="Kéo-thả từng hộ khách vào bàn, hoặc chạm để chọn rồi chạm vào bàn nếu bạn không quen kéo-thả. Dùng chung danh sách khách với công cụ Danh sách khách."
-      related={[
-        { href: "/cong-cu/danh-sach-khach", label: "Danh sách khách", description: "Nhập cả loạt khách bằng CSV." },
-        { href: "/cong-cu-dam-cuoi", label: "Công cụ khác", description: "Xem thêm các công cụ miễn phí." },
-      ]}
-    >
+    <ToolPage name="Sơ đồ chỗ ngồi" title="Sơ đồ chỗ ngồi" description="Chạm hoặc nhấn giữ để chọn khách, rồi bấm vào bàn để xếp chỗ." width={1100}>
       <SeatingTool />
     </ToolPage>
   );

@@ -51,6 +51,10 @@ export function RsvpForm({ slug, preview, guestName, guestToken = "", questions,
   if (status === "done") {
     return (
       <div className="inv-card inv-done" role="status">
+        <svg className="inv-done__tick" width="52" height="52" viewBox="0 0 52 52" aria-hidden="true">
+          <circle cx="26" cy="26" r="24" />
+          <path d="M15 27l7 7 15-15" />
+        </svg>
         <p className="inv-done__title">{attending ? dict.doneAttending : dict.doneNotAttending}</p>
         <p>{dict.doneBody}</p>
         <button type="button" className="inv-btn inv-btn--ghost" onClick={() => setStatus("idle")}>

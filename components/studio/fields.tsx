@@ -86,7 +86,7 @@ export function useListFocus<T extends HTMLElement>() {
 export function PanelSection({ title, description, action, children }: { title: string; description?: string; action?: ReactNode; children: ReactNode }) {
   const id = useId();
   return (
-    <section className="pn-section card" aria-labelledby={id}>
+    <section className="pn-section card" aria-labelledby={id} data-section={title}>
       <header className="pn-section__head">
         <div>
           <h3 id={id}>{title}</h3>

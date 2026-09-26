@@ -5,12 +5,12 @@ import { StudioHome } from "@/components/studio/StudioHome";
 
 export const metadata: Metadata = { title: "Tạo thiệp cưới", robots: { index: false, follow: false } };
 
-export default async function StudioPage({ searchParams }: { searchParams: Promise<{ template?: string }> }) {
-  const { template } = await searchParams;
+export default async function StudioPage({ searchParams }: { searchParams: Promise<{ template?: string; color?: string }> }) {
+  const { template, color } = await searchParams;
   return (
     <>
       <SiteHeader />
-      <StudioHome initialTemplate={template} />
+      <StudioHome initialTemplate={template} initialColor={color} />
       <SiteFooter />
     </>
   );

@@ -1,99 +1,69 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AddButton, Glyph, IconButton, PanelSection, TextField, useListFocus } from "@/components/studio/fields";
 import { guestsToCsv, parseGuestsCsv, type GuestCsvRow } from "@/lib/csv";
-import { GUEST_LIST_STORAGE_KEY, newGuestId, type LocalGuest } from "@/lib/tools/guestList";
+import { GUEST_LIST_STORAGE_KEY, newGuestId, type GuestStatus, type LocalGuest } from "@/lib/tools/guestList";
 
-// Standalone, browser-only guest list — NOT the Phase 3 guest manager (which has a backend, an
-// invitation and personal ?g= links). This is a scratch pad for people who don't have a thiệp yet, or
-// want an offline list; it shares no storage or API with Phase 3. Export uses the same lib/csv.ts
-// column format Studio's importer reads, so a file made here can be re-imported there. The seating
-// chart tool (/cong-cu/so-do-cho-ngoi) reads this same localStorage key — see lib/tools/guestList.ts.
+// design/CC Danh Sach Khach.dc.html. Browser-only scratch list (not the backend guest manager); the seating tool
+// reads the same localStorage key. CSV keeps the Studio import columns, so a file made here re-imports there.
 function loadStored(): LocalGuest[] {
   try {
-    const raw = localStorage.getItem(GUEST_LIST_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(localStorage.getItem(GUEST_LIST_STORAGE_KEY) ?? "[]");
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
-
 function persist(list: LocalGuest[]) {
   try {
     localStorage.setItem(GUEST_LIST_STORAGE_KEY, JSON.stringify(list));
   } catch {
-    // localStorage bị chặn (chế độ riêng tư, hết hạn mức) — danh sách vẫn dùng được trong phiên này, chỉ không nhớ lại lần sau.
+    // localStorage blocked (private mode, quota): the list still works for this session.
   }
 }
 
-type Form = { household: string; groupName: string; tableNo: string; phone: string; expectedPax: string; note: string };
-const blankForm = (): Form => ({ household: "", groupName: "", tableNo: "", phone: "", expectedPax: "1", note: "" });
-const formFrom = (g: LocalGuest): Form => ({ household: g.household, groupName: g.groupName, tableNo: g.tableNo, phone: g.phone, expectedPax: String(g.expectedPax), note: g.note });
+const STATUS: Record<GuestStatus, string> = { pending: "Chưa trả lời", yes: "Tham dự", no: "Vắng mặt" };
+type Detail = Pick<GuestCsvRow, "tableNo" | "phone" | "note"> & { expectedPax: string };
 
 export function GuestListTool() {
   const [guests, setGuests] = useState<LocalGuest[] | null>(null);
-  const [editingId, setEditingId] = useState<string | "new" | null>(null);
-  const [form, setForm] = useState<Form>(blankForm());
+  const [name, setName] = useState("");
+  const [group, setGroup] = useState("");
+  const [editing, setEditing] = useState<string | null>(null);
+  const [detail, setDetail] = useState<Detail>({ tableNo: "", phone: "", note: "", expectedPax: "1" });
+  const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
-  const [confirmId, setConfirmId] = useState<string | null>(null);
-  const [importBusy, setImportBusy] = useState(false);
-  const [importReport, setImportReport] = useState<{ added: number; problems: string[] } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const focus = useListFocus<HTMLOListElement>();
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setGuests(loadStored());
-  }, []);
-
-  function save(next: LocalGuest[]) {
+  useEffect(() => setGuests(loadStored()), []);
+  const list = guests ?? [];
+  const save = (next: LocalGuest[]) => {
     setGuests(next);
     persist(next);
+  };
+
+  function add(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    save([...list, { id: newGuestId(), household: name.trim(), groupName: group.trim(), tableNo: "", phone: "", expectedPax: 1, note: "", status: "pending" }]);
+    setName("");
+    setGroup("");
   }
 
-  function startAdd() {
-    setForm(blankForm());
-    setError("");
-    setEditingId("new");
+  function openDetail(g: LocalGuest) {
+    setEditing(editing === g.id ? null : g.id);
+    setDetail({ tableNo: g.tableNo, phone: g.phone, note: g.note, expectedPax: String(g.expectedPax) });
   }
-  function startEdit(g: LocalGuest) {
-    setForm(formFrom(g));
-    setError("");
-    setEditingId(g.id);
-  }
-
-  function pax(): number {
-    const n = Number(form.expectedPax.replace(/[^0-9]/g, ""));
-    return Number.isFinite(n) ? Math.min(20, Math.max(0, n)) : 1;
-  }
-
-  function submitForm() {
-    if (!form.household.trim()) {
-      setError("Tên hộ/nhóm không được để trống.");
-      return;
-    }
-    setError("");
-    const row: GuestCsvRow = { household: form.household.trim(), groupName: form.groupName.trim(), tableNo: form.tableNo.trim(), phone: form.phone.trim(), expectedPax: pax(), note: form.note.trim() };
-    const current = guests ?? [];
-    if (editingId === "new") {
-      save([{ ...row, id: newGuestId() }, ...current]);
-    } else if (editingId) {
-      save(current.map((g) => (g.id === editingId ? { ...row, id: g.id } : g)));
-    }
-    setEditingId(null);
-  }
-
-  function remove(id: string) {
-    save((guests ?? []).filter((g) => g.id !== id));
-    setConfirmId(null);
+  function saveDetail(id: string) {
+    const n = Number(detail.expectedPax.replace(/[^0-9]/g, ""));
+    const expectedPax = Number.isFinite(n) ? Math.min(20, Math.max(0, n)) : 1;
+    save(list.map((g) => (g.id === id ? { ...g, tableNo: detail.tableNo.trim(), phone: detail.phone.trim(), note: detail.note.trim(), expectedPax } : g)));
+    setEditing(null);
   }
 
   function exportCsv() {
-    if (!guests || guests.length === 0) return;
-    const csv = guestsToCsv(guests.map((g) => ({ ...g, link: "" })));
-    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    if (list.length === 0) return;
+    const url = URL.createObjectURL(new Blob([guestsToCsv(list.map((g) => ({ ...g, link: "" })))], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
     a.href = url;
     a.download = "danh-sach-khach.csv";
@@ -102,97 +72,36 @@ export function GuestListTool() {
   }
 
   async function importFile(file: File) {
-    setImportBusy(true);
-    setImportReport(null);
     setError("");
+    setNotice("");
     try {
-      const text = await file.text();
-      const parsed = parseGuestsCsv(text);
+      const parsed = parseGuestsCsv(await file.text());
       const fileError = parsed.errors.find((e) => e.line === -1);
-      if (fileError) {
-        setError(fileError.message);
-        return;
-      }
-      const problems = parsed.errors.map((e) => `Dòng ${e.line}: ${e.message}`);
-      const added: LocalGuest[] = parsed.rows.map((r) => ({ id: newGuestId(), household: r.household, groupName: r.groupName, tableNo: r.tableNo, phone: r.phone, expectedPax: r.expectedPax, note: r.note }));
-      if (added.length > 0) save([...added, ...(guests ?? [])]);
-      setImportReport({ added: added.length, problems });
+      if (fileError) return setError(fileError.message);
+      const added: LocalGuest[] = parsed.rows.map((r) => ({ ...r, id: newGuestId(), status: "pending" }));
+      if (added.length > 0) save([...list, ...added]);
+      const skipped = parsed.errors.map((e) => `dòng ${e.line}: ${e.message}`);
+      setNotice(`Đã thêm ${added.length} khách.${skipped.length ? ` Bỏ qua ${skipped.join("; ")}` : ""}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Chưa đọc được file này, bạn thử lại nhé.");
-    } finally {
-      setImportBusy(false);
     }
   }
 
-  const editForm = (
-    <div className="pn-item__body">
-      <TextField label="Tên hộ/nhóm" value={form.household} onChange={(household) => setForm((f) => ({ ...f, household }))} maxLength={80} placeholder="Gia đình chú Ba" autoFocus />
-      <div className="pn-row">
-        <TextField label="Nhóm" hint="Không bắt buộc." value={form.groupName} onChange={(groupName) => setForm((f) => ({ ...f, groupName }))} maxLength={60} placeholder="Họ nhà trai" />
-        <TextField label="Bàn" hint="Không bắt buộc." value={form.tableNo} onChange={(tableNo) => setForm((f) => ({ ...f, tableNo }))} maxLength={20} placeholder="B1" />
-      </div>
-      <div className="pn-row">
-        <TextField label="Số điện thoại" hint="Không bắt buộc." value={form.phone} onChange={(phone) => setForm((f) => ({ ...f, phone }))} maxLength={20} inputMode="numeric" />
-        <TextField label="Số khách dự kiến" hint="Tính cả hộ." value={form.expectedPax} onChange={(expectedPax) => setForm((f) => ({ ...f, expectedPax }))} inputMode="numeric" maxLength={2} />
-      </div>
-      <TextField label="Ghi chú" hint="Không bắt buộc." value={form.note} onChange={(note) => setForm((f) => ({ ...f, note }))} maxLength={300} />
-      <div className="actions">
-        <button type="button" className="button-primary" onClick={submitForm}>
-          Lưu
-        </button>
-        <button type="button" className="button-ghost" onClick={() => setEditingId(null)}>
-          Huỷ
-        </button>
-      </div>
-    </div>
-  );
-
   return (
-    <PanelSection
-      title="Danh sách khách"
-      description="Lưu ngay trên trình duyệt này — không đồng bộ máy khác, không cần tài khoản. Xuất CSV để mở lại ở Studio khi bạn đã có thiệp."
-      action={guests ? <span className="pn-count">{guests.length}</span> : null}
-    >
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
+    <>
+      <div className="tool-toolbar">
+        <p>
+          Lưu tự động trên máy của bạn ({list.length} khách · {list.filter((g) => g.status === "yes").length} đã xác nhận).
         </p>
-      )}
-      {guests === null ? (
-        <p className="pn-empty">Đang tải…</p>
-      ) : (
-        <>
-          {guests.length > 0 && (
-            <>
-              <div className="pn-row" role="group" aria-label="Nhập và xuất danh sách">
-                <button type="button" className="button-ghost pn-compact" onClick={() => fileInputRef.current?.click()} disabled={importBusy}>
-                  {importBusy ? "Đang nhập…" : "Nhập CSV"}
-                </button>
-                <button type="button" className="button-ghost pn-compact" onClick={exportCsv}>
-                  Xuất CSV
-                </button>
-              </div>
-              <div className="resp-summary" aria-label="Tổng hợp">
-                <div className="resp-stat">
-                  <strong>{guests.length}</strong>
-                  <span>Hộ/nhóm</span>
-                </div>
-                <div className="resp-stat">
-                  <strong>{guests.reduce((n, g) => n + g.expectedPax, 0)}</strong>
-                  <span>Khách dự kiến</span>
-                </div>
-              </div>
-            </>
-          )}
-          {guests.length === 0 && (
-            <div className="pn-row">
-              <button type="button" className="button-ghost pn-compact" onClick={() => fileInputRef.current?.click()} disabled={importBusy}>
-                {importBusy ? "Đang nhập…" : "Nhập CSV"}
-              </button>
-            </div>
-          )}
+        <div>
+          <button type="button" className="tool-copy" onClick={exportCsv} disabled={list.length === 0}>
+            Xuất CSV
+          </button>
+          <button type="button" className="tool-copy" onClick={() => fileRef.current?.click()}>
+            Nhập CSV
+          </button>
           <input
-            ref={fileInputRef}
+            ref={fileRef}
             type="file"
             accept=".csv,text/csv"
             hidden
@@ -202,70 +111,83 @@ export function GuestListTool() {
               if (file) void importFile(file);
             }}
           />
-          {importReport && (
-            <p className="pn-empty" role="status">
-              Đã thêm {importReport.added} khách.
-              {importReport.problems.length > 0 && (
-                <>
-                  {" "}
-                  {importReport.problems.length} dòng bị bỏ qua: {importReport.problems.join("; ")}
-                </>
-              )}
-            </p>
-          )}
-
-          {editingId === "new" && (
-            <div className="pn-item" data-key="new">
-              <div className="pn-item__head">
-                <h4 className="pn-item__title">Khách mới</h4>
-              </div>
-              {editForm}
-            </div>
-          )}
-
-          {guests.length === 0 && editingId !== "new" && <p className="pn-empty">Chưa có khách nào. Thêm khách hoặc nhập CSV.</p>}
-
-          {guests.length > 0 && (
-            <ol className="pn-list" ref={focus.listRef}>
-              {guests.map((g) => (
-                <li key={g.id} className="pn-item" data-key={g.id}>
-                  <div className="pn-item__head">
-                    <h4 className="pn-item__title">
-                      {g.household}
-                      {g.groupName && ` · ${g.groupName}`}
-                      {g.tableNo && ` · Bàn ${g.tableNo}`}
-                    </h4>
-                    <div className="pn-item__actions">
-                      <button type="button" className="link-quiet" onClick={() => startEdit(g)}>
-                        Sửa
-                      </button>
-                      <IconButton label={`Xoá ${g.household}`} tone="danger" data-act="remove" onClick={() => setConfirmId(g.id)}>
-                        <Glyph name="trash" />
-                      </IconButton>
-                    </div>
-                  </div>
-                  {confirmId === g.id && (
-                    <div className="pn-confirm" role="group" aria-label={`Xác nhận xoá ${g.household}`}>
-                      <p>Xoá khách này khỏi danh sách?</p>
-                      <button type="button" className="button-ghost pn-compact pn-danger" onClick={() => remove(g.id)}>
-                        Xoá
-                      </button>
-                      <button type="button" className="button-ghost pn-compact" autoFocus onClick={() => setConfirmId(null)}>
-                        Giữ lại
-                      </button>
-                    </div>
-                  )}
-                  {editingId === g.id && editForm}
-                </li>
-              ))}
-            </ol>
-          )}
-
-          <AddButton onClick={startAdd} disabled={editingId !== null}>
-            Thêm khách
-          </AddButton>
-        </>
+        </div>
+      </div>
+      {error && (
+        <p className="tool-error" role="alert">
+          {error}
+        </p>
       )}
-    </PanelSection>
+      {notice && (
+        <p className="tool-note" role="status">
+          {notice}
+        </p>
+      )}
+      <form className="tool-add" onSubmit={add}>
+        <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tên khách" aria-label="Tên khách" maxLength={80} />
+        <input className="input" value={group} onChange={(e) => setGroup(e.target.value)} placeholder="Nhóm (nhà trai, bạn bè…)" aria-label="Nhóm" maxLength={60} />
+        <button type="submit" className="tool-add__btn">
+          + Thêm khách
+        </button>
+      </form>
+      {guests !== null && list.length === 0 && <div className="tool-empty">Chưa có khách nào, thêm khách đầu tiên ở trên.</div>}
+      {list.length > 0 && (
+        <ul className="tool-guests">
+          {list.map((g) => {
+            const status = g.status ?? "pending";
+            return (
+              <li key={g.id}>
+                <div className="tool-guests__row">
+                  <span className="tool-guests__name">{g.household}</span>
+                  <span className="tool-guests__group">{g.groupName || "Chưa phân nhóm"}</span>
+                  <select
+                    className={`tool-guests__status tool-guests__status--${status}`}
+                    value={status}
+                    aria-label={`Trạng thái của ${g.household}`}
+                    onChange={(e) => save(list.map((x) => (x.id === g.id ? { ...x, status: e.target.value as GuestStatus } : x)))}
+                  >
+                    {Object.entries(STATUS).map(([k, label]) => (
+                      <option key={k} value={k}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="tool-guests__link" title="Tạo thiệp trong Studio rồi thêm danh sách này vào tab Khách để lấy link riêng">link riêng ?g=… trong Studio</span>
+                  <button type="button" className="tool-link" aria-expanded={editing === g.id} onClick={() => openDetail(g)}>
+                    Chi tiết
+                  </button>
+                  <button type="button" className="tool-link tool-link--danger" onClick={() => save(list.filter((x) => x.id !== g.id))}>
+                    Xoá
+                  </button>
+                </div>
+                {editing === g.id && (
+                  <div className="tool-guests__detail">
+                    <label className="tool-field">
+                      Bàn
+                      <input className="input" value={detail.tableNo} maxLength={20} onChange={(e) => setDetail((d) => ({ ...d, tableNo: e.target.value }))} />
+                    </label>
+                    <label className="tool-field">
+                      Số khách
+                      <input className="input" value={detail.expectedPax} maxLength={2} inputMode="numeric" onChange={(e) => setDetail((d) => ({ ...d, expectedPax: e.target.value }))} />
+                    </label>
+                    <label className="tool-field">
+                      Số điện thoại
+                      <input className="input" value={detail.phone} maxLength={20} inputMode="tel" onChange={(e) => setDetail((d) => ({ ...d, phone: e.target.value }))} />
+                    </label>
+                    <label className="tool-field">
+                      Ghi chú
+                      <input className="input" value={detail.note} maxLength={300} onChange={(e) => setDetail((d) => ({ ...d, note: e.target.value }))} />
+                    </label>
+                    <button type="button" className="tool-add__btn" onClick={() => saveDetail(g.id)}>
+                      Lưu
+                    </button>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </>
   );
 }

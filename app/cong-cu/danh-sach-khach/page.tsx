@@ -11,21 +11,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage
-      eyebrow="Công cụ miễn phí"
-      title={
-        <>
-          Lập danh sách
-          <br />
-          <em>khách mời trước.</em>
-        </>
-      }
-      description="Ghi lại từng hộ/nhóm khách trước khi bạn cần đến thiệp — lưu ngay trên trình duyệt này, xuất CSV bất cứ lúc nào."
-      related={[
-        { href: "/cong-cu/so-do-cho-ngoi", label: "Sơ đồ chỗ ngồi", description: "Xếp bàn cho đúng danh sách này." },
-        { href: "/studio", label: "Mở Studio", description: "Tạo thiệp rồi nhập file CSV vào tab Khách mời." },
-      ]}
-    >
+    <ToolPage name="Danh sách khách" title="Danh sách khách" width={1000}>
       <p className="pn-hint" style={{ maxWidth: 620 }}>
         Đã có thiệp? Vào <Link href="/studio">Studio</Link> → tab <strong>Khách mời</strong> → <strong>Nhập CSV</strong> và chọn file bạn vừa xuất từ đây để lấy link riêng cho từng khách.
       </p>

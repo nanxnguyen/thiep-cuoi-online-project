@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalBody, type LegalSection } from "@/components/marketing/LegalBody";
-import { MarketingLayout, PageHero } from "@/components/marketing/MarketingLayout";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ const sections: LegalSection[] = [
       [
         "Nội dung thiệp hai bạn nhập: tên, ngày giờ, địa điểm, lời mời, thông tin hai họ, câu hỏi xác nhận tham dự và, nếu bật mừng cưới, ngân hàng, số tài khoản và tên chủ tài khoản.",
         "Ảnh và nhạc hai bạn tải lên.",
-        "Từ khách: tên, việc đến hay không, số người đi cùng, ghi chú, câu trả lời cho các câu hỏi riêng, lời chúc, và tên trong link (phần ?to=) nếu có khi khách gửi xác nhận.",
+        "Từ khách: tên, việc đến hay không, số người đi cùng, ghi chú, câu trả lời cho các câu hỏi riêng, lời chúc, và tên hộ từ danh sách khách (link riêng ?g=) nếu khách mở bằng link đó khi gửi xác nhận.",
         "Một bản băm (SHA-256) của khoá chỉnh sửa. MỘC không lưu chính khoá.",
       ],
       "Trình duyệt của bạn lưu danh sách \"Thiệp của tôi\" cùng khoá chỉnh sửa trong bộ nhớ cục bộ (localStorage). Dữ liệu đó ở trên máy bạn, không phải trên máy chủ MỘC.",
@@ -92,8 +92,7 @@ const sections: LegalSection[] = [
 export default function PrivacyPage() {
   return (
     <MarketingLayout>
-      <PageHero crumbs={[{ label: "Quyền riêng tư" }]} eyebrow="Quyền riêng tư" title={<>Dữ liệu của bạn, <em>nói rõ ràng.</em></>} lede="MỘC lưu gì, ai xem được, dùng dịch vụ nào bên ngoài và bạn có những quyền gì." />
-      <LegalBody sections={sections} updated="22 tháng 9, 2026" />
+      <LegalBody href="/quyen-rieng-tu" title="Quyền riêng tư" sections={sections} updated="22.09.2026" />
     </MarketingLayout>
   );
 }

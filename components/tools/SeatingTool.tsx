@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
-import { AddButton, PanelSection, TextField } from "@/components/studio/fields";
 import { BOM, toCsv } from "@/lib/csv";
 import { GUEST_LIST_STORAGE_KEY, newGuestId, type LocalGuest } from "@/lib/tools/guestList";
 import { assignGuest, countByTable, unassignGuest, unassignedGuestIds, SEATING_STORAGE_KEY, type Assignments, type Table } from "@/lib/tools/seating";
@@ -64,7 +63,8 @@ export function SeatingTool() {
   useEffect(() => {
     setGuests(loadGuests());
     const s = loadSeating();
-    setTables(s.tables);
+    // First visit: start with the design's six tables of eight, so the page is usable immediately.
+    setTables(s.tables.length > 0 ? s.tables : Array.from({ length: 6 }, (_, i) => ({ id: newGuestId() + i, name: `Bàn ${i + 1}`, capacity: 8 })));
     setAssignments(s.assignments);
   }, []);
 
@@ -177,112 +177,121 @@ export function SeatingTool() {
   const counts = countByTable(assignments);
   const byId = new Map(guests.map((g) => [g.id, g] as const));
 
-  return (
-    <PanelSection
-      title="Sơ đồ chỗ ngồi"
-      description="Chạm một hộ để chọn rồi chạm vào bàn để xếp — hoặc kéo thả trên chuột/cảm ứng. Lưu ngay trên trình duyệt này."
+  const chip = (id: string, seated: boolean) => (
+    <button
+      key={id}
+      type="button"
+      className="tool-seat-guest"
+      aria-pressed={selectedGuest === id}
+      onPointerDown={(e) => onPointerDown(e, id)}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onClick={(e) => {
+        if (seated) e.stopPropagation();
+        onGuestClick(id);
+      }}
     >
+      {byId.get(id)?.household}
+    </button>
+  );
+
+  // design/CC So Do Cho Ngoi.dc.html: unassigned list on the left, table cards on the right.
+  return (
+    <>
       {notice && (
-        <p className="form-error" role="alert">
+        <p className="tool-error" role="alert">
           {notice}
         </p>
       )}
-      {guests.length === 0 && (
-        <p className="pn-empty">
-          Chưa có khách nào. Thêm nhanh bên dưới, hoặc dùng <a href="/cong-cu/danh-sach-khach">công cụ Danh sách khách</a> để nhập cả loạt bằng CSV.
-        </p>
-      )}
-      <div className="pn-row">
-        <TextField label="Thêm hộ/nhóm" hint="Chỉ cần tên, sửa chi tiết ở Danh sách khách." value={newGuestName} onChange={setNewGuestName} maxLength={80} placeholder="Gia đình chú Ba" />
-        <div className="actions" style={{ alignSelf: "end" }}>
-          <button type="button" className="button-ghost pn-compact" onClick={addGuest} disabled={!newGuestName.trim()}>
-            Thêm
-          </button>
-        </div>
-      </div>
-
-      {guests.length > 0 && (
-        <button type="button" className="button-ghost pn-compact" onClick={exportCsv}>
-          Xuất CSV (hộ + bàn)
-        </button>
-      )}
-
       <div className="tool-seating">
-        <div>
-          <h3 className="pn-item__title">Chưa xếp bàn ({unassigned.length})</h3>
-          <div data-unassign="true" onClick={onUnassignedZoneClick} style={{ minHeight: 60, padding: 8, border: "1px dashed var(--line)", borderRadius: 12 }}>
-            {unassigned.length === 0 && guests.length > 0 ? <small className="pn-hint">Đã xếp hết.</small> : null}
-            {unassigned.map((id) => {
-              const g = byId.get(id)!;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  className="tool-chip"
-                  aria-pressed={selectedGuest === id}
-                  onPointerDown={(e) => onPointerDown(e, id)}
-                  onPointerMove={onPointerMove}
-                  onPointerUp={onPointerUp}
-                  onClick={() => onGuestClick(id)}
-                >
-                  {g.household}
-                </button>
-              );
-            })}
+        <div className="tool-seating__side">
+          <h3>Khách chưa xếp bàn</h3>
+          <div className="tool-seating__pool" data-unassign="true" onClick={onUnassignedZoneClick}>
+            {unassigned.map((id) => chip(id, false))}
+            {guests.length > 0 && unassigned.length === 0 && <span className="tool-note">Mọi khách đã có bàn.</span>}
+            {guests.length === 0 && (
+              <span className="tool-note">
+                Chưa có khách. Thêm nhanh bên dưới, hoặc nhập cả loạt ở <a href="/cong-cu/danh-sach-khach">Danh sách khách</a>.
+              </span>
+            )}
           </div>
+          <form
+            className="tool-seating__add"
+            onSubmit={(e) => {
+              e.preventDefault();
+              addGuest();
+            }}
+          >
+            <input className="input" value={newGuestName} onChange={(e) => setNewGuestName(e.target.value)} maxLength={80} placeholder="Thêm khách…" aria-label="Tên khách mới" />
+            <button type="submit" className="tool-copy" disabled={!newGuestName.trim()}>
+              Thêm
+            </button>
+          </form>
+          {guests.length > 0 && (
+            <button type="button" className="tool-copy" onClick={exportCsv}>
+              Xuất CSV (khách + bàn)
+            </button>
+          )}
         </div>
-
-        <div>
+        <div className="tool-seating__tables">
           {tables.map((t) => {
             const occupantIds = guestIds.filter((id) => assignments[id] === t.id);
-            const full = (counts[t.id] ?? 0) >= t.capacity;
             return (
-              <div key={t.id} className="tool-table" data-table-id={t.id} onClick={() => onTableClick(t.id)}>
-                <div className="tool-table__head">
+              <div key={t.id} className="tool-seat-table" data-table-id={t.id} data-armed={selectedGuest !== null} onClick={() => onTableClick(t.id)}>
+                <div className="tool-seat-table__head">
+                  <strong>{t.name}</strong>
                   <span>
-                    {t.name} <small>({occupantIds.length}/{t.capacity}{full ? " · đầy" : ""})</small>
+                    {occupantIds.length}/{t.capacity}
                   </span>
-                  <button type="button" className="link-quiet" onClick={(e) => { e.stopPropagation(); removeTable(t.id); }}>
-                    Xoá bàn
-                  </button>
                 </div>
-                {occupantIds.map((id) => {
-                  const g = byId.get(id)!;
-                  return (
+                {occupantIds.map((id) => (
+                  <div className="tool-seat-table__seat" key={id}>
+                    {chip(id, true)}
                     <button
-                      key={id}
                       type="button"
-                      className="tool-chip"
-                      aria-pressed={selectedGuest === id}
-                      onPointerDown={(e) => onPointerDown(e, id)}
-                      onPointerMove={onPointerMove}
-                      onPointerUp={onPointerUp}
+                      aria-label={`Bỏ ${byId.get(id)?.household} khỏi ${t.name}`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        onGuestClick(id);
+                        tryUnassign(id);
                       }}
                     >
-                      {g.household}
+                      ✕
                     </button>
-                  );
-                })}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="tool-link tool-seat-table__remove"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeTable(t.id);
+                  }}
+                >
+                  Xoá bàn
+                </button>
               </div>
             );
           })}
-
-          <div className="pn-row">
-            <TextField label="Tên bàn mới" hint="Bỏ trống thì tự đặt tên." value={tableForm.name} onChange={(name) => setTableForm((f) => ({ ...f, name }))} maxLength={20} placeholder="Bàn 1" />
-            <TextField label="Sức chứa" value={tableForm.capacity} onChange={(capacity) => setTableForm((f) => ({ ...f, capacity }))} inputMode="numeric" maxLength={2} />
-          </div>
-          <AddButton onClick={addTable}>Thêm bàn</AddButton>
+          <form
+            className="tool-seat-table tool-seat-table--new"
+            onSubmit={(e) => {
+              e.preventDefault();
+              addTable();
+            }}
+          >
+            <input className="input" value={tableForm.name} onChange={(e) => setTableForm((f) => ({ ...f, name: e.target.value }))} maxLength={20} placeholder={`Bàn ${tables.length + 1}`} aria-label="Tên bàn mới" />
+            <input className="input" value={tableForm.capacity} onChange={(e) => setTableForm((f) => ({ ...f, capacity: e.target.value }))} inputMode="numeric" maxLength={2} aria-label="Sức chứa" />
+            <button type="submit" className="tool-copy">
+              + Thêm bàn
+            </button>
+          </form>
         </div>
       </div>
-
       {drag && (
-        <div className="tool-chip tool-chip--ghost" style={{ left: drag.x + 12, top: drag.y + 12 }} aria-hidden="true">
+        <div className="tool-seat-guest tool-seat-guest--ghost" style={{ left: drag.x + 12, top: drag.y + 12 }} aria-hidden="true">
           {byId.get(drag.guestId)?.household}
         </div>
       )}
-    </PanelSection>
+    </>
   );
 }

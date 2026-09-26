@@ -10,21 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage
-      eyebrow="Công cụ miễn phí"
-      title={
-        <>
-          Nén ảnh cưới
-          <br />
-          <em>ngay trên trình duyệt.</em>
-        </>
-      }
-      description="Chọn nhiều ảnh cùng lúc, mỗi ảnh được thu nhỏ và nén ngay trên máy bạn — không có ảnh nào rời khỏi trình duyệt cho tới khi bạn bấm tải."
-      related={[
-        { href: "/studio", label: "Mở Studio", description: "Album ảnh trong thiệp cũng tự nén như thế này." },
-        { href: "/cong-cu/save-the-date", label: "Ảnh save-the-date", description: "Dùng ảnh vừa nén để tạo ảnh báo ngày cưới." },
-      ]}
-    >
+    <ToolPage name="Nén ảnh" title="Nén ảnh cưới" description="Giảm ảnh về tối đa 1600px, chất lượng vẫn đẹp trên điện thoại. Xử lý ngay trên máy của bạn, không tải lên đâu cả." width={900}>
       <ImageCompressTool />
     </ToolPage>
   );

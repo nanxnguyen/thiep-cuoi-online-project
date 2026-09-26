@@ -1,33 +1,24 @@
-import { formatDateVi } from "../datetime.ts";
+export type InviteTone = "formal" | "friendly";
+export type InviteMessageInput = { bride: string; groom: string; link: string };
 
-export type InviteMessageInput = {
-  groom: string;
-  bride: string;
-  date: string; // "YYYY-MM-DD", optional
-  link: string; // optional
-  guestName: string; // optional
+// The six sample messages from design/CC Tin Nhan.dc.html, three per tone. Blank fields fall back to readable
+// placeholders so a half-filled form still produces something the couple can edit after pasting.
+const TEMPLATES: Record<InviteTone, ((a: string, b: string, l: string) => string)[]> = {
+  formal: [
+    (a, b, l) => `Kính mời anh/chị đến chung vui trong ngày trọng đại của ${a} và ${b}. Mọi thông tin chi tiết đã có trong thiệp mời: ${l}`,
+    (a, b, l) => `${a} và ${b} xin trân trọng thông báo lễ thành hôn. Kính mong quý anh/chị dành thời gian ghé chung vui, thiệp mời chi tiết: ${l}`,
+    (_a, _b, l) => `Con/cháu xin kính báo ngày vui của con/cháu. Kính mong đến chung vui, thông tin chi tiết trong link sau: ${l}`,
+  ],
+  friendly: [
+    (a, b, l) => `Ê, ${a} với ${b} cưới rồi nè! Ghé xem thiệp mời đi, nhớ xác nhận tham dự giúp bọn mình nha: ${l} 🥂`,
+    (_a, _b, l) => `Tin nóng: mình cưới rồi! Xem thiệp mời tại đây và đến chung vui với bọn mình nhé: ${l}`,
+    (a, b, l) => `Chỉ còn vài ngày nữa là đến ngày cưới của ${a} và ${b} rồi, xác nhận tham dự giúp mình nếu chưa xác nhận nha: ${l}`,
+  ],
 };
 
-const clean = (s: string) => s.trim();
-
-// Two tones, each a single composed message — not a template library, just string assembly so an
-// invalid/empty optional field drops its whole clause instead of leaving a blank gap ("vào " with
-// nothing after it, or a dangling "tại: ").
-export function buildInviteMessages(input: InviteMessageInput): { friendly: string; formal: string } {
-  const groom = clean(input.groom) || "chú rể";
-  const bride = clean(input.bride) || "cô dâu";
-  const guestName = clean(input.guestName);
-  const link = clean(input.link);
-  const dateVi = formatDateVi(clean(input.date));
-
-  const whenClause = dateVi ? ` vào ${dateVi}` : "";
-  const linkSentence = link ? ` Bạn xem thiệp và gửi lời chúc tại: ${link}.` : "";
-
-  const friendlyGreeting = guestName ? `${guestName} ơi, ` : "Cả nhà ơi, ";
-  const friendly = `${friendlyGreeting}${groom} và ${bride} tổ chức lễ cưới${whenClause}.${linkSentence} Rất mong được đón tiếp!`;
-
-  const formalGreeting = guestName ? `Kính gửi ${guestName},` : "Kính gửi,";
-  const formal = `${formalGreeting} ${groom} và ${bride} trân trọng kính mời bạn đến dự lễ thành hôn${whenClause}.${linkSentence} Sự hiện diện của bạn là niềm vinh hạnh cho gia đình hai bên.`;
-
-  return { friendly, formal };
+export function inviteMessages(tone: InviteTone, input: InviteMessageInput): string[] {
+  const a = input.bride.trim() || "cô dâu";
+  const b = input.groom.trim() || "chú rể";
+  const l = input.link.trim() || "[link thiệp]";
+  return TEMPLATES[tone].map((f) => f(a, b, l));
 }

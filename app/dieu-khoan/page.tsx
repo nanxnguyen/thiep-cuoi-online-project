@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LegalBody, type LegalSection } from "@/components/marketing/LegalBody";
-import { MarketingLayout, PageHero } from "@/components/marketing/MarketingLayout";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -83,8 +83,7 @@ const sections: LegalSection[] = [
 export default function TermsPage() {
   return (
     <MarketingLayout>
-      <PageHero crumbs={[{ label: "Điều khoản sử dụng" }]} eyebrow="Điều khoản" title={<>Điều khoản <em>sử dụng.</em></>} lede="Những quy ước đơn giản khi làm và chia sẻ thiệp cưới trên MỘC." />
-      <LegalBody sections={sections} updated="21 tháng 9, 2026" />
+      <LegalBody href="/dieu-khoan" title="Điều khoản sử dụng" sections={sections} updated="21.09.2026" />
     </MarketingLayout>
   );
 }

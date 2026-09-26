@@ -3,6 +3,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useCallback, useEffect, useState } from "react";
 import { api, type ResponsesDto } from "@/lib/api";
+import { subscribeToWishes } from "@/lib/supabase-browser";
 
 type Props = { id: string; editKey: string; questions: { id: string; label: string }[]; published: boolean };
 
@@ -34,12 +35,14 @@ export function ResponsesPanel({ id, editKey, questions, published }: Props) {
     void load();
   }, [load]);
 
-  async function toggle(wishId: string, hidden: boolean) {
+  useEffect(() => subscribeToWishes(id, () => { void load(); }), [id, load]);
+
+  async function moderate(wishId: string, patch: { hidden?: boolean; approved?: boolean }) {
     if (!data) return;
     const before = data;
-    setData({ ...data, wishes: data.wishes.map((w) => (w.id === wishId ? { ...w, hidden } : w)) }); // optimistic
+    setData({ ...data, wishes: data.wishes.map((w) => (w.id === wishId ? { ...w, ...patch } : w)) });
     try {
-      await api.setWishHidden(id, editKey, wishId, hidden);
+      await api.setWishModeration(id, editKey, wishId, patch);
     } catch {
       setData(before);
       setError("Chưa đổi được trạng thái lời chúc, bạn thử lại nhé.");
@@ -118,13 +121,19 @@ export function ResponsesPanel({ id, editKey, questions, published }: Props) {
                 <li className="resp-item" key={w.id} data-hidden={w.hidden}>
                   <header>
                     <strong>{w.name}</strong>
-                    <button type="button" className="link-quiet" onClick={() => toggle(w.id, !w.hidden)}>
-                      {w.hidden ? "Hiện lại" : "Ẩn"}
-                    </button>
+                    <span>
+                      <button type="button" className="link-quiet" onClick={() => moderate(w.id, { approved: !w.approved })}>
+                        {w.approved ? "Bỏ duyệt" : "Duyệt"}
+                      </button>{" · "}
+                      <button type="button" className="link-quiet" onClick={() => moderate(w.id, { hidden: !w.hidden })}>
+                        {w.hidden ? "Hiện lại" : "Ẩn"}
+                      </button>
+                    </span>
                   </header>
                   <p style={{ color: "var(--ink)", whiteSpace: "pre-line" }}>{w.message}</p>
                   <p style={{ fontSize: 12 }}>
                     {time(w.createdAt)}
+                    {!w.approved && " · chờ duyệt"}
                     {w.hidden && " · đang ẩn khỏi thiệp"}
                   </p>
                 </li>

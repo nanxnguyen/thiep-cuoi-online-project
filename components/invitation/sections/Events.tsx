@@ -29,7 +29,7 @@ export function Events({ content, locale = "vi" }: { content: Content; locale?: 
   if (events.length === 0) return null;
 
   return (
-    <section className="inv-section inv-events" aria-labelledby="inv-events-h">
+    <section id="su-kien" className="inv-section inv-events" aria-labelledby="inv-events-h">
       <Reveal>
         <h2 className="inv-label" id="inv-events-h">
           {dict.eventsTitle}

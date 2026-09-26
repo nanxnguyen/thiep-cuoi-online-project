@@ -38,9 +38,9 @@ export type InvitationDto = {
   updatedAt: string;
 };
 export type CreatedInvitation = { id: string; slug: string; key: string };
-export type PublicInvitationDto = { slug: string; templateId: string; content: Content; wishes: PublicWish[] };
+export type PublicInvitationDto = { id: string; slug: string; templateId: string; content: Content; wishes: PublicWish[] };
 // `website` is a honeypot: real users never fill it, bots do. `guestToken` comes from a `?g=` guest-manager
-// link (Phase 3); empty string for the manual `?to=` flow, resolved server-side into `guest_id` or ignored.
+// link resolved server-side into `guest_id` or ignored. `guestLabel` is the name the guest typed in the form.
 export type RsvpInput = {
   name: string;
   attending: boolean;
@@ -62,7 +62,7 @@ export type RsvpRow = {
   guestLabel: string;
   createdAt: string;
 };
-export type WishRow = PublicWish & { hidden: boolean };
+export type WishRow = PublicWish & { hidden: boolean; approved: boolean };
 export type ResponsesDto = {
   rsvps: RsvpRow[];
   summary: { attending: number; declined: number; headcount: number };
@@ -99,7 +99,7 @@ export type GuestInput = {
 export type GuestImportResult = { created: number; errors: { index: number; message: string }[] };
 export type AccountUser = { id: string; email: string };
 export type AuthResponse = { accessToken: string; user: AccountUser };
-export type AccountInvitation = { id: string; slug: string; templateId: string; published: boolean; updatedAt: string };
+export type AccountInvitation = { id: string; slug: string; templateId: string; published: boolean; updatedAt: string; groomName: string; brideName: string; weddingDate: string; paletteKey: string };
 
 export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => fetch(...a)) {
   async function call<T>(path: string, init: RequestInit = {}, key?: string): Promise<T> {
@@ -130,9 +130,10 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
   return {
     register: (email: string, password: string) => call<AuthResponse>("/api/auth/register", json("POST", { email, password })),
     login: (email: string, password: string) => call<AuthResponse>("/api/auth/login", json("POST", { email, password })),
-    me: (token: string) => call<AccountUser>("/api/auth/me", { headers: { Authorization: `Bearer ${token}` } }),
-    listAccountInvitations: (token: string) => call<AccountInvitation[]>("/api/account/invitations", { headers: { Authorization: `Bearer ${token}` } }),
-    claimInvitation: (token: string, id: string, key: string) => call<AccountInvitation>("/api/account/invitations/claim", { ...json("POST", { id, key }), headers: { Authorization: `Bearer ${token}` } }),
+    me: (_token: string) => call<AccountUser>("/api/auth/me", { cache: "no-store" }),
+    logout: () => call<void>("/api/auth/logout", { method: "POST" }),
+    listAccountInvitations: (_token: string) => call<AccountInvitation[]>("/api/account/invitations", { cache: "no-store" }),
+    claimInvitation: (_token: string, id: string, key: string) => call<AccountInvitation>("/api/account/invitations/claim", json("POST", { id, key })),
     createInvitation: (templateId: string, content: Content) =>
       call<CreatedInvitation>("/api/invitations", json("POST", { templateId, content })),
     getInvitation: (id: string, key: string) => call<InvitationDto>(`/api/invitations/${id}`, {}, key),
@@ -148,6 +149,8 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
     getResponses: (id: string, key: string) => call<ResponsesDto>(`/api/invitations/${id}/responses`, {}, key),
     setWishHidden: (id: string, key: string, wishId: string, hidden: boolean) =>
       call<void>(`/api/invitations/${id}/wishes/${wishId}`, json("PATCH", { hidden }), key),
+    setWishModeration: (id: string, key: string, wishId: string, patch: { hidden?: boolean; approved?: boolean }) =>
+      call<void>(`/api/invitations/${id}/wishes/${wishId}`, json("PATCH", patch), key),
     // 404 (unknown or unpublished) resolves to null so the page can call notFound(); never cached.
     async getPublicInvitation(slug: string): Promise<PublicInvitationDto | null> {
       try {
@@ -158,9 +161,9 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
       }
     },
     submitRsvp: (slug: string, input: RsvpInput) =>
-      call<void>(`/api/public/invitations/${slug}/rsvp`, json("POST", input)),
+      call<void>(`/api/public/invitations/${slug}/rsvp`, { ...json("POST", input), headers: { "Idempotency-Key": crypto.randomUUID() } }),
     submitWish: (slug: string, input: WishInput) =>
-      call<PublicWish>(`/api/public/invitations/${slug}/wishes`, json("POST", input)),
+      call<PublicWish>(`/api/public/invitations/${slug}/wishes`, { ...json("POST", input), headers: { "Idempotency-Key": crypto.randomUUID() } }),
     listGuests: (id: string, key: string) => call<{ guests: GuestDto[] }>(`/api/invitations/${id}/guests`, {}, key),
     createGuest: (id: string, key: string, input: GuestInput & { household: string }) =>
       call<GuestDto>(`/api/invitations/${id}/guests`, json("POST", input), key),
@@ -183,4 +186,4 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
   };
 }
 
-export const api = createApi(process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080");
+export const api = createApi(process.env.NEXT_PUBLIC_API_BASE_URL ?? "");

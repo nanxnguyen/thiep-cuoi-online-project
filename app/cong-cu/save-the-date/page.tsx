@@ -10,21 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage
-      eyebrow="Công cụ miễn phí"
-      title={
-        <>
-          Tạo ảnh
-          <br />
-          <em>Save the date.</em>
-        </>
-      }
-      description="Điền tên và ngày cưới, chọn ảnh nền nếu muốn, tải ảnh về để đăng lên mạng xã hội báo tin vui trước khi gửi thiệp."
-      related={[
-        { href: "/cong-cu/nen-anh", label: "Nén ảnh", description: "Chuẩn bị ảnh nền đẹp và nhẹ." },
-        { href: "/studio", label: "Mở Studio", description: "Tạo thiệp đầy đủ để gửi khách." },
-      ]}
-    >
+    <ToolPage name="Save the date" title="Ảnh báo ngày cưới" width={1000}>
       <SaveTheDateTool />
     </ToolPage>
   );

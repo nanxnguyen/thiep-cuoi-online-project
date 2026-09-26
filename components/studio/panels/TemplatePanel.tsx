@@ -2,13 +2,19 @@
 
 import { useId } from "react";
 import { Glyph, PanelSection } from "@/components/studio/fields";
-import { templates } from "@/lib/templates";
+import { colors, getTemplate, templates } from "@/lib/templates";
 
 // Native radio inputs stretched over each card: arrow keys, Tab and the checked state come from the browser.
-export function TemplatePanel({ templateId, onTemplate }: { templateId: string; onTemplate: (id: string) => void }) {
+export function TemplatePanel({ templateId, paletteKey, onTemplate, onPalette }: { templateId: string; paletteKey: string; onTemplate: (id: string) => void; onPalette: (key: string) => void }) {
   const group = useId();
+  const selected = getTemplate(templateId);
   return (
     <div className="pn-stack">
+      {selected && <PanelSection title="Màu thiệp" description="Đổi màu ngay trên thiệp; lựa chọn được tự lưu cùng nội dung.">
+        <div className="pn-color-options" role="group" aria-label="Màu thiệp">
+          {selected.colors.map((key) => <button key={key} type="button" aria-pressed={(paletteKey || selected.colors[0]) === key} onClick={() => onPalette(key)}><i style={{ background: colors[key].deep }} />{colors[key].label}</button>)}
+        </div>
+      </PanelSection>}
       <PanelSection title="Chọn mẫu thiệp" description="Đổi mẫu lúc nào cũng được. Nội dung bạn đã nhập vẫn được giữ nguyên.">
         <div className="pn-tpl-grid" role="radiogroup" aria-label="Mẫu thiệp">
           {templates.map((t) => {

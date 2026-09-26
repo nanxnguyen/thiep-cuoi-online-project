@@ -10,21 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage
-      eyebrow="Công cụ miễn phí"
-      title={
-        <>
-          Nén video
-          <br />
-          <em>ngay trên trình duyệt.</em>
-        </>
-      }
-      description="Chọn video, chọn mức nén, video được xử lý trực tiếp trên máy bạn — không tải lên máy chủ nào. Video dài có thể mất vài phút."
-      related={[
-        { href: "/cong-cu/nen-anh", label: "Nén ảnh", description: "Thu nhỏ ảnh cưới trên trình duyệt." },
-        { href: "/studio", label: "Mở Studio", description: "Tạo thiệp đầy đủ để gửi khách." },
-      ]}
-    >
+    <ToolPage name="Nén video" title="Nén video cưới" description="Thu nhỏ video phóng sự cưới trước khi đưa vào thiệp. Video được xử lý ngay trên máy bạn, không tải lên máy chủ nào; video dài có thể mất vài phút." width={900}>
       <VideoCompressTool />
     </ToolPage>
   );

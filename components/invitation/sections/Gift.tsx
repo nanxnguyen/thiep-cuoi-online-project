@@ -15,7 +15,7 @@ export function Gift({ content, locale = "vi" }: { content: Content; locale?: Lo
   const note = pick(locale, gift.note, gift.noteEn);
 
   return (
-    <section className="inv-section inv-gift" aria-labelledby="inv-gift-h">
+    <section id="mung-cuoi" className="inv-section inv-gift" aria-labelledby="inv-gift-h">
       <Reveal>
         <h2 className="inv-label" id="inv-gift-h">
           {dict.giftTitle}

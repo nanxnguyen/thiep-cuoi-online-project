@@ -1,24 +1,26 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { Glyph } from "@/components/studio/fields";
+import { useState } from "react";
 import { compressImage } from "@/lib/image-compress";
 
-type Result = { id: string; name: string; before: number; after?: number; url?: string; type?: string; error?: string };
+type Result = { id: string; name: string; before: number; preview: string; after?: number; url?: string; type?: string; error?: string };
 
-const fmtKb = (bytes: number) => `${(bytes / 1024).toFixed(0)} KB`;
+const fmtKb = (bytes: number) => (bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`);
+const downloadName = (name: string, type?: string) => name.replace(/\.[^.]+$/, "") + (type === "image/webp" ? "-da-nen.webp" : "-da-nen.jpg");
 
+// design/CC Nen Anh.dc.html: dashed drop zone (click or drop, many files) → grid of result cards.
 export function ImageCompressTool() {
   const [items, setItems] = useState<Result[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [over, setOver] = useState(false);
 
   async function addFiles(files: File[]) {
-    const started: Result[] = files.map((f) => ({ id: `${f.name}-${f.size}-${Math.random()}`, name: f.name, before: f.size }));
+    const images = files.filter((f) => f.type.startsWith("image/"));
+    const started: Result[] = images.map((f) => ({ id: `${f.name}-${f.size}-${Math.random()}`, name: f.name, before: f.size, preview: URL.createObjectURL(f) }));
     setItems((prev) => [...started, ...prev]);
-    for (let i = 0; i < files.length; i++) {
+    for (let i = 0; i < images.length; i++) {
       const item = started[i];
       try {
-        const blob = await compressImage(files[i]);
+        const blob = await compressImage(images[i]);
         const url = URL.createObjectURL(blob);
         setItems((prev) => prev.map((r) => (r.id === item.id ? { ...r, after: blob.size, url, type: blob.type } : r)));
       } catch (e) {
@@ -28,60 +30,67 @@ export function ImageCompressTool() {
     }
   }
 
-  const downloadName = (name: string, type?: string) => name.replace(/\.[^.]+$/, "") + (type === "image/webp" ? "-da-nen.webp" : "-da-nen.jpg");
-
   return (
-    <div className="card tool-result">
-      <div className="pn-drop">
-        <Glyph name="image" size={28} />
-        <p>
-          <strong>Chọn ảnh</strong> để thu nhỏ còn tối đa 1600px và 2MB, ngay trên trình duyệt — ảnh không được tải lên máy chủ nào.
-        </p>
-        <button type="button" className="button-ghost pn-compact" onClick={() => inputRef.current?.click()}>
-          <Glyph name="upload" size={18} />
-          Chọn ảnh
-        </button>
-      </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        hidden
-        onChange={(e) => {
-          const picked = Array.from(e.target.files ?? []);
-          e.target.value = "";
-          if (picked.length > 0) void addFiles(picked);
+    <>
+      <label
+        className="tool-drop"
+        data-over={over}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setOver(true);
         }}
-      />
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setOver(false);
+          void addFiles(Array.from(e.dataTransfer.files));
+        }}
+      >
+        <strong>Chọn hoặc thả ảnh vào đây</strong>
+        <span>JPG, PNG — nhiều ảnh một lúc</span>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          className="tool-sr"
+          onChange={(e) => {
+            const picked = Array.from(e.target.files ?? []);
+            e.target.value = "";
+            if (picked.length > 0) void addFiles(picked);
+          }}
+        />
+      </label>
       {items.length > 0 && (
-        <ul className="pn-list">
+        <ul className="tool-shots">
           {items.map((r) => (
-            <li key={r.id} className="pn-item">
-              <div className="pn-item__head">
-                <h3 className="pn-item__title">{r.name}</h3>
-                {r.url && (
-                  <a className="link-quiet" href={r.url} download={downloadName(r.name, r.type)}>
-                    Tải ảnh đã nén
-                  </a>
+            <li key={r.id}>
+              <div className="tool-shots__img">
+                <img src={r.preview} alt="" />
+              </div>
+              <div className="tool-shots__body">
+                <h3>{r.name}</h3>
+                {r.error ? (
+                  <p className="tool-error" role="alert">
+                    {r.error}
+                  </p>
+                ) : r.after != null && r.url ? (
+                  <>
+                    <p className="tool-shots__size">
+                      <span>{fmtKb(r.before)}</span>
+                      <b>→ {fmtKb(r.after)}</b>
+                    </p>
+                    <a className="tool-dark-pill" href={r.url} download={downloadName(r.name, r.type)}>
+                      Tải ảnh đã nén
+                    </a>
+                  </>
+                ) : (
+                  <span className="tool-spin" role="status" aria-label="Đang nén" />
                 )}
               </div>
-              {r.error ? (
-                <p className="form-error" role="alert">
-                  {r.error}
-                </p>
-              ) : r.after != null ? (
-                <p className="tool-result__meta">
-                  <span>{fmtKb(r.before)} → {fmtKb(r.after)}</span>
-                  <span>Giảm {Math.round((1 - r.after / r.before) * 100)}%</span>
-                </p>
-              ) : (
-                <p className="pn-empty">Đang nén…</p>
-              )}
             </li>
           ))}
         </ul>
       )}
-    </div>
+    </>
   );
 }

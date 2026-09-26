@@ -45,8 +45,8 @@ export function CouplePanel({ content, onChange, media }: PanelProps & { media: 
   return (
     <div className="pn-stack">
       <PanelSection title="Cô dâu và chú rể" description="Tên hai bạn sẽ hiện lớn trên trang bìa.">
-        <TextField label="Tên chú rể" value={couple.groom.name} onChange={(name) => setCouple({ groom: { name } })} maxLength={60} placeholder="Ví dụ: Nguyễn Văn Minh" />
-        <TextField label="Tên cô dâu" value={couple.bride.name} onChange={(name) => setCouple({ bride: { name } })} maxLength={60} placeholder="Ví dụ: Lê Thị An" />
+        <TextField label="Tên chú rể" value={couple.groom.name} onChange={(name) => setCouple({ groom: { ...couple.groom, name } })} maxLength={60} placeholder="Ví dụ: Nguyễn Văn Minh" />
+        <TextField label="Tên cô dâu" value={couple.bride.name} onChange={(name) => setCouple({ bride: { ...couple.bride, name } })} maxLength={60} placeholder="Ví dụ: Lê Thị An" />
         {bothSample ? <p className="pn-note">Hai tên này là tên mẫu. Nhớ đổi thành tên của hai bạn trước khi xuất bản.</p> : null}
       </PanelSection>
 

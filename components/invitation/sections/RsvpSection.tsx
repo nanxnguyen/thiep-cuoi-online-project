@@ -24,7 +24,7 @@ export function RsvpSection({
   if (!rsvp.enabled) return null;
   const deadline = rsvp.deadline ? (locale === "en" ? formatDateEn(rsvp.deadline) : formatDateVi(rsvp.deadline)) : "";
   return (
-    <section className="inv-section inv-rsvp" aria-labelledby="inv-rsvp-h">
+    <section id="tham-du" className="inv-section inv-rsvp" aria-labelledby="inv-rsvp-h">
       <Reveal>
         <h2 className="inv-label" id="inv-rsvp-h">
           {dict.rsvpTitle}

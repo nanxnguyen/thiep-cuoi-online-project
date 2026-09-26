@@ -3,7 +3,7 @@
    ~420px column on desktop and fill the width on phones, so nothing here has a fixed width above 100%. */
 
 :root {
-  --pn-danger: #b01a40; /* text-safe rose: 6.8:1 on white, 5.7:1 on --accent-soft (--accent alone is 4.2:1 there) */
+  --pn-danger: var(--accent-hover); /* 9:1+ on white and on --accent-soft */
 }
 
 .pn-stack {
@@ -147,7 +147,7 @@
   transition: border-color 0.2s, background 0.2s;
 }
 .pn-toggle:hover {
-  border-color: #cfcae6;
+  border-color: var(--line-strong);
 }
 .pn-toggle:has(:checked) {
   border-color: color-mix(in oklab, var(--accent) 30%, var(--line));
@@ -186,7 +186,7 @@
   width: 48px;
   height: 28px;
   border-radius: 999px;
-  background: #8f93ad; /* 3:1 against white, so the off state is visible without colour perception */
+  background: var(--faint-deco); /* 4:1 against white, so the off state is visible without colour perception */
   transition: background 0.2s;
 }
 .pn-toggle__thumb {
@@ -196,7 +196,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--surface);
   box-shadow: 0 1px 3px rgb(21 23 43 / 0.3);
   transition: transform 0.2s;
 }
@@ -242,7 +242,7 @@
 .button-ghost.pn-add {
   width: 100%;
   border-style: dashed;
-  border-color: #c9c3e2;
+  border-color: var(--line-strong);
 }
 .button-ghost.pn-add:hover:not(:disabled) {
   background: var(--paper);
@@ -327,7 +327,7 @@
 .pn-empty {
   margin: 0;
   padding: 18px 16px;
-  border: 1.5px dashed #d9d5ee;
+  border: 1.5px dashed var(--line-strong);
   border-radius: var(--radius);
   color: var(--muted);
   font-size: 14px;
@@ -352,7 +352,7 @@
   justify-items: center;
   gap: 8px;
   padding: 20px 16px;
-  border: 1.5px dashed #c9c3e2;
+  border: 1.5px dashed var(--line-strong);
   border-radius: var(--radius);
   background: color-mix(in oklab, var(--lilac) 12%, var(--surface));
   color: var(--muted);
@@ -424,7 +424,7 @@
   padding: 0 8px;
   border-radius: 999px;
   background: rgb(21 23 43 / 0.72);
-  color: #fff;
+  color: var(--surface);
   font: 700 12px/1 var(--sans);
 }
 .pn-photo__actions {
@@ -557,7 +557,7 @@
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  background: #fff; /* QR codes need a white quiet zone whatever the surroundings */
+  background: var(--surface); /* QR codes need a white quiet zone whatever the surroundings */
   box-shadow: var(--shadow);
   text-align: center;
   transition: opacity 0.2s;
@@ -612,7 +612,7 @@
 }
 @media (hover: hover) {
   .pn-tpl:hover .pn-tpl__card {
-    border-color: #cfcae6;
+    border-color: var(--line-strong);
     transform: translateY(-2px);
   }
 }
@@ -655,7 +655,7 @@
   height: 24px;
   border-radius: 50%;
   background: var(--ink);
-  color: #fff;
+  color: var(--surface);
   box-shadow: 0 0 0 2px var(--surface);
 }
 .pn-tpl__input:checked + .pn-tpl__card .pn-tpl__tick {
@@ -676,3 +676,7 @@
     animation: none;
   }
 }
+.pn-color-options { display:flex; flex-wrap:wrap; gap:10px; }
+.pn-color-options button { display:flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:var(--paper); cursor:pointer; }
+.pn-color-options button[aria-pressed="true"] { border-color:var(--ink); box-shadow:0 0 0 1px var(--ink); }
+.pn-color-options i { width:18px; height:18px; border-radius:50%; }

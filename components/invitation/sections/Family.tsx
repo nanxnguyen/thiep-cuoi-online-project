@@ -17,7 +17,7 @@ export function Family({ content, locale = "vi" }: { content: Content; locale?: 
   if (sides.length === 0) return null;
 
   return (
-    <section className="inv-section inv-family" aria-labelledby="inv-family-h">
+    <section id="gia-dinh" className="inv-section inv-family" aria-labelledby="inv-family-h">
       <Reveal>
         <h2 className="inv-label" id="inv-family-h">
           {dict.familyTitle}

@@ -1,44 +1,49 @@
 "use client";
 
 import { useState } from "react";
-import { TextField, isHttpUrl } from "@/components/studio/fields";
+import { isHttpUrl } from "@/components/studio/fields";
 import { qrImageUrl } from "@/lib/tools/qr";
 
+// design/CC Tao QR.dc.html: link field → 220px QR tile beside the download action.
 export function QrTool() {
   const [link, setLink] = useState("");
-  const [touched, setTouched] = useState(false);
   const trimmed = link.trim();
   const valid = trimmed !== "" && isHttpUrl(trimmed);
-  const error = touched && trimmed !== "" && !valid ? "Link phải bắt đầu bằng http:// hoặc https:// và không có khoảng trắng." : undefined;
+  const error = trimmed !== "" && !valid;
+  const src = valid ? qrImageUrl(trimmed) : "";
 
   return (
-    <div className="card tool-result">
-      <TextField
-        label="Đường link"
-        hint="Ví dụ: https://moc.wedding/invite/ten-thiep"
-        error={error}
-        value={link}
-        onChange={setLink}
-        onBlur={() => setTouched(true)}
-        inputMode="url"
-        maxLength={500}
-        placeholder="https://"
-        autoFocus
-      />
-      {valid && (
-        <>
-          <img src={qrImageUrl(trimmed)} alt={`Mã QR cho ${trimmed}`} width={320} height={320} />
-          <div className="tool-result__meta">
-            <span>Quét thử bằng camera điện thoại trước khi in.</span>
-            <a className="button-ghost" href={qrImageUrl(trimmed)} download="ma-qr-thiep.png">
-              Tải mã QR
-            </a>
-          </div>
-          <p className="pn-hint">
-            Nếu nút tải không tự lưu ảnh (một số trình duyệt trên iPhone mở ảnh ở tab mới), hãy chạm giữ vào ảnh QR để lưu.
-          </p>
-        </>
-      )}
-    </div>
+    <>
+      <label className="tool-field">
+        Link cần tạo mã
+        <input
+          className="input"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          inputMode="url"
+          maxLength={500}
+          placeholder="https://moc.vn/invite/vy-khoi"
+          aria-invalid={error}
+          aria-describedby={error ? "qr-error" : undefined}
+          autoFocus
+        />
+        {error && (
+          <span className="tool-error" id="qr-error">
+            Link cần bắt đầu bằng http:// hoặc https://
+          </span>
+        )}
+      </label>
+      <div className="tool-qr">
+        <div className="tool-qr__tile">
+          {valid ? <img src={src} alt={`Mã QR cho ${trimmed}`} width={220} height={220} /> : <span>Nhập link để xem mã QR</span>}
+        </div>
+        <div className="tool-qr__side">
+          <a className="button-primary" href={src || undefined} download="ma-qr-moc.png" aria-disabled={!valid} tabIndex={valid ? undefined : -1}>
+            Tải mã QR (PNG)
+          </a>
+          <span>Mã được tạo qua dịch vụ QR miễn phí, không lưu lại link của bạn. Trên iPhone, nếu ảnh mở ở tab mới, hãy chạm giữ ảnh để lưu.</span>
+        </div>
+      </div>
+    </>
   );
 }

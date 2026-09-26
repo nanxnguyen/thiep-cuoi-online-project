@@ -7,7 +7,7 @@ export function Album({ content, locale = "vi" }: { content: Content; locale?: L
   if (content.album.length === 0) return null;
   const dict = t(locale);
   return (
-    <section className="inv-section inv-albumsec" aria-labelledby="inv-album-h">
+    <section id="album" className="inv-section inv-albumsec" aria-labelledby="inv-album-h">
       <Reveal>
         <h2 className="inv-label" id="inv-album-h">
           {dict.albumTitle}

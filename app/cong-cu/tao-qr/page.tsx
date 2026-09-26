@@ -10,21 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage
-      eyebrow="Công cụ miễn phí"
-      title={
-        <>
-          Tạo mã QR
-          <br />
-          <em>cho đường link thiệp.</em>
-        </>
-      }
-      description="Dán đường link thiệp (hoặc bất kỳ link nào) để lấy mã QR in lên thiệp giấy, standee hay banner ngày cưới."
-      related={[
-        { href: "/studio", label: "Mở Studio", description: "Tạo thiệp và lấy link chia sẻ." },
-        { href: "/cong-cu/tin-nhan-moi", label: "Tin nhắn mời", description: "Soạn sẵn lời nhắn kèm link thiệp." },
-      ]}
-    >
+    <ToolPage name="Tạo mã QR" title="Tạo mã QR từ link thiệp" description="Dán link thiệp hoặc bất kỳ đường link nào, nhận mã QR để in lên thiệp giấy hoặc bảng chào." width={760}>
       <QrTool />
     </ToolPage>
   );

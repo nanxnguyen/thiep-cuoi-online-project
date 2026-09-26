@@ -41,6 +41,17 @@ test("getPublicInvitation returns null on 404 and does not cache", async () => {
   assert.equal(calls[0].init.cache, "no-store");
 });
 
+test("public writes include a fresh idempotency key", async () => {
+  const first = fake(204, undefined);
+  await first.api.submitRsvp("minh-an", { name: "Lan", attending: true, guests: 2, note: "", answers: {}, guestLabel: "", guestToken: "", website: "" });
+  const second = fake(201, { id: "w1", name: "Lan", message: "Chúc mừng", createdAt: "2026-09-26T00:00:00Z" });
+  await second.api.submitWish("minh-an", { name: "Lan", message: "Chúc mừng", website: "" });
+  const firstKey = new Headers(first.calls[0].init.headers).get("idempotency-key");
+  const secondKey = new Headers(second.calls[0].init.headers).get("idempotency-key");
+  assert.match(firstKey ?? "", /^[0-9a-f-]{36}$/);
+  assert.notEqual(firstKey, secondKey);
+});
+
 test("errors surface the ProblemDetail text", async () => {
   const { api } = fake(409, { title: "Conflict", detail: "Slug đã được dùng" });
   await assert.rejects(
@@ -61,6 +72,17 @@ test("a network failure becomes an ApiError(0) with the offline message", async 
     throw new TypeError("Failed to fetch");
   }) as unknown as typeof fetch);
   await assert.rejects(down.getInvitation("i", "k"), (e: unknown) => e instanceof ApiError && e.status === 0 && e.message === NETWORK_MESSAGE);
+});
+
+test("account calls rely on the HttpOnly cookie and logout clears the server session", async () => {
+  const { api, calls } = fake(200, { id: "u", email: "a@example.com" });
+  await api.me("legacy-jwt");
+  assert.equal(new Headers(calls[0].init.headers).get("authorization"), null);
+
+  const loggedOut = fake(204, undefined);
+  await loggedOut.api.logout();
+  assert.equal(loggedOut.calls[0].url, "http://be/api/auth/logout");
+  assert.equal(loggedOut.calls[0].init.method, "POST");
 });
 
 test("uploadMedia posts multipart with kind and file", async () => {

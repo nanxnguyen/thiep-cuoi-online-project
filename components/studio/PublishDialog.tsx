@@ -19,11 +19,14 @@ type Props = {
   /** Saves the draft now and resolves once the server has it: publishing checks the SAVED content. */
   flush: () => Promise<void>;
   onMeta: (meta: PublishMeta) => void;
+  /** Completion % and the parts still missing (lib/editor-sections), shown before the first publish like Editor v3. */
+  pct?: number;
+  missing?: { label: string; why: string; go: () => void }[];
 };
 
 // Publishing dialog: choose the public address (until the first publish), see what still blocks publishing,
 // then share the link. Uses the native <dialog> so focus trapping, ESC and the backdrop come for free.
-export function PublishDialog({ open, onClose, id, editKey, content, meta, flush, onMeta }: Props) {
+export function PublishDialog({ open, onClose, id, editKey, content, meta, flush, onMeta, pct, missing = [] }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const confetti = useRef<HTMLCanvasElement>(null);
   const [slug, setSlug] = useState(meta.slug);
@@ -85,7 +88,7 @@ export function PublishDialog({ open, onClose, id, editKey, content, meta, flush
             <h2 id="publish-title">
               Thiệp của bạn <em>đã sẵn sàng.</em>
             </h2>
-            <p style={{ color: "var(--muted)", margin: "0 0 8px" }}>Gửi link này cho khách. Thêm <code>?to=Tên khách</code> vào cuối link để thiệp chào đúng tên từng người.</p>
+            <p style={{ color: "var(--muted)", margin: "0 0 8px" }}>Gửi link này cho khách. Muốn thiệp chào đúng tên từng hộ, thêm khách ở tab Khách rồi sao chép link riêng (<code>?g=…</code>) của từng người.</p>
             <div className="link-row">
               <input className="input" readOnly value={publicUrl} aria-label="Link thiệp" onFocus={(e) => e.currentTarget.select()} />
               <button type="button" className="button-primary" onClick={() => copy("public", publicUrl)}>
@@ -123,6 +126,23 @@ export function PublishDialog({ open, onClose, id, editKey, content, meta, flush
             <h2 id="publish-title">
               Gửi thiệp <em>cho khách.</em>
             </h2>
+            {pct !== undefined && (
+              <div className="pub-check">
+                <p>Thiệp đã hoàn thiện {pct}%. Bạn vẫn có thể sửa sau khi xuất bản, link giữ nguyên.</p>
+                <div className="ed-progress" aria-hidden="true"><i style={{ width: `${pct}%` }} /></div>
+                {missing.length > 0 && (
+                  <ul>
+                    {missing.map((m) => (
+                      <li key={m.label}>
+                        <span aria-hidden="true">!</span>
+                        <div><strong>{m.label}</strong><small>{m.why}</small></div>
+                        <button type="button" className="ed-chipbtn" onClick={m.go}>Bổ sung</button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
             <p style={{ color: "var(--muted)", margin: "0 0 20px" }}>Sau khi xuất bản, ai có link cũng mở được thiệp. Bạn vẫn sửa được bất cứ lúc nào, thiệp cập nhật ngay.</p>
             {issues.length > 0 && (
               <ul className="issues" role="alert">

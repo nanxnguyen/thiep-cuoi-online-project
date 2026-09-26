@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FaqList } from "@/components/marketing/FaqList";
-import { FEATURE_ICON } from "@/components/marketing/featureIcons";
-import { CtaBand, MarketingLayout, PageHero } from "@/components/marketing/MarketingLayout";
-import { featureDescription, features, getFeature } from "@/lib/marketing/features";
+import { MarketingLayout } from "@/components/marketing/MarketingLayout";
+import { featureArt, featureDescription, features, getFeature } from "@/lib/marketing/features";
+import "../features.css";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -23,99 +23,74 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// design/Tinh Nang Chi Tiet.dc.html. "Đáng biết" and the FAQ (FAQPage JSON-LD) are not in the design; kept below it
+// for search and because they carry the real limits of each feature.
 export default async function FeaturePage({ params }: Props) {
   const f = getFeature((await params).slug);
   if (!f) notFound();
-  const Icon = FEATURE_ICON[f.slug];
-  const related = f.related.map((slug) => getFeature(slug)).filter((r) => r !== undefined);
+  const i = features.indexOf(f);
+  const prev = features[(i - 1 + features.length) % features.length];
+  const next = features[(i + 1) % features.length];
+  const art = featureArt[f.slug];
 
   return (
     <MarketingLayout>
-      <PageHero
-        crumbs={[{ label: "Tính năng", href: "/tinh-nang" }, { label: f.name }]}
-        eyebrow="Tính năng"
-        title={f.name}
-        lede={f.tagline}
-      >
-        <div className="actions">
-          <Link className="button-primary" href="/studio">
-            Dùng thử ngay
-          </Link>
-          <Link className="button-ghost" href="/templates">
-            Xem mẫu thiệp
-          </Link>
-        </div>
-      </PageHero>
-
-      <section className="mk-section mk-narrow">
-        {Icon && (
-          <span className="mk-icon" aria-hidden="true" style={{ marginBottom: 18 }}>
-            <Icon size={24} />
-          </span>
-        )}
-        <p className="lede" style={{ maxWidth: "none", fontSize: 19 }}>
-          {f.intro}
-        </p>
-      </section>
-
-      <section className="mk-section mk-narrow" aria-labelledby="how">
-        <h2 id="how">Cách hoạt động</h2>
-        <ol className="mk-steps">
-          {f.steps.map((s) => (
-            <li key={s}>{s}</li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="mk-section" aria-labelledby="notes">
-        <h2 id="notes">Đáng biết</h2>
-        <ul className="mk-grid">
-          {f.points.map((p) => (
-            <li key={p.title}>
-              <div className="mk-card">
-                <h3>{p.title}</h3>
-                <p>{p.body}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mk-section mk-narrow" aria-labelledby="faq">
-        <h2 id="faq">Câu hỏi thường gặp</h2>
-        <FaqList items={f.faq} schema />
-      </section>
-
-      {related.length > 0 && (
-        <section className="mk-section" aria-labelledby="more">
-          <h2 id="more">Tính năng liên quan</h2>
-          <ul className="mk-grid">
-            {related.map((r) => {
-              const RelIcon = FEATURE_ICON[r.slug];
-              return (
-                <li key={r.slug}>
-                  <Link className="mk-card" href={`/tinh-nang/${r.slug}`}>
-                    <span className="mk-icon" aria-hidden="true">
-                      {RelIcon && <RelIcon size={24} />}
-                    </span>
-                    <h3>{r.name}</h3>
-                    <p>{r.tagline}</p>
-                    <span className="mk-card__more">Xem chi tiết →</span>
-                  </Link>
-                </li>
-              );
-            })}
+      <div className="feature-detail">
+        <nav className="tool-crumb" aria-label="Đường dẫn">
+          <Link href="/tinh-nang">Tính năng</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{f.name}</span>
+        </nav>
+        <section className="feature-detail__hero anim-fade-up">
+          <div>
+            <p className="eyebrow">
+              Tính năng {i + 1}/{features.length}
+            </p>
+            <h1>{f.name}</h1>
+            <p className="feature-detail__lede">{f.intro}</p>
+            <Link className="button-primary" href="/studio">
+              Tạo thiệp có {f.name.toLowerCase()}
+            </Link>
+          </div>
+          <div className="feature-detail__art" style={{ background: art.bg, color: art.ink }} aria-hidden="true">
+            <i />
+            <div>
+              <strong>{art.glyph}</strong>
+              <small>{art.caption}</small>
+            </div>
+          </div>
+        </section>
+        <section className="feature-detail__how" aria-labelledby="how">
+          <h2 id="how">Hoạt động thế nào</h2>
+          <ol>
+            {f.steps.map((s, n) => (
+              <li key={s}>
+                <span>{String(n + 1).padStart(2, "0")}</span>
+                {s}
+              </li>
+            ))}
+          </ol>
+        </section>
+        <section className="feature-detail__notes" aria-labelledby="notes">
+          <h2 id="notes">Đáng biết</h2>
+          <ul>
+            {f.points.map((p) => (
+              <li key={p.title}>
+                <strong>{p.title}</strong>
+                <span>{p.body}</span>
+              </li>
+            ))}
           </ul>
         </section>
-      )}
-
-      <CtaBand
-        title={
-          <>
-            Một lời mời <em>thật riêng.</em>
-          </>
-        }
-      />
+        <section className="feature-detail__faq" aria-labelledby="faq">
+          <h2 id="faq">Câu hỏi thường gặp</h2>
+          <FaqList items={f.faq} schema />
+        </section>
+        <nav className="feature-detail__pager" aria-label="Tính năng khác">
+          <Link href={`/tinh-nang/${prev.slug}`}>← {prev.name}</Link>
+          <Link href={`/tinh-nang/${next.slug}`}>{next.name} →</Link>
+        </nav>
+      </div>
     </MarketingLayout>
   );
 }

@@ -31,7 +31,7 @@ export function CountdownClock({ targetIso, nowIso, locale = "vi" }: { targetIso
       <p className="inv-sr-only">{dict.srCountdown(r.days)}</p>
       {cells.map(([label, value]) => (
         <div className="inv-clock__cell" key={label} aria-hidden="true">
-          <span className="inv-clock__num">{label === dict.days ? value : pad(value)}</span>
+          <span className="inv-clock__num" key={value}>{label === dict.days ? value : pad(value)}</span>
           <span className="inv-clock__label">{label}</span>
         </div>
       ))}
