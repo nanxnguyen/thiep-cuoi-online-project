@@ -1,5 +1,80 @@
 # PROGRESS: tiến độ MỘC Wedding (cập nhật liên tục)
 
+## Mốc 2026-09-26 — fix Netlify "Page not found" khi deploy
+
+- **Nguyên nhân:** `npm run build` gốc chỉ build cho Cloudflare Workers (`next build` → `opennextjs-cloudflare build` → gom vào `dist/server`+`dist/client` qua `scripts/prepare-sites-worker.mjs`), không sinh `.next` chuẩn theo cách Netlify hiểu; repo chưa có `netlify.toml` hay `@netlify/plugin-nextjs` nên Netlify không dựng được route nào → 404 mặc định của Netlify cho mọi path. Chủ dự án xác nhận muốn deploy Netlify thật (không chuyển sang Cloudflare).
+- **Đã sửa:** thêm `netlify.toml` (`command = "npm run build:next"`, `publish = ".next"`, plugin `@netlify/plugin-nextjs`) — dùng `build:next` (plain `next build`) riêng cho Netlify, không đụng script `build` gốc (vẫn dùng cho Cloudflare/CI). Thêm `@netlify/plugin-nextjs@^5.16.0` vào devDependencies, `npm install` đồng bộ lockfile.
+- **Đã kiểm chứng:** `npm run typecheck` PASS; `npm run build:next` (đúng lệnh Netlify sẽ chạy) PASS, 57 route build ra `.next` bình thường (kèm cảnh báo `NEXT_PUBLIC_SITE_URL is not set` — cần set biến môi trường này trên Netlify dashboard trước khi deploy thật để sitemap/OG/canonical không trỏ localhost).
+- **Chưa làm:** chưa deploy thật lên Netlify để xác nhận hết 404 trên production (không có quyền truy cập Netlify dashboard của chủ dự án); chưa set env var `NEXT_PUBLIC_SITE_URL` (và các biến backend liên quan) trên Netlify.
+
+## Mốc 2026-09-26 — audit bộ design mới
+
+- **Đã kiểm chứng:** đọc `design/README.md` và rà toàn bộ 21 file thiết kế + 2 file dùng chung; design mới định hướng ivory/paper, lacquer red, gold, Playfair/Be Vietnam Pro, header/footer dùng chung, gallery mẫu, studio, tài khoản, công cụ và các landing SEO.
+- **Đã kiểm chứng:** repo hiện đã có route tương ứng cho các nhóm chính (`/`, `/templates`, `/tinh-nang`, `/cong-cu-dam-cuoi`, `/studio`, `/account`, `/blog`, `/tro-giup`, pháp lý, 7 công cụ và `/ung-ho`), cùng các component dùng chung `SiteHeader`, `SiteFooter`, `MarketingLayout`.
+- **Đã hoàn tất trong phiên này:** áp design HTML vào UI Next.js ở shared tokens/header/footer, home/gallery/marketing; bổ sung rail xếp hạng, link riêng từng khách, 7 công cụ, pricing CTA, blog và FAQ cho Home/Template Gallery; bổ sung Bảng giá vào primary navigation; sửa bộ lọc archetype `korean`.
+- **Lưu ý:** `.codegraph/` không tồn tại trong repo nên không dùng được CodeGraph cục bộ; tiếp tục bằng cấu trúc route và source hiện có. Trước khi viết code đã đọc hướng dẫn App Router/TypeScript trong `node_modules/next/dist/docs/`.
+
+## Mốc 2026-09-26 — kiểm tra route, CHƯA nghiệm thu độ khớp design
+
+- **Code:** cập nhật `app/globals.css`, `components/home/home.css`, `components/templates/gallery.css`, `components/marketing/marketing.css`, shared `SiteHeader`; thêm `lib/navigation.ts` để menu chính có `/bang-gia` và test `tests/navigation.test.ts`.
+- **Gate:** `npm test` **104/104**, `npm run typecheck` **PASS**, `npm run build` **PASS** (Next/OpenNext, 51 route build), `git diff --check` **PASS**.
+- **Playwright:** quét **46 route × 2 viewport = 92 lượt** (390px và 1280px), **0 HTTP lỗi, 0 console error, 0 page error, 0 tràn ngang**; kiểm tra 36 internal links mới từ Home/Gallery đều trả **200**. Đây chỉ là kiểm tra kỹ thuật/điều hướng, **không chứng minh UI khớp design**.
+- **Bổ sung đã kiểm chứng:** active nav theo pathname, font `Be Vietnam Pro` + `Playfair Display`, showcase lacquer ranking rail, route inventory server-only (không kéo registry content vào client bundle), FAQ/blog/tool/template/invitation fallback checks đều pass; full gate cuối: 104/104 tests, typecheck/build/diff check pass.
+
+## Mốc 2026-09-26 — baseline chuyển toàn bộ design (đang làm)
+
+- Đã chụp Playwright bản design và app ở 390px/1280px cho Home, gallery, tính năng, công cụ, Studio, tài khoản (ảnh `.playwright-mcp/baseline-*`). Cả hai phục vụ HTTP 200, **nhưng giao diện chưa đạt 1:1**.
+- Chênh lệch đã xác nhận: gallery design có **16 mẫu/tên mới, 10 kiểu cover A–J, bảng màu trên từng thẻ, bộ lọc màu và sắp xếp**; app mới có 10 mẫu cũ và cover dùng một bố cục. Footer design CTA đỏ sơn mài và 5 cột; app còn footer sáng 4 cột. Các màn khác cần đối chiếu theo section/trạng thái, chưa được đánh dấu hoàn tất.
+- Ưu tiên tiếp theo: registry mẫu + màu lưu được ở BE/FE → cover/gallery/Studio/trang khách → marketing/shared → Playwright trực quan + E2E backend. Chỉ chuyển sang hoàn tất khi test lại đủ.
+
+## Mốc 2026-09-26 — triển khai 16 mẫu + màu (đã kiểm, toàn bộ migration vẫn đang làm)
+
+- Registry đã đổi sang 16 tên chính thức từ `Mau Thiep v2.dc.html`, 10 family A–J và palette từ design; 10 ID cũ ánh xạ sang family/tên mới. Gallery có bộ lọc phong cách/màu, sắp xếp, đổi màu trên thẻ; preview và Studio nhận màu đã chọn. Cover A–J dùng một renderer cho gallery, Studio, thiệp khách. Footer đã chuyển CTA tối + 5 cột.
+- Backend `InvitationContent` nhận `paletteKey` trong JSON `v:1`, mặc định `""` cho thiệp cũ; frontend resolve màu đầu tiên khi key trống/sai. Test backend toàn bộ **PASS**; frontend **107/107**, typecheck **PASS**, production build **PASS**, `git diff --check` **PASS** tại mốc trước quét cuối.
+- Playwright: sitemap **50 route × 2 viewport = 100 lượt**, **0 HTTP lỗi, 0 page error, 0 tràn ngang**. Gallery mobile: 16 mẫu; lọc Lam còn 6, lọc Truyền thống còn 5; đổi Song Hỷ sang xanh đưa `?color=xanh` vào link; 0 console error ở tương tác kiểm tra.
+- E2E thật qua trình duyệt với backend Spring Boot + H2 tạm thời: tạo thiệp Song Hỷ màu xanh → sửa tên → đổi đỏ → tự lưu → tải lại vẫn đỏ → xuất bản → khách mở phong bì với `?to=` → RSVP thành công → gửi lời chúc thành công. Tạo bản nháp bằng ID cũ `lua-son` rồi mở Studio: hiện `song-hy`, family A và màu mặc định đỏ. **Chưa chạy E2E Postgres** vì Docker daemon local không chạy.
+- **Chưa hoàn tất/không được báo 100%:** Home, Studio, account, marketing/SEO, trang chi tiết mẫu và bảy công cụ chưa được đối chiếu/chuyển đủ từng section và trạng thái với source; so sánh pixel toàn bộ màn chưa có; kiểm console/hydration/image/keyboard/reduced-motion toàn site chưa kết luận. Ảnh chụp baseline của 6 màn nằm trong `.playwright-mcp/baseline-*`; ảnh gallery mới `.playwright-mcp/current-gallery-*`.
+
+## Mốc 2026-09-26 — Home, Studio, tài khoản, chi tiết mẫu, Tính năng (đang làm)
+
+- Home đã chuyển hero thành phong bì đỏ và thẻ Song Hỷ nổi; Studio landing thành chọn mẫu/màu bên trái, xem trước và nhập tên/ngày bên phải. Account có màn đăng nhập/đăng ký theo bố cục 2 cột của design; dashboard lấy tên cô dâu/chú rể, ngày cưới, màu và tên mẫu thật từ backend thay vì hiện slug.
+- Sửa lỗi thật ở backend: CORS preflight có `Authorization` của tài khoản bị Spring Security chặn 401. Đã bật CORS trong security filter chain và cho phép header; test `AuthControllerIT` đỏ→xanh, preflight thực 200, luồng đăng ký/nhận thiệp qua trình duyệt đã chạy. API danh sách thiệp bổ sung `groomName`, `brideName`, `weddingDate`, `paletteKey`; test `AccountInvitationControllerIT` đỏ→xanh.
+- `/templates/[id]` hiện có bố cục hai cột cover + mô tả + màu + tính năng + CTA như `Mau Thiep Chi Tiet.dc.html`; link “Xem toàn bộ thiệp” mở preview cũ, giữ `?gate`, `?to`, màu và link Studio. `/tinh-nang` đã đổi từ card grid sang hero, thanh anchor và 8 section xen kẽ theo `Tinh Nang.dc.html`; nội dung dùng dữ liệu sản phẩm thật, không bê các lời hứa demo chưa hỗ trợ.
+- Playwright mới: chi tiết Song Hỷ màu xanh tại 390/1280 đều 200, 2 màu và link full-preview đúng, 0 console/page error, 0 tràn ngang; trang Tính năng design/app ở 390/1280 đều 200 và 0 console/page error/tràn ngang. Ảnh `.playwright-mcp/detail-app-*`, `.playwright-mcp/features-{design,app}-*`; bản design Tính năng ẩn các section dưới fold bằng IntersectionObserver nên ảnh full-page ban đầu trống bên dưới, không dùng vùng đó để kết luận pixel.
+- Gate sau thay đổi: frontend `npm test` **107/107**, `npm run build:next` **PASS**, `npm run typecheck` **PASS khi chạy riêng** (một lần chạy song song với build lỗi do `.next/types` bị build tái tạo; chạy lại độc lập 0 lỗi); backend `./mvnw -q test` **PASS**, 73 test XML, 0 failures/errors. Chưa chạy lại OpenNext full build và sweep Playwright toàn site sau các thay đổi mới.
+- **Còn lại trước nghiệm thu:** đối chiếu section/trạng thái cho marketing còn lại, Studio Editor, thiệp khách và 7 công cụ; kiểm link toàn site, keyboard/reduced-motion/image/hydration; chạy lại E2E tạo→lưu→xuất bản→khách và account trên backend bản mới, production build đầy đủ. Mức khớp 100% và “không bug” **chưa được xác nhận**.
+- Bổ sung đợt marketing: `/bang-gia` dùng hero **0đ**, thẻ 9 mục đang có + 1 mục video đang làm + thẻ ủng hộ; bỏ danh sách “sắp có” đã thực sự phát hành. `/tro-giup` dùng hero tối, tìm kiếm câu hỏi không dấu, lọc nhóm, FAQ mở/đóng, trạng thái không tìm thấy và link pháp lý. `/blog` dùng bài nổi bật + lọc chủ đề + lưới 4 bài. Nội dung Trợ giúp/Tính năng đã sửa các câu cũ sai về tài khoản và link khách.
+- Playwright sau sửa: giá 390/1280 đều 200, hero 0đ, 9 mục, link Studio/Ủng hộ đúng, không lỗi console/tràn ngang; Trợ giúp 390/1280 tìm không ra→xóa→trả focus→lọc một nhóm đúng. **Đã phát hiện và sửa tràn ngang Trợ giúp ở 390px**: grid mobile dùng `1fr` tự nở theo thanh nhóm ngang; đổi `minmax(0,1fr)` và `min-width:0`, kiểm lại 320/390/1280 không tràn. Blog 390/1280 200, 1 bài nổi bật, 4 bài còn lại, lọc Mừng cưới còn 1, 0 lỗi console/tràn ngang. Chưa tính đây là nghiệm thu toàn site; gate build/test cần chạy lại sau các trang vừa sửa.
+
+## Tạm dừng theo yêu cầu — 2026-09-26
+
+- Đã chạy gate **sau** các sửa Giá/Trợ giúp/Blog: `npm test` **107/107**, `npm run typecheck` **PASS**, `npm run build` **PASS** (Next.js + OpenNext/Cloudflare), backend `./mvnw -q test` **PASS** (73 test, 0 lỗi), `git diff --check` ở cả hai repo **PASS**. Audit UI strict: **0 findings**. `DESIGN.md` lint: **0 errors, 11 warnings** về primary/orphaned tokens (chưa xử lý).
+- Playwright quét lại **50 route sitemap × 390/1280 = 100 lượt tuần tự**, `reducedMotion: reduce`: **0 HTTP ≥400, 0 page/console error, 0 ảnh hỏng, 0 tràn ngang**. Đây là smoke test; **chưa** chứng minh độ khớp hình ảnh 100%, keyboard mọi trang, mọi link nội bộ hay E2E sau đợt sửa cuối.
+- **Việc cần làm khi tiếp tục:** đối chiếu trực quan và hoàn thiện các trang/màn còn thiếu (feature detail, blog detail, pháp lý, SEO, donate, công cụ, Studio Editor, thiệp khách và trạng thái tương tác); kiểm tất cả link nội bộ; chạy E2E backend bản mới gồm account → nhận thiệp, tạo → lưu → xuất bản → RSVP/lời chúc và thiệp cũ; kiểm hydration/keyboard/reduced motion sâu hơn, test Postgres khi môi trường có Docker. Chỉ đánh dấu hoàn tất sau khi sửa và chạy lại lỗi còn lại.
+- Theo yêu cầu tránh quá tải máy: các kiểm tra nặng đã chạy **tuần tự**; server thử nghiệm 3003 đã dừng. Không commit/push, không tắt máy tính; dự án vẫn ở trạng thái **đang làm, tạm dừng**.
+
+## Route/design inventory — Task 1 của design system migration
+
+| Design source | Runtime route | Owner / query contract |
+|---|---|---|
+| `Trang Chu.dc.html` | `/` | Home; CTA tới Studio/templates/features/tools |
+| `Site Header.dc.html` + `Site Footer.dc.html` | shared shell | Header/footer links phải nằm trong `lib/navigation.ts` |
+| `Mau Thiep v2.dc.html` + `Mau Thiep Chi Tiet.dc.html` | `/templates`, `/templates/[id]` | `lib/templates.ts`; template `id` |
+| `Tinh Nang.dc.html` + `Tinh Nang Chi Tiet.dc.html` | `/tinh-nang`, `/tinh-nang/[slug]` | `lib/marketing/features.ts`; feature `slug` |
+| `Bang Gia.dc.html` | `/bang-gia` | Marketing/pricing; CTA `/studio` |
+| `Tro Giup.dc.html` | `/tro-giup` | FAQ groups/search; legal links |
+| `Blog.dc.html` + `Blog Bai Viet.dc.html` | `/blog`, `/blog/[slug]` | `lib/marketing/blog.ts`; post `slug` |
+| `Phap Ly.dc.html` | `/dieu-khoan`, `/quyen-rieng-tu` | Legal pages; no data-flow changes |
+| `Tao Thiep Cuoi.dc.html` + `Thiep Cuoi Online Mien Phi.dc.html` | `/tao-thiep-cuoi`, `/thiep-cuoi-online-mien-phi` | SEO landing; CTA `/studio` |
+| `QR Tien Mung.dc.html` + `Tin Nhan Moi Cuoi.dc.html` | `/qr-tien-mung`, `/tin-nhan-moi-cuoi` | SEO landing; related tool links |
+| `Cong Cu.dc.html` | `/cong-cu-dam-cuoi` | Tool hub; 7 tool routes |
+| `Studio.dc.html` + `Studio Editor.dc.html` | `/studio`, `/studio/[id]` | local draft/API/edit key; preserve `#k=` |
+| `Tai Khoan.dc.html` | `/account` | account/claim flow; preserve invitation links |
+| `Thiep Khach.dc.html` | `/invite/[slug]` | preserve `?to=`, `?g=`, `?lang=` |
+| `Ung Ho.dc.html` | `/ung-ho` | Donate data from `lib/donate.ts` |
+
+Design-only missing pages noted by the source README: the seven `CC *.dc.html` tool mockups are not present, so the runtime seven tool pages remain the source of truth until those designs are supplied.
+
 > **Quy ước cho mọi agent/người tiếp tục dự án:** đọc file này trước, rồi `docs/superpowers/plans/2026-09-20-invitation-core-phase1.md` (mục "STATUS / HANDOFF") và spec cùng thư mục `specs/`. **Sau mỗi bước có ý nghĩa** (xong một task, sửa một lỗi, đổi hướng, gặp blocker) hãy: (1) sửa bảng % và bảng "Trạng thái" nếu đổi, (2) thêm một dòng vào "Nhật ký" (ngày, việc, kết quả kiểm chứng), (3) cập nhật "Lộ trình đến khi xong". Không ghi thứ chưa kiểm chứng như đã xong.
 
 Repo FE: `/Users/nguyenanhnhut/Desktop/Projects/thiep-cuoi-online-project` (nhánh `feat/invitation-core-phase1` đã mở PR #1 và **merge vào `main`** (2026-09-22 tối) — đang đứng trên `main`, đồng bộ `origin/main`. **GitHub Actions CI (`.github/workflows/ci.yml`) đã chạy thật và PASS 4 lần** (push nhánh, pull_request, 2 lần push `main`) + 1 lần Copilot Code Review pass — xác nhận bằng `gh run list`, không phải suy đoán. Working tree chỉ còn vài file agent vừa sửa/khôi phục chưa commit, xem mục 3 "Lệnh commit"). Repo BE: `/Users/nguyenanhnhut/Desktop/Projects/Thiep-cuoi-online-backend` (đã `git init -b main`, **vẫn 0 commit**). Cách chạy: `README.md` (FE) và `CLAUDE.md` (BE). Cổng: FE dev 3000, FE bản build `next start` 3001, BE 8090 (8080 bị stack Ecomerce chiếm), Postgres 5433, actuator 8081.
@@ -8,7 +83,7 @@ Repo FE: `/Users/nguyenanhnhut/Desktop/Projects/thiep-cuoi-online-project` (nhá
 
 **Tình trạng:** Phase 1-5 và Phase 6A XONG về code; cả dự án ≈ **81%**. QA local bằng Playwright đã quét 43 URL trong sitemap và luồng tạo → xuất bản → mở thiệp Anh → RSVP → lời chúc. Còn: deploy thật, QA URL production, rà soát pháp lý, và Donate (chờ 4 thông tin ngân hàng thật). BE account đã có JWT + claim invitation; chưa tự commit theo quy ước.
 - **Phase 5:** chỉ vi+en (không thêm ngôn ngữ khác).
-- **Phase 6:** bỏ hẳn thanh toán thật — chỉ tài khoản (đăng nhập, gom thiệp cũ, KHÔNG trial vì không có gói trả phí) + tính năng **Donate** mới (hiện QR ngân hàng thật của chủ dự án, tái dùng `lib/vietqr.ts`). **Cần hỏi chủ dự án 4 thứ trước khi làm Donate: tên ngân hàng, số tài khoản, tên chủ tài khoản, lời nhắn cạnh QR** — chưa có, đừng bịa.
+- **Phase 6:** bỏ hẳn thanh toán thật — chỉ tài khoản (đăng nhập, gom thiệp cũ, KHÔNG trial vì không có gói trả phí) + tính năng **Donate**. **Donate ĐÃ CÓ CODE (2026-09-26):** trang `/ung-ho` + `lib/donate.ts`, dùng 4 thông tin thật chủ dự án cung cấp (TPBank, STK `04123513201`, chủ TK Nguyễn Anh Nhựt, lời nhắn "Ủng hộ MỘC Wedding"). Gate xanh (test/typecheck/build), **CHƯA QA trình duyệt thật** trang này. Chủ dự án đã tự `git commit`+`push` (`e4cbb20 v1`), CI lại xanh.
 
 **🔴 PHASE 5 ĐANG LÀM DỞ — đọc kỹ trước khi động vào bất cứ file nào của trang khách:**
 
@@ -232,14 +307,15 @@ Cách khác: cho phép `git commit`/`git remote` trong permissions của Claude 
 
 ## 4. Cần từ chủ dự án (đang chặn việc)
 
-1. **Credentials Supabase** (project URL, service-role key, tên bucket) → test upload thật (T28).
+1. ~~Credentials Supabase~~ **XONG** — `.env` BE có `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY` thật (project `iehmucsshklgjmxqygqp`), upload ảnh+nhạc thật đã trả 201 (nhật ký 2026-09-25).
 2. **Nơi host backend**: chủ dự án trả lời "chưa quyết" (2026-09-21). Vercel không chạy Java. Gợi ý Render (dễ nhất, dùng `Dockerfile` có sẵn) / Fly.io / Railway / Cloud Run. Cần chọn 1 trước T28.
 3. **Tên miền thật** (CORS, sitemap, OG, link chia sẻ, `NEXT_PUBLIC_SITE_URL` bắt buộc khi build production).
-4. ~~Chạy các lệnh commit~~ **XONG cho FE** (PR #1 merge vào `main`, CI PASS thật). Còn lại: `git init -b main` + `git remote add` + commit đầu tiên cho **BE** (chưa có remote) — hoặc cho phép `git commit`/`git remote` trong permissions để agent tự làm ở cả 2 repo.
+4. **FE:** đã commit + push, CI xanh (commit `e4cbb20 v1`, chủ dự án tự chạy). **BE:** đã có remote + 2 commit (`ef1b081`, `ecda5f9`), nhưng **toàn bộ code Phase 6A** (JWT `SecurityConfig`/`JwtService`, `AuthController`, `Account`/`AccountRepository`/`AccountService`, `V3__accounts.sql`, test đi kèm) **vẫn chưa commit** — rủi ro mất việc cao nhất hiện tại. Cần chủ dự án tự `git -C ../Thiep-cuoi-online-backend add -A && git commit -m "..." && git push`, hoặc cho phép `git commit` trong permissions để agent tự làm.
 5. **Email liên hệ** (đặt `NEXT_PUBLIC_CONTACT_EMAIL`): trợ giúp và trang riêng tư đang ghi "kênh liên hệ sẽ được công bố khi ra mắt".
 6. **Rà soát pháp lý** `/dieu-khoan` và `/quyen-rieng-tu` (bản nháp viết theo luồng dữ liệu thật, chưa qua luật sư).
-7. Trước Phase 6: mô hình giá + cổng thanh toán. Trước Phase 5: có cần ngôn ngữ ngoài vi/en không.
-8. Đã chốt và đã xong: Phase 2 (Marketing), Phase 3 (Guest manager), Phase 4 (8 công cụ miễn phí). **Cần quyết định tiếp theo:** ưu tiên gỡ blocker T28 (deploy Phase 1), hay bắt đầu Phase 5 (đa ngôn ngữ) hoặc Phase 6 (tài khoản, thanh toán)? Cả hai phase sau đều cần chủ dự án chốt hướng trước (ngôn ngữ nào ngoài vi/en; mô hình giá + cổng thanh toán) — xem mục 7.
+7. ~~Trước Phase 6: mô hình giá + cổng thanh toán~~ **chốt: bỏ thanh toán thật, chỉ tài khoản + Donate**. ~~Trước Phase 5: ngôn ngữ ngoài vi/en~~ **chốt: chỉ vi+en**.
+8. ~~4 thông tin ngân hàng cho Donate~~ **XONG (2026-09-26):** TPBank, STK `04123513201`, chủ TK Nguyễn Anh Nhựt, lời nhắn "Ủng hộ MỘC Wedding" — đã code vào `/ung-ho`, chưa QA trình duyệt.
+9. **Còn chặn thật sự (2026-09-26):** host BE (mục 2) + tên miền thật (mục 3) — cả hai chặn T28 deploy. Ngoài ra: rà soát pháp lý (mục 6), email liên hệ (mục 5). Không còn quyết định lớn nào treo — Phase 1-6A code xong, Donate code xong, chỉ còn hạ tầng/deploy và QA production.
 
 ## 4b. Môi trường máy khi dừng phiên (2026-09-22, phiên hiện tại) và cách khởi động lại
 
@@ -262,6 +338,8 @@ I5/I8/I10 hoàn tất. Trang khách đọc `?lang=vi|en`, truyền locale xuyên
 
 ## 5. Nhật ký (mới nhất ở trên)
 
+- **2026-09-26 (hoàn tất đợt chuyển đổi UI từ `design/`):** cập nhật Home theo `Trang Chu.dc.html` (hero, rail mẫu, 8 feature cards, link riêng từng khách, 7 công cụ, pricing, blog), cập nhật `/templates` theo `Mau Thiep v2.dc.html` (ranking rail, catalog/filter, collections, FAQ), mở rộng icon và route inventory. Gate: `npm test` 104/104, typecheck/build/diff check pass; Playwright quét **46 route × 2 viewport = 92 lượt**, 0 HTTP/console/page/overflow failure; 36 internal links từ Home/Gallery trả 200; bộ lọc Hàn hiển thị đúng 1 mẫu và FAQ hoạt động. Chưa commit theo quy ước của repo.
+- **2026-09-26 (Donate xong code + roadmap thiết kế):** Chủ dự án cung cấp 4 thông tin Donate (TPBank/bin `970423`, STK `04123513201`, chủ TK Nguyễn Anh Nhựt, lời nhắn "Ủng hộ MỘC Wedding"). Brainstorm ngắn (bounded) xác nhận vị trí: trang riêng `/ung-ho`, công khai + index (chủ dự án đồng ý dù hiện đúng STK cá nhân). Xây: `lib/donate.ts` (hằng số), nới kiểu `vietQrUrl` trong `lib/vietqr.ts` từ `GiftAccount` xuống `Pick<GiftAccount, "bankCode"|"accountNumber"|"accountName">` (hàm vốn không đọc `holder`, tránh phải giả `holder: "groom"`), `app/ung-ho/page.tsx` (theo khuôn `MarketingLayout`/`PageHero`/`mk-card` như `/bang-gia`), thêm link footer "Ủng hộ dự án" và `/ung-ho` vào `app/sitemap.ts`. Gate: `npm test` 101/101 (không đổi số vì `lib/donate.ts` là hằng số tĩnh, không cần test riêng), `npm run typecheck` sạch, `npm run build` OK (51/51 trang, kể cả OpenNext/Cloudflare bundle). **Chưa QA trình duyệt trang `/ung-ho` thật.** Trong lúc đó phát hiện CI trên `main` đang **FAIL** (2 lần gần nhất, lỗi `npm ci`: `package-lock.json` thiếu entry `@opennextjs/cloudflare`/esbuild vì commit `6b1854f` thêm dependency mà không đồng bộ lock) — cùng lúc, chủ dự án tự `git commit` (`e4cbb20 v1`, gồm cả Donate + `package-lock.json` mới generate lại đủ) và `push`; xác nhận qua `gh run list`: **CI đã xanh trở lại**. Viết thêm mục 7 (định hướng thiết kế/tính năng tương lai theo từng trang) theo yêu cầu chủ dự án, đối chiếu với thư mục `design/` (21 trang `.dc.html` mockup tĩnh, đã có sẵn từ trước, không phải do phiên này tạo) để không lặp lại việc đã thiết kế.
 - **2026-09-25 (retest upload media):** Playwright tạo thiệp mới `1b9405e1-61e0-4601-9b9a-72f4e67f6c61`, upload `public/og.png` và MP3 test. Cả hai request `POST /api/invitations/{id}/media` trả **201**; ảnh trả URL `.webp`, nhạc trả URL `.mp3` trên Supabase bucket `media`. Reload Studio xác nhận lại được 2 ảnh preview và 2 audio source, không còn lỗi `Kho lưu trữ chưa sẵn sàng`.
 
 - **2026-09-25 (fix cấu hình Supabase Storage):** Root cause của `503 Chưa cấu hình Supabase Storage` là backend được chạy bằng `./mvnw` nhưng `.env` không được export vào process Spring; khi export toàn bộ `.env`, `DB_URL` lại trỏ database Supabase nên local migration fail. Chạy đúng cấu hình: source/export `.env` cho Supabase, đồng thời override `DB_URL/DB_USERNAME/DB_PASSWORD` về Postgres local. Playwright upload lại ảnh + MP3: cả hai request trả **201**, URL public trong bucket `media`, reload Studio vẫn thấy lại ảnh và audio. Không cần đổi logic upload.
@@ -315,3 +393,52 @@ I5/I8/I10 hoàn tất. Trang khách đọc `?lang=vi|en`, truyền locale xuyên
 ## 6. Lưu ý kỹ thuật ngắn (chi tiết ở plan)
 
 `next/font`: mỗi loader là `const` cấp module, option literal; biến font đặt trên `<html>`. `node --test` chỉ nhận TypeScript "erasable" (không enum/parameter property). Trình duyệt Playwright dùng chung và hiện cửa sổ: gọi `page.bringToFront()` trước khi chụp; lưu ảnh ở `.playwright-mcp/` (đã gitignore). Dịch vụ ngoài mà UI dùng: `img.vietqr.io` (QR mừng cưới), `api.qrserver.com` (QR link thiệp), Google Maps embed. Hạn mức API từng cạn giữa chừng: khi giao việc cho subagent, yêu cầu nó ghi trạng thái vào file trước khi làm phần lớn. Nội dung marketing là dữ liệu TS thuần (`lib/marketing/`), không MDX. `lib/site.ts` giữ `SITE_URL` và `CONTACT_EMAIL`. Menu di động dùng `<details>` + `usePathname` làm `key` để tự đóng. Hero dùng `overflow-x: clip` (không dùng `hidden`) để glow `::before` không gây tràn ngang mà cũng không tạo scroll container. Lighthouse chạy qua chrome-devtools MCP: `navigation` reload trang và mất `#k=` của link chỉnh sửa, dùng `snapshot` cho trang có khoá trong hash.
+
+## 7. Định hướng tính năng tương lai theo từng trang (roadmap ý tưởng, CHƯA CHỐT — để chủ dự án dùng khi thiết kế)
+
+Viết theo yêu cầu chủ dự án ngày 2026-09-26, để tham chiếu khi làm việc trong `design/` (21 trang mockup tĩnh `.dc.html`, xem `design/README.md`). Đối chiếu 2 nguồn: (a) `.dc.html` đã có sẵn nhưng nội dung placeholder/thiếu (từ `design/README.md` mục "Ghi chú"), (b) câu hỏi mở ghi sẵn trong spec/PROGRESS (không phải bịa mới). Đánh dấu 🔵 = đã có trong spec/PROGRESS, chờ chủ dự án quyết; 🟡 = gợi ý mới, chưa có tài liệu nào nhắc tới.
+
+**Việc thiết kế còn thiếu ngay trong `design/` (ưu tiên trước khi nghĩ tính năng mới):**
+- 7 trang công cụ (`CC Tao QR`, `CC Nen Anh`, `CC Nen Video`, `CC Tin Nhan`, `CC Danh Sach Khach`, `CC So Do Cho Ngoi`, `CC Save The Date`) — `Cong Cu.dc.html` đã trỏ tới nhưng **chưa được thiết kế** (ghi rõ trong `design/README.md` mục 5).
+- `Ung Ho.dc.html` đã có khung nhưng thông tin ngân hàng để trống — **giờ đã có số thật** (mục 4 file này): TPBank, STK `04123513201`, chủ TK Nguyễn Anh Nhựt, lời nhắn "Ủng hộ MỘC Wedding" — điền vào mock khi cần, khớp với `/ung-ho` đã code thật trong app.
+- Toàn bộ `<image-slot>` trong mock vẫn là ô trống, nội dung mẫu (tên khách, blog, FAQ) chưa phải nội dung thật — theo đúng ghi chú sẵn trong `design/README.md`.
+
+**Studio / Editor / Tài khoản:**
+| Ý tưởng | Trạng thái |
+|---|---|
+| Video thiệp | 🔵 Đã hứa ở `/bang-gia` mục "đang lên kế hoạch" từ đầu dự án, chưa làm. Cần quyết định nơi lưu (bucket, giới hạn dung lượng/thời lượng), có nén như `/cong-cu/nen-video` không |
+| Khoá "chỉ đọc" khách mời sau khi publish | 🔵 Phase 3 spec mục 11.3 — hiện luôn sửa được |
+| Giới hạn số khách tối đa/thiệp | 🔵 Phase 3 spec mục 11.2 — đề xuất 500-1000 dòng, chưa chốt số |
+| Gửi link mời hàng loạt qua SMS/Zalo/email thật | 🔵 Phase 3 spec mục 11.1 — hiện chỉ copy/CSV thủ công, cần chọn nhà cung cấp (SMS: eSMS/Speed SMS; email: Resend/SES) |
+| Quên mật khẩu, xác minh email, OAuth, nhiều chủ tài khoản | 🔵 Phase 6 spec ghi rõ "không làm trong 6A" — vẫn treo |
+| Xoá thiệp khỏi tài khoản | 🟡 Dashboard `/account` hiện chỉ liệt kê + mở, chưa có nút xoá hẳn |
+
+**Trang khách `/invite/[slug]`:**
+| Ý tưởng | Trạng thái |
+|---|---|
+| Ngôn ngữ ngoài vi/en | 🔵 Đã chốt "chỉ vi+en", nhưng `lib/i18n.ts` (dictionary key-value) đủ mở nếu sau này đổi ý |
+| Thống kê "đã xem thiệp" (bao nhiêu người mở, khi nào) | 🟡 Gợi ý — giúp chủ thiệp biết ai chưa xem |
+
+**`/ung-ho` (Donate):**
+| Ý tưởng | Trạng thái |
+|---|---|
+| Xác nhận đã chuyển khoản qua webhook (Casso/SePay đọc biến động số dư) | 🟡 Hiện chỉ là ảnh QR tĩnh, không biết ai đã ủng hộ |
+| Lời cảm ơn / ghi nhận người ủng hộ công khai | 🟡 Cần có webhook ở trên trước mới làm được |
+
+**Công cụ miễn phí `/cong-cu/*`:**
+| Ý tưởng | Trạng thái |
+|---|---|
+| Tool thứ 8 | 🔵 Phase 4 spec mục 9.1 — chưa xác định. Spec có sẵn 2 gợi ý: "đếm ngược ngày cưới dạng widget nhúng" hoặc "tạo lời cảm ơn sau cưới" |
+| Trang public riêng cho Save-the-date (thay vì chỉ tải ảnh) | 🔵 Phase 4 spec mục 9.2 — cần backend mới (slug, lưu trữ), dễ trùng vai trò với thiệp chính |
+| Giới hạn kích thước video đầu vào cho tool nén video | 🔵 Phase 4 spec mục 9.4 — đề xuất ≤200MB, chưa chốt số |
+
+**Marketing/SEO:**
+| Ý tưởng | Trạng thái |
+|---|---|
+| **`/bang-gia` đang nói sai** — mục "đang lên kế hoạch" liệt kê 4 thứ, 3 thứ (guest link riêng, tài khoản, song ngữ) **đã xong thật**, chỉ "video thiệp" còn thật sự chưa | 🔵 Lỗi nội dung cần sửa khi động vào trang này, không phải feature mới |
+| `/lien-he` (trang liên hệ riêng), RSS blog, `lastModified` cho trang tính năng | 🔵 Phase 2 roadmap ghi "tuỳ chọn" |
+
+**Mẫu thiệp `/templates`:**
+| Ý tưởng | Trạng thái |
+|---|---|
+| Thêm mẫu/archetype mới | 🟡 Kiến trúc đã sẵn cho việc này (1 entry `lib/templates.ts` + CSS archetype nếu cần look mới) — mở rộng liên tục, không phải feature mới |
