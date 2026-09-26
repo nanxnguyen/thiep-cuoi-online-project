@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { authCookieOptions } from "../lib/server/supabase.ts";
 import { HttpError, parseJson } from "../lib/server/http.ts";
-import { loginUser, logoutUser, registerUser, requireUser, toAccountInvitation } from "../lib/server/auth.ts";
+import { loginUser, logoutUser, registerUser, requireUser, resendSignupEmail, resetPasswordEmail, toAccountInvitation, updatePassword } from "../lib/server/auth.ts";
 
 type AuthResult = { data?: unknown; error?: { code?: string; message: string; status?: number } | null };
 
@@ -49,6 +49,33 @@ test("register maps duplicate users to 409 and returns a live session on success
     accessToken: "access",
     user: { id: "user-1", email: "a@example.com" },
   });
+});
+
+test("register accepts email confirmation without inventing a session", async () => {
+  const client = clientWith({
+    signUp: async () => ({ data: { user: { id: "user-1", email: "a@example.com" }, session: null }, error: null }),
+  });
+  assert.deepEqual(await registerUser(client, "a@example.com", "password1"), {
+    user: { id: "user-1", email: "a@example.com" },
+    emailConfirmationRequired: true,
+  });
+});
+
+test("auth email helpers delegate to Supabase and map failures", async () => {
+  const calls: unknown[] = [];
+  const client = clientWith({
+    resend: async (...args) => { calls.push(args); return { data: {}, error: null }; },
+    resetPasswordForEmail: async (...args) => { calls.push(args); return { data: {}, error: null }; },
+    updateUser: async (...args) => { calls.push(args); return { data: { user: { id: "user-1", email: "a@example.com" } }, error: null }; },
+  });
+  await resendSignupEmail(client, "a@example.com");
+  await resetPasswordEmail(client, "a@example.com", "https://moc.vn/auth/callback");
+  await updatePassword(client, "password2");
+  assert.deepEqual(calls, [
+    [{ type: "signup", email: "a@example.com" }],
+    ["a@example.com", { redirectTo: "https://moc.vn/auth/callback" }],
+    [{ password: "password2" }],
+  ]);
 });
 
 test("login maps invalid credentials to 401", async () => {
