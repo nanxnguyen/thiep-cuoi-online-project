@@ -867,6 +867,27 @@
 }
 
 /* ---------- music ---------- */
+.inv-autoscroll {
+  position: fixed;
+  right: max(16px, calc(50vw - 240px + 16px));
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 54px);
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--inv-surface);
+  color: var(--inv-accent);
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--inv-ink) 30%, transparent);
+  font-size: 20px;
+  cursor: pointer;
+}
+.inv-autoscroll[data-running="true"] {
+  background: var(--inv-accent);
+  color: var(--inv-accent-ink);
+}
 .inv-music {
   position: fixed;
   right: max(16px, calc(50vw - 240px + 16px));

@@ -113,6 +113,7 @@ export function InvitationRenderer({ content, template, mode, slug, invitationId
             bride={content.couple.bride.name.trim() || dict.brideFallback}
             music={content.music}
             locale={locale}
+            autoScroll={mode === "live"}
           >
             {mode === "live" && <SectionNav content={content} labels={dict.nav} />}
             <main className="inv-main">

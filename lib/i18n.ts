@@ -106,6 +106,8 @@ interface ChromeText {
   kindlyInvites: string;
   defaultGuest: string;
   openInvitation: string;
+  autoScrollStart: string;
+  autoScrollStop: string;
   muteMusic(title: string): string;
   playMusic(title: string): string;
 }
@@ -204,6 +206,8 @@ const VI: ChromeText = {
   kindlyInvites: "Trân trọng kính mời",
   defaultGuest: "Quý khách",
   openInvitation: "Mở thiệp",
+  autoScrollStart: "Tự cuộn thiệp từ đầu đến cuối",
+  autoScrollStop: "Dừng tự cuộn",
   muteMusic: (title) => `Tắt nhạc nền: ${title}`,
   playMusic: (title) => `Bật nhạc nền: ${title}`,
 };
@@ -302,6 +306,8 @@ const EN: ChromeText = {
   kindlyInvites: "You are cordially invited",
   defaultGuest: "Dear guest",
   openInvitation: "Open invitation",
+  autoScrollStart: "Auto-scroll the invitation end to end",
+  autoScrollStop: "Stop auto-scroll",
   muteMusic: (title) => `Mute background music: ${title}`,
   playMusic: (title) => `Play background music: ${title}`,
 };

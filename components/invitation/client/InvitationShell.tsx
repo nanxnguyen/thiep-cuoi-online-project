@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { t, type Locale } from "@/lib/i18n";
+import { AutoScroll } from "./AutoScroll";
 
 type Props = {
   gate: boolean;
@@ -11,6 +12,7 @@ type Props = {
   music: { url: string; title: string } | null;
   children: ReactNode;
   locale?: Locale;
+  autoScroll?: boolean;
 };
 
 // Deterministic petals behind the envelope and a burst of confetti when it opens (design/Thiep Khach.dc.html).
@@ -24,7 +26,7 @@ const OPEN_MS = 1100; // flap opens, card rises, overlay fades: keep in sync wit
 
 // Holds the two pieces of state that need a user gesture: the envelope that gates the page and the
 // background music (browsers only allow audio to start after a tap, so the tap on "Mở thiệp" starts it).
-export function InvitationShell({ gate, guestName, groom, bride, music, children, locale = "vi" }: Props) {
+export function InvitationShell({ gate, guestName, groom, bride, music, children, locale = "vi", autoScroll = false }: Props) {
   const dict = t(locale);
   const [phase, setPhase] = useState<"closed" | "opening" | "open">(gate ? "closed" : "open");
   const [playing, setPlaying] = useState(false);
@@ -147,6 +149,7 @@ export function InvitationShell({ gate, guestName, groom, bride, music, children
           )}
         </>
       )}
+      {autoScroll && phase === "open" && <AutoScroll startLabel={dict.autoScrollStart} stopLabel={dict.autoScrollStop} />}
     </>
   );
 }
