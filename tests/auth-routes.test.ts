@@ -24,6 +24,18 @@ test("parseJson rejects invalid auth input with status 400", async () => {
   );
 });
 
+test("parseJson rejects oversized JSON before parsing it", async () => {
+  const request = new Request("http://localhost/api/auth/register", {
+    method: "POST",
+    headers: { "content-length": String(1024 * 1024 + 1) },
+    body: "{}",
+  });
+  await assert.rejects(
+    () => parseJson(request, z.object({}), 1024 * 1024),
+    (error: unknown) => error instanceof HttpError && error.status === 413,
+  );
+});
+
 test("register maps duplicate users to 409 and returns a live session on success", async () => {
   const duplicate = clientWith({
     signUp: async () => ({ data: { user: null, session: null }, error: { code: "user_already_exists", message: "exists", status: 422 } }),

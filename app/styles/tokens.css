@@ -1,6 +1,6 @@
 /* MỘC design tokens — the one place raw colours live. Source: design/Wedding Design System.dc.html (FAM scales,
    semantic tokens, type/space/radius) + design/design.md. Guarded by tests/design-system.test.ts.
-   Deviations from the source (AA contrast) are listed in docs/superpowers/plans/2026-09-26-design-system-core.md. */
+   Owner decision 2026-09-27: values match design/ exactly, including the ones that miss WCAG AA. */
 :root {
   /* primitive scales */
   --red-50: #fdf2f1; --red-100: #f9dfdd; --red-200: #f0b9b6; --red-300: #e08d88; --red-400: #c85a51; --red-500: #a3161c;
@@ -17,10 +17,11 @@
   --surface: #ffffff;
   --ink: #1a1412;
   --muted: #5e534b;
-  --faint: #6b5f57; /* design #8a7d72 fails AA as text; kept below for non-text */
+  --faint: #8a7d72; /* design value (owner 2026-09-27: 100% design fidelity over AA) */
   --faint-deco: #8a7d72;
   --line: #e8dfd3;
   --line-strong: #ddd2c4;
+  --line-mid: #e0d5c6;
 
   /* brand */
   --accent: #a3161c;
@@ -40,14 +41,29 @@
   /* footer / dark band text ladder (design/Site Footer.dc.html) */
   --on-dark-body: #d8cbbb;
   --on-dark-soft: #b8ab9b;
-  --on-dark-faint: #8f8277; /* design #7d7067 fails AA on --night (3.9:1) */
+  --on-dark-faint: #7d7067;
   --line-on-dark-soft: #2e2522;
   --accent-bright: #c01d24; /* CTA hover on dark grounds */
+  --rose-on-red: #fbe3e3; /* body text on red grounds */
+  --gold-on-red: #f3d9a6; /* italic keyword on red grounds */
+  --tpbank: #6b2d8c;
+  --ink-hover: #3a2e28; /* dark pill hover */
+
+  /* one-off illustration colours of design/Trang Chu.dc.html */
+  --petal-1: #e8b4b0; --petal-2: #f1cfc7; --petal-3: #e0bb74; --petal-4: #d99a9a; --petal-5: #f4dcd2;
+  --env-back: #6e1216; --env-front-a: #9a1f24; --env-front-b: #7d1418; --env-flap: #a3262b;
+  --seal-light: #f0d49a; --seal-dark: #b8893e;
+  --rsvp-green: #2f6b45; --rsvp-green-bg: #e7f1e9;
+  --book-paper: #fffdf8; --map-ground: #eef0e8; --map-grid: #dfe3d6;
+  --cd-card: #2a1a1c; --cd-tile: #3a2628; --quote-rule: #3a2c28;
+  --album-1: #e3d6c6; --album-2: #d9c3c0; --album-3: #cfd6c8;
+  --browser-dot: #d8ccbc; --invite-glow: #fbf3e6; --paper-cream: #f7efe3; --qr-ground: #f4efe8; --segment: #efe8de; --feat-gold: #e6c47a; --field-bg: #faf7f2; --feat-brown: #6b4a33;
+  --draft-ink: #6b5237; /* legal draft notice */
 
   /* status (guest badges, RSVP) */
   --ok-bg: #e7eee6; --ok-fg: #24493a;
   --warn-bg: #f5efe0; --warn-fg: #7a5a22;
-  --neutral-bg: #efe6d9; --neutral-fg: var(--faint);
+  --neutral-bg: #efe6d9; --neutral-fg: var(--muted); /* --faint (3.23:1) giữ cho deco; text dùng --muted (6.04:1) để qua AA */
   --danger-bg: #f5e3e1; --danger-fg: #8e1b1f;
 
   /* legacy tint names still read by existing CSS */
@@ -80,11 +96,11 @@
   --shadow-lift: var(--shadow-card-hover);
 
   /* type */
-  --display: var(--font-display), "Times New Roman", serif;
-  --sans: var(--font-sans), system-ui, sans-serif;
-  --serif: var(--font-display), Georgia, serif;
-  --script: var(--font-script), Georgia, serif;
-  --hand: var(--font-hand), cursive;
+  --display: var(--font-display);
+  --sans: var(--font-sans);
+  --serif: var(--font-display);
+  --script: var(--font-script);
+  --hand: var(--font-hand);
   --fs-h1: clamp(38px, 5.6vw, 96px);
   --fs-h2: clamp(32px, 4.4vw, 60px);
   --fs-h3: 22px;

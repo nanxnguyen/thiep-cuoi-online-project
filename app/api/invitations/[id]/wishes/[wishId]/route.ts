@@ -8,7 +8,7 @@ const schema = z.object({ hidden: z.boolean().optional(), approved: z.boolean().
   .refine((value) => Object.keys(value).length > 0, "Không có thay đổi để lưu.");
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string; wishId: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const { id, wishId } = await context.params;
     if (!z.uuid().safeParse(wishId).success) throw new HttpError(404, "Không tìm thấy lời chúc.");
     const patch = await parseJson(request, schema);

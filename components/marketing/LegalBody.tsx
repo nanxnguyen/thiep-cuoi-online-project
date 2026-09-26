@@ -13,14 +13,14 @@ export function LegalBody({ href, title, sections, updated }: { href: (typeof DO
   return (
     <article className="legal">
       <header className="legal__head">
-        <p className="eyebrow">Pháp lý</p>
+        <span className="legal__kicker">PHÁP LÝ</span>
         <h1>{title}</h1>
-        <p className="legal__updated">Cập nhật lần cuối: {updated}</p>
-        <p className="legal__draft">Đây là bản nháp nội bộ, chưa được luật sư rà soát. Nội dung có thể thay đổi trước khi phát hành chính thức.</p>
+        <span className="legal__updated">Cập nhật lần cuối: {updated}</span>
+        <div className="legal__draft">Đây là bản nháp nội bộ, chưa được luật sư rà soát. Nội dung có thể thay đổi trước khi phát hành chính thức.</div>
       </header>
       <nav className="legal__tabs" aria-label="Văn bản pháp lý">
         {DOCS.map(([to, label]) => (
-          <Link key={to} href={to} className="chip" aria-current={to === href ? "page" : undefined}>
+          <Link key={to} href={to} aria-current={to === href ? "page" : undefined}>
             {label}
           </Link>
         ))}

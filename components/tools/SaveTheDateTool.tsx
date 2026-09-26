@@ -45,7 +45,7 @@ async function draw(canvas: HTMLCanvasElement, form: Form, photo: ImageBitmap | 
   const cx = W / 2;
   ctx.font = `${24 * K}px ${sans}`;
   ctx.fillText("SAVE THE DATE", cx, 210 * K);
-  ctx.font = `${64 * K}px ${hand}`;
+  ctx.font = `italic ${64 * K}px ${hand}`;
   ctx.fillText(`${form.bride.trim() || "Cô dâu"} & ${form.groom.trim() || "Chú rể"}`, cx, 400 * K, W - 80);
   const [y, m, d] = form.date.split("-");
   ctx.font = `${28 * K}px ${display}`;
@@ -56,7 +56,7 @@ async function draw(canvas: HTMLCanvasElement, form: Form, photo: ImageBitmap | 
 
 export function SaveTheDateTool() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [form, setForm] = useState<Form>({ bride: "", groom: "", date: "", place: "" });
+  const [form, setForm] = useState<Form>({ bride: "Hạ Vy", groom: "Minh Khôi", date: "2026-11-09", place: "Hà Nội" });
   const [photo, setPhoto] = useState<ImageBitmap | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -99,19 +99,19 @@ export function SaveTheDateTool() {
       <div className="tool-std__form">
         <label className="tool-field">
           Tên cô dâu
-          <input className="input" value={form.bride} onChange={set("bride")} maxLength={40} placeholder="Hạ Vy" />
+          <input value={form.bride} onChange={set("bride")} maxLength={40} placeholder="Hạ Vy" />
         </label>
         <label className="tool-field">
           Tên chú rể
-          <input className="input" value={form.groom} onChange={set("groom")} maxLength={40} placeholder="Minh Khôi" />
+          <input value={form.groom} onChange={set("groom")} maxLength={40} placeholder="Minh Khôi" />
         </label>
         <label className="tool-field">
           Ngày cưới
-          <input className="input" type="date" value={form.date} onChange={set("date")} />
+          <input type="date" value={form.date} onChange={set("date")} />
         </label>
         <label className="tool-field">
           Địa điểm
-          <input className="input" value={form.place} onChange={set("place")} maxLength={60} placeholder="Hà Nội" />
+          <input value={form.place} onChange={set("place")} maxLength={60} placeholder="Hà Nội" />
         </label>
         <div className="tool-field">
           Ảnh nền {busy && "(đang xử lý…)"}
@@ -142,7 +142,7 @@ export function SaveTheDateTool() {
             {error}
           </p>
         )}
-        <button type="button" className="button-primary" onClick={download}>
+        <button type="button" className="tool-std__dl" onClick={download}>
           Tải ảnh PNG
         </button>
       </div>

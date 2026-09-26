@@ -92,7 +92,7 @@ export function VideoCompressTool() {
   return (
     <>
       <label className="tool-drop">
-        <strong>{file ? file.name : "Chọn video cưới"}</strong>
+        <span>{file ? file.name : "Chọn video cưới"}</span>
         <span>{file ? `Dung lượng gốc: ${fmtMb(file.size)}` : "MP4, MOV — xử lý ngay trên máy, video dài có thể mất vài phút"}</span>
         <input
           type="file"
@@ -124,10 +124,10 @@ export function VideoCompressTool() {
       {result && (
         <div className="tool-video">
           <video src={result.url} controls />
-          <p className="tool-shots__size">
+          <div className="tool-shots__size">
             <span>{fmtMb(file!.size)}</span>
-            <b>→ {fmtMb(result.size)}</b>
-          </p>
+            <span>→ {fmtMb(result.size)}</span>
+          </div>
           <a className="tool-dark-pill" href={result.url} download="video-da-nen.mp4">
             Tải video đã nén
           </a>

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { detectMedia, uploadMedia } from "../lib/server/media.ts";
+import { assertUploadRequestSize, detectMedia, IMAGE_MAX_BYTES, UPLOAD_REQUEST_MAX_BYTES, uploadMedia } from "../lib/server/media.ts";
 import { HttpError } from "../lib/server/http.ts";
 
 const id = "11111111-1111-4111-8111-111111111111";
@@ -26,7 +26,16 @@ test("media detection trusts bytes, not browser MIME or filename", () => {
   assert.deepEqual(detectMedia("audio", new TextEncoder().encode("ID3music")), { contentType: "audio/mpeg", extension: "mp3" });
   assert.throws(() => detectMedia("image", new Uint8Array()), (error: unknown) => error instanceof HttpError && error.status === 400);
   assert.throws(() => detectMedia("audio", new TextEncoder().encode("fake")), (error: unknown) => error instanceof HttpError && error.status === 415);
-  assert.throws(() => detectMedia("image", new Uint8Array(2 * 1024 * 1024 + 1)), (error: unknown) => error instanceof HttpError && error.status === 413);
+  const maxImage = new Uint8Array(IMAGE_MAX_BYTES);
+  maxImage.set([0xff, 0xd8, 0xff]);
+  assert.deepEqual(detectMedia("image", maxImage), { contentType: "image/jpeg", extension: "jpg" });
+  assert.throws(() => detectMedia("image", new Uint8Array(IMAGE_MAX_BYTES + 1)), (error: unknown) => error instanceof HttpError && error.status === 413);
+});
+
+test("upload request size is bounded before multipart parsing", () => {
+  assert.doesNotThrow(() => assertUploadRequestSize(new Request("http://localhost", { headers: { "content-length": String(UPLOAD_REQUEST_MAX_BYTES) } })));
+  assert.throws(() => assertUploadRequestSize(new Request("http://localhost", { headers: { "content-length": String(UPLOAD_REQUEST_MAX_BYTES + 1) } })), (error: unknown) => error instanceof HttpError && error.status === 413);
+  assert.throws(() => assertUploadRequestSize(new Request("http://localhost")), (error: unknown) => error instanceof HttpError && error.status === 413);
 });
 
 test("authorized upload uses an invitation-scoped random path and detected content type", async () => {

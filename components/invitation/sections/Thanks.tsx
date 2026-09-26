@@ -12,7 +12,11 @@ export function Thanks({ content, locale = "vi" }: { content: Content; locale?: 
       <Reveal>
         {message.trim() && <p className="inv-thanks__msg">{message}</p>}
         <p className="inv-thanks__names">
-          {couple.groom.name.trim() || dict.groomFallback} &amp; {couple.bride.name.trim() || dict.brideFallback}
+          <span className="inv-thanks__name">{couple.groom.name.trim() || dict.groomFallback}</span>
+          <span className="inv-thanks__amp" aria-hidden="true">
+            &amp;
+          </span>
+          <span className="inv-thanks__name">{couple.bride.name.trim() || dict.brideFallback}</span>
         </p>
         <p className="inv-credit">
           {dict.creditPrefix}

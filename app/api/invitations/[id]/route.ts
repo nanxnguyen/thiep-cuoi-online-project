@@ -13,7 +13,7 @@ const patchSchema = z.object({
 }).strict().refine((value) => Object.keys(value).length > 0, "Không có thay đổi để lưu.");
 
 export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const { id } = await context.params;
     const auth = await invitationRequestAccess(request, id);
     return auth.applyCookies(NextResponse.json(await getInvitation(auth.admin, id, auth.editKey, auth.userId)));
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 }
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const { id } = await context.params;
     const input = await parseJson(request, patchSchema);
     const auth = await invitationRequestAccess(request, id);

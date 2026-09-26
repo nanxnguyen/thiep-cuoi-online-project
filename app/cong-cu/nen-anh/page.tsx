@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage name="Nén ảnh" title="Nén ảnh cưới" description="Giảm ảnh về tối đa 1600px, chất lượng vẫn đẹp trên điện thoại. Xử lý ngay trên máy của bạn, không tải lên đâu cả." width={900}>
+    <ToolPage name="Nén ảnh" title="Nén ảnh cưới" description="Giảm ảnh về tối đa 1600px, chất lượng vẫn đẹp trên điện thoại. Xử lý ngay trên máy của bạn, không tải lên đâu cả." width={900} ledeWidth={560}>
       <ImageCompressTool />
     </ToolPage>
   );

@@ -80,16 +80,28 @@ export async function updateInvitation(
     { templateId: row.template_id, content: row.content, slug: row.slug, published: row.published },
     patch,
   );
-  const { data, error } = await client.from("invitations").update({
-    template_id: next.templateId,
-    content: next.content,
-    slug: next.slug,
-    published: next.published,
-    published_at: next.published && !row.published ? new Date().toISOString() : row.published_at,
-  }).eq("id", id).select("*").single();
-  if (error?.code === "23505") throw new HttpError(409, "Đường dẫn thiệp đã được dùng.");
-  if (error || !data) throw new HttpError(500, "Chưa lưu được thiệp.");
-  return toInvitationDto(data as InvitationRow);
+  // Slug đẹp dễ đoán ("phan-duy...") nên trùng là chuyện thường: tự thêm hậu tố
+  // ngẫu nhiên thay vì bắt chủ thiệp đoán tên khác. DTO trả về slug cuối cùng.
+  const candidates = [next.slug];
+  if (patch.slug && patch.slug !== row.slug) {
+    for (let i = 0; i < 3; i++) {
+      const stem = next.slug.length > 35 ? next.slug.slice(0, 35).replace(/-+$/, "") : next.slug;
+      const alt = `${stem}-${randomSlug().slice(0, 4)}`;
+      if (isValidSlug(alt)) candidates.push(alt);
+    }
+  }
+  for (const slug of candidates) {
+    const { data, error } = await client.from("invitations").update({
+      template_id: next.templateId,
+      content: next.content,
+      slug,
+      published: next.published,
+      published_at: next.published && !row.published ? new Date().toISOString() : row.published_at,
+    }).eq("id", id).select("*").single();
+    if (!error && data) return toInvitationDto(data as InvitationRow);
+    if (error?.code !== "23505") throw new HttpError(500, "Chưa lưu được thiệp.");
+  }
+  throw new HttpError(409, "Đường dẫn thiệp đã được dùng, bạn đổi tên khác nhé.");
 }
 
 export async function claimInvitation(client: SupabaseClient, id: string, editKey: string) {

@@ -6,8 +6,9 @@ import { HttpError } from "./http.ts";
 export type MediaKind = "image" | "audio";
 type DetectedMedia = { contentType: "image/png" | "image/jpeg" | "image/webp" | "audio/mpeg"; extension: "png" | "jpg" | "webp" | "mp3" };
 
-const IMAGE_MAX = 2 * 1024 * 1024;
-const AUDIO_MAX = 8 * 1024 * 1024;
+export const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const AUDIO_MAX_BYTES = 8 * 1024 * 1024;
+export const UPLOAD_REQUEST_MAX_BYTES = AUDIO_MAX_BYTES + 256 * 1024;
 
 function startsWith(data: Uint8Array, head: number[]) {
   return head.every((byte, index) => data[index] === byte);
@@ -15,7 +16,7 @@ function startsWith(data: Uint8Array, head: number[]) {
 
 export function detectMedia(kind: MediaKind, data: Uint8Array): DetectedMedia {
   if (!data.length) throw new HttpError(400, "File rỗng.");
-  const max = kind === "image" ? IMAGE_MAX : AUDIO_MAX;
+  const max = kind === "image" ? IMAGE_MAX_BYTES : AUDIO_MAX_BYTES;
   if (data.length > max) throw new HttpError(413, `File quá lớn (tối đa ${max / 1024 / 1024}MB).`);
   if (kind === "image") {
     if (startsWith(data, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return { contentType: "image/png", extension: "png" };
@@ -27,6 +28,14 @@ export function detectMedia(kind: MediaKind, data: Uint8Array): DetectedMedia {
   throw new HttpError(415, "Chỉ nhận nhạc MP3.");
 }
 
+export function assertUploadRequestSize(request: Request): void {
+  const rawLength = request.headers.get("content-length");
+  const length = rawLength === null ? NaN : Number(rawLength);
+  if (!Number.isSafeInteger(length) || length <= 0 || length > UPLOAD_REQUEST_MAX_BYTES) {
+    throw new HttpError(413, "File quá lớn hoặc yêu cầu tải lên không hợp lệ.");
+  }
+}
+
 export async function uploadMedia(
   client: SupabaseClient,
   invitationId: string,
@@ -36,7 +45,7 @@ export async function uploadMedia(
   userId?: string,
 ): Promise<{ url: string }> {
   await requireInvitationAccess({ client, id: invitationId, editKey, userId });
-  const max = kind === "image" ? IMAGE_MAX : AUDIO_MAX;
+  const max = kind === "image" ? IMAGE_MAX_BYTES : AUDIO_MAX_BYTES;
   if (!file.size) throw new HttpError(400, "File rỗng.");
   if (file.size > max) throw new HttpError(413, `File quá lớn (tối đa ${max / 1024 / 1024}MB).`);
   const bytes = new Uint8Array(await file.arrayBuffer());

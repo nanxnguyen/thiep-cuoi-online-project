@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage name="Tạo mã QR" title="Tạo mã QR từ link thiệp" description="Dán link thiệp hoặc bất kỳ đường link nào, nhận mã QR để in lên thiệp giấy hoặc bảng chào." width={760}>
+    <ToolPage name="Tạo mã QR" title="Tạo mã QR từ link thiệp" description="Dán link thiệp hoặc bất kỳ đường link nào, nhận mã QR để in lên thiệp giấy hoặc bảng chào." width={760} gap={32}>
       <QrTool />
     </ToolPage>
   );

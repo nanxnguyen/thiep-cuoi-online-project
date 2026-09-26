@@ -11,6 +11,13 @@ Repo FE: thư mục này (`main`). Repo BE: `../Thiep-cuoi-online-backend`. Cổ
 
 ## ▶ BẮT ĐẦU PHIÊN MỚI Ở ĐÂY
 
+**Đang làm (2026-09-27, chủ dự án yêu cầu): P7 Design parity 100%** — mọi trang phải giống `design/*.dc.html` 100% về màu, typo, spacing, animation; được phép bỏ UI cũ. Bỏ luôn các lệch AA (chủ dự án chốt design thắng).
+- Cách so: serve `design/` (`python3 -m http.server 4100` trong `design/`) + `next dev` 3000; Chrome DevTools MCP chạy extractor style (text → computed style + hình học + animation + @keyframes) trên cả 2 trang, lưu JSON vào `.playwright-mcp/parity/`, diff offline. Script extractor/diff nằm ở scratchpad của phiên, cách viết lại: xem Nhật ký 2026-09-27.
+- **Đã khớp (1280):** Site Header/Footer, font fallback (next/font `adjustFontFallback:false`), tokens AA→design, keyframes tham số hoá (`--fu-y`, `--heart-a`), `ScrollReveal`, `ThiepPreview` (port nguyên văn design, dùng ở home), `/`, `/bang-gia`, `/ung-ho`, `/tinh-nang`, `/tinh-nang/[slug]`, `/tro-giup`, `/dieu-khoan`, `/quyen-rieng-tu`, 4 landing SEO, `/cong-cu-dam-cuoi`, 6 `/cong-cu/*`.
+- **Còn lại theo thứ tự:** `/templates`, `/templates/[id]`, `/studio`, `/account`, `/demo` (Thiep Preview), Studio Editor v3, Thiệp mẫu đầy đủ, trang khách (Thiep Khach). Sau đó quét 390px + gate.
+- Nội dung giữ khác design (sự thật sản phẩm): Q&A trợ giúp, văn bản pháp lý, copy "offline"/"không rời máy" ở hub công cụ, số mẫu 16. Bỏ phần SEO copy/related ở 4 landing và FAQ ở tính năng chi tiết (không có trong design).
+- Quyết định giữ khác design: header < 760px dùng menu (design chỉ wrap 3 hàng); số mẫu thật (16) thay "10".
+
 **Đang làm:** migration backend từ Spring Boot sang Next.js + Supabase.
 - Spec đã duyệt: `docs/superpowers/specs/2026-09-26-supabase-migration-design.md`.
 - Plan thực thi: `docs/superpowers/plans/2026-09-26-supabase-migration.md`.
@@ -145,10 +152,7 @@ Chi tiết trong plan, mục "Owner decisions":
 - Gợi ý lời cảm ơn xoay vòng 3 mẫu có sẵn, không gọi AI.
 - Dùng Great Vibes cho `--hand`.
 - Không làm route riêng cho "Thiệp mẫu đầy đủ".
-- Lệch màu để đạt AA:
-  - `#8a7d72` → `#6b5f57`
-  - chữ vàng trên nền sáng → `#8a6425`
-  - chữ nhỏ footer `#7d7067` → `#8f8277`
+- ~~Lệch màu để đạt AA~~: bỏ từ 2026-09-27, token dùng đúng hex design (`--faint #8a7d72`, `--on-dark-faint #7d7067`).
 
 ## 3. Cần từ chủ dự án (đang chặn)
 
@@ -160,6 +164,8 @@ Chi tiết trong plan, mục "Owner decisions":
 
 ## 4. Nhật ký (mới nhất ở trên, giữ ~15 dòng)
 
+- **2026-09-27** P7 parity: xong Trang chủ (ThiepPreview port, chiều cao 6123px = design), trợ giúp, pháp lý, 4 landing, hub + 6 công cụ; kiểm chứng diff DevTools 1280. Gặp: cache Turbopack hỏng (restart dev), khoá Chrome MCP treo (gỡ SingletonLock).
+- **2026-09-27** P7 parity: header/footer viết lại đúng design; bỏ lệch AA; font fallback giống design (♥/line-height); `/bang-gia`, `/ung-ho`, `/tinh-nang`, `/tinh-nang/[slug]` khớp computed style ở 1280 (diff DevTools còn 0 lệch thật, chỉ nhiễu span runtime của design). Chưa chạy gate.
 - **2026-09-27** Pentest P0 trên local (Supabase local + env tách biệt, remote không bẩn): 23/23 PASS — IDOR cross-key/guests 401/403/404, mass-assignment bị chặn, RLS anon (insert + đọc unpublished), honeypot/idempotency/payload limits, spam concurrent 6→5×204+1×429 atomic không dư row, upload giả/trống/quá cỡ/sai key, token đoán mò 404. 1 fail giả do script viết sai filter PostgREST, verify lại RLS đúng. Env đã khôi phục remote, dev 3001 chạy lại bình thường.
 - **2026-09-27** Bỏ `?to=Tên` thủ công: tên khách chỉ từ DB qua link riêng `?g=<token>` (Studio tab Khách đã có copy link). Sửa page khách + preview mẫu + Editor/PublishDialog/GuestListTool + copy marketing/trợ giúp/pháp lý + README/DEPLOY/CLAUDE. Sửa bug lộ khi verify: page dùng anon nên RLS chặn bảng guests → tra token bằng admin (giống route, key không ra browser). Kiểm chứng: browser `?g=` hiện đúng tên hộ, `?to=` cũ bị bỏ qua (Quý khách); test 153/153, typecheck 0, diff-check sạch.
 - **2026-09-26** Session remote cutover XONG: config `.env.local` đủ 6 biến, `supabase db push` (5 bảng + RLS verify), deploy Edge `public-write`, tắt confirm email; E2E remote 16/16 (register→tạo→publish→RSVP/wish→moderation). Gate: test 153/153, typecheck 0, `build:next` + diff-check PASS.

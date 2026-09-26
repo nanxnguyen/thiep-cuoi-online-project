@@ -10,7 +10,7 @@ const TONES: [InviteTone, string][] = [
 
 // design/CC Tin Nhan.dc.html: bride/groom/link → tone switch → three ready-to-copy messages, with a toast.
 export function InviteMessageTool() {
-  const [form, setForm] = useState({ bride: "", groom: "", link: "" });
+  const [form, setForm] = useState({ bride: "Hạ Vy", groom: "Minh Khôi", link: "https://moc.vn/invite/vy-khoi" });
   const [tone, setTone] = useState<InviteTone>("formal");
   const [toast, setToast] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -30,17 +30,17 @@ export function InviteMessageTool() {
   return (
     <>
       <div className="tool-form-grid">
-        <label className="tool-field">
+        <label>
           Tên cô dâu
-          <input className="input" value={form.bride} onChange={set("bride")} maxLength={80} placeholder="Hạ Vy" />
+          <input value={form.bride} onChange={set("bride")} maxLength={80} placeholder="Hạ Vy" />
         </label>
-        <label className="tool-field">
+        <label>
           Tên chú rể
-          <input className="input" value={form.groom} onChange={set("groom")} maxLength={80} placeholder="Minh Khôi" />
+          <input value={form.groom} onChange={set("groom")} maxLength={80} placeholder="Minh Khôi" />
         </label>
-        <label className="tool-field tool-field--full">
+        <label className="tool-field--full">
           Link thiệp
-          <input className="input" value={form.link} onChange={set("link")} inputMode="url" maxLength={500} placeholder="https://moc.vn/invite/vy-khoi" />
+          <input value={form.link} onChange={set("link")} inputMode="url" maxLength={500} placeholder="https://moc.vn/invite/vy-khoi" />
         </label>
       </div>
       <div className="tool-segment" role="group" aria-label="Giọng điệu">
@@ -50,18 +50,22 @@ export function InviteMessageTool() {
           </button>
         ))}
       </div>
-      <ul className="tool-messages">
+      <div className="tool-messages">
         {inviteMessages(tone, form).map((text) => (
-          <li key={text}>
-            <p className="script">{text}</p>
+          <div key={text}>
+            <span>{text}</span>
             <button type="button" className="tool-copy" onClick={() => void copy(text)}>
               Sao chép
             </button>
-          </li>
+          </div>
         ))}
-      </ul>
-      <div className="tool-toast" role="status" aria-live="polite">
-        {toast && <span key={toast + Date.now()}>{toast}</span>}
+      </div>
+      <div role="status" aria-live="polite">
+        {toast && (
+          <div className="tool-toast" key={toast + Date.now()}>
+            {toast}
+          </div>
+        )}
       </div>
     </>
   );

@@ -7,7 +7,6 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { DONATE_ACCOUNT, DONATE_MESSAGE } from "@/lib/donate";
 import { vietQrUrl } from "@/lib/vietqr";
 import { CopyRows } from "./CopyRows";
-import "@/components/tools/tools.css";
 import "./donate.css";
 
 export const metadata: Metadata = {
@@ -44,12 +43,12 @@ export default function DonatePage() {
           </div>
           <div className="donate-hero__inner">
             <div className="donate-hero__copy">
-              <span className="anim-heart" aria-hidden="true">♥</span>
-              <h1 className="anim-fade-up">
+              <span className="donate-hero__heart" aria-hidden="true">♥</span>
+              <h1>
                 Ủng hộ <em>Mộc</em>
               </h1>
-              <p className="anim-fade-up">Mộc miễn phí cho tất cả mọi người. Nếu tấm thiệp giúp ngày cưới của bạn nhẹ nhàng hơn, một khoản ủng hộ nhỏ sẽ giúp dự án tiếp tục.</p>
-              <ol className="anim-fade-up">
+              <p>Mộc miễn phí cho tất cả mọi người. Nếu tấm thiệp giúp ngày cưới của bạn nhẹ nhàng hơn, một khoản ủng hộ nhỏ sẽ giúp dự án tiếp tục.</p>
+              <ol>
                 {USES.map((u, i) => (
                   <li key={u}>
                     <span>{i + 1}</span>
@@ -60,8 +59,8 @@ export default function DonatePage() {
             </div>
             <div className="donate-card">
               <div className="donate-card__head">
-                <span>Chuyển khoản</span>
-                <strong>{bank}</strong>
+                <span>CHUYỂN KHOẢN</span>
+                <span className="donate-card__bank">{bank}</span>
               </div>
               <div className="donate-card__qr">
                 <img src={qrUrl} alt={`Mã QR chuyển khoản ${bank} tới ${DONATE_ACCOUNT.accountName}`} width={320} height={320} loading="lazy" />
@@ -78,8 +77,8 @@ export default function DonatePage() {
           </div>
         </section>
         <section className="donate-quote">
-          <p>“Không ủng hộ cũng không sao. Hãy dùng Mộc, và kể cho một cặp đôi khác nghe.”</p>
-          <Link className="tool-dark-pill" href="/studio">
+          <span>“Không ủng hộ cũng không sao. Hãy dùng Mộc, và kể cho một cặp đôi khác nghe.”</span>
+          <Link href="/studio">
             Tạo thiệp miễn phí
           </Link>
         </section>

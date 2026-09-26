@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/server/supabase";
 const noStore = { "Cache-Control": "no-store" };
 
 export async function GET(_request: Request, context: { params: Promise<{ slug: string; token: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(_request, async () => {
     const { slug, token } = await context.params;
     const guest = await resolveGuestToken(createAdminClient(), slug, token);
     return guest

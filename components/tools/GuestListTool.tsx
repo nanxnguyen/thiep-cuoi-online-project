@@ -89,30 +89,31 @@ export function GuestListTool() {
 
   return (
     <>
-      <div className="tool-toolbar">
-        <p>
-          Lưu tự động trên máy của bạn ({list.length} khách · {list.filter((g) => g.status === "yes").length} đã xác nhận).
-        </p>
+      <div className="tool-titlebar">
+        <h1>Danh sách khách</h1>
         <div>
-          <button type="button" className="tool-copy" onClick={exportCsv} disabled={list.length === 0}>
+          <button type="button" className="tool-outline" onClick={exportCsv} disabled={list.length === 0}>
             Xuất CSV
           </button>
-          <button type="button" className="tool-copy" onClick={() => fileRef.current?.click()}>
+          <label className="tool-outline">
             Nhập CSV
-          </button>
-          <input
-            ref={fileRef}
-            type="file"
-            accept=".csv,text/csv"
-            hidden
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = "";
-              if (file) void importFile(file);
-            }}
-          />
+            <input
+              ref={fileRef}
+              type="file"
+              accept=".csv,text/csv"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (file) void importFile(file);
+              }}
+            />
+          </label>
         </div>
       </div>
+      <p className="tool-meta">
+        Lưu tự động trên máy của bạn ({list.length} khách · {list.filter((g) => g.status === "yes").length} đã xác nhận).
+      </p>
       {error && (
         <p className="tool-error" role="alert">
           {error}
@@ -124,19 +125,19 @@ export function GuestListTool() {
         </p>
       )}
       <form className="tool-add" onSubmit={add}>
-        <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Tên khách" aria-label="Tên khách" maxLength={80} />
-        <input className="input" value={group} onChange={(e) => setGroup(e.target.value)} placeholder="Nhóm (nhà trai, bạn bè…)" aria-label="Nhóm" maxLength={60} />
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Tên khách" aria-label="Tên khách" maxLength={80} />
+        <input value={group} onChange={(e) => setGroup(e.target.value)} placeholder="Nhóm (nhà trai, bạn bè…)" aria-label="Nhóm" maxLength={60} />
         <button type="submit" className="tool-add__btn">
           + Thêm khách
         </button>
       </form>
       {guests !== null && list.length === 0 && <div className="tool-empty">Chưa có khách nào, thêm khách đầu tiên ở trên.</div>}
       {list.length > 0 && (
-        <ul className="tool-guests">
+        <div className="tool-guests">
           {list.map((g) => {
             const status = g.status ?? "pending";
             return (
-              <li key={g.id}>
+              <div key={g.id}>
                 <div className="tool-guests__row">
                   <span className="tool-guests__name">{g.household}</span>
                   <span className="tool-guests__group">{g.groupName || "Chưa phân nhóm"}</span>
@@ -183,10 +184,10 @@ export function GuestListTool() {
                     </button>
                   </div>
                 )}
-              </li>
+              </div>
             );
           })}
-        </ul>
+        </div>
       )}
     </>
   );

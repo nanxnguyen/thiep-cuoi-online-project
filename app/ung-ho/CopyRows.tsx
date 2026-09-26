@@ -18,20 +18,22 @@ export function CopyRows({ rows }: { rows: readonly (readonly [string, string])[
   }
   return (
     <>
-      <dl className="donate-rows">
+      <div className="donate-rows">
         {rows.map(([label, value]) => (
           <div key={label}>
-            <dt>{label}</dt>
-            <dd>{value}</dd>
-            <button type="button" className="tool-copy" onClick={() => void copy(label, value)} aria-label={`Sao chép ${label.toLowerCase()}`}>
+            <div className="donate-rows__text">
+              <span>{label}</span>
+              <span>{value}</span>
+            </div>
+            <button type="button" onClick={() => void copy(label, value)} aria-label={`Sao chép ${label.toLowerCase()}`}>
               Sao chép
             </button>
           </div>
         ))}
-      </dl>
-      <p className="donate-toast" role="status" aria-live="polite">
+      </div>
+      <div className="donate-toast" role="status" aria-live="polite">
         {toast && <span key={toast}>{toast}</span>}
-      </p>
+      </div>
     </>
   );
 }

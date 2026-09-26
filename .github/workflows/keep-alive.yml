@@ -1,0 +1,27 @@
+name: Keep alive
+# Ping production mỗi giờ để Supabase free + Netlify không bị idle/pause.
+# Chạy tay bất cứ lúc nào ở tab Actions → Keep alive → Run workflow.
+
+on:
+  schedule:
+    - cron: "11 * * * *" # phút 11 mỗi giờ (tránh nghẽn mốc :00)
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping homepage (Netlify + Next)
+        run: curl -fsS -o /dev/null -w "home %{http_code}\n" https://moc-wedding.netlify.app/
+
+      - name: Ping public read (PostgREST + DB)
+        run: curl -fsS -o /dev/null -w "public-read %{http_code}\n" "https://moc-wedding.netlify.app/api/public/invitations/ho6my9vg"
+
+      - name: Ping RSVP path honeypot (Edge Function, không ghi DB)
+        run: >
+          curl -fsS -o /dev/null -w "edge %{http_code}\n"
+          -X POST "https://moc-wedding.netlify.app/api/public/invitations/ho6my9vg/rsvp"
+          -H "Content-Type: application/json"
+          -H "Idempotency-Key: keepalive-00000000-0000-0000-0000-000000000000"
+          -d '{"name":"keepalive","attending":true,"guests":0,"note":"","answers":{},"guestLabel":"","guestToken":"","website":"bot"}'

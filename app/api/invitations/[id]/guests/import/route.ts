@@ -7,7 +7,7 @@ import { invitationRequestAccess } from "@/lib/server/invitation-request";
 const schema = z.object({ guests: z.array(z.unknown()) }).strict();
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const { id } = await context.params;
     const input = await parseJson(request, schema);
     const auth = await invitationRequestAccess(request, id);

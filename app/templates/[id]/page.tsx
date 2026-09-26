@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
-import { ScaledFrame } from "@/components/templates/ScaledFrame";
+import { ThiepPreview } from "@/components/templates/ThiepPreview";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { sampleContent } from "@/lib/content";
-import { getTemplate, templates, familyLayout } from "@/lib/templates";
-import { colors } from "@/lib/templates";
+import { colors, familyLayout, getTemplate, templateSamples, templates } from "@/lib/templates";
 import "./detail.css";
 
 export function generateStaticParams() {
@@ -53,17 +52,52 @@ export default async function TemplatePreviewPage({
     </>
   );
 
+  const sample = templateSamples[template.id];
+  const pal = colors[paletteKey as keyof typeof colors];
+  // design/Mau Thiep Chi Tiet.dc.html, value for value.
   return (
     <>
       <SiteHeader />
-      <main className="template-detail">
-        <div className="template-detail__preview"><ScaledFrame className="template-detail__cover"><InvitationRenderer only="cover" mode="preview" gate={false} template={template} content={{ ...sampleContent(), paletteKey }} /></ScaledFrame></div>
-        <div className="template-detail__info">
-          <nav aria-label="Đường dẫn"><Link href="/templates">Mẫu thiệp</Link><span>/</span>{template.name}</nav>
-          <div><p className="template-detail__eyebrow">{template.archetype.toUpperCase()} · {template.blurb}</p><h1>{template.name}</h1><p className="template-detail__desc">{familyLayout[template.family]} Mọi thông tin chỉnh được trong Studio.</p></div>
-          <div><p>Chọn màu để xem trước</p><div className="template-detail__swatches" role="group" aria-label="Chọn màu mẫu thiệp">{template.colors.map((key) => <Link key={key} href={`/templates/${template.id}?color=${key}`} title={colors[key].label} aria-label={colors[key].label} aria-current={paletteKey === key ? "true" : undefined} style={{ background: colors[key].deep }} />)}</div></div>
-          <div className="template-detail__includes"><h2>Mẫu này bao gồm</h2>{["Trang bìa và đếm ngược", "Ảnh và nhạc nền", "Xác nhận tham dự", "Sổ lưu bút", "Mừng cưới QR", "Link riêng cho khách"].map((feature) => <p key={feature}><i aria-hidden="true" />{feature}</p>)}</div>
-          <div className="template-detail__actions"><Link className="button-primary" href={`/studio?template=${template.id}&color=${paletteKey}`}>Dùng mẫu này</Link><Link className="template-detail__secondary" href="/templates">Xem các mẫu khác</Link><Link className="template-detail__full" href={`/templates/${template.id}?preview=1&color=${paletteKey}`}>Xem toàn bộ thiệp →</Link></div>
+      <main className="tdt">
+        <div className="tdt__stage">
+          <div className="tdt__card">
+            <ThiepPreview family={template.family} deep={pal.deep} paper={pal.paper} gold={pal.gold} a={sample.a} b={sample.b} date={sample.date} place={sample.place} radius="14px" />
+          </div>
+        </div>
+        <div className="tdt__info">
+          <nav className="tdt__crumb" aria-label="Đường dẫn">
+            <Link href="/templates">Mẫu thiệp</Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">{template.name}</span>
+          </nav>
+          <div className="tdt__head">
+            <span>
+              {sample.style} · {sample.motif}
+            </span>
+            <h1>{template.name}</h1>
+            <p>{familyLayout[template.family]}</p>
+          </div>
+          <div className="tdt__colors">
+            <span>Chọn màu để xem trước</span>
+            <div role="group" aria-label="Chọn màu mẫu thiệp">
+              {template.colors.map((key) => (
+                <Link key={key} href={`/templates/${template.id}?color=${key}`} title={colors[key].label} aria-label={colors[key].label} aria-current={paletteKey === key ? "true" : undefined} style={{ background: colors[key].deep }} />
+              ))}
+            </div>
+          </div>
+          <div className="tdt__incl">
+            <span>Mẫu này bao gồm</span>
+            {["Trang bìa và đếm ngược", "Ảnh và nhạc nền", "Xác nhận tham dự", "Sổ lưu bút", "Mừng cưới QR", "Link riêng cho khách"].map((feature) => (
+              <div key={feature}>
+                <span aria-hidden="true" />
+                {feature}
+              </div>
+            ))}
+          </div>
+          <div className="tdt__actions">
+            <Link href={`/studio?template=${template.id}&color=${paletteKey}`}>Dùng mẫu này</Link>
+            <Link href="/templates">Xem các mẫu khác</Link>
+          </div>
         </div>
       </main>
       <SiteFooter />

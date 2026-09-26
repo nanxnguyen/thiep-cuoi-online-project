@@ -632,9 +632,22 @@
 }
 .inv-thanks__names {
   margin: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   font-family: var(--inv-font-display), Georgia, serif;
   font-size: 32px;
   color: var(--inv-accent);
+}
+.inv-thanks__name {
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+.inv-thanks__amp {
+  font-size: 0.72em;
+  opacity: 0.85;
 }
 .inv-credit {
   margin: 0;

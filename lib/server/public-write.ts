@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 import type { RsvpInput, WishInput } from "../api.ts";
 import { parsePayload, type PublicAction } from "../../supabase/functions/_shared/public-write.ts";
+import { traceId } from "../../supabase/functions/_shared/logging.ts";
 import { serverEnv } from "./env.ts";
 import { HttpError } from "./http.ts";
 
@@ -27,14 +28,22 @@ export async function forwardPublicWrite(
   fingerprint: string,
   idempotencyKey: string,
   fetchImpl: typeof fetch = fetch,
+  requestId = crypto.randomUUID(),
 ) {
   if (idempotencyKey.length < 16 || idempotencyKey.length > 120) throw new HttpError(400, "Idempotency-Key chưa hợp lệ.");
   const env = serverEnv();
+  const safeRequestId = traceId(new Headers({ "x-request-id": requestId }));
   let response: Response;
   try {
     response = await fetchImpl(env.edgeFunctionUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-Edge-Secret": env.edgeSharedSecret, "Idempotency-Key": idempotencyKey },
+      headers: {
+        "Content-Type": "application/json",
+        "X-Edge-Secret": env.edgeSharedSecret,
+        "Idempotency-Key": idempotencyKey,
+        "X-Request-Id": safeRequestId,
+        "X-Parent-Trace-Id": safeRequestId,
+      },
       body: JSON.stringify({ action, slug, payload, fingerprint }),
     });
   } catch {

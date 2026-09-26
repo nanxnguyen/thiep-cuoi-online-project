@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
-import { ScaledFrame } from "@/components/templates/ScaledFrame";
+import { useEffect, useState, type FormEvent } from "react";
+import { ThiepPreview } from "@/components/templates/ThiepPreview";
 import { api } from "@/lib/api";
-import { defaultContent, sampleContent } from "@/lib/content";
+import { defaultContent } from "@/lib/content";
 import { createLocalStore, editLink, invitationTitle, parseEditLink, type LocalInvitation } from "@/lib/local-invitations";
-import { getTemplate, templates } from "@/lib/templates";
+import { colors, getTemplate, templateSamples, templates, type ColorKey } from "@/lib/templates";
 
+const fmtDate = (d: string) => {
+  const [y, m, dd] = d.split("-");
+  return y ? `${dd} · ${m} · ${y}` : "";
+};
 const when = (iso: string) => new Date(iso).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
 
 // "/studio": the owner's invitations (kept in this browser), the template picker that creates a new draft, and a
@@ -24,15 +27,13 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
   const [link, setLink] = useState("");
   const [importing, setImporting] = useState(false);
   const [copied, setCopied] = useState("");
-  const sample = useMemo(() => sampleContent(), []);
-  const starting = useMemo(() => defaultContent(), []);
   const [selectedId, setSelectedId] = useState(() => getTemplate(initialTemplate || "")?.id || templates[0].id);
-  const [bride, setBride] = useState("");
-  const [groom, setGroom] = useState("");
-  const [date, setDate] = useState(starting.events[0]?.date || "");
+  const [bride, setBride] = useState("Hạ Vy");
+  const [groom, setGroom] = useState("Minh Khôi");
+  const [date, setDate] = useState("2026-11-09");
   const selected = getTemplate(selectedId)!;
   const selectedColor = selectedId === getTemplate(initialTemplate || "")?.id && selected.colors.includes(initialColor as typeof selected.colors[number]) ? initialColor! : "";
-  const preview = { ...sample, paletteKey: selectedColor, couple: { ...sample.couple, groom: { ...sample.couple.groom, name: groom || "Chú rể" }, bride: { ...sample.couple.bride, name: bride || "Cô dâu" }, heroPhoto: "" }, events: sample.events.map((e) => ({ ...e, date })) };
+  const cur = colors[(selectedColor || selected.colors[0]) as ColorKey];
 
   const store = () => createLocalStore(window.localStorage);
   useEffect(() => setItems(createLocalStore(window.localStorage).list()), []);
@@ -88,28 +89,77 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
   }
 
   return (
-    <main className="section studio-home">
-      <div className="studio-create-layout">
-        <div className="studio-create-left">
-          <div className="studio-steps"><b>1</b> Chọn mẫu <i /> <b>2</b> Tên hai bạn <i /> <b>3</b> Chỉnh sửa</div>
-          <h1>Tạo thiệp mới</h1>
-          <p className="lede">Chọn một mẫu để bắt đầu. Bạn đổi mẫu lúc nào cũng được mà không mất nội dung.</p>
-          <div className="pick-grid" role="group" aria-label="Chọn mẫu thiệp">
-            {templates.map((template) => <button type="button" key={template.id} className="pick" data-selected={selectedId === template.id} aria-pressed={selectedId === template.id} onClick={() => setSelectedId(template.id)}>
-              <ScaledFrame className="pick__thumb"><InvitationRenderer only="cover" mode="preview" gate={false} template={template} content={{ ...preview, paletteKey: "" }} /></ScaledFrame>
-              <span className="pick__meta"><strong>{template.name}</strong><small>{template.blurb}</small></span>
-            </button>)}
+    <div className="studio-home">
+      <main className="sh">
+        <div className="sh__left">
+          <div className="sh__intro">
+            <div className="sh__steps">
+              <span className="sh__step sh__step--on">1</span>Chọn mẫu<span className="sh__line" />
+              <span className="sh__step">2</span>Tên hai bạn<span className="sh__line" />
+              <span className="sh__step">3</span>Chỉnh sửa
+            </div>
+            <h1>Tạo thiệp mới</h1>
+            <p>Chọn một mẫu để bắt đầu. Bạn đổi mẫu lúc nào cũng được mà không mất nội dung.</p>
+          </div>
+          <div className="sh__grid" role="group" aria-label="Chọn mẫu thiệp">
+            {templates.map((t, i) => {
+              const on = selectedId === t.id;
+              const c = colors[t.colors[0]];
+              return (
+                <button type="button" key={t.id} aria-pressed={on} onClick={() => setSelectedId(t.id)} style={{ animationDelay: `${i * 0.04}s` }}>
+                  <div className="sh__thumb" data-on={on || undefined}>
+                    <ThiepPreview family={t.family} deep={c.deep} paper={c.paper} gold={c.gold} a={bride || "Cô dâu"} b={groom || "Chú rể"} date={fmtDate(date)} place="HÀ NỘI" radius="8px" />
+                    {on && <span className="sh__check">✓</span>}
+                  </div>
+                  <div className="sh__meta">
+                    <span>{t.name}</span>
+                    <span>{templateSamples[t.id].style}</span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
-        <aside className="studio-create-aside" aria-label="Thiệp đang chọn">
-          <div className="studio-create-selected"><ScaledFrame className="studio-create-preview"><InvitationRenderer only="cover" mode="preview" gate={false} template={selected} content={preview} /></ScaledFrame><div><small>ĐÃ CHỌN</small><strong>{selected.name}</strong><span>{selected.blurb}</span></div></div>
-          <div className="studio-create-fields"><label>Cô dâu<input className="input" value={bride} onChange={(e) => setBride(e.target.value)} placeholder="Tên cô dâu" /></label><label>Chú rể<input className="input" value={groom} onChange={(e) => setGroom(e.target.value)} placeholder="Tên chú rể" /></label><label>Ngày cưới<input className="input" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></label></div>
-          <button className="button-primary studio-create-submit" type="button" disabled={creating !== null} onClick={create}>{creating ? "Đang tạo thiệp…" : "Bắt đầu chỉnh sửa →"}</button>
-          <p>Không cần đăng nhập. MỘC sẽ cấp một link sửa riêng, hãy lưu lại link đó.</p>
-          {error && <p className="form-error" role="alert">{error}</p>}
+        <aside className="sh__aside" aria-label="Thiệp đang chọn">
+          <div className="sh__selected">
+            <div className="sh__bob">
+              <div className="sh__big" key={selectedId}>
+                <ThiepPreview family={selected.family} deep={cur.deep} paper={cur.paper} gold={cur.gold} a={bride || "Cô dâu"} b={groom || "Chú rể"} date={fmtDate(date)} place="HÀ NỘI" />
+              </div>
+            </div>
+            <div className="sh__name">
+              <span>ĐÃ CHỌN</span>
+              <span>{selected.name}</span>
+              <span>{templateSamples[selected.id].style}</span>
+            </div>
+          </div>
+          <div className="sh__fields">
+            <label>
+              Cô dâu
+              <input value={bride} onChange={(e) => setBride(e.target.value)} />
+            </label>
+            <label>
+              Chú rể
+              <input value={groom} onChange={(e) => setGroom(e.target.value)} />
+            </label>
+            <label className="sh__full">
+              Ngày cưới
+              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            </label>
+          </div>
+          <button className="sh__go" type="button" disabled={creating !== null} onClick={create}>
+            {creating && <span className="sh__spin" aria-hidden="true" />}
+            {creating ? "Đang tạo thiệp…" : "Bắt đầu chỉnh sửa →"}
+          </button>
+          <span className="sh__note">Không cần đăng nhập. Mộc sẽ cấp một link sửa riêng, hãy lưu lại link đó.</span>
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
         </aside>
-      </div>
-
+      </main>
+      <div className="section studio-home__more">
       {items.length > 0 && (
         <section className="studio-block" aria-labelledby="mine">
           <h2 id="mine">Thiệp đã tạo</h2>
@@ -149,6 +199,7 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
           </button>
         </form>
       </section>
-    </main>
+      </div>
+    </div>
   );
 }

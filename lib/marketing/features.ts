@@ -1,5 +1,3 @@
-import { colors } from "../templates.ts";
-
 // Feature pages of the marketing site. Pure data: every number below (6 events, 24 photos, 3 questions, 2 gift
 // accounts, 2 MB photos, 8 MB music) mirrors lib/content.ts and the backend rules, so change them together.
 export type Faq = { q: string; a: string };
@@ -208,15 +206,85 @@ export const features: readonly Feature[] = [
 
 // Illustration tile per feature (design/Tinh Nang + Tinh Nang Chi Tiet): big glyph, caption, and colours taken from the
 // invitation palettes and site tokens so they follow the design system.
-export const featureArt: Record<string, { glyph: string; caption: string; bg: string; ink: string }> = {
-  "xac-nhan-tham-du": { glyph: "96/128", caption: "KHÁCH ĐÃ XÁC NHẬN", bg: "var(--ok-bg)", ink: "var(--ok-fg)" },
-  "so-luu-but": { glyph: "“…”", caption: "LỜI CHÚC MỚI", bg: colors.cam.paper, ink: colors.cam.deep },
-  "mung-cuoi-qr": { glyph: "QR", caption: "QUÉT ĐỂ MỪNG", bg: "var(--danger-bg)", ink: "var(--danger-fg)" },
-  "ban-do-chi-duong": { glyph: "→", caption: "CHỈ ĐƯỜNG", bg: colors.lam.paper, ink: colors.lam.deep },
-  "dem-nguoc-lich": { glyph: "45", caption: "NGÀY NỮA", bg: "var(--night)", ink: "var(--gold-light)" },
-  "album-anh": { glyph: "✦", caption: "ẢNH CƯỚI", bg: "var(--paper-alt)", ink: colors.nau.deep },
-  "nhac-nen": { glyph: "♪", caption: "ĐANG PHÁT", bg: colors.tim.paper, ink: colors.tim.deep },
-  "phong-bi-loi-moi": { glyph: "✉", caption: "CHẠM ĐỂ MỞ", bg: colors.do.paper, ink: "var(--accent)" },
+/** The feature tiles exactly as design/Tinh Nang.dc.html and design/Tinh Nang Chi Tiet.dc.html write them: short title,
+ * list-page description + bullets, detail-page description + "Hoạt động thế nào" steps, and the illustration. */
+export type FeatureArt = {
+  title: string;
+  desc: string;
+  bullets: readonly string[];
+  detailDesc: string;
+  steps: readonly string[];
+  glyph: string;
+  caption: string;
+  bg: string;
+  ink: string;
+};
+
+export const featureArt: Record<string, FeatureArt> = {
+  "xac-nhan-tham-du": {
+    title: "Xác nhận tham dự",
+    desc: "Khách bấm xác nhận ngay trên thiệp, chọn số người đi cùng và để lại ghi chú. Bạn xem tổng số theo thời gian thực để báo nhà hàng.",
+    bullets: ["Chọn số người đi cùng", "Xuất danh sách ra CSV", "Nhắc khách chưa trả lời"],
+    detailDesc: "Khách bấm xác nhận ngay trên thiệp, chọn số người đi cùng và để lại ghi chú. Bạn xem tổng số theo thời gian thực để báo nhà hàng.",
+    steps: ['Khách mở thiệp và bấm "Sẽ tham dự" hoặc "Xin phép vắng"', "Số người đi cùng và ghi chú được lưu lại ngay", "Bạn xem tổng số trong tab Tham dự của trình chỉnh sửa"],
+    glyph: "96/128", caption: "KHÁCH ĐÃ XÁC NHẬN", bg: "#e7eee6", ink: "#24493a",
+  },
+  "so-luu-but": {
+    title: "Sổ lưu bút",
+    desc: "Lời chúc của khách hiện ngay trên thiệp và được giữ lại thành một cuốn sổ nhỏ. Bạn có thể ẩn những lời chúc không muốn công khai.",
+    bullets: ["Duyệt trước khi hiển thị", "Ghim lời chúc yêu thích", "Tải về làm kỷ niệm"],
+    detailDesc: "Lời chúc của khách hiện ngay trên thiệp và được giữ lại thành một cuốn sổ nhỏ.",
+    steps: ["Khách viết lời chúc ngay dưới phần xác nhận tham dự", "Lời chúc hiện công khai hoặc chờ bạn duyệt", "Bạn có thể ẩn hoặc ghim lời chúc yêu thích"],
+    glyph: "“…”", caption: "LỜI CHÚC MỚI", bg: "#f3e7df", ink: "#8a4a3a",
+  },
+  "mung-cuoi-qr": {
+    title: "Mừng cưới QR",
+    desc: "Mã QR chuyển khoản của cô dâu, chú rể hoặc gia đình hiện trong một phong bì nhỏ. Khách ở xa gửi mừng chỉ với một lần quét.",
+    bullets: ["Nhiều tài khoản cho hai nhà", "Ẩn hoặc hiện tuỳ khách", "Không thu phí giao dịch"],
+    detailDesc: "Mã QR chuyển khoản hiện trong một phong bì nhỏ trên thiệp.",
+    steps: ["Bạn nhập số tài khoản và tải ảnh QR lên", 'QR hiện trong phần "Mừng cưới" của thiệp', "Khách quét bằng ứng dụng ngân hàng để chuyển ngay"],
+    glyph: "QR", caption: "QUÉT ĐỂ MỪNG", bg: "#f5e3e1", ink: "#8e1b1f",
+  },
+  "ban-do-chi-duong": {
+    title: "Bản đồ chỉ đường",
+    desc: "Mỗi sự kiện (lễ gia tiên, lễ cưới, tiệc) có địa chỉ riêng và một nút mở chỉ đường trên điện thoại.",
+    bullets: ["Nhiều địa điểm cho nhiều lễ", "Mở thẳng ứng dụng bản đồ", "Ghi chú chỗ đỗ xe"],
+    detailDesc: "Mỗi sự kiện có địa chỉ riêng và một nút mở chỉ đường trên điện thoại.",
+    steps: ["Nhập địa chỉ chi tiết trong tab Sự kiện", 'Thiệp hiện nút "Chỉ đường" ngay bên dưới', "Khách bấm để mở thẳng ứng dụng bản đồ trên máy"],
+    glyph: "→", caption: "CHỈ ĐƯỜNG", bg: "#e6ebef", ink: "#1f3a5f",
+  },
+  "dem-nguoc-lich": {
+    title: "Đếm ngược & lịch",
+    desc: "Đồng hồ đếm ngược tới giờ làm lễ và nút thêm sự kiện vào lịch điện thoại để khách không quên.",
+    bullets: ["Thêm vào lịch Google, Apple", "Hiển thị cả ngày âm lịch", "Tự đổi lời chào sau ngày cưới"],
+    detailDesc: "Đồng hồ đếm ngược tới giờ làm lễ và nút thêm vào lịch điện thoại.",
+    steps: ["Đồng hồ tự chạy dựa trên ngày giờ bạn đã nhập", 'Khách bấm "Thêm vào lịch" để lưu vào điện thoại', "Đồng hồ tự đổi lời chào sau khi qua ngày cưới"],
+    glyph: "45", caption: "NGÀY NỮA", bg: "#1c1012", ink: "#e6c47a",
+  },
+  "album-anh": {
+    title: "Album ảnh",
+    desc: "Đưa những tấm ảnh cưới đẹp nhất vào thiệp. Ảnh được nén sẵn để khách mở nhanh trên điện thoại.",
+    bullets: ["Tự nén ảnh khi tải lên", "Sắp xếp bằng kéo thả", "Xem toàn màn hình"],
+    detailDesc: "Đưa những tấm ảnh cưới đẹp nhất vào thiệp.",
+    steps: ["Kéo thả ảnh vào tab Ảnh và nhạc", "Ảnh được tự nén để mở nhanh trên điện thoại", "Khách chạm vào ảnh để xem toàn màn hình"],
+    glyph: "✦", caption: "ẢNH CƯỚI", bg: "#efe6d9", ink: "#6b4a33",
+  },
+  "nhac-nen": {
+    title: "Nhạc nền",
+    desc: "Chọn bài hát của hai bạn để phát khi khách mở thiệp. Khách có thể tắt bất cứ lúc nào.",
+    bullets: ["Tải nhạc của bạn lên", "Chọn đoạn bắt đầu", "Nút tắt tiếng rõ ràng"],
+    detailDesc: "Chọn bài hát của hai bạn để phát khi khách mở thiệp.",
+    steps: ["Dán link file nhạc trong tab Ảnh và nhạc", "Nhạc tự phát nhẹ khi khách mở thiệp", "Khách có thể tắt tiếng bất cứ lúc nào"],
+    glyph: "♪", caption: "ĐANG PHÁT", bg: "#ece6f0", ink: "#4b3566",
+  },
+  "phong-bi-loi-moi": {
+    title: "Phong bì lời mời",
+    desc: "Thiệp mở ra từ một phong bì có tên khách, giống như nhận một tấm thiệp giấy được trao tận tay.",
+    bullets: ["Tên khách trên phong bì", "Màu phong bì theo mẫu", "Hiệu ứng mở nhẹ nhàng"],
+    detailDesc: "Thiệp mở ra từ một phong bì có tên khách.",
+    steps: ["Khách mở link và thấy phong bì mang tên mình", "Chạm vào phong bì để xem thiệp mở ra", "Hiệu ứng đổi theo màu của mẫu thiệp đã chọn"],
+    glyph: "✉", caption: "CHẠM ĐỂ MỞ", bg: "#f7efe3", ink: "#a3161c",
+  },
 };
 
 export const getFeature = (slug: string): Feature | undefined => features.find((f) => f.slug === slug);

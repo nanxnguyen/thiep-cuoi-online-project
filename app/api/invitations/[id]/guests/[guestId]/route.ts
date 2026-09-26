@@ -20,7 +20,7 @@ async function params(context: { params: Promise<{ id: string; guestId: string }
 }
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string; guestId: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const { id, guestId } = await params(context);
     const input = await parseJson(request, patchSchema);
     const auth = await invitationRequestAccess(request, id);
@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 }
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string; guestId: string }> }) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const { id, guestId } = await params(context);
     const auth = await invitationRequestAccess(request, id);
     await deleteGuest(auth.admin, id, guestId, auth.editKey, auth.userId);

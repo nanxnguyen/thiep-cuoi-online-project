@@ -46,7 +46,7 @@ export function ImageCompressTool() {
           void addFiles(Array.from(e.dataTransfer.files));
         }}
       >
-        <strong>Chọn hoặc thả ảnh vào đây</strong>
+        <span>Chọn hoặc thả ảnh vào đây</span>
         <span>JPG, PNG — nhiều ảnh một lúc</span>
         <input
           type="file"
@@ -60,25 +60,24 @@ export function ImageCompressTool() {
           }}
         />
       </label>
-      {items.length > 0 && (
-        <ul className="tool-shots">
-          {items.map((r) => (
-            <li key={r.id}>
+      <div className="tool-shots">
+        {items.map((r) => (
+            <div key={r.id}>
               <div className="tool-shots__img">
                 <img src={r.preview} alt="" />
               </div>
               <div className="tool-shots__body">
-                <h3>{r.name}</h3>
+                <span className="tool-shots__name">{r.name}</span>
                 {r.error ? (
                   <p className="tool-error" role="alert">
                     {r.error}
                   </p>
                 ) : r.after != null && r.url ? (
                   <>
-                    <p className="tool-shots__size">
+                    <div className="tool-shots__size">
                       <span>{fmtKb(r.before)}</span>
-                      <b>→ {fmtKb(r.after)}</b>
-                    </p>
+                      <span>→ {fmtKb(r.after)}</span>
+                    </div>
                     <a className="tool-dark-pill" href={r.url} download={downloadName(r.name, r.type)}>
                       Tải ảnh đã nén
                     </a>
@@ -87,10 +86,9 @@ export function ImageCompressTool() {
                   <span className="tool-spin" role="status" aria-label="Đang nén" />
                 )}
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+        ))}
+      </div>
     </>
   );
 }

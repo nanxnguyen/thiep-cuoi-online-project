@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { securityHeaders } from "./lib/server/security";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -8,6 +9,9 @@ const nextConfig: NextConfig = {
   turbopack: { root: process.cwd() },
   images: {
     formats: ["image/avif", "image/webp"],
+  },
+  async headers() {
+    return [{ source: "/(.*)", headers: Object.entries(securityHeaders()).map(([key, value]) => ({ key, value })) }];
   },
 };
 

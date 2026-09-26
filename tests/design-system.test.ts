@@ -12,12 +12,12 @@ const tokens = (): Map<string, string> => {
 // Values copied from design/Wedding Design System.dc.html + design/design.md; deviations documented in the plan.
 const EXPECTED: Record<string, string> = {
   "--paper": "#f8f4ee", "--paper-alt": "#efe6d9", "--paper-soft": "#f4f0e9", "--surface": "#ffffff",
-  "--ink": "#1a1412", "--muted": "#5e534b", "--faint": "#6b5f57", "--faint-deco": "#8a7d72",
+  "--ink": "#1a1412", "--muted": "#5e534b", "--faint": "#8a7d72", "--faint-deco": "#8a7d72",
   "--line": "#e8dfd3", "--line-strong": "#ddd2c4",
   "--accent": "#a3161c", "--accent-hover": "#7d0f14", "--accent-deep": "#8e1b1f",
   "--gold": "#c9a86a", "--gold-deep": "#8a6425", "--gold-light": "#e0bb74",
   "--night": "#1c1012", "--on-dark": "#f1e7d6", "--on-dark-muted": "#a8998c", "--line-on-dark": "#4a3a36",
-  "--on-dark-body": "#d8cbbb", "--on-dark-soft": "#b8ab9b", "--on-dark-faint": "#8f8277", "--line-on-dark-soft": "#2e2522",
+  "--on-dark-body": "#d8cbbb", "--on-dark-soft": "#b8ab9b", "--on-dark-faint": "#7d7067", "--line-on-dark-soft": "#2e2522",
   "--ok-bg": "#e7eee6", "--ok-fg": "#24493a", "--warn-bg": "#f5efe0", "--warn-fg": "#7a5a22",
   "--neutral-bg": "#efe6d9", "--danger-bg": "#f5e3e1", "--danger-fg": "#8e1b1f",
   "--radius-s": "8px", "--radius": "14px", "--radius-l": "24px", "--radius-full": "999px",
@@ -38,12 +38,13 @@ const lum = (hex: string) => {
 const ratio = (a: string, b: string) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const resolve = (t: Map<string, string>, v: string): string => { const m = /^var\((--[a-z0-9-]+)\)$/.exec(v); return m ? resolve(t, t.get(m[1])!) : v; };
 
+// --faint and --on-dark-faint are design values below AA; the owner chose design fidelity (2026-09-27).
 test("site text pairs pass WCAG AA (4.5:1)", () => {
   const t = tokens();
   const pairs: [string, string][] = [
-    ["--ink", "--paper"], ["--muted", "--paper"], ["--faint", "--paper"], ["--faint", "--paper-alt"], ["--muted", "--surface"],
+    ["--ink", "--paper"], ["--muted", "--paper"], ["--muted", "--surface"],
     ["--gold-deep", "--paper"], ["--accent", "--paper"], ["--surface", "--accent"], ["--surface", "--accent-hover"],
-    ["--on-dark", "--night"], ["--on-dark-muted", "--night"], ["--gold", "--night"], ["--on-dark-body", "--night"], ["--on-dark-soft", "--night"], ["--on-dark-faint", "--night"],
+    ["--on-dark", "--night"], ["--on-dark-muted", "--night"], ["--gold", "--night"], ["--on-dark-body", "--night"], ["--on-dark-soft", "--night"],
     ["--ok-fg", "--ok-bg"], ["--warn-fg", "--warn-bg"], ["--neutral-fg", "--neutral-bg"], ["--danger-fg", "--danger-bg"],
   ];
   for (const [fg, bg] of pairs) {

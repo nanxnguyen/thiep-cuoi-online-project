@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { handlePublicWrite, type PublicAction, type PublicWriteStore, type StoredWrite } from "../_shared/public-write.ts";
+import { MAX_LOG_BODY_BYTES, redactHeaders, redactJsonText, sha256Text, traceId } from "../_shared/logging.ts";
 
 const required = (name: string) => {
   const value = Deno.env.get(name)?.trim();
@@ -51,8 +52,52 @@ const store: PublicWriteStore = {
   },
 };
 
-Deno.serve((request) => handlePublicWrite(request, store, {
-  sharedSecret: required("EDGE_SHARED_SECRET"),
-  limit: Number(Deno.env.get("PUBLIC_WRITE_LIMIT") ?? 5),
-  windowSeconds: Number(Deno.env.get("PUBLIC_WRITE_WINDOW_SECONDS") ?? 600),
-}));
+async function bodySnapshot(request: Request | Response) {
+  const contentType = request.headers.get("content-type") ?? "";
+  const length = Number(request.headers.get("content-length"));
+  if (!contentType.includes("json") || !Number.isSafeInteger(length) || length > MAX_LOG_BODY_BYTES) {
+    return { body: { omitted: true, reason: "body_unavailable" }, hash: null };
+  }
+  try {
+    const text = await request.clone().text();
+    return { body: redactJsonText(text), hash: await sha256Text(text) };
+  } catch {
+    return { body: { omitted: true, reason: "body_unavailable" }, hash: null };
+  }
+}
+
+async function recordEdgeLog(request: Request, response: Response, trace: string, startedAt: number) {
+  try {
+    const [requestBody, responseBody] = await Promise.all([bodySnapshot(request), bodySnapshot(response)]);
+    await supabase.from("api_request_logs").insert({
+      trace_id: trace,
+      parent_trace_id: request.headers.get("x-parent-trace-id"),
+      service: "edge-function",
+      method: request.method,
+      route: "/functions/v1/public-write",
+      status_code: response.status,
+      duration_ms: Math.max(0, Date.now() - startedAt),
+      request_headers: redactHeaders(request.headers),
+      request_body: requestBody.body,
+      response_headers: redactHeaders(response.headers),
+      response_body: responseBody.body,
+      request_body_sha256: requestBody.hash,
+      response_body_sha256: responseBody.hash,
+    });
+  } catch (error) {
+    console.error("request log write failed", error instanceof Error ? error.message : "unknown error");
+  }
+}
+
+Deno.serve(async (request) => {
+  const trace = traceId(request.headers);
+  const startedAt = Date.now();
+  const response = await handlePublicWrite(request, store, {
+    sharedSecret: required("EDGE_SHARED_SECRET"),
+    limit: Number(Deno.env.get("PUBLIC_WRITE_LIMIT") ?? 5),
+    windowSeconds: Number(Deno.env.get("PUBLIC_WRITE_WINDOW_SECONDS") ?? 600),
+  });
+  response.headers.set("x-request-id", trace);
+  await recordEdgeLog(request, response, trace, startedAt);
+  return response;
+});

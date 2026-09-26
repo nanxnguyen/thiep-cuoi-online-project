@@ -8,7 +8,7 @@ import { createRouteClient } from "@/lib/server/supabase";
 const schema = z.object({ id: z.uuid(), key: z.string().min(20).max(200) });
 
 export async function POST(request: NextRequest) {
-  return routeResponse(async () => {
+  return routeResponse(request, async () => {
     const input = await parseJson(request, schema);
     const { client, applyCookies } = createRouteClient(request);
     await requireUser(client);

@@ -7,10 +7,11 @@ import { isNavActive, NAV_LINKS } from "@/lib/navigation";
 
 export { NAV_LINKS } from "@/lib/navigation";
 
-// Shared top bar for the marketing pages: sticky, translucent, one primary action. Wide screens show the links inline;
-// phones get a menu button next to the action.
+// Shared top bar (design/Site Header.dc.html): logo, three section links, then Ủng hộ / Tài khoản / Tạo thiệp.
+// Phones get a menu button next to the action instead of the design's wrapped rows.
 export function SiteHeader() {
   const pathname = usePathname();
+  const current = (href: string) => (isNavActive(pathname, href) ? "page" : undefined);
 
   return (
     <header className="site-header">
@@ -19,20 +20,29 @@ export function SiteHeader() {
           <span className="brand-mark" aria-hidden="true">
             M
           </span>
-          MỘC
+          <span className="brand-word">MỘC</span>
         </Link>
         <nav className="site-nav" aria-label="Chính">
           {NAV_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} aria-current={isNavActive(pathname, l.href) ? "page" : undefined}>
+            <Link key={l.href} href={l.href} aria-current={current(l.href)}>
               {l.label}
             </Link>
           ))}
-          <Link href="/account">Tài khoản</Link>
+        </nav>
+        <div className="site-actions">
+          <Link href="/ung-ho">
+            Ủng hộ
+          </Link>
+          <Link href="/account" aria-current={current("/account")}>
+            Tài khoản
+          </Link>
           <Link className="nav-cta" href="/studio">
             Tạo thiệp
           </Link>
-          <MobileMenu links={[...NAV_LINKS, { href: "/bang-gia", label: "Bảng giá" }, { href: "/account", label: "Tài khoản" }]} />
-        </nav>
+          <MobileMenu
+            links={[...NAV_LINKS, { href: "/ung-ho", label: "Ủng hộ" }, { href: "/bang-gia", label: "Bảng giá" }, { href: "/account", label: "Tài khoản" }]}
+          />
+        </div>
       </div>
     </header>
   );

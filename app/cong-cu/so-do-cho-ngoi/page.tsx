@@ -10,7 +10,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <ToolPage name="Sơ đồ chỗ ngồi" title="Sơ đồ chỗ ngồi" description="Chạm hoặc nhấn giữ để chọn khách, rồi bấm vào bàn để xếp chỗ." width={1100}>
+    <ToolPage name="Sơ đồ chỗ ngồi" title="Sơ đồ chỗ ngồi" width={1100} gap={24}>
+      <p className="tool-meta tool-meta--14">Chạm hoặc nhấn giữ để chọn khách, rồi bấm vào bàn để xếp chỗ.</p>
       <SeatingTool />
     </ToolPage>
   );

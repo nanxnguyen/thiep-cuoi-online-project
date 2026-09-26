@@ -1,89 +1,206 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
-import { sampleContent } from "@/lib/content";
-import { colors, templates, type Template } from "@/lib/templates";
-import { ScaledFrame } from "./ScaledFrame";
+import { useRef, useState } from "react";
+import { colors, templateSamples, templates, type ColorKey, type Template } from "@/lib/templates";
+import { ThiepPreview } from "./ThiepPreview";
 
-const styleOf = (family: Template["family"]) =>
-  ["A", "H", "I", "J"].includes(family) ? "Truyền thống" :
-  family === "B" ? "Tối giản" : family === "C" ? "Hoa" : family === "D" ? "Cổ điển" :
-  ["E", "G"].includes(family) ? "Lãng mạn" : "Hiện đại";
-const styles = ["Tất cả", "Truyền thống", "Tối giản", "Hoa", "Cổ điển", "Lãng mạn", "Hiện đại"];
-// Swatch colours come from the template palette registry, never copied hex.
-const groups = [
-  ["Đỏ", colors.do.deep, ["do", "dodam"]],
-  ["Xanh", colors.xanh.deep, ["xanh", "oliu"]],
-  ["Lam", colors.lam.deep, ["lam"]],
-  ["Hồng", colors.hong.deep, ["hong", "tim"]],
-  ["Nâu", colors.nau.deep, ["nau", "cam"]],
-  ["Vàng kim", colors.xanh.gold, ["vang"]],
-  ["Mực", colors.muc.deep, ["muc"]],
-] as const;
-// Per-template sample couple and badge from design/Mau Thiep v2.dc.html, so each card previews like the design.
-const CARD: Record<string, [badge: string, bride: string, groom: string]> = {
-  "song-hy": ["HOT", "Ngọc Hân", "Đức Huy"], "net-muc": ["MỚI", "An", "Bảo"], "hoa-nhai": ["", "Thu Hà", "Văn Long"],
-  "hoang-gia": ["HOT", "Phương Thảo", "Trung Kiên"], "phong-thu": ["MỚI", "Hoàng Long", "Bảo Ngọc"], "bia-bao": ["", "Linh", "Tuấn"],
-  "hy-su": ["", "Quỳnh Anh", "Gia Khánh"], "giay-do": ["", "Hương", "Nam"], "vuon-uom": ["MỚI", "Mai", "Phong"],
-  "nhung-lam": ["", "Thanh Trúc", "Quốc Anh"], "thu-tinh": ["", "Minh Ánh", "Thế Bảo"], "chan-dung": ["HOT", "Hạ Vy", "Minh Khôi"],
-  "song-phung": ["HOT", "Ngọc Ánh", "Thế Bảo"], "bao-hy": ["MỚI", "Thanh Tú", "Hoàng Nam"], "doi-khung": ["MỚI", "Thu Hà", "Minh Quân"],
-  "song-cua": ["HOT", "Thanh Hà", "Tuấn Kiệt"],
-};
-const rank = ["song-hy", "song-phung", "song-cua", "hoang-gia", "chan-dung", "hy-su", "bao-hy"];
-const sample = sampleContent(new Date("2026-09-20T00:00:00Z"));
-const preview = { ...sample, couple: { ...sample.couple, heroPhoto: "" } };
-const cardContent = (id: string, paletteKey: string) => {
-  const names = CARD[id];
-  return { ...preview, paletteKey, couple: names ? { ...preview.couple, bride: { ...preview.couple.bride, name: names[1] }, groom: { ...preview.couple.groom, name: names[2] } } : preview.couple };
+// design/Mau Thiep v2.dc.html, interactive part: ranking rail, sticky style/colour filter bar, sortable card grid with a
+// colour switch per card. Previews are the design's own Thiep Preview with each template's sample couple.
+const STYLES = ["Tất cả", "Truyền thống", "Tối giản", "Hoa", "Cổ điển", "Lãng mạn", "Hiện đại"];
+const COLOR_GROUPS: { key: string; label: string; color: string; pals: ColorKey[] }[] = [
+  { key: "red", label: "Đỏ", color: colors.do.deep, pals: ["do", "dodam"] },
+  { key: "green", label: "Xanh", color: colors.xanh.deep, pals: ["xanh", "oliu"] },
+  { key: "blue", label: "Lam", color: colors.lam.deep, pals: ["lam"] },
+  { key: "pink", label: "Hồng", color: colors.hong.deep, pals: ["hong", "tim"] },
+  { key: "brown", label: "Nâu", color: colors.nau.deep, pals: ["nau", "cam"] },
+  { key: "gold", label: "Vàng kim", color: colors.xanh.gold, pals: ["vang"] },
+  { key: "ink", label: "Mực", color: colors.muc.deep, pals: ["muc"] },
+];
+const sampleOf = (t: Template) => templateSamples[t.id];
+const preview = (t: Template, key: ColorKey, radius?: string) => {
+  const s = sampleOf(t);
+  const c = colors[key];
+  return <ThiepPreview family={t.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} radius={radius} />;
 };
 
 export function GalleryCatalog() {
-  const [style, setStyle] = useState("Tất cả");
-  const [color, setColor] = useState("");
-  const [sort, setSort] = useState("popular");
-  const [chosen, setChosen] = useState<Record<string, string>>({});
-  const list = useMemo(() => {
-    const selected = groups.find(([label]) => label === color)?.[2];
-    return templates.filter((t) => (style === "Tất cả" || styleOf(t.family) === style) && (!selected || t.colors.some((key) => (selected as readonly string[]).includes(key))))
-      .sort((a, b) => sort === "new" ? templates.indexOf(b) - templates.indexOf(a) : (rank.indexOf(a.id) < 0 ? 99 : rank.indexOf(a.id)) - (rank.indexOf(b.id) < 0 ? 99 : rank.indexOf(b.id)));
-  }, [style, color, sort]);
+  const [cat, setCat] = useState("Tất cả");
+  const [color, setColor] = useState<string | null>(null);
+  const [sort, setSort] = useState<"pop" | "new">("pop");
+  const [hover, setHover] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<Record<string, ColorKey>>({});
+  const rail = useRef<HTMLDivElement>(null);
+  const scroll = (dir: number) => rail.current?.scrollBy({ left: dir * 292 * 2, behavior: "smooth" });
 
-  return <>
-    <div className="tpl-filters" role="group" aria-label="Lọc theo phong cách">
-      {styles.map((label) => <button className="tpl-chip" key={label} type="button" aria-pressed={style === label} onClick={() => setStyle(label)}>{label}</button>)}
-      <span className="tpl-filter-spacer" />
-      <span className="tpl-color-label">Màu</span>
-      {groups.map(([label, swatch]) => <button key={label} type="button" className="tpl-color-filter" aria-label={`Lọc màu ${label}`} aria-pressed={color === label} title={label} onClick={() => setColor(color === label ? "" : label)} style={{ background: swatch }} />)}
-    </div>
-    <div className="tpl-catalog-controls"><span>{list.length} mẫu · chọn điểm bắt đầu của hai bạn</span><label>Sắp xếp <select value={sort} onChange={(e) => setSort(e.target.value)}><option value="popular">Phổ biến</option><option value="new">Mới nhất</option></select></label></div>
-    <div className="tpl-grid">
-      {list.map((template) => {
-        const key = template.colors.includes(chosen[template.id] as typeof template.colors[number]) ? chosen[template.id] as typeof template.colors[number] : template.colors[0];
-        return <article className="tpl-card" key={template.id}>
-          <div className="tpl-card__frame">
-            <Link href={`/templates/${template.id}?color=${key}`} aria-label={`Xem mẫu ${template.name}`}>
-              <ScaledFrame className="tpl-thumb"><InvitationRenderer only="cover" mode="preview" gate={false} template={template} content={cardContent(template.id, key)} /></ScaledFrame>
+  const grp = COLOR_GROUPS.find((g) => g.key === color);
+  const list = templates
+    .filter((t) => (cat === "Tất cả" || sampleOf(t).style === cat) && (!grp || t.colors.some((k) => grp.pals.includes(k))))
+    .sort((x, y) => (sort === "new" ? Number(sampleOf(y).isNew) - Number(sampleOf(x).isNew) || sampleOf(y).pop - sampleOf(x).pop : sampleOf(y).pop - sampleOf(x).pop));
+  const ranking = [...templates].sort((x, y) => sampleOf(y).pop - sampleOf(x).pop).slice(0, 7);
+  const title = [cat === "Tất cả" ? "Tất cả mẫu thiệp" : cat, grp ? `tông ${grp.label.toLowerCase()}` : ""].filter(Boolean).join(", ");
+
+  return (
+    <>
+      <section className="gal-rank" aria-labelledby="gal-rank-title">
+        <div className="gal-rank__head">
+          <div>
+            <span className="gal-kicker gal-kicker--gold">BẢNG XẾP HẠNG · THÁNG 9</span>
+            <h2 id="gal-rank-title">
+              Được các cặp đôi
+              <br />
+              <em>chọn nhiều nhất</em>
+            </h2>
+          </div>
+          <div className="gal-rank__nav">
+            <button type="button" aria-label="Trước" onClick={() => scroll(-1)}>
+              ←
+            </button>
+            <button type="button" aria-label="Sau" onClick={() => scroll(1)}>
+              →
+            </button>
+          </div>
+        </div>
+        <div className="gal-rank__rail" ref={rail}>
+          {ranking.map((t, i) => (
+            <Link href={`/templates/${t.id}`} key={t.id}>
+              <div className="gal-rank__card">
+                {preview(t, t.colors[0], "12px")}
+                <span className="gal-rank__n">{i + 1}</span>
+              </div>
+              <div className="gal-rank__meta">
+                <span>{t.name}</span>
+                <span>
+                  {sampleOf(t).style} · {t.colors.length} màu
+                </span>
+              </div>
             </Link>
-            {CARD[template.id]?.[0] && <span className={`tpl-card__badge${CARD[template.id][0] === "HOT" ? " tpl-card__badge--hot" : ""}`}>{CARD[template.id][0]}</span>}
-            <div className="tpl-card__actions">
-              <Link href={`/templates/${template.id}?color=${key}`} tabIndex={-1}>Xem thử</Link>
-              <Link href={`/studio?template=${template.id}&color=${key}`}>Dùng mẫu</Link>
-            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="gal-filters">
+        <div>
+          <div className="gal-chips" role="group" aria-label="Lọc theo phong cách">
+            {STYLES.map((c) => (
+              <button type="button" key={c} aria-pressed={c === cat} onClick={() => { setCat(c); setChosen({}); }}>
+                {c}
+                <span>{c === "Tất cả" ? templates.length : templates.filter((t) => sampleOf(t).style === c).length}</span>
+              </button>
+            ))}
           </div>
-          <div className="tpl-card__meta"><strong>{template.name}</strong><span>— {colors[key].label}</span><small>{styleOf(template.family)} · {template.blurb}</small></div>
-          <div className="tpl-card__swatches" role="group" aria-label={`Màu mẫu ${template.name}`}>
-            {template.colors.map((option) => <button key={option} type="button" title={colors[option].label} aria-label={`${template.name}: ${colors[option].label}`} aria-pressed={key === option} onClick={() => setChosen((previous) => ({ ...previous, [template.id]: option }))} style={{ background: colors[option].deep }} />)}
+          <div className="gal-dots">
+            <span>Màu</span>
+            {COLOR_GROUPS.map((g) => (
+              <button
+                type="button"
+                key={g.key}
+                title={g.label}
+                aria-label={`Lọc màu ${g.label}`}
+                aria-pressed={g.key === color}
+                onClick={() => { setColor(color === g.key ? null : g.key); setChosen({}); }}
+                style={{ background: g.color }}
+              />
+            ))}
           </div>
-        </article>;
-      })}
-    </div>
-    {list.length === 0 && (
-      <div className="tpl-empty">
-        <strong>Chưa có mẫu phù hợp bộ lọc này</strong>
-        <button type="button" className="button-ghost" onClick={() => { setStyle("Tất cả"); setColor(""); }}>Xoá bộ lọc</button>
+        </div>
       </div>
-    )}
-  </>;
+
+      <main className="gal-main">
+        <div className="gal-main__head">
+          <div>
+            <h2>{title}</h2>
+            <p>{list.length} mẫu · bấm chấm màu để đổi phiên bản</p>
+          </div>
+          <div className="gal-sort">
+            {(
+              [
+                ["pop", "Phổ biến"],
+                ["new", "Mới nhất"],
+              ] as const
+            ).map(([k, l]) => (
+              <button type="button" key={k} aria-pressed={sort === k} onClick={() => setSort(k)}>
+                {l}
+              </button>
+            ))}
+          </div>
+        </div>
+        {list.length === 0 && (
+          <div className="gal-empty">
+            <span>Chưa có mẫu phù hợp bộ lọc này</span>
+            <button type="button" onClick={() => { setCat("Tất cả"); setColor(null); setChosen({}); }}>
+              Xoá bộ lọc
+            </button>
+          </div>
+        )}
+        <div className="gal-grid">
+          {list.map((t) => {
+            const s = sampleOf(t);
+            let key = chosen[t.id] ?? (grp ? t.colors.find((k) => grp.pals.includes(k)) : t.colors[0]) ?? t.colors[0];
+            if (!t.colors.includes(key)) key = t.colors[0];
+            const on = hover === t.id;
+            return (
+              <article key={t.id} onMouseEnter={() => setHover(t.id)} onMouseLeave={() => setHover(null)}>
+                <div className="gal-card" data-hover={on || undefined}>
+                  <Link href={`/templates/${t.id}?color=${key}`} aria-label={`Xem mẫu ${t.name}`}>
+                    {preview(t, key)}
+                  </Link>
+                  {s.badge && <span className={`gal-badge${s.badge === "HOT" ? " gal-badge--hot" : ""}`}>{s.badge}</span>}
+                  {on && (
+                    <div className="gal-card__actions">
+                      <Link href={`/templates/${t.id}?color=${key}`}>Xem thử</Link>
+                      <Link href={`/studio?template=${t.id}&color=${key}`}>Dùng mẫu</Link>
+                    </div>
+                  )}
+                </div>
+                <div className="gal-card__meta">
+                  <div>
+                    <span>{t.name}</span>
+                    <span>— {colors[key].label}</span>
+                  </div>
+                  <div>
+                    <div className="gal-swatches">
+                      {t.colors.map((k) => (
+                        <button
+                          type="button"
+                          key={k}
+                          title={colors[k].label}
+                          aria-label={`${t.name}: ${colors[k].label}`}
+                          aria-pressed={k === key}
+                          onClick={() => setChosen((c) => ({ ...c, [t.id]: k }))}
+                          style={{ background: colors[k].deep }}
+                        />
+                      ))}
+                    </div>
+                    <span className="gal-card__sep" />
+                    <span className="gal-card__tags">
+                      {s.style} · {s.motif}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </main>
+    </>
+  );
+}
+
+/** "Hỏi đáp" accordion: one answer open at a time, the first open to start. */
+export function GalleryFaq({ items }: { items: readonly (readonly [string, string])[] }) {
+  const [open, setOpen] = useState(0);
+  return (
+    <div className="gal-faq__list">
+      {items.map(([q, a], i) => (
+        <div key={q}>
+          <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)}>
+            <span>{q}</span>
+            <span aria-hidden="true">{open === i ? "−" : "+"}</span>
+          </button>
+          {open === i && <p>{a}</p>}
+        </div>
+      ))}
+    </div>
+  );
 }

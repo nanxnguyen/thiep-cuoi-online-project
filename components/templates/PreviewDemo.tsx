@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { sampleContent } from "@/lib/content";
-import { colors, templates, type ColorKey, type CoverFamily } from "@/lib/templates";
-import { ScaledFrame } from "./ScaledFrame";
+import { colors, templateSamples, templates, type ColorKey, type CoverFamily } from "@/lib/templates";
+import { ThiepPreview } from "./ThiepPreview";
 
 const familyLabels: Record<CoverFamily, string> = {
   A: "Song hỷ",
@@ -57,9 +57,9 @@ export function PreviewDemo() {
             <span>{family} · {familyLabels[family]}</span>
             <span>9 : 16</span>
           </div>
-          <ScaledFrame className="demo-cover-frame">
-            <InvitationRenderer only="cover" mode="preview" gate={false} template={template} content={content} />
-          </ScaledFrame>
+          <div className="demo-cover-frame">
+            <ThiepPreview fit maxW="100%" family={template.family} deep={colors[paletteKey].deep} paper={colors[paletteKey].paper} gold={colors[paletteKey].gold} a={templateSamples[template.id].a} b={templateSamples[template.id].b} date={templateSamples[template.id].date} place={templateSamples[template.id].place} />
+          </div>
           <div className="demo-workbench__caption">
             <strong>{template.name}</strong>
             <span>{template.blurb}</span>

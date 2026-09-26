@@ -6,14 +6,16 @@ import "./globals.css";
 import "./styles/motion.css";
 import "./seo.css";
 
+// Fallback chains match the design pages ('Be Vietnam Pro', sans-serif etc.): no metric-adjusted fallback face, so
+// line boxes and symbol glyphs (♥ ✓ ✉) come out the same height as in design/.
 // Product voice: a refined high-contrast serif for headlines (roman + italic for the one emphasised phrase)
 // and a clean readable sans for everything else. Both carry the Vietnamese subset.
-const sans = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["300", "400", "500", "600"], variable: "--font-sans" });
-const display = Playfair_Display({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600"], style: ["normal", "italic"], variable: "--font-display" });
+const sans = Be_Vietnam_Pro({ subsets: ["latin", "vietnamese"], weight: ["300", "400", "500", "600"], variable: "--font-sans", adjustFontFallback: false, fallback: ["sans-serif"] });
+const display = Playfair_Display({ subsets: ["latin", "vietnamese"], weight: ["400", "500", "600"], style: ["normal", "italic"], variable: "--font-display", adjustFontFallback: false, fallback: ["serif"] });
 // Design system roles "script" (quotes, formal names) and "hand" (signatures, large only). Not preloaded:
 // a route downloads them only if it renders text in var(--script)/var(--hand).
-const script = Cormorant_Garamond({ subsets: ["latin", "vietnamese"], weight: ["400", "500"], style: ["normal", "italic"], variable: "--font-script", preload: false });
-const hand = Great_Vibes({ subsets: ["latin", "vietnamese"], weight: "400", variable: "--font-hand", preload: false });
+const script = Cormorant_Garamond({ subsets: ["latin", "vietnamese"], weight: ["400", "500"], style: ["normal", "italic"], variable: "--font-script", preload: false, adjustFontFallback: false, fallback: ["serif"] });
+const hand = Great_Vibes({ subsets: ["latin", "vietnamese"], weight: "400", variable: "--font-hand", preload: false, adjustFontFallback: false, fallback: ["cursive"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -61,6 +61,30 @@ create table public.rate_limits (
   count integer not null default 1 check (count > 0)
 );
 
+create table public.api_request_logs (
+  id uuid primary key default gen_random_uuid(),
+  trace_id uuid not null,
+  parent_trace_id uuid,
+  service text not null check (service in ('next-api', 'edge-function')),
+  method text not null check (length(method) between 1 and 16),
+  route text not null check (length(route) between 1 and 300),
+  status_code integer not null check (status_code between 100 and 599),
+  duration_ms integer not null check (duration_ms >= 0),
+  actor_type text not null default 'anonymous' check (actor_type in ('anonymous', 'user', 'edit_key', 'service')),
+  actor_id_hash text,
+  invitation_id uuid,
+  slug_hash text,
+  request_headers jsonb not null default '{}'::jsonb check (jsonb_typeof(request_headers) = 'object'),
+  request_body jsonb not null default '{}'::jsonb check (octet_length(request_body::text) <= 65536),
+  response_headers jsonb not null default '{}'::jsonb check (jsonb_typeof(response_headers) = 'object'),
+  response_body jsonb not null default '{}'::jsonb check (octet_length(response_body::text) <= 65536),
+  request_body_sha256 text,
+  response_body_sha256 text,
+  error_code text,
+  error_message text,
+  created_at timestamptz not null default now()
+);
+
 create index invitations_owner_updated_idx on public.invitations(owner_id, updated_at desc);
 create index invitations_public_slug_idx on public.invitations(slug) where published;
 create index guests_invitation_created_idx on public.guests(invitation_id, created_at);
@@ -68,6 +92,36 @@ create index rsvps_invitation_created_idx on public.rsvps(invitation_id, created
 create index rsvps_guest_created_idx on public.rsvps(guest_id, created_at desc) where guest_id is not null;
 create index wishes_invitation_created_idx on public.wishes(invitation_id, created_at desc);
 create index wishes_public_idx on public.wishes(invitation_id, created_at) where approved and not hidden;
+create index api_request_logs_trace_idx on public.api_request_logs(trace_id, created_at desc);
+create index api_request_logs_created_idx on public.api_request_logs(created_at desc);
+create index api_request_logs_route_status_idx on public.api_request_logs(route, status_code, created_at desc);
+
+alter table public.api_request_logs enable row level security;
+revoke all on public.api_request_logs from public, anon, authenticated;
+grant select, insert, delete on public.api_request_logs to service_role;
+
+create function public.purge_api_request_logs(p_before timestamptz)
+returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  removed integer;
+begin
+  if p_before is null then raise exception 'purge cutoff is required' using errcode = '22023'; end if;
+  p_before := least(greatest(p_before, now() - interval '7 days'), now());
+  delete from public.api_request_logs where created_at < p_before;
+  get diagnostics removed = row_count;
+  return removed;
+end;
+$$;
+
+revoke all on function public.purge_api_request_logs(timestamptz) from public, anon, authenticated;
+grant execute on function public.purge_api_request_logs(timestamptz) to service_role;
+
+create extension if not exists pg_cron with schema extensions;
+select cron.schedule('purge-api-request-logs', '0 3 * * *', $$select public.purge_api_request_logs(now());$$);
 
 create function public.set_updated_at()
 returns trigger

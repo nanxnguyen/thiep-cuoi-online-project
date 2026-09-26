@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { defaultContent } from "../lib/content.ts";
-import { createInvitation, toInvitationDto, validateInvitationPatch } from "../lib/server/invitations.ts";
+import { createInvitation, toInvitationDto, updateInvitation, validateInvitationPatch } from "../lib/server/invitations.ts";
+import { hashEditKey } from "../lib/server/edit-key.ts";
 import { HttpError } from "../lib/server/http.ts";
 
 function queuedClient(responses: { body: unknown; status?: number }[], calls: { url: string; init?: RequestInit }[]): SupabaseClient {
@@ -61,6 +62,26 @@ test("patch validation merges only allowed fields and blocks invalid publishing"
   assert.equal(validateInvitationPatch(current, { slug: "minh-an-moi" }).slug, "minh-an-moi");
   assert.throws(() => validateInvitationPatch(current, { slug: "Sai Slug" }), (error: unknown) => error instanceof HttpError && error.status === 400);
   assert.throws(() => validateInvitationPatch(current, { published: true }), (error: unknown) => error instanceof HttpError && error.status === 400);
+});
+
+test("updateInvitation auto-suffixes a taken custom slug instead of failing", async () => {
+  const calls: { url: string; init?: RequestInit }[] = [];
+  const key = "test-edit-key-0123456789abcdef";
+  const row = {
+    id: "inv-1", owner_id: null, edit_key_hash: await hashEditKey(key),
+    slug: "cu-moi", template_id: "song-hy", content: defaultContent(),
+    published: false, published_at: null, updated_at: "2026-09-26T00:00:00Z",
+  };
+  const client = queuedClient([
+    { body: row },
+    { body: { code: "23505", message: "duplicate" }, status: 409 },
+    { body: { ...row, slug: "placeholder" }, status: 200 },
+  ], calls);
+  const dto = await updateInvitation(client, "inv-1", { slug: "phan-duy-dong-ho-tran-thi-nhung" }, key);
+  const retried = JSON.parse(String(calls[2].init?.body));
+  assert.match(retried.slug, /^phan-duy-dong-ho-tran-thi-nhung-[a-z0-9]{4}$/);
+  assert.equal(dto.slug, "placeholder"); // mock trả nguyên response, quan trọng là request đã gắn hậu tố
+  assert.equal(calls.length, 3);
 });
 
 test("invitation rows map to the existing DTO contract", () => {

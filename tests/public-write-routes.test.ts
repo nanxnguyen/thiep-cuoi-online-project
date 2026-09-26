@@ -36,10 +36,15 @@ test("Edge adapter forwards only its internal contract and secret", async () => 
   });
   assert.equal(result.status, 204);
   assert.equal(captured?.url, "https://project.supabase.co/functions/v1/public-write");
-  assert.deepEqual(Object.fromEntries(new Headers(captured?.init?.headers)), {
+  const headers = Object.fromEntries(new Headers(captured?.init?.headers));
+  assert.deepEqual({ ...headers, "x-request-id": undefined, "x-parent-trace-id": undefined }, {
     "content-type": "application/json",
     "idempotency-key": "request-key-123456",
     "x-edge-secret": "edge-secret",
+    "x-request-id": undefined,
+    "x-parent-trace-id": undefined,
   });
+  assert.match(headers["x-request-id"], /^[0-9a-f-]{36}$/i);
+  assert.equal(headers["x-parent-trace-id"], headers["x-request-id"]);
   assert.deepEqual(JSON.parse(String(captured?.init?.body)), { action: "rsvp", slug: "minh-an", payload: rsvp, fingerprint: "a".repeat(64) });
 });

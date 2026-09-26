@@ -81,3 +81,25 @@ export const FONT_VARS: Record<FontKey, string> = {
   playfair: "var(--font-playfair)", fraunces: "var(--font-fraunces)", cormorant: "var(--font-cormorant)",
   newsreader: "var(--font-newsreader)", notoDisplay: "var(--font-noto-display)", jakarta: "var(--font-jakarta)", allura: "var(--font-allura)",
 };
+
+/** Gallery card data from design/Mau Thiep v2.dc.html (T): style/motif labels, badge, popularity and the sample couple,
+ * date and place each card previews with. Keyed by template id. */
+export type TemplateSample = { style: string; motif: string; badge: "" | "HOT" | "MỚI"; pop: number; isNew: boolean; a: string; b: string; date: string; place: string };
+export const templateSamples: Record<string, TemplateSample> = {
+  "song-hy": { style: "Truyền thống", motif: "Chữ Hỷ", badge: "HOT", pop: 98, isNew: false, a: "Ngọc Hân", b: "Đức Huy", date: "20 · 11 · 2026", place: "TƯ GIA · NAM ĐỊNH" },
+  "net-muc": { style: "Tối giản", motif: "Typography", badge: "MỚI", pop: 80, isNew: true, a: "An", b: "Bảo", date: "09 · 11 · 2026", place: "HÀ NỘI" },
+  "hoa-nhai": { style: "Hoa", motif: "Vòm hoa", badge: "", pop: 86, isNew: false, a: "Thu Hà", b: "Văn Long", date: "14 · 12 · 2026", place: "ĐÀ LẠT" },
+  "hoang-gia": { style: "Cổ điển", motif: "Khung vàng", badge: "HOT", pop: 95, isNew: false, a: "Phương Thảo", b: "Trung Kiên", date: "06 · 12 · 2026", place: "KHÁCH SẠN METROPOLE" },
+  "phong-thu": { style: "Lãng mạn", motif: "Phong bì", badge: "MỚI", pop: 88, isNew: true, a: "Hoàng Long", b: "Bảo Ngọc", date: "28 · 09 · 2027", place: "ĐÀ NẴNG" },
+  "bia-bao": { style: "Hiện đại", motif: "Tạp chí", badge: "", pop: 72, isNew: false, a: "Linh", b: "Tuấn", date: "SÀI GÒN · 11.2026", place: "Một ngày cuối thu" },
+  "hy-su": { style: "Truyền thống", motif: "Chữ Hỷ", badge: "", pop: 90, isNew: false, a: "Quỳnh Anh", b: "Gia Khánh", date: "15 · 01 · 2027", place: "TƯ GIA · HUẾ" },
+  "giay-do": { style: "Tối giản", motif: "Giấy kem", badge: "", pop: 70, isNew: false, a: "Hương", b: "Nam", date: "03 · 10 · 2026", place: "HỘI AN" },
+  "vuon-uom": { style: "Hoa", motif: "Sân vườn", badge: "MỚI", pop: 76, isNew: true, a: "Mai", b: "Phong", date: "21 · 03 · 2027", place: "TAM ĐẢO" },
+  "nhung-lam": { style: "Cổ điển", motif: "Nhung", badge: "", pop: 74, isNew: false, a: "Thanh Trúc", b: "Quốc Anh", date: "12 · 12 · 2026", place: "NHÀ HÁT LỚN" },
+  "thu-tinh": { style: "Lãng mạn", motif: "Sáp niêm", badge: "", pop: 82, isNew: false, a: "Minh Ánh", b: "Thế Bảo", date: "14 · 02 · 2027", place: "CẦN THƠ" },
+  "chan-dung": { style: "Hiện đại", motif: "Ảnh lớn", badge: "HOT", pop: 92, isNew: false, a: "Hạ Vy", b: "Minh Khôi", date: "HÀ NỘI · 11.2026", place: "Chủ nhật, 5 giờ chiều" },
+  "song-phung": { style: "Truyền thống", motif: "Chữ Hỷ lớn", badge: "HOT", pop: 97, isNew: false, a: "Ngọc Ánh", b: "Thế Bảo", date: "08 · 12 · 2026", place: "TƯ GIA · BẮC NINH" },
+  "bao-hy": { style: "Truyền thống", motif: "Thông tin lễ", badge: "MỚI", pop: 89, isNew: true, a: "Thanh Tú", b: "Hoàng Nam", date: "NGÀY 22 · 11 · 2026", place: "" },
+  "doi-khung": { style: "Lãng mạn", motif: "Ảnh đôi", badge: "MỚI", pop: 85, isNew: true, a: "Thu Hà", b: "Minh Quân", date: "19 · 10 · 2026", place: "" },
+  "song-cua": { style: "Truyền thống", motif: "Khung vòm", badge: "HOT", pop: 96, isNew: false, a: "Thanh Hà", b: "Tuấn Kiệt", date: "05 · 01 · 2027", place: "TRUNG TÂM TIỆC CƯỚI · HÀ NỘI" },
+};

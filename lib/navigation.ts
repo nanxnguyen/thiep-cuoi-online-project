@@ -4,10 +4,11 @@ export const NAV_LINKS: readonly NavigationLink[] = [
   { href: "/templates", label: "Mẫu thiệp" },
   { href: "/tinh-nang", label: "Tính năng" },
   { href: "/cong-cu-dam-cuoi", label: "Công cụ" },
-  { href: "/ung-ho", label: "Ủng hộ" },
 ] as const;
 
 export function isNavActive(pathname: string, href: string): boolean {
+  // the tool pages live under /cong-cu/*, the hub at /cong-cu-dam-cuoi (design: every CC page marks "Công cụ")
+  if (href === "/cong-cu-dam-cuoi" && pathname.startsWith("/cong-cu/")) return true;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

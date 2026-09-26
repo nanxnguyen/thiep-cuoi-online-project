@@ -13,7 +13,9 @@
 .dc-cover[data-family=A] .dc-a-top { height:46%; padding:9cqi 5cqi 0; border-radius:0 0 50% 50% / 0 0 14cqi 14cqi; background:var(--cover-deep); color:var(--cover-gold); text-align:center; }
 .dc-a-names { display:flex; justify-content:space-between; align-items:center; margin-top:7cqi; gap:2cqi; }
 .dc-a-names span { flex:1; font-size:2.2cqi; letter-spacing:.14em; }
-.dc-a-names strong { display:block; margin-top:1cqi; color:var(--cover-paper); font:5cqi var(--font-playfair),serif; letter-spacing:0; white-space:nowrap; }
+.dc-a-names strong { display:block; margin-top:1cqi; color:var(--cover-paper); font:5cqi/1.15 var(--font-playfair),serif; letter-spacing:0; text-wrap:balance; overflow-wrap:break-word; }
+/* Tên dài (họ tên 4-5 chữ) được xuống dòng trong cột của mình thay vì tràn ra ngoài. */
+.dc-cover-art .dc-title, .dc-b-bottom strong, .dc-g-groom strong, .dc-h-names strong, .dc-h-family strong, .dc-j-head span { text-wrap:balance; overflow-wrap:break-word; }
 .dc-a-names b { font:21cqi serif; line-height:1; }
 .dc-a-photo { position:absolute; top:31%; left:15%; width:70%; height:53%; border:1.2cqi solid var(--cover-paper); border-radius:35cqi 35cqi 0 0; }
 .dc-a-date { position:absolute; bottom:11cqi; left:0; right:0; text-align:center; font-size:7cqi; }
