@@ -157,3 +157,21 @@ test("account invitation list is scoped to the authenticated owner", async () =>
   assert.deepEqual(filters, [["owner_id", "user-1"]]);
   assert.equal(result[0]?.published, true);
 });
+
+// Regression (2026-09-27): after Google sign-in the header stayed logged-out because SiteHeader only calls
+// api.me when the sessionStorage hint exists, and nothing on the Google path set it. These are source guards:
+// the components are TSX and `npm test` has no DOM, so the wiring is checked textually.
+test("Google sign-in leaves the session hint the header needs to show the avatar", async () => {
+  const { readFileSync } = await import("node:fs");
+  const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+
+  const authForm = read("components/account/AuthForm.tsx");
+  assert.match(authForm, /className="acc-google"[^>]*onClick=\{\(\) => accountToken\.set\("session"\)\}/);
+
+  const header = read("components/site/SiteHeader.tsx");
+  assert.match(header, /if \(!accountToken\.get\(\)\) setProfile\(null\)/);
+  assert.match(header, /\.catch\(\(\) => \{ accountToken\.clear\(\); setProfile\(null\); \}\)/);
+
+  const account = read("components/account/AccountClient.tsx");
+  assert.match(account, /accountToken\.set\("session"\);\s*broadcastAuth\(currentUser\)/);
+});

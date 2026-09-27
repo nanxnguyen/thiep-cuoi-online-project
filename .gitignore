@@ -8,6 +8,8 @@ dist
 .DS_Store
 .playwright-mcp/
 .design-workflow/
+.qc-report/
+.tmp-test/
 
 # Local Netlify folder
 .netlify
@@ -16,3 +18,9 @@ dist
 supabase/.branches/
 supabase/.temp/
 qa-evidence
+.vercel
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
