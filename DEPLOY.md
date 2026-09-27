@@ -46,6 +46,36 @@ git add -A && git commit -m "<nội-dung>" && git push origin main
 netlify deploy --prod --build
 ```
 
+### 4b. Vercel (song song với Netlify, team ray-team3)
+
+```bash
+npx -y vercel@latest login
+npx -y vercel@latest link --yes --scope ray-team3 --project thiep-cuoi-online-project
+# Đẩy env lần đầu (Production); NEXT_PUBLIC_SITE_URL=https://thiep-cuoi-online-project.vercel.app
+printf '%s' "<giá-trị>" | npx -y vercel@latest env add TEN_BIEN production --scope ray-team3 --force
+npx -y vercel@latest --prod --yes
+```
+Production: `https://thiep-cuoi-online-project.vercel.app`. Cron giữ ấm vẫn dùng GitHub Actions (Vercel free chỉ cho cron 1 lần/ngày). File `.vercelignore` loại `node_modules/.cache`-kiểu rác (`.codegraph`, `qa-evidence`, `supabase/.temp`) khỏi upload.
+
+### 4c. Cloudflare Workers (song song, free)
+
+Chuẩn bị 1 lần: `wrangler.jsonc` (đã có trong repo), đăng ký workers.dev subdomain ở dashboard, rồi:
+```bash
+npx -y wrangler@latest login
+npm run build # sinh .open-next/worker.js (build sạch: rm -rf .open-next dist trước)
+./node_modules/.bin/opennextjs-cloudflare deploy # hoặc: npx wrangler deploy
+```
+Env: `vars` public nằm sẵn trong `wrangler.jsonc`; secret set tay:
+```bash
+npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+npx wrangler secret put EDGE_SHARED_SECRET
+npx wrangler secret put RATE_LIMIT_HMAC_SECRET
+```
+Lưu ý:
+- Build Cloudflare snapshot toàn bộ env shell vào `.open-next/cloudflare/next-env.mjs` — build xong kiểm tra không lọt token lạ (`grep -o "VERCEL_[A-Z_]*" ...` phải trống). `.env` thừa và dòng lạ trong `.env.local` phải xóa trước build.
+- `NEXT_PUBLIC_*` nướng vào build: đổi URL worker thì build lại với `NEXT_PUBLIC_SITE_URL` đúng.
+- Có thể connect GitHub trong dashboard để auto-deploy (Build command `npm run build`, Deploy command `npx wrangler deploy`); env vẫn phải set tay ở Settings → Variables.
+
 ## 5. Verify sau deploy
 
 ```bash
