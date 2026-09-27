@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { colors, templateSamples, templates, type ColorKey, type Template } from "@/lib/templates";
+import { TemplateDemo } from "./TemplateDemo";
 import { ThiepPreview } from "./ThiepPreview";
 
 // design/Mau Thiep v2.dc.html, interactive part: ranking rail, sticky style/colour filter bar, sortable card grid with a
@@ -30,6 +31,8 @@ export function GalleryCatalog() {
   const [sort, setSort] = useState<"pop" | "new">("pop");
   const [hover, setHover] = useState<string | null>(null);
   const [chosen, setChosen] = useState<Record<string, ColorKey>>({});
+  const [demo, setDemo] = useState<{ t: Template; key: ColorKey } | null>(null);
+  const closeDemo = useCallback(() => setDemo(null), []);
   const rail = useRef<HTMLDivElement>(null);
   const scroll = (dir: number) => rail.current?.scrollBy({ left: dir * 292 * 2, behavior: "smooth" });
 
@@ -148,7 +151,9 @@ export function GalleryCatalog() {
                   {s.badge && <span className={`gal-badge${s.badge === "HOT" ? " gal-badge--hot" : ""}`}>{s.badge}</span>}
                   {on && (
                     <div className="gal-card__actions">
-                      <Link href={`/templates/${t.id}?color=${key}`}>Xem thử</Link>
+                      <button type="button" onClick={() => setDemo({ t, key })}>
+                        Xem thử
+                      </button>
                       <Link href={`/studio?template=${t.id}&color=${key}`}>Dùng mẫu</Link>
                     </div>
                   )}
@@ -183,6 +188,7 @@ export function GalleryCatalog() {
           })}
         </div>
       </main>
+      {demo && <TemplateDemo template={demo.t} colorKey={demo.key} onClose={closeDemo} />}
     </>
   );
 }

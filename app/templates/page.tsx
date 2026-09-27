@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { GalleryCatalog, GalleryFaq } from "@/components/templates/GalleryCatalog";
-import { colors, templates } from "@/lib/templates";
+import { colors } from "@/lib/templates";
 import "@/components/templates/gallery.css";
 
 export const metadata: Metadata = {
@@ -12,15 +12,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/templates" },
 };
 
-// design/Mau Thiep v2.dc.html. Copy that promises a paid plan ("3 ngày dùng thử", "Ưng mới trả", "Một giá cho mọi mẫu")
-// states the free product instead; everything else is value for value.
+// design/Mau Thiep v2.dc.html, value for value.
 const COLLECTIONS = [
   ["Màu đỏ", colors.do.deep], ["Xanh rêu", colors.xanh.deep], ["Lam", colors.lam.deep], ["Vàng kim", colors.xanh.gold], ["Chữ Hỷ", "var(--accent)"],
   ["Truyền thống", colors.dodam.deep], ["Tối giản", colors.muc.deep], ["Hoa", colors.hong.deep], ["Sân vườn", colors.oliu.deep], ["Châu Âu", colors.vang.deep],
 ] as const;
 const FAQ = [
   ["Tạo xong rồi có đổi mẫu được không?", "Được. Bạn đổi mẫu bất cứ lúc nào trong Studio. Tên, ngày, địa điểm và ảnh đã nhập được giữ nguyên khi chuyển sang mẫu mới."],
-  ["Có được dùng thử miễn phí không?", "Mọi mẫu đều tạo miễn phí và dùng đầy đủ tính năng, không cần thẻ ngân hàng."],
+  ["Có mất phí không?", "Không. Mọi mẫu và tính năng đều miễn phí, không giới hạn số khách mời."],
   ["Mẫu nào hợp với đám cưới của tôi?", "Tiệc truyền thống hợp Song Hỷ hoặc Hỷ Sự. Tiệc sân vườn hợp Hoa Nhài, Vườn Ươm. Tiệc hiện đại hợp Nét Mực, Bìa Báo. Bạn có thể xem thử từng mẫu trước khi quyết định."],
   ["Mỗi mẫu có bao nhiêu màu?", "Mỗi mẫu có từ 2 đến 4 phiên bản màu. Bấm vào chấm màu dưới mỗi thẻ để xem trước ngay."],
 ] as const;
@@ -49,12 +48,12 @@ export default function TemplatesPage() {
               <span>khi tạo thiệp</span>
             </div>
             <div>
-              <span>{templates.length} mẫu</span>
-              <span>thiết kế riêng</span>
+              <span>Đổi mẫu</span>
+              <span>bất cứ lúc nào</span>
             </div>
             <div>
-              <span>0đ</span>
-              <span>mọi tính năng</span>
+              <span>Không giới hạn</span>
+              <span>số khách mời</span>
             </div>
           </div>
         </div>

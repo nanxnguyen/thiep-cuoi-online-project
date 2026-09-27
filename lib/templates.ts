@@ -3,7 +3,7 @@ export type Archetype = (typeof archetypes)[number];
 export type FontKey = "playfair" | "fraunces" | "cormorant" | "newsreader" | "notoDisplay" | "jakarta" | "allura";
 export type Palette = { bg: string; surface: string; ink: string; muted: string; accent: string; accentInk: string };
 export type ColorKey = "do" | "dodam" | "nau" | "lam" | "tim" | "xanh" | "hong" | "vang" | "oliu" | "cam" | "muc";
-export type CoverFamily = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J";
+export type CoverFamily = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O";
 export type Template = {
   id: string; name: string; family: CoverFamily; archetype: Archetype; blurb: string;
   colors: readonly ColorKey[]; palette: Palette;
@@ -34,7 +34,6 @@ const catalog: Entry[] = [
   ["phong-thu", "Phong Thư", "E", "editorial", "Phong bì · lãng mạn", ["do", "oliu"], "afterglow"],
   ["bia-bao", "Bìa Báo", "F", "editorial", "Tạp chí · hiện đại", ["muc", "hong"], "gallery-noir"],
   ["hy-su", "Hỷ Sự", "A", "traditional", "Chữ Hỷ · lễ thành hôn", ["dodam", "lam"]],
-  ["giay-do", "Giấy Dó", "B", "minimal", "Giấy kem · thanh thoát", ["nau", "xanh"]],
   ["vuon-uom", "Vườn Ươm", "C", "botanical", "Sân vườn · nên thơ", ["oliu", "cam"]],
   ["nhung-lam", "Nhung Lam", "D", "classic", "Nhung lam · cổ điển", ["lam", "do"]],
   ["thu-tinh", "Thư Tình", "E", "editorial", "Sáp niêm · lãng mạn", ["hong", "dodam"]],
@@ -43,6 +42,11 @@ const catalog: Entry[] = [
   ["bao-hy", "Báo Hỷ", "H", "traditional", "Thông tin lễ · truyền thống", ["do", "lam"], "so-xuan"],
   ["doi-khung", "Đôi Khung", "G", "korean", "Ảnh đôi · lãng mạn", ["xanh", "hong", "nau"], "olive-story"],
   ["song-cua", "Song Cửa", "J", "traditional", "Khung vòm · trang trọng", ["dodam", "do", "xanh"], "thanh-ngoc"],
+  ["tem-thu", "Tem Thư", "K", "editorial", "Tem & dấu bưu điện · lãng mạn", ["do", "lam", "xanh"]],
+  ["ve-hanh-phuc", "Vé Hạnh Phúc", "L", "editorial", "Vé tàu · hiện đại", ["lam", "dodam", "xanh"]],
+  ["dia-than", "Đĩa Than", "M", "editorial", "Vinyl · hiện đại", ["muc", "dodam", "cam"]],
+  ["cuon-phim", "Cuộn Phim", "N", "editorial", "Phim nhựa · hiện đại", ["muc", "nau", "hong"]],
+  ["lich-bloc", "Lịch Bloc", "O", "traditional", "Lịch xé · truyền thống", ["do", "xanh", "lam"]],
 ];
 
 // One-line description of each cover layout, from design/Mau Thiep Chi Tiet.dc.html (shown on /templates/[id]).
@@ -57,14 +61,29 @@ export const familyLayout: Record<CoverFamily, string> = {
   H: "Bố cục hai ảnh tròn và bảng thông tin lễ cưới đầy đủ hai họ.",
   I: "Nhánh hoa vẽ tay mảnh, tên hai bên theo chiều dọc.",
   J: "Khung vòm viền vàng ôm ảnh cưới, nền đậm sang trọng.",
+  K: "Con tem răng cưa và dấu bưu điện ghi ngày cưới, viền thư máy bay.",
+  L: "Vé tàu một chiều: ga đi chú rể, ga đến cô dâu, toa ghế, mã vạch và cuống vé.",
+  M: "Đĩa vinyl và bìa Side A, nhãn đĩa là ảnh cưới, tracklist là lịch trình.",
+  N: "Dải phim ba khung có lỗ răng, dấu ngày màu cam kiểu máy film.",
+  O: "Tờ lịch xé: số ngày lớn, thứ, dòng Ngày lành tháng tốt.",
+};
+
+// Default sample photos per cover family (design/Thiep Preview.dc.html DEF, README §4.8), served from public/photos.
+const ph = (...names: string[]) => names.map((n) => `/photos/${n}.jpg`);
+export const familyPhotos: Record<CoverFamily, string[]> = {
+  A: ph("hy-phuc-do"), B: ph("han-quoc-toi-gian"), C: ph("om-hem-nui"), D: ph("lau-dai-trang"), E: ph("retro-pho-cho"),
+  F: ph("vuon-xanh"), G: ph("o-hoa", "vest-xanh-navy"), H: ph("retro-do-hoa-hong", "ao-dai-do"), I: ph("studio-hoa-trang"),
+  J: ph("ao-dai-do"), K: ph("nang-chieu"), L: ph("cua-so-vom"), M: ph("khoi-hong"), N: ph("voan-hoa-kho", "vuon-bong-bong", "nang-chieu"),
+  O: ph("han-phuc-co-trang"),
 };
 
 export const DEFAULT_TEMPLATE_ID = "song-hy";
-const legacy = new Map(catalog.filter((entry) => entry[6]).map((entry) => [entry[6], entry[0]]));
+// "giay-do" left the design (same layout as Nét Mực); invitations saved with it render as Nét Mực.
+const legacy = new Map([...catalog.filter((entry) => entry[6]).map((entry) => [entry[6]!, entry[0]] as const), ["giay-do", "net-muc"] as const]);
 
 export function getPalette(template: Pick<Template, "family" | "colors">, key = ""): Palette {
   const selected = colors[template.colors.includes(key as ColorKey) ? key as ColorKey : template.colors[0]];
-  const dark = ["A", "D", "F", "J"].includes(template.family);
+  const dark = ["A", "D", "F", "J", "L"].includes(template.family);
   return dark
     ? { bg: selected.deep, surface: selected.deep, ink: selected.paper, muted: selected.paper, accent: selected.paper, accentInk: selected.deep }
     : { bg: selected.paper, surface: selected.paper, ink: selected.deep, muted: selected.deep, accent: selected.deep, accentInk: selected.paper };
@@ -93,7 +112,6 @@ export const templateSamples: Record<string, TemplateSample> = {
   "phong-thu": { style: "Lãng mạn", motif: "Phong bì", badge: "MỚI", pop: 88, isNew: true, a: "Hoàng Long", b: "Bảo Ngọc", date: "28 · 09 · 2027", place: "ĐÀ NẴNG" },
   "bia-bao": { style: "Hiện đại", motif: "Tạp chí", badge: "", pop: 72, isNew: false, a: "Linh", b: "Tuấn", date: "SÀI GÒN · 11.2026", place: "Một ngày cuối thu" },
   "hy-su": { style: "Truyền thống", motif: "Chữ Hỷ", badge: "", pop: 90, isNew: false, a: "Quỳnh Anh", b: "Gia Khánh", date: "15 · 01 · 2027", place: "TƯ GIA · HUẾ" },
-  "giay-do": { style: "Tối giản", motif: "Giấy kem", badge: "", pop: 70, isNew: false, a: "Hương", b: "Nam", date: "03 · 10 · 2026", place: "HỘI AN" },
   "vuon-uom": { style: "Hoa", motif: "Sân vườn", badge: "MỚI", pop: 76, isNew: true, a: "Mai", b: "Phong", date: "21 · 03 · 2027", place: "TAM ĐẢO" },
   "nhung-lam": { style: "Cổ điển", motif: "Nhung", badge: "", pop: 74, isNew: false, a: "Thanh Trúc", b: "Quốc Anh", date: "12 · 12 · 2026", place: "NHÀ HÁT LỚN" },
   "thu-tinh": { style: "Lãng mạn", motif: "Sáp niêm", badge: "", pop: 82, isNew: false, a: "Minh Ánh", b: "Thế Bảo", date: "14 · 02 · 2027", place: "CẦN THƠ" },
@@ -102,4 +120,9 @@ export const templateSamples: Record<string, TemplateSample> = {
   "bao-hy": { style: "Truyền thống", motif: "Thông tin lễ", badge: "MỚI", pop: 89, isNew: true, a: "Thanh Tú", b: "Hoàng Nam", date: "NGÀY 22 · 11 · 2026", place: "" },
   "doi-khung": { style: "Lãng mạn", motif: "Ảnh đôi", badge: "MỚI", pop: 85, isNew: true, a: "Thu Hà", b: "Minh Quân", date: "19 · 10 · 2026", place: "" },
   "song-cua": { style: "Truyền thống", motif: "Khung vòm", badge: "HOT", pop: 96, isNew: false, a: "Thanh Hà", b: "Tuấn Kiệt", date: "05 · 01 · 2027", place: "TRUNG TÂM TIỆC CƯỚI · HÀ NỘI" },
+  "tem-thu": { style: "Lãng mạn", motif: "Tem & dấu bưu điện", badge: "MỚI", pop: 91, isNew: true, a: "Khánh Linh", b: "Đức Anh", date: "18 · 10 · 2026", place: "BƯU ĐIỆN HÀ NỘI" },
+  "ve-hanh-phuc": { style: "Hiện đại", motif: "Vé tàu", badge: "MỚI", pop: 93, isNew: true, a: "Bảo Trâm", b: "Minh Đức", date: "24 · 10 · 2026", place: "GA HUẾ" },
+  "dia-than": { style: "Hiện đại", motif: "Vinyl", badge: "MỚI", pop: 87, isNew: true, a: "Diệu Linh", b: "Hải Nam", date: "07 · 11 · 2026", place: "SÀI GÒN" },
+  "cuon-phim": { style: "Hiện đại", motif: "Phim nhựa", badge: "MỚI", pop: 84, isNew: true, a: "Tường Vi", b: "Quang Huy", date: "29 · 11 · 2026", place: "ĐÀ LẠT" },
+  "lich-bloc": { style: "Truyền thống", motif: "Lịch xé", badge: "MỚI", pop: 94, isNew: true, a: "Hồng Nhung", b: "Văn Khoa", date: "13 · 12 · 2026", place: "TƯ GIA · HẢI PHÒNG" },
 };

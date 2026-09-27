@@ -234,12 +234,9 @@ export default function HomePage() {
                   Mọi thứ khách cần, <em>trong một tấm thiệp</em>
                 </h2>
               </div>
-              <Link className="hm-more" href="/tinh-nang">
-                Xem tất cả tính năng →
-              </Link>
             </div>
             <div className="hm-feats__grid">
-              <Link className="hm-feat" href="/tinh-nang#xac-nhan-tham-du" data-reveal="1" data-delay="0">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="0">
                 <div className="hm-feat__art hm-rsvp">
                   <div>
                     <span>Tham dự</span>
@@ -259,14 +256,14 @@ export default function HomePage() {
                 <span className="hm-feat__title">Xác nhận tham dự</span>
                 <span className="hm-feat__text">Khách bấm xác nhận ngay trên thiệp, bạn thấy số người đến theo thời gian thực.</span>
               </Link>
-              <Link className="hm-feat" href="/tinh-nang#so-luu-but" data-reveal="1" data-delay="80">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="80">
                 <div className="hm-feat__art hm-book">
                   <WishRotator />
                 </div>
                 <span className="hm-feat__title">Sổ lưu bút</span>
                 <span className="hm-feat__text">Lời chúc của khách được lưu lại thành một cuốn sổ nhỏ để đọc về sau.</span>
               </Link>
-              <Link className="hm-feat" href="/tinh-nang#mung-cuoi-qr" data-reveal="1" data-delay="160">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="160">
                 <div className="hm-feat__art hm-qr">
                   <div className="hm-qr__box">
                     <div className="hm-qr__grid">
@@ -280,7 +277,7 @@ export default function HomePage() {
                 <span className="hm-feat__title">Mừng cưới QR</span>
                 <span className="hm-feat__text">Mã QR chuyển khoản nằm sẵn trong thiệp, khách ở xa gửi mừng dễ dàng.</span>
               </Link>
-              <Link className="hm-feat" href="/tinh-nang#ban-do-chi-duong" data-reveal="1" data-delay="240">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="240">
                 <div className="hm-feat__art hm-map">
                   <div className="hm-map__road1" />
                   <div className="hm-map__road2" />
@@ -294,14 +291,14 @@ export default function HomePage() {
                 <span className="hm-feat__title">Bản đồ chỉ đường</span>
                 <span className="hm-feat__text">Một chạm mở chỉ đường tới nhà hàng hay tư gia, không ai phải hỏi lại.</span>
               </Link>
-              <Link className="hm-feat hm-feat--dark" href="/tinh-nang#dem-nguoc-lich" data-reveal="1" data-delay="0">
+              <Link className="hm-feat hm-feat--dark" href="/studio" data-reveal="1" data-delay="0">
                 <div className="hm-feat__art hm-cd">
                   <CountdownTiles />
                 </div>
                 <span className="hm-feat__title">Đếm ngược &amp; lịch</span>
                 <span className="hm-feat__text">Đồng hồ đếm ngược tới giờ cưới và nút thêm sự kiện vào lịch điện thoại.</span>
               </Link>
-              <Link className="hm-feat" href="/tinh-nang#album-anh" data-reveal="1" data-delay="80">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="80">
                 <div className="hm-feat__art hm-album">
                   <div className="hm-album__a">
                     <div />
@@ -310,13 +307,15 @@ export default function HomePage() {
                     <div />
                   </div>
                   <div className="hm-album__c">
-                    <div />
+                    <div>
+                      <img src="/photos/o-hoa.jpg" alt="" />
+                    </div>
                   </div>
                 </div>
                 <span className="hm-feat__title">Album ảnh</span>
                 <span className="hm-feat__text">Kể câu chuyện của hai bạn bằng những tấm ảnh cưới đẹp nhất.</span>
               </Link>
-              <Link className="hm-feat" href="/tinh-nang#nhac-nen" data-reveal="1" data-delay="160">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="160">
                 <div className="hm-feat__art hm-music">
                   <div className="hm-music__disc">
                     <span />
@@ -330,7 +329,7 @@ export default function HomePage() {
                 <span className="hm-feat__title">Nhạc nền</span>
                 <span className="hm-feat__text">Bài hát của hai bạn vang lên khi khách mở thiệp.</span>
               </Link>
-              <Link className="hm-feat" href="/tinh-nang#phong-bi-loi-moi" data-reveal="1" data-delay="240">
+              <Link className="hm-feat" href="/studio" data-reveal="1" data-delay="240">
                 <div className="hm-feat__art hm-mini">
                   <div className="hm-mini__env">
                     <div className="hm-mini__back" />
@@ -411,9 +410,6 @@ export default function HomePage() {
               <div>
                 <Link className="hm-price__cta" href="/studio">
                   Tạo thiệp ngay
-                </Link>
-                <Link className="hm-price__donate" href="/ung-ho">
-                  <span aria-hidden="true">♥</span>Ủng hộ Mộc
                 </Link>
               </div>
             </div>

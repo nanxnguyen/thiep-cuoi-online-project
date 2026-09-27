@@ -117,7 +117,6 @@
 .hm-feats { background: var(--paper-alt); padding: 120px 0; }
 .hm-feats__inner { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
 .hm-feats__top { display: flex; align-items: end; gap: 24px; flex-wrap: wrap; margin-bottom: 56px; }
-.hm-feats__top .hm-more { margin-left: auto; }
 .hm-feats__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
 .hm-feat { background: var(--paper); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 12px; color: var(--ink); transition: transform .35s, box-shadow .35s; }
 .hm-feat:hover { transform: translateY(-6px); box-shadow: 0 24px 44px -24px rgba(26, 20, 18, .35); color: var(--ink); }
@@ -162,6 +161,7 @@
 .hm-album__b > div { background: var(--album-2); }
 .hm-album > .hm-album__c { box-shadow: 0 10px 22px -8px rgba(0, 0, 0, .35); }
 .hm-album__c > div { position: relative; background: var(--album-3); }
+.hm-album__c img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .hm-music { display: flex; align-items: center; gap: 18px; padding: 0 22px; }
 .hm-music__disc { width: 64px; height: 64px; border-radius: 50%; background: repeating-radial-gradient(circle, var(--ink) 0 2px, var(--line-on-dark-soft) 2px 4px); display: grid; place-items: center; animation: spinSlow 4s linear infinite; flex: none; }
 .hm-music__disc span { width: 20px; height: 20px; border-radius: 50%; background: var(--accent); }
@@ -230,6 +230,3 @@
 .hm-price__body > div { display: flex; gap: 12px; flex-wrap: wrap; }
 .hm-price__cta { background: var(--surface); color: var(--accent); padding: 15px 26px; border-radius: 999px; font-size: 15px; font-weight: 500; transition: transform .25s; }
 .hm-price__cta:hover { transform: translateY(-2px); color: var(--accent-hover); }
-.hm-price__donate { color: var(--surface); padding: 15px 22px; border-radius: 999px; font-size: 15px; border: 1px solid rgba(255, 255, 255, .5); display: flex; align-items: center; gap: 10px; }
-.hm-price__donate:hover { background: rgba(255, 255, 255, .1); color: var(--surface); }
-.hm-price__donate span { display: inline-block; animation: heart 1.6s ease-in-out infinite; }

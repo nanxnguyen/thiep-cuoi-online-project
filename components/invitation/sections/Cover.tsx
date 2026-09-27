@@ -3,6 +3,7 @@ import type { Content } from "@/lib/content";
 import { earliestEvent } from "@/lib/datetime";
 import { t, type Locale } from "@/lib/i18n";
 import type { Template } from "@/lib/templates";
+import { ThiepPreview } from "@/components/templates/ThiepPreview";
 
 function Photo({ src, alt, className = "" }: { src: string; alt: string; className?: string }) {
   return <span className={`dc-photo ${className}`}>{src ? <img src={src} alt={alt} decoding="async" /> : <span role="img" aria-label={alt}>▧<small>{alt}</small></span>}</span>;
@@ -51,6 +52,10 @@ export function Cover({ content, template, locale = "vi" }: { content: Content; 
       break;
     case "J":
       artwork = <><div className="dc-j-head"><span>{groom}</span><b>囍</b><span>{bride}</span></div><div className="dc-j-line">⌁ ✧ ⌁</div><Photo src={photo} alt="Ảnh cưới" className="dc-j-photo" />{title(<>{bride} &amp; {groom}</>)}<span className="dc-j-date">{date}<small>{place}</small></span></>;
+      break;
+    default:
+      // K–O: the gallery cover itself, recoloured by the invitation palette; an empty hero photo shows the empty frame.
+      artwork = <ThiepPreview fit maxW="100%" radius="0" family={template.family} deep="var(--cover-deep)" paper="var(--cover-paper)" gold="var(--cover-gold)" tint="color-mix(in srgb, var(--cover-deep) 12%, transparent)" a={bride} b={groom} date={date} place={place} photo={photo} photo2={photo} photo3={photo} />;
   }
 
   return <section className="inv-cover dc-cover" aria-labelledby="inv-title" data-family={template.family}><h1 id="inv-title" className="inv-sr-only">{bride} &amp; {groom}</h1><div className="dc-cover-art">{artwork}</div></section>;

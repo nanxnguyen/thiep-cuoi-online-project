@@ -81,7 +81,6 @@ export default function PricingPage() {
             </span>
             <h2>Thấy Mộc có ích?</h2>
             <p>Một khoản ủng hộ nhỏ giúp trả tiền máy chủ và làm thêm mẫu mới.</p>
-            <Link href="/ung-ho">Ủng hộ dự án</Link>
           </div>
         </div>
       </section>

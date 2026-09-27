@@ -18,6 +18,11 @@ const familyLabels: Record<CoverFamily, string> = {
   H: "Hỷ sự",
   I: "Song phụng",
   J: "Song cửa",
+  K: "Tem thư",
+  L: "Vé hạnh phúc",
+  M: "Đĩa than",
+  N: "Cuộn phim",
+  O: "Lịch bloc",
 };
 
 const families = [...new Set(templates.map((template) => template.family))] as CoverFamily[];

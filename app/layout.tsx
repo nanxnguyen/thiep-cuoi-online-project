@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Cormorant_Garamond, Great_Vibes, Playfair_Display } from "next/font/google";
 import { SITE_URL } from "@/lib/site";
+import { Motion } from "@/components/site/Motion";
 import "./styles/tokens.css";
 import "./globals.css";
 import "./styles/motion.css";
@@ -31,8 +32,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     // The font variables must sit on <html>: globals.css derives --display/--sans from them on :root.
-    <html lang="vi" className={`${sans.variable} ${display.variable} ${script.variable} ${hand.variable}`}>
-      <body>{children}</body>
+    <html lang="vi" data-scroll-behavior="smooth" className={`${sans.variable} ${display.variable} ${script.variable} ${hand.variable}`}>
+      <body>
+        {children}
+        <Motion />
+      </body>
     </html>
   );
 }

@@ -50,6 +50,9 @@
   --ink-hover: #3a2e28; /* dark pill hover */
 
   /* one-off illustration colours of design/Trang Chu.dc.html */
+  /* fixed props of design/Thiep Preview.dc.html covers K–O (vinyl, film strip, tear-off calendar, stamp paper) */
+  --vinyl-a: #141012; --vinyl-b: #231d1f; --film: #1c1614; --film-stamp: #ff8a3d; --bloc-paper: #fffdf8; --bloc-ring: #b8b0a6; --stamp-paper: #ffffff;
+  --trail-sand: #d8a977; --trail-blush: #e9b7b0; /* design/motion.js petal trail */
   --petal-1: #e8b4b0; --petal-2: #f1cfc7; --petal-3: #e0bb74; --petal-4: #d99a9a; --petal-5: #f4dcd2;
   --env-back: #6e1216; --env-front-a: #9a1f24; --env-front-b: #7d1418; --env-flap: #a3262b;
   --seal-light: #f0d49a; --seal-dark: #b8893e;

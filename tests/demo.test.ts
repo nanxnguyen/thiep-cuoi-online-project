@@ -7,6 +7,6 @@ test("demo route is public and covers every invitation family", () => {
   assert.ok(PUBLIC_ROUTES.includes("/demo"));
   assert.deepEqual(
     [...new Set(templates.map((template) => template.family))].sort(),
-    ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
+    ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
   );
 });

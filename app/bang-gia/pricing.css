@@ -30,5 +30,3 @@
 .pricing-donate__heart { font-size: 34px; display: inline-block; animation: heart 1.6s ease-in-out infinite; align-self: flex-start; }
 .pricing-donate h2 { font-size: 28px; line-height: 1.2; }
 .pricing-donate p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--rose-on-red); }
-.pricing-donate a { align-self: flex-start; margin-top: auto; background: var(--surface); color: var(--accent); padding: 13px 22px; border-radius: 999px; font-size: 14px; font-weight: 500; }
-.pricing-donate a:hover { color: var(--accent-hover); }

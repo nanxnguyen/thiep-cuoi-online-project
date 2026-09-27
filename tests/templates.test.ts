@@ -15,11 +15,11 @@ const ratio = (a: string, b: string) => {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 };
 
-test("design catalog has sixteen distinct names and ten cover families", () => {
-  assert.equal(templates.length, 16);
-  assert.equal(new Set(templates.map((t) => t.id)).size, 16);
-  assert.equal(new Set(templates.map((t) => t.name)).size, 16);
-  assert.equal(new Set(templates.map((t) => t.family)).size, 10);
+test("design catalog has twenty distinct names and fifteen cover families", () => {
+  assert.equal(templates.length, 20);
+  assert.equal(new Set(templates.map((t) => t.id)).size, 20);
+  assert.equal(new Set(templates.map((t) => t.name)).size, 20);
+  assert.equal(new Set(templates.map((t) => t.family)).size, 15);
   assert.deepEqual(templates.slice(0, 3).map((t) => t.name), ["Song Hỷ", "Nét Mực", "Hoa Nhài"]);
 });
 
@@ -27,6 +27,7 @@ test("published legacy template IDs resolve to their new visual families", () =>
   assert.equal(getTemplate("lua-son")?.name, "Song Hỷ");
   assert.equal(getTemplate("gallery-noir")?.name, "Bìa Báo");
   assert.equal(getTemplate("thanh-ngoc")?.family, "J");
+  assert.equal(getTemplate("giay-do")?.name, "Nét Mực");
 });
 
 test("selected palette is resolved per template and invalid/old key falls back to first", () => {
