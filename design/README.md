@@ -39,33 +39,32 @@ Website tạo và gửi thiệp cưới online miễn phí cho người Việt. 
 3. **Xuất bản:** cửa sổ Xuất bản liệt kê phần còn thiếu → đặt link → confetti → chia sẻ (Zalo, Messenger, sao chép link).
 4. **Gửi khách:** mỗi khách 1 link có tên (`Thiep Khach?to=Tên`), dùng kèm công cụ Tin nhắn mời / Danh sách khách.
 5. **Khách xem:** mở phong bì → thiệp → xác nhận tham dự → lưu bút → mừng cưới QR → lời cảm ơn.
-6. **Quản lý:** Tài khoản → danh sách thiệp đã tạo, nhận lại thiệp bằng link `#k=`.
+6. **Quản lý:** nút Đăng nhập (Google) ở header → avatar → Thiệp của tôi: danh sách thiệp, nhận lại thiệp bằng link `#k=`.
 
-## 4. Danh sách trang (17 trang + file dùng chung)
+## 4. Danh sách trang (22 trang đang dùng + 2 trang tạm ẩn + file dùng chung)
 
-Menu (Site Header): Mẫu thiệp, Tính năng, Công cụ, Trợ giúp, Tài khoản, Tạo thiệp.
+Menu (Site Header): Mẫu thiệp, Công cụ · nút Đăng nhập (popup Google) · Tạo thiệp. Sau khi đăng nhập: avatar + tên, bấm mở menu Thiệp của tôi / Đăng xuất. Trạng thái lưu ở `localStorage.moc_user`, đồng bộ qua sự kiện `moc-auth`; trang khác mở popup bằng `dispatchEvent(new Event('moc-open-login'))`.
 Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, Hỗ trợ, Pháp lý).
 
 ### File dùng chung
 | File | Chức năng |
 |---|---|
-| `Site Header.dc.html` | Header mọi trang: logo, 4 menu, nút Tài khoản + Tạo thiệp |
+| `Site Header.dc.html` | Header mọi trang: logo, menu Mẫu thiệp / Công cụ, nút Đăng nhập → popup Google, nút Tạo thiệp; khi đã đăng nhập hiện avatar + tên, menu Thiệp của tôi / Đăng xuất |
 | `Site Footer.dc.html` | Footer: CTA tạo thiệp, 4 cột link, dòng bản quyền |
 | `Thiep Preview.dc.html` | Render 1 mẫu thiệp (10 kiểu A–J). Mở riêng trên desktop: rộng 70% trang. Prop `fit` + `maxW` để co giãn theo khung (v3); prop `full` hiện đủ các phần nội dung |
 | `Thiep Mau Day Du.dc.html` | Thiệp mẫu điền đủ 14 phần (Thu Hà & Quốc Bảo, 12/12/2026), mở sẵn chế độ Xem như khách; bấm "Chỉnh sửa" để sửa |
 | `Wedding Design System.dc.html` | Trang trình bày design system Mộc (màu, font, cỡ chữ, spacing, bóng, component, animation, đối chiếu các trang) |
 | `design.md` | Bản văn bản của design system, dành cho FE khi port sang codebase thật |
-| `Stock Design System.dc.html`, `stock-tokens.css`, `stock-tokens.json` | Design system khác (tông xanh, dùng cho ứng dụng chứng khoán) — **không dùng** cho site Mộc |
+| `stock-tokens.css`, `stock-tokens.json` | Token của design system khác (tông xanh, ứng dụng chứng khoán) — **không dùng** cho site Mộc |
+| `motion.js` | Lớp chuyển động dùng chung, nhúng trong `<helmet>` mọi trang: màn chuyển trang (logo MỘC), thanh tiến độ cuộn, hiện dần khi cuộn (tiêu đề mở từ dưới lên, ảnh mở khung, lưới xuất hiện so le), **hiệu ứng hoa rơi khi di chuyển chuột** (cánh hoa vàng/đỏ/hồng rơi nhẹ theo vệt chuột, chỉ trên máy tính), cánh hoa bung khi bấm nút đỏ, nút đỏ hút theo chuột, lời chào khi quay lại (từ lần ghé thứ 2). `data-lite` (Studio Editor v3) chỉ giữ chuyển trang + thanh tiến độ. Tắt hết khi `prefers-reduced-motion`. Thêm `data-no-reveal` để bỏ hiệu ứng cho 1 vùng |
+| `assets/photos/` | 13 ảnh cưới mẫu (đã nén ≤1200px) dùng làm ảnh mặc định. Người dùng kéo/thả ảnh mới vào ô sẽ thay ảnh mặc định |
 | `image-slot.js`, `support.js` | File hệ thống, không phải trang |
 
 ### 4.1 Trang chủ & marketing
 | Trang | Trỏ đến | Chức năng chính |
 |---|---|---|
-| `Trang Chu.dc.html` | Studio, Mẫu thiệp, Tính năng, Công cụ, Bảng giá, Ủng hộ | Hero có animation phong bì mở (tilt theo chuột), dải mẫu thiệp cuộn ngang, dải trích dẫn khách, khối thống kê đếm số, 3 bước dùng, 8 tính năng minh hoạ động, demo link riêng khách, 7 công cụ, bảng giá, CTA cuối trang |
-| `Tinh Nang.dc.html` | Tinh Nang Chi Tiet | 8 tính năng, thanh chuyển nhanh, mỗi mục có minh hoạ + "Tìm hiểu thêm" |
-| `Tinh Nang Chi Tiet.dc.html` (?slug=) | Studio | Chi tiết 1 tính năng, điều hướng trước/sau |
-| `Bang Gia.dc.html` | Studio, Ủng hộ | Bảng giá 0đ, danh sách đã có/đang làm, khối ủng hộ |
-| `Ung Ho.dc.html` | — | Trang ủng hộ tự nguyện (thông tin ngân hàng để trống) |
+| `Trang Chu.dc.html` | Studio, Mẫu thiệp, Công cụ, Bảng giá | Hero có animation phong bì mở (tilt theo chuột), dải mẫu thiệp cuộn ngang, dải trích dẫn khách, khối thống kê đếm số, 3 bước dùng, 8 tính năng minh hoạ động, demo link riêng khách, 7 công cụ, bảng giá, CTA cuối trang |
+| `Bang Gia.dc.html` | Studio | Bảng giá 0đ, danh sách đã có/đang làm, khối "Thấy Mộc có ích?" (đã bỏ nút sang Ủng hộ) |
 | `Tro Giup.dc.html` | Phap Ly | 25 câu hỏi, lọc theo 6 nhóm, tìm kiếm |
 | `Phap Ly.dc.html` (?doc=) | — | Điều khoản sử dụng / Quyền riêng tư (2 tab) |
 | `Tao Thiep Cuoi.dc.html` | Studio | Landing SEO: tạo thiệp trong 15 phút |
@@ -78,13 +77,12 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 |---|---|---|
 | `Studio.dc.html` | Studio Editor v3 | Chọn 1 trong 10 mẫu, nhập tên & ngày cưới, xem trước trực tiếp |
 | `Studio Editor v3.dc.html` | Thiep Khach, Cong Cu | **Bản chính thức.** 3 cột: danh sách phần → form → xem trước. Bật/tắt phần tuỳ chọn; vòng % hoàn thiện; bấm vào thiệp để nhảy tới phần tương ứng, chọn phần thì thiệp tự cuộn tới và gắn nhãn "ĐANG SỬA"; "Xem như khách" đổi tên khách; khung điện thoại/máy tính; cửa sổ Xuất bản. Màn hình < 1024px: xem trước toàn màn, danh sách & form mở dạng bottom-sheet |
-| `Tai Khoan.dc.html` | Studio, Studio Editor v3, Thiep Khach | Đăng nhập/đăng ký (demo), dán link `#k=` để nhận thiệp cũ, danh sách thiệp đã tạo |
+| `Thiep Cua Toi.dc.html` **(mới)** | Studio, Studio Editor v3, Thiep Khach | Danh sách thiệp của tài khoản: lọc Tất cả/Đã xuất bản/Bản nháp, thẻ có ảnh thu nhỏ mẫu, số xác nhận/lời chúc/lượt xem hoặc % hoàn thiện, Chỉnh sửa/Xem/Sao chép link/Xoá (có Hoàn tác), nhận thiệp cũ bằng link `#k=`. Chưa đăng nhập: hiện lời mời đăng nhập |
 
 ### 4.3 Mẫu thiệp
 | Trang | Trỏ đến | Chức năng chính |
 |---|---|---|
-| `Mau Thiep.dc.html` | — | v1, giữ lại để so sánh |
-| `Mau Thiep v2.dc.html` | Mau Thiep Chi Tiet, Studio | Bản chính thức: bảng xếp hạng cuộn ngang, lọc theo phong cách + màu, 16 mẫu, đổi màu ngay trên thẻ |
+| `Mau Thiep v2.dc.html` | Mau Thiep Chi Tiet, Studio | Bản chính thức: bảng xếp hạng cuộn ngang, lọc theo phong cách + màu, 20 mẫu, đổi màu ngay trên thẻ. Nút "Xem thử" mở popup demo: thiệp đầy đủ trong khung điện thoại, tự cuộn từ trên xuống rồi quay lại đầu; rê chuột (hoặc chạm) vào thiệp thì dừng và cuộn tay được; Esc/bấm nền để đóng |
 | `Mau Thiep Chi Tiet.dc.html` (?id=) | Studio | 1 mẫu: đổi màu, mô tả, tính năng đi kèm |
 
 ### 4.4 Trang khách
@@ -103,6 +101,70 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 | `CC So Do Cho Ngoi.dc.html` | Xếp khách vào bàn (giới hạn số ghế/bàn) |
 | `CC Save The Date.dc.html` | Vẽ ảnh báo ngày cưới bằng canvas, tải PNG |
 | `CC Nen Video.dc.html` | **Chưa tạo**: hub có trỏ tới nhưng trang chưa thiết kế |
+
+### 4.6 Trang tạm ẩn (giữ file, không còn link nào trỏ tới)
+| Trang | Lý do / thay thế |
+|---|---|
+| `Ung Ho.dc.html` | Tạm chưa dùng. Đã bỏ link ở header, Trang chủ, Bảng giá |
+| `Tai Khoan.dc.html` | Thay bằng popup đăng nhập Google trong header + trang `Thiep Cua Toi.dc.html` |
+
+### 4.7 Trang đã xoá
+| Trang | Thay bằng |
+|---|---|
+| `Studio Editor.dc.html` (v1) | `Studio Editor v3.dc.html` |
+| `Studio Editor v2.dc.html` | `Studio Editor v3.dc.html` |
+| `Tinh Nang.dc.html` | Khối 8 tính năng trên Trang chủ (thẻ trỏ về Studio) |
+| `Tinh Nang Chi Tiet.dc.html` | — |
+| `Mau Thiep.dc.html` (v1) | `Mau Thiep v2.dc.html` |
+| `Stock Design System.dc.html` | — (không thuộc site Mộc) |
+| Blog | — |
+
+### 4.8 Ảnh mặc định theo mẫu (`Thiep Preview`, prop `photo`/`photo2` để ghi đè)
+| Kiểu | Mẫu tiêu biểu | Ảnh | Lý do |
+|---|---|---|---|
+| A | Song Hỷ | `hy-phuc-do` | Hỷ phục đỏ, hợp mẫu truyền thống chữ Hỷ |
+| B | Chữ số lớn | `han-quoc-toi-gian` | Nền trắng tối giản, hợp bố cục editorial |
+| C | Khung tròn | `om-hem-nui` | Ảnh ôm cận mặt, cắt tròn vẫn rõ |
+| D | Hoàng Gia | `lau-dai-trang` | Kiến trúc cổ điển, hợp khung vòm vàng |
+| E | Save the date (polaroid) | `retro-pho-cho` | Ảnh film retro, hợp khung polaroid |
+| F | Chung Nhà (ảnh tràn) | `vuon-xanh` | Ảnh dọc ngoài trời, phủ toàn thiệp |
+| G | The Wedding Of (2 ảnh) | `o-hoa` + `vest-xanh-navy` | Cùng studio, 2 ảnh đồng bộ |
+| H | Hai khung tròn 囍 | `retro-do-hoa-hong` + `ao-dai-do` | Tông đỏ, hợp nền đỏ |
+| I | Song Phụng | `studio-hoa-trang` | (mẫu không có ô ảnh bìa) |
+| J | Song Cửa | `ao-dai-do` | Áo dài đỏ thêu vàng, hợp đỏ đậm + vòm vàng |
+| K | Tem Thư (mới) | `nang-chieu` | Con tem răng cưa + dấu bưu điện ghi ngày cưới, viền thư máy bay |
+| L | Vé Hạnh Phúc (mới) | `cua-so-vom` | Vé tàu một chiều: Ga đi (chú rể) → Ga đến (cô dâu), toa/ghế, mã vạch, cuống vé |
+| M | Đĩa Than (mới) | `khoi-hong` | Đĩa vinyl + bìa "Side A", nhãn đĩa là ảnh cưới, tracklist = lịch trình |
+| N | Cuộn Phim (mới) | `voan-hoa-kho` + `vuon-bong-bong` + `nang-chieu` | Dải phim 3 khung, lỗ răng phim, dấu ngày màu cam kiểu máy film |
+| O | Lịch Bloc (mới) | `han-phuc-co-trang` | Tờ lịch xé Việt Nam: số ngày lớn, thứ, "Ngày lành tháng tốt" |
+
+Album dùng lần lượt các ảnh còn lại. Thiep Khach (ảnh bìa `studio-hoa-trang`), Thiep Mau Day Du / Studio Editor v3 (chú rể `vest-xanh-navy`, cô dâu `studio-hoa-trang`), Trang chủ (ô Album) cũng dùng ảnh mặc định.
+
+### 4.9 Danh sách mẫu thiệp (Mẫu thiệp v2, 20 mẫu)
+| # | Tên | Kiểu | Phong cách | Hoạ tiết | Màu | Nhãn |
+|---|---|---|---|---|---|---|
+| 1 | Song Hỷ | A | Truyền thống | Chữ Hỷ | Đỏ, Xanh rêu | HOT |
+| 2 | Nét Mực | B | Tối giản | Typography | Đỏ đậm, Nâu, Lam, Tím | MỚI |
+| 3 | Hoa Nhài | C | Hoa | Vòm hoa | Xanh rêu, Hồng, Nâu | — |
+| 4 | Hoàng Gia | D | Cổ điển | Khung vàng | Vàng kim, Đỏ đậm, Lam | HOT |
+| 5 | Phong Thư | E | Lãng mạn | Phong bì | Đỏ, Ô liu | MỚI |
+| 6 | Bìa Báo | F | Hiện đại | Tạp chí | Mực, Hồng | — |
+| 7 | Hỷ Sự | A | Truyền thống | Chữ Hỷ | Đỏ đậm, Lam | — |
+| 9 | Vườn Ươm | C | Hoa | Sân vườn | Ô liu, Cam đất | MỚI |
+| 10 | Nhung Lam | D | Cổ điển | Nhung | Lam, Đỏ | — |
+| 11 | Thư Tình | E | Lãng mạn | Sáp niêm | Hồng, Đỏ đậm | — |
+| 12 | Chân Dung | F | Hiện đại | Ảnh lớn | Mực, Xanh rêu | HOT |
+| 13 | Song Phụng | I | Truyền thống | Chữ Hỷ lớn | Đỏ, Đỏ đậm, Lam | HOT |
+| 14 | Báo Hỷ | H | Truyền thống | Thông tin lễ | Đỏ, Lam | MỚI |
+| 15 | Đôi Khung | G | Lãng mạn | Ảnh đôi | Xanh rêu, Hồng, Nâu | MỚI |
+| 16 | Song Cửa | J | Truyền thống | Khung vòm | Đỏ đậm, Đỏ, Xanh rêu | HOT |
+| 17 | Tem Thư | K | Lãng mạn | Tem & dấu bưu điện | Đỏ, Lam, Xanh rêu | MỚI |
+| 18 | Vé Hạnh Phúc | L | Hiện đại | Vé tàu | Lam, Đỏ đậm, Xanh rêu | MỚI |
+| 19 | Đĩa Than | M | Hiện đại | Vinyl | Mực, Đỏ đậm, Cam đất | MỚI |
+| 20 | Cuộn Phim | N | Hiện đại | Phim nhựa | Mực, Nâu, Hồng | MỚI |
+| 21 | Lịch Bloc | O | Truyền thống | Lịch xé | Đỏ, Xanh rêu, Lam | MỚI |
+
+**Mẫu dùng chung bố cục** (chỉ khác tên/màu, cần xoá bớt hoặc thiết kế lại): A: Song Hỷ / Hỷ Sự · C: Hoa Nhài / Vườn Ươm · D: Hoàng Gia / Nhung Lam · E: Phong Thư / Thư Tình · F: Bìa Báo / Chân Dung. Đã xoá: Giấy Dó (trùng Nét Mực).
 
 ## 5. Cấu trúc nội dung thiệp (Studio Editor v3)
 
@@ -192,7 +254,7 @@ Hero H1 `clamp(38px, 5.6vw, 96px)` · H2 `clamp(32px, 4.4vw, 60px)` · H3 card `
 - Reveal khi cuộn `900ms`, dịch dọc `36–40px → 0`, dùng IntersectionObserver.
 - Vòng lặp `4–12s` (float, marquee, đếm ngược); marquee dừng khi hover.
 - Keyframes đang dùng: `fadeUp`, `fadeIn`, `popIn`, `floaty`, `sway`, `petFall`, `flapOpen`, `cardRise`, `marqueeL/R`, `eq`, `scan`, `ripple`, `shimmer`, `heart`, `toast`, `pulseDot`… (mỗi trang tự khai báo).
-- Chưa hỗ trợ `prefers-reduced-motion`, cần bổ sung khi tích hợp.
+- `prefers-reduced-motion`: đã xử lý trong `motion.js`.
 
 ### 6.8 Port sang codebase thật
 Chuyển màu/font/spacing/radius/shadow thành CSS variables hoặc Tailwind theme; gom keyframes vào 1 file animation chung; tách `PAL` và danh sách mẫu `TPL` thành `templates.json`. Chi tiết ở `design.md` mục 8.
@@ -201,6 +263,40 @@ Chuyển màu/font/spacing/radius/shadow thành CSS variables hoặc Tailwind th
 Mở file `.dc.html` bằng browser (kéo thả) hoặc chạy local server tĩnh bất kỳ tại thư mục gốc. Các trang tham chiếu nhau bằng đường dẫn tương đối. Trang bắt đầu gợi ý: `Trang Chu.dc.html`; xem thiệp mẫu hoàn chỉnh: `Thiep Mau Day Du.dc.html`.
 
 ## 8. Nhật ký thay đổi
+
+### Tóm tắt đợt cập nhật 26–27/09/2026
+| Nhóm | Thay đổi |
+|---|---|
+| Trang mới | `Thiep Cua Toi.dc.html` (danh sách thiệp của tài khoản), `Thiep Mau Day Du.dc.html` (thiệp mẫu đủ 14 phần), `motion.js` (chuyển động dùng chung) |
+| Mẫu thiệp | Thêm 5 mẫu mới K–O (Tem Thư, Vé Hạnh Phúc, Đĩa Than, Cuộn Phim, Lịch Bloc); xoá Giấy Dó; "Xem thử" mở popup demo tự cuộn 15 phần, dừng khi rê chuột; thay "3 ngày dùng thử / Ưng mới trả" bằng "Đổi mẫu / Không giới hạn khách" |
+| Ảnh | 21 ảnh cưới mẫu trong `assets/photos/`, gán theo kiểu mẫu (mục 4.8) |
+| Trang đã xoá | `Studio Editor.dc.html` (v1), `Studio Editor v2.dc.html`, `Tinh Nang.dc.html`, `Tinh Nang Chi Tiet.dc.html`, `Mau Thiep.dc.html` (v1), `Stock Design System.dc.html` |
+| Trang tạm ẩn (giữ file) | `Ung Ho.dc.html`, `Tai Khoan.dc.html` |
+| Đăng nhập | Chỉ còn đăng nhập Google, dạng popup từ nút Đăng nhập trên header (demo). Sau khi đăng nhập: avatar + tên, menu Thiệp của tôi / Đăng xuất |
+| Header / Footer | Bỏ mục Tính năng, Ủng hộ, Tài khoản. Header: Mẫu thiệp, Công cụ, Đăng nhập, Tạo thiệp. Footer: "Tài khoản" đổi thành "Thiệp của tôi" |
+| Trang chủ | Bỏ link "Xem tất cả tính năng" và nút Ủng hộ; 8 thẻ tính năng trỏ về Studio |
+| Bảng giá | Bỏ nút sang trang Ủng hộ |
+| Chuyển động | `motion.js` nhúng vào 25 trang (Studio Editor v3 dùng bản nhẹ). Đã sửa lỗi nội dung bị ẩn khi cuộn. Di chuyển chuột có hiệu ứng hoa rơi |
+| Sửa lỗi | Ô chọn thứ bậc/ngân hàng/tên khách hiển thị sai (đổi sang chip); lỗi console khi đổi phần trong v3; thanh "Đang xem với tên" bị header che; ảnh thu nhỏ trên Thiệp của tôi bị lệch bóng; popup demo không tự cuộn; Lịch Bloc chữ thứ đè số ngày; Đĩa Than chữ bìa bị đĩa che |
+
+### Chi tiết theo ngày
+- **27/09/2026** — Sửa Lịch Bloc (chữ thứ đè số ngày) và Đĩa Than (chữ bìa bị che). README: thêm mục 4.9 danh sách toàn bộ mẫu thiệp và các cặp trùng bố cục; cập nhật bảng tóm tắt.
+- **27/09/2026** — Mẫu thiệp v2: xoá mẫu "Giấy Dó" (id 8) vì trùng bố cục kiểu B với "Nét Mực". Còn 20 mẫu.
+- **27/09/2026** — Ghi chú README: di chuyển chuột sẽ có hiệu ứng hoa rơi (từ `motion.js`, chạy trên mọi trang trừ Studio Editor v3; tắt khi bật giảm chuyển động).
+- **27/09/2026** — Thêm 5 mẫu thiệp mới (kiểu K–O trong `Thiep Preview`, id 17–21 trong Mẫu thiệp v2, gắn nhãn MỚI): Tem Thư, Vé Hạnh Phúc, Đĩa Than, Cuộn Phim, Lịch Bloc. Ý tưởng tự thiết kế, không trùng các chủ đề đã có trên thị trường (Long Phụng, Song Hỷ, Baroque, Vườn, Hoa…).
+- **27/09/2026** — Mẫu thiệp v2: thay "3 ngày dùng thử" và "Ưng mới trả" bằng "Đổi mẫu – bất cứ lúc nào" và "Không giới hạn – số khách mời"; sửa câu hỏi thường gặp về dùng thử cho khớp (miễn phí hoàn toàn).
+- **27/09/2026** — `Thiep Preview` chế độ `full` mở rộng 15 phần: lời mời, hai gia đình, chú rể & cô dâu (ảnh riêng), lễ thành hôn (thứ/ngày/tháng), tiệc cưới, lịch trình, đếm ngược, album 9 ảnh, chuyện tình yêu, trang phục gợi ý, xác nhận tham dự, sổ lưu bút, hộp mừng cưới 2 bên, ảnh cảm ơn. Thêm 8 ảnh vào `assets/photos/` (han-phuc-co-trang, quan-phuc-studio, khoi-hong, nang-chieu, vuon-bong-bong, voan-hoa-kho, bieu-thu-canh-hoa, cua-so-vom).
+- **27/09/2026** — Mẫu thiệp v2: "Xem thử" mở popup demo tự cuộn toàn bộ nội dung thiệp mẫu, dừng khi rê chuột vào.
+- **27/09/2026** — Thêm 13 ảnh cưới mẫu vào `assets/photos/`, gán làm ảnh mặc định cho từng kiểu mẫu (A–J), album, thiệp khách, thiệp mẫu, Studio Editor v3, Trang chủ.
+- **27/09/2026** — Header: nút Đăng nhập thiết kế lại cùng dáng với chip avatar (vòng tròn icon người + chữ); hover viền đậm, vòng tròn chuyển đỏ, nút nâng nhẹ.
+- **27/09/2026** — Thiệp của tôi: bỏ nút "+ Tạo thiệp mới" ở đầu trang (đã có nút Tạo thiệp ở header và ô tạo mới trong lưới).
+- **27/09/2026** — Cập nhật README: thêm mục 4.6 Trang tạm ẩn, 4.7 Trang đã xoá; sửa mô tả Site Header, luồng Quản lý, số trang; bỏ các dòng trỏ tới file không còn tồn tại (`Mau Thiep.dc.html`, `Stock Design System.dc.html`).
+- **27/09/2026** — Tạm ẩn `Tai Khoan.dc.html`. Header: nút Đăng nhập → popup "Tiếp tục với Google" (demo) → avatar + tên, menu Thiệp của tôi / Đăng xuất. Thêm trang `Thiep Cua Toi.dc.html`. Footer trỏ sang Thiệp của tôi.
+- **27/09/2026** — Tạm ẩn `Ung Ho.dc.html` (không xoá): bỏ link ở header, Trang chủ, Bảng giá. `Tai Khoan`: bỏ form email/mật khẩu và tab Đăng ký, chỉ còn nút "Tiếp tục với Google".
+- **27/09/2026** — Xoá `Tinh Nang.dc.html` và `Tinh Nang Chi Tiet.dc.html`. Bỏ mục "Tính năng" khỏi header/footer; trên Trang chủ bỏ link "Xem tất cả tính năng", 8 thẻ tính năng trỏ về Studio.
+- **27/09/2026** — Thiệp của tôi: sửa ảnh thu nhỏ (dùng `fit`/`max-w` để lấp đầy khung, bóng đổ theo hình thiệp).
+- **27/09/2026** — `motion.js`: sửa lỗi tiêu đề/khối nội dung không hiện khi cuộn (bỏ IntersectionObserver, kiểm tra vị trí khi cuộn + dự phòng mỗi 600ms).
+- **27/09/2026** — Thêm `motion.js` và nhúng vào 26 trang: chuyển trang, thanh tiến độ, hiện dần khi cuộn, cánh hoa theo chuột và khi bấm, nút hút theo chuột, lời chào khách quay lại. Hỗ trợ `prefers-reduced-motion`.
 - **26/09/2026** — Xoá `Studio Editor.dc.html` (v1) và `Studio Editor v2.dc.html`; chỉ giữ v3. Link "Bắt đầu chỉnh sửa" ở Studio và nút "Sửa" ở Tài khoản chuyển sang v3.
 - **26/09/2026** — Viết lại README chi tiết: mục tiêu, kiến trúc, luồng người dùng, cấu trúc 14 phần thiệp, toàn bộ design system (màu, palette mẫu, font, cỡ chữ, spacing, bóng, component, animation). Ghi rõ `Stock Design System` / `stock-tokens.*` không thuộc site Mộc.
 - **26/09/2026** — Thêm `Thiep Mau Day Du.dc.html`: thiệp mẫu đầy đủ thông tin để xem trước. Sửa lỗi thanh "Đang xem với tên" bị header che khi màn hình thấp (v3 + thiệp mẫu).
@@ -214,4 +310,4 @@ Mở file `.dc.html` bằng browser (kéo thả) hoặc chạy local server tĩn
 - Ảnh trong thiệp là ô trống `<image-slot>`, cần kéo/thả ảnh thật.
 - Số liệu, tên khách, câu hỏi thường gặp là nội dung mẫu, cần thay trước khi phát hành.
 - Thông tin ngân hàng ở `Ung Ho.dc.html` đang để trống.
-- Chưa có: `CC Nen Video.dc.html`, backend lưu thiệp, đăng nhập thật, `prefers-reduced-motion`.
+- Chưa có: `CC Nen Video.dc.html`, backend lưu thiệp, đăng nhập thật.

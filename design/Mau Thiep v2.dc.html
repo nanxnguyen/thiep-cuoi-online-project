@@ -15,6 +15,8 @@ body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans
 a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
 *{box-sizing:border-box}
 </style>
+<style>@keyframes demoFade{from{opacity:0}to{opacity:1}}@keyframes demoPop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}</style>
+<script src="motion.js"></script>
 </helmet>
 <div style="min-height:100vh;background:#f8f4ee">
   <dc-import name="Site Header" active="templates" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
@@ -28,8 +30,8 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
       <p style="margin:0;font-size:17px;line-height:1.75;color:#5e534b;font-weight:300;text-wrap:pretty">Mỗi mẫu có một nhịp điệu riêng. Đổi mẫu lúc nào cũng được, nội dung của bạn vẫn còn nguyên.</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #1a1412">
         <div style="padding:16px 12px 0 0;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">Miễn phí</span><span style="font-size:12px;color:#8a7d72">khi tạo thiệp</span></div>
-        <div style="padding:16px 12px 0;border-left:1px solid #e0d5c6;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">3 ngày</span><span style="font-size:12px;color:#8a7d72">dùng thử đủ tính năng</span></div>
-        <div style="padding:16px 0 0 12px;border-left:1px solid #e0d5c6;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">Ưng mới trả</span><span style="font-size:12px;color:#8a7d72">thanh toán sau</span></div>
+        <div style="padding:16px 12px 0;border-left:1px solid #e0d5c6;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">Đổi mẫu</span><span style="font-size:12px;color:#8a7d72">bất cứ lúc nào</span></div>
+        <div style="padding:16px 0 0 12px;border-left:1px solid #e0d5c6;display:flex;flex-direction:column;gap:4px"><span style="font-family:'Playfair Display',serif;font-size:22px">Không giới hạn</span><span style="font-size:12px;color:#8a7d72">số khách mời</span></div>
       </div>
     </div>
   </section>
@@ -105,7 +107,7 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
             <sc-if value="{{ t.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:600;letter-spacing:.12em;padding:5px 10px;border-radius:999px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};pointer-events:none">{{ t.badge }}</span></sc-if>
             <sc-if value="{{ t.hover }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;left:0;right:0;bottom:0;padding:48px 14px 14px;border-radius:0 0 10px 10px;display:flex;gap:8px;background:linear-gradient(to top,rgba(20,14,12,.82),rgba(20,14,12,0))">
-                <a href="Studio.dc.html" style="flex:1;text-align:center;padding:12px;border-radius:999px;background:rgba(255,255,255,.95);color:#1a1412;font-size:13px;font-weight:500" style-hover="background:#fff;color:#1a1412">Xem thử</a>
+                <button onClick="{{ t.openDemo }}" style="flex:1;font-family:inherit;text-align:center;padding:12px;border:0;border-radius:999px;background:rgba(255,255,255,.95);color:#1a1412;font-size:13px;font-weight:500;cursor:pointer" style-hover="background:#fff">Xem thử</button>
                 <a href="Studio.dc.html" style="flex:1;text-align:center;padding:12px;border-radius:999px;background:#a3161c;color:#fff;font-size:13px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Dùng mẫu</a>
               </div>
             </sc-if>
@@ -187,6 +189,29 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
   </section>
 
   <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+  <sc-if value="{{ demoOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDemo }}" style="position:fixed;inset:0;z-index:120;background:rgba(28,16,18,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;gap:48px;padding:24px;flex-wrap:wrap;overflow:auto;animation:demoFade .3s both">
+      <div onClick="{{ stop }}" onMouseEnter="{{ demoPause }}" onMouseLeave="{{ demoResume }}" onTouchStart="{{ demoPause }}" onTouchEnd="{{ demoResumeLater }}" style="flex:none;padding:14px;border-radius:44px;background:rgba(248,244,238,.9);box-shadow:0 40px 80px -40px rgba(0,0,0,.8);animation:demoPop .45s cubic-bezier(.2,.7,.2,1) both">
+        <div data-demo-scroller="1" style="width:336px;max-width:calc(100vw - 76px);height:min(74vh,700px);border-radius:32px;overflow-y:auto;overflow-x:hidden;background:{{ demo.paper }};scrollbar-width:none;overscroll-behavior:contain">
+          <div style="width:240px;zoom:1.4">
+            <dc-import name="Thiep Preview" family="{{ demo.family }}" deep="{{ demo.deep }}" paper="{{ demo.paper }}" gold="{{ demo.gold }}" tint="{{ demo.tint }}" a="{{ demo.a }}" b="{{ demo.b }}" date="{{ demo.date }}" place="{{ demo.place }}" slot="{{ demo.slot }}" full="{{ true }}" fit="{{ true }}" max-w="100%" radius="0" hint-size="240px,427px"></dc-import>
+          </div>
+        </div>
+      </div>
+      <div onClick="{{ stop }}" style="display:flex;flex-direction:column;gap:22px;max-width:320px;color:#f1e7d6;animation:demoPop .45s .08s cubic-bezier(.2,.7,.2,1) both">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.2em;color:#c9a86a;font-weight:600"><span style="width:8px;height:8px;border-radius:50%;background:{{ demoDot }};transition:background .3s"></span>{{ demoStatus }}</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-family:'Playfair Display',serif;font-size:42px;line-height:1.05">{{ demo.name }}</span>
+          <span style="font-size:15px;color:#a8998c">{{ demo.variantLabel }}</span>
+        </div>
+        <p style="margin:0;font-size:14px;line-height:1.7;color:#d8cbbb;text-wrap:pretty">Thiệp tự cuộn qua toàn bộ nội dung như khách sẽ thấy. Rê chuột vào thiệp để dừng và tự cuộn xem.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="Studio.dc.html" style="background:#a3161c;color:#fff;padding:14px 26px;border-radius:999px;font-size:14px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Dùng mẫu này</a>
+          <button onClick="{{ closeDemo }}" style="font-family:inherit;font-size:14px;padding:14px 22px;border-radius:999px;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;cursor:pointer" style-hover="border-color:#f1e7d6">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Thoáng&quot;,&quot;Gọn&quot;],&quot;default&quot;:&quot;Thoáng&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
@@ -220,7 +245,6 @@ const T = [
   { id:5,  name:'Phong Thư', family:'E', style:'Lãng mạn',     motif:'Phong bì',   v:['do','oliu'],            badge:'MỚI', pop:88, isNew:1, a:'Hoàng Long', b:'Bảo Ngọc', date:'28 · 09 · 2027', place:'ĐÀ NẴNG' },
   { id:6,  name:'Bìa Báo',   family:'F', style:'Hiện đại',     motif:'Tạp chí',    v:['muc','hong'],           badge:'',    pop:72, isNew:0, a:'Linh', b:'Tuấn', date:'SÀI GÒN · 11.2026', place:'Một ngày cuối thu' },
   { id:7,  name:'Hỷ Sự',     family:'A', style:'Truyền thống', motif:'Chữ Hỷ',     v:['dodam','lam'],          badge:'',    pop:90, isNew:0, a:'Quỳnh Anh', b:'Gia Khánh', date:'15 · 01 · 2027', place:'TƯ GIA · HUẾ' },
-  { id:8,  name:'Giấy Dó',   family:'B', style:'Tối giản',     motif:'Giấy kem',   v:['nau','xanh'],           badge:'',    pop:70, isNew:0, a:'Hương', b:'Nam', date:'03 · 10 · 2026', place:'HỘI AN' },
   { id:9,  name:'Vườn Ươm',  family:'C', style:'Hoa',          motif:'Sân vườn',   v:['oliu','cam'],           badge:'MỚI', pop:76, isNew:1, a:'Mai', b:'Phong', date:'21 · 03 · 2027', place:'TAM ĐẢO' },
   { id:10, name:'Nhung Lam', family:'D', style:'Cổ điển',      motif:'Nhung',      v:['lam','do'],             badge:'',    pop:74, isNew:0, a:'Thanh Trúc', b:'Quốc Anh', date:'12 · 12 · 2026', place:'NHÀ HÁT LỚN' },
   { id:11, name:'Thư Tình',  family:'E', style:'Lãng mạn',     motif:'Sáp niêm',   v:['hong','dodam'],         badge:'',    pop:82, isNew:0, a:'Minh Ánh', b:'Thế Bảo', date:'14 · 02 · 2027', place:'CẦN THƠ' },
@@ -229,17 +253,46 @@ const T = [
   { id:14, name:'Báo Hỷ',     family:'H', style:'Truyền thống', motif:'Thông tin lễ', v:['do','lam'],       badge:'MỚI', pop:89, isNew:1, a:'Thanh Tú', b:'Hoàng Nam', date:'NGÀY 22 · 11 · 2026', place:'' },
   { id:15, name:'Đôi Khung',  family:'G', style:'Lãng mạn',     motif:'Ảnh đôi',     v:['xanh','hong','nau'],  badge:'MỚI', pop:85, isNew:1, a:'Thu Hà', b:'Minh Quân', date:'19 · 10 · 2026', place:'' },
   { id:16, name:'Song Cửa',   family:'J', style:'Truyền thống', motif:'Khung vòm',   v:['dodam','do','xanh'], badge:'HOT', pop:96, isNew:0, a:'Thanh Hà', b:'Tuấn Kiệt', date:'05 · 01 · 2027', place:'TRUNG TÂM TIỆC CƯỚI · HÀ NỘI' },
+  { id:17, name:'Tem Thư',     family:'K', style:'Lãng mạn',     motif:'Tem & dấu bưu điện', v:['do','lam','xanh'], badge:'MỚI', pop:91, isNew:1, a:'Khánh Linh', b:'Đức Anh', date:'18 · 10 · 2026', place:'BƯU ĐIỆN HÀ NỘI' },
+  { id:18, name:'Vé Hạnh Phúc', family:'L', style:'Hiện đại',    motif:'Vé tàu',       v:['lam','dodam','xanh'], badge:'MỚI', pop:93, isNew:1, a:'Bảo Trâm', b:'Minh Đức', date:'24 · 10 · 2026', place:'GA HUẾ' },
+  { id:19, name:'Đĩa Than',    family:'M', style:'Hiện đại',     motif:'Vinyl',        v:['muc','dodam','cam'], badge:'MỚI', pop:87, isNew:1, a:'Diệu Linh', b:'Hải Nam', date:'07 · 11 · 2026', place:'SÀI GÒN' },
+  { id:20, name:'Cuộn Phim',   family:'N', style:'Hiện đại',     motif:'Phim nhựa',    v:['muc','nau','hong'], badge:'MỚI', pop:84, isNew:1, a:'Tường Vi', b:'Quang Huy', date:'29 · 11 · 2026', place:'ĐÀ LẠT' },
+  { id:21, name:'Lịch Bloc',   family:'O', style:'Truyền thống', motif:'Lịch xé',      v:['do','xanh','lam'], badge:'MỚI', pop:94, isNew:1, a:'Hồng Nhung', b:'Văn Khoa', date:'13 · 12 · 2026', place:'TƯ GIA · HẢI PHÒNG' },
 ];
 const STYLES = ['Tất cả','Truyền thống','Tối giản','Hoa','Cổ điển','Lãng mạn','Hiện đại'];
 const FAQ = [
   ['Tạo xong rồi có đổi mẫu được không?', 'Được. Bạn đổi mẫu bất cứ lúc nào trong trang quản lý. Tên, ngày, địa điểm và ảnh đã nhập được giữ nguyên khi chuyển sang mẫu mới.'],
-  ['Có được dùng thử miễn phí không?', 'Mọi mẫu đều tạo miễn phí và dùng thử đầy đủ tính năng trong 3 ngày. Bạn chỉ thanh toán khi đã hài lòng với tấm thiệp của mình.'],
+  ['Có mất phí không?', 'Không. Mọi mẫu và tính năng đều miễn phí, không giới hạn số khách mời.'],
   ['Mẫu nào hợp với đám cưới của tôi?', 'Tiệc truyền thống hợp Song Hỷ hoặc Hỷ Sự. Tiệc sân vườn hợp Hoa Nhài, Vườn Ươm. Tiệc hiện đại hợp Nét Mực, Bìa Báo. Bạn có thể xem thử từng mẫu trước khi quyết định.'],
   ['Mỗi mẫu có bao nhiêu màu?', 'Mỗi mẫu có từ 2 đến 4 phiên bản màu. Bấm vào chấm màu dưới mỗi thẻ để xem trước ngay.'],
 ];
 
 class Component extends DCLogic {
-  state = { cat:'Tất cả', color:null, sort:'pop', hover:null, v:{}, faq:0 };
+  state = { cat:'Tất cả', color:null, sort:'pop', hover:null, v:{}, faq:0, demo:null, demoPaused:false };
+  demoRef = React.createRef();
+  componentWillUnmount() { this.stopDemo(); }
+  startDemo() {
+    this.stopDemo(); this.paused = false; this.atEnd = false; this.pos = 0; this.hold = performance.now() + 900;
+    let last = performance.now();
+    this.onKey = e => { if (e.key === 'Escape') { this.stopDemo(); this.setState({ demo: null }); } };
+    addEventListener('keydown', this.onKey);
+    const tick = now => {
+      const el = document.querySelector('[data-demo-scroller]'), dt = Math.min(64, now - last); last = now;
+      if (el && !this.paused && now > this.hold) {
+        if (this.atEnd) { this.atEnd = false; this.pos = 0; el.scrollTo({ top: 0, behavior: 'smooth' }); this.hold = now + 1500; }
+        else {
+          const max = el.scrollHeight - el.clientHeight;
+          if (Math.abs(el.scrollTop - this.pos) > 4) this.pos = el.scrollTop;
+          this.pos = Math.min(max, this.pos + dt * 0.055);
+          el.scrollTop = this.pos;
+          if (this.pos >= max - 1) { this.atEnd = true; this.hold = now + 1800; }
+        }
+      }
+      this.raf = requestAnimationFrame(tick);
+    };
+    this.raf = requestAnimationFrame(tick);
+  }
+  stopDemo() { cancelAnimationFrame(this.raf); clearTimeout(this.rt); if (this.onKey) removeEventListener('keydown', this.onKey); }
   railRef = React.createRef();
   scroll(dir) { const el = this.railRef.current; if (el) el.scrollBy({ left: dir * 292 * 2, behavior:'smooth' }); }
   vals(t, key) {
@@ -261,6 +314,7 @@ class Component extends DCLogic {
         hover: on, lift: on ? 'translateY(-8px)' : 'none',
         shadow: on ? '0 36px 60px -28px rgba(26,20,18,.55)' : '0 18px 40px -24px rgba(26,20,18,.4)',
         enter: () => this.setState({ hover: t.id }),
+        openDemo: () => this.setState({ demo: { family: t.family, name: t.name, variantLabel: PAL[key].label, a: t.a, b: t.b, date: t.date, place: t.place, ...this.vals(t, key) }, demoPaused: false }, () => this.startDemo()),
         swatches: t.v.map(k => ({ label: PAL[k].label, color: PAL[k].deep, ring: k === key ? '#1a1412' : 'transparent',
           onClick: () => this.setState(s => ({ v: { ...s.v, [t.id]: k } })) })) };
     });
@@ -280,7 +334,13 @@ class Component extends DCLogic {
       railRef: this.railRef, scrollPrev: () => this.scroll(-1), scrollNext: () => this.scroll(1),
       ranking, chips, colorDots, sorts, cards, empty: cards.length === 0,
       gridTitle: titleBits.join(', '), countText: `${cards.length} mẫu · bấm chấm màu để đổi phiên bản`,
-      leave: () => this.setState({ hover:null }), reset: () => this.setState({ cat:'Tất cả', color:null, v:{} }),
+      leave: () => this.setState({ hover:null }),
+      demoOpen: !!this.state.demo, demo: this.state.demo || {}, 
+      demoStatus: this.state.demoPaused ? 'ĐÃ DỪNG' : 'ĐANG TỰ CUỘN', demoDot: this.state.demoPaused ? '#a8998c' : '#e0bb74',
+      closeDemo: () => { this.stopDemo(); this.setState({ demo: null }); }, stop: e => e.stopPropagation(),
+      demoPause: () => { this.paused = true; clearTimeout(this.rt); this.setState({ demoPaused: true }); },
+      demoResume: () => { this.paused = false; this.hold = performance.now() + 400; this.setState({ demoPaused: false }); },
+      demoResumeLater: () => { clearTimeout(this.rt); this.rt = setTimeout(() => { this.paused = false; this.setState({ demoPaused: false }); }, 2500); }, reset: () => this.setState({ cat:'Tất cả', color:null, v:{} }),
       minCol: (this.props.density ?? 'Thoáng') === 'Gọn' ? '220px' : '270px',
       collections: [['Màu đỏ','#8e1b1f'],['Xanh rêu','#24493a'],['Lam','#1f3a5f'],['Vàng kim','#c9a86a'],['Chữ Hỷ','#a3161c'],['Truyền thống','#5a1119'],['Tối giản','#1a1412'],['Hoa','#a4505f'],['Sân vườn','#5a6636'],['Châu Âu','#7a5a22']].map(([label, c]) => ({ label, color:c })),
       faqs: FAQ.map(([q, a], i) => ({ q, a, open: faq === i, icon: faq === i ? '−' : '+',

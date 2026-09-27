@@ -2,7 +2,6 @@ export type NavigationLink = { href: string; label: string };
 
 export const NAV_LINKS: readonly NavigationLink[] = [
   { href: "/templates", label: "Mẫu thiệp" },
-  { href: "/tinh-nang", label: "Tính năng" },
   { href: "/cong-cu-dam-cuoi", label: "Công cụ" },
 ] as const;
 
@@ -17,10 +16,9 @@ export const FOOTER_COLUMNS: readonly { title: string; links: readonly Navigatio
     title: "Sản phẩm",
     links: [
       { href: "/templates", label: "Mẫu thiệp" },
-      { href: "/tinh-nang", label: "Tính năng" },
       { href: "/bang-gia", label: "Bảng giá" },
       { href: "/studio", label: "Tạo thiệp" },
-      { href: "/account", label: "Tài khoản" },
+      { href: "/account", label: "Thiệp của tôi" },
     ],
   },
   {

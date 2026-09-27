@@ -3,7 +3,7 @@ export type PublishedInvitation = {
   id: string;
   content: {
     rsvp?: { enabled?: boolean; questions?: { id: string }[] };
-    guestbook?: { enabled?: boolean };
+    guestbook?: { enabled?: boolean; moderate?: boolean };
   };
 };
 export type StoredWrite = Record<string, unknown>;
@@ -125,7 +125,7 @@ export async function handlePublicWrite(
     const input = payload as WishPayload;
     if (invitation.content.guestbook?.enabled === false) return json(403, "Chủ thiệp đã tắt tính năng này.");
     const saved = await store.insertWish({ invitation_id: invitation.id, name: input.name, message: input.message,
-      hidden: false, approved: false, request_key: requestKey });
+      hidden: false, approved: invitation.content.guestbook?.moderate === false, request_key: requestKey });
     return Response.json(wishResponse(saved), { status: 201 });
   } catch {
     return json(500, "Máy chủ đang bận, bạn thử lại sau nhé.");

@@ -1,5 +1,5 @@
 /// <reference lib="deno.ns" />
-import { handlePublicWrite, type PublicWriteStore } from "../_shared/public-write.ts";
+import { handlePublicWrite, type PublicWriteStore, type PublishedInvitation } from "../_shared/public-write.ts";
 
 function assertEquals(actual: unknown, expected: unknown) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
@@ -7,17 +7,17 @@ function assertEquals(actual: unknown, expected: unknown) {
 
 const secret = "edge-shared-secret";
 const fingerprint = "a".repeat(64);
-const invitation = {
+const invitation: PublishedInvitation = {
   id: "inv-1",
   content: { rsvp: { enabled: true, questions: [{ id: "meal" }] }, guestbook: { enabled: true } },
 };
 
-function fakeStore() {
+function fakeStore(inv: typeof invitation = invitation) {
   const rows: { action: string; value: Record<string, unknown> }[] = [];
   const limits = new Map<string, number>();
   const existing = new Map<string, Record<string, unknown>>();
   const store: PublicWriteStore = {
-    findPublishedInvitation: async (slug) => slug === "published" ? invitation : null,
+    findPublishedInvitation: async (slug) => slug === "published" ? inv : null,
     consumeRateLimit: async (key, limit) => {
       const count = (limits.get(key) ?? 0) + 1;
       limits.set(key, count);
@@ -83,6 +83,13 @@ Deno.test("valid wishes default to pending moderation and duplicate keys return 
   assertEquals(await second.json(), await first.json());
   assertEquals(one.rows.length, 1);
   assertEquals(one.rows[0].value.approved, false);
+});
+
+Deno.test("wishes skip moderation when the owner turned it off", async () => {
+  const one = fakeStore({ ...invitation, content: { ...invitation.content, guestbook: { enabled: true, moderate: false } } });
+  const res = await handlePublicWrite(request("wish", wish), one.store, { sharedSecret: secret });
+  assertEquals(res.status, 201);
+  assertEquals(one.rows[0].value.approved, true);
 });
 
 Deno.test("atomic threshold allows exactly five concurrent writes and stores no raw IP", async () => {

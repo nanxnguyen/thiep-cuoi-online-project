@@ -25,6 +25,10 @@ export type ThiepPreviewProps = {
   photo?: string;
   photo2?: string;
   photo3?: string;
+  /** Groom and bride rank (G, H); design sample "Trưởng Nam" / "Út Nữ" when not given. */
+  ranks?: [string, string];
+  /** Groom's then bride's parents (H); design sample names when not given. */
+  parents?: [[string, string], [string, string]];
   /** Design `full`: the sample invitation sections follow the cover. */
   full?: boolean;
   className?: string;
@@ -59,6 +63,8 @@ export function ThiepPreview(p: ThiepPreviewProps) {
   const arcId = `tp-arc-${[...`${a}|${b}|${date}|${deep}`].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7).toString(36)}`;
   const S = (photo: string | undefined, caption: string, circle?: boolean) => <Slot photo={photo} caption={caption} circle={circle} />;
   const def = familyPhotos[f];
+  const [rankB, rankA] = [p.ranks?.[0] || "Trưởng Nam", p.ranks?.[1] || "Út Nữ"];
+  const [pg, pb] = p.parents ?? [["Ông Trần Văn Tuấn", "Bà Trần Thị Mai"], ["Ông Lê Văn Hùng", "Bà Hồ Thị Lan"]];
   const ph = p.photo ?? def[0];
   const ph2 = p.photo2 ?? def[1] ?? def[0];
   const ph3 = p.photo3 ?? def[2] ?? def[0];
@@ -86,7 +92,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         </div>
         <svg className="tpA__arc" viewBox="0 0 100 20">
           <path id={arcId} d="M5,18 Q50,-4 95,18" fill="none" />
-          <text fill={gold}>
+          <text style={{ fill: gold }}>
             <textPath href={`#${arcId}`} startOffset="50%" textAnchor="middle">
               ✦ love never fails ✦
             </textPath>
@@ -207,14 +213,14 @@ export function ThiepPreview(p: ThiepPreviewProps) {
           <div className="tpG__photo">{S(ph, "Chú rể")}</div>
         </div>
         <div className="tpG__who tpG__who--b">
-          <span className="tpG__rank">Trưởng Nam</span>
+          <span className="tpG__rank">{rankB}</span>
           <span className="tpG__name">{b}</span>
         </div>
         <div className="tpG__pol tpG__pol--2">
           <div className="tpG__photo">{S(ph2, "Cô dâu")}</div>
         </div>
         <div className="tpG__who tpG__who--a">
-          <span className="tpG__rank">Út Nữ</span>
+          <span className="tpG__rank">{rankA}</span>
           <span className="tpG__name">{a}</span>
         </div>
         <div className="tpG__date">{date}</div>
@@ -232,11 +238,11 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         </div>
         <div className="tpH__names">
           <div>
-            <span className="tpH__rank">Trưởng Nam</span>
+            <span className="tpH__rank">{rankB}</span>
             <span className="tpH__name">{b}</span>
           </div>
           <div>
-            <span className="tpH__rank">Út Nữ</span>
+            <span className="tpH__rank">{rankA}</span>
             <span className="tpH__name">{a}</span>
           </div>
         </div>
@@ -244,14 +250,14 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         <div className="tpH__families">
           <div>
             <span className="tpH__fam">Nhà trai</span>
-            <span className="tpH__parent">Ông Trần Văn Tuấn</span>
-            <span className="tpH__parent">Bà Trần Thị Mai</span>
+            <span className="tpH__parent">{pg[0]}</span>
+            <span className="tpH__parent">{pg[1]}</span>
           </div>
           <div className="tpH__divider" />
           <div>
             <span className="tpH__fam">Nhà gái</span>
-            <span className="tpH__parent">Ông Lê Văn Hùng</span>
-            <span className="tpH__parent">Bà Hồ Thị Lan</span>
+            <span className="tpH__parent">{pb[0]}</span>
+            <span className="tpH__parent">{pb[1]}</span>
           </div>
         </div>
         <div className="tpH__foot">
@@ -274,7 +280,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
           <br />
           <span>{b}</span>
         </div>
-        <svg className="tpI__branch1" viewBox="0 0 100 60" fill="none" stroke={deep} strokeWidth="1.1" strokeLinecap="round">
+        <svg className="tpI__branch1" viewBox="0 0 100 60" fill="none" style={{ stroke: deep }} strokeWidth="1.1" strokeLinecap="round">
           <path d="M95 8 C70 4 55 18 62 30 C68 40 84 36 82 26 C80 18 70 20 71 27" />
           <path d="M95 20 C78 20 70 32 76 42 C82 52 96 48 94 40" />
           <path d="M60 30 C40 34 30 50 10 52" />
@@ -282,7 +288,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         </svg>
         <div className="tpI__band" />
         <span className="tpI__xi">囍</span>
-        <svg className="tpI__branch2" viewBox="0 0 100 60" fill="none" stroke={deep} strokeWidth="1" strokeLinecap="round">
+        <svg className="tpI__branch2" viewBox="0 0 100 60" fill="none" style={{ stroke: deep }} strokeWidth="1" strokeLinecap="round">
           <path d="M5 50 C20 30 40 30 44 42 C47 52 34 56 30 48 C27 42 34 38 38 43" />
           <path d="M10 58 C30 48 55 50 70 40 C80 33 92 36 95 30" />
           <circle cx="72" cy="22" r="6" />
@@ -303,10 +309,10 @@ export function ThiepPreview(p: ThiepPreviewProps) {
           <span className="tpJ__xi">囍</span>
           <span className="tpJ__name">{a}</span>
         </div>
-        <svg className="tpJ__orn" viewBox="0 0 100 20" fill="none" stroke={gold} strokeWidth=".5">
+        <svg className="tpJ__orn" viewBox="0 0 100 20" fill="none" style={{ stroke: gold }} strokeWidth=".5">
           <path d="M0 10 C15 2 30 18 45 8" />
           <path d="M100 10 C85 2 70 18 55 8" />
-          <circle cx="50" cy="8" r="1.2" fill={gold} />
+          <circle cx="50" cy="8" r="1.2" style={{ fill: gold }} />
         </svg>
         <div className="tpJ__arch">
           <div className="tpJ__photo">{S(ph, "Ảnh cưới")}</div>

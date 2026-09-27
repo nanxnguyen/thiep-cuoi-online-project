@@ -6,7 +6,6 @@ import { resolveGuestToken } from "@/lib/server/guests";
 import { getPublicInvitation } from "@/lib/server/invitations";
 import { createAdminClient, createAnonClient } from "@/lib/server/supabase";
 import { earliestEvent, formatDateVi } from "@/lib/datetime";
-import { fontClassesFor } from "@/lib/fonts";
 import { resolveLocale } from "@/lib/i18n";
 import { isValidSlug } from "@/lib/slug";
 import { SITE_URL } from "@/lib/site";
@@ -81,7 +80,6 @@ export default async function InvitePage({ params, searchParams }: Props) {
   const toggleHref = `?${toggleParams.toString()}`;
 
   return (
-    <div className={fontClassesFor(template)}>
       <InvitationRenderer
         mode="live"
         invitationId={dto.id}
@@ -94,6 +92,5 @@ export default async function InvitePage({ params, searchParams }: Props) {
         locale={locale}
         toggleHref={toggleHref}
       />
-    </div>
   );
 }

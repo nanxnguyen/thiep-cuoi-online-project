@@ -97,8 +97,8 @@ export type GuestInput = {
   note?: string;
 };
 export type GuestImportResult = { created: number; errors: { index: number; message: string }[] };
-export type AccountUser = { id: string; email: string };
-export type AuthResponse = { accessToken: string; user: AccountUser };
+export type AccountUser = { id: string; email: string; avatarUrl?: string };
+export type AuthResponse = { accessToken?: string; user: AccountUser; emailConfirmationRequired?: boolean };
 export type AccountInvitation = { id: string; slug: string; templateId: string; published: boolean; updatedAt: string; groomName: string; brideName: string; weddingDate: string; paletteKey: string };
 
 export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => fetch(...a)) {
@@ -147,6 +147,11 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
       return call<{ url: string }>(`/api/invitations/${id}/media`, { method: "POST", body: form }, key);
     },
     getResponses: (id: string, key: string) => call<ResponsesDto>(`/api/invitations/${id}/responses`, {}, key),
+    deleteInvitation: (id: string) => call<void>(`/api/invitations/${id}`, { method: "DELETE" }),
+    getViewSummary: (id: string) => call<{ views: number; visitors: number }>(`/api/invitations/${id}/analytics`, { cache: "no-store" }),
+    forgotPassword: (email: string) => call<{ sent: boolean }>("/api/auth/forgot-password", json("POST", { email })),
+    resendVerification: (email: string) => call<{ sent: boolean }>("/api/auth/resend-verification", json("POST", { email })),
+    resetPassword: (password: string) => call<{ updated: boolean }>("/api/auth/reset-password", json("POST", { password })),
     setWishHidden: (id: string, key: string, wishId: string, hidden: boolean) =>
       call<void>(`/api/invitations/${id}/wishes/${wishId}`, json("PATCH", { hidden }), key),
     setWishModeration: (id: string, key: string, wishId: string, patch: { hidden?: boolean; approved?: boolean }) =>

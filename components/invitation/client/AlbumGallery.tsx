@@ -21,7 +21,7 @@ export function AlbumGallery({ photos, locale = "vi" }: { photos: Photo[]; local
     <>
       <ul className="inv-album">
         {photos.map((p, i) => (
-          <li key={`${p.url}-${i}`}>
+          <li key={`${p.url}-${i}`} data-big={(i === 0 && photos.length > 3) || undefined}>
             <button type="button" className="inv-photo" aria-label={dict.viewPhotoLabel(i + 1, photos.length)} onClick={() => setIndex(i)}>
               {/* Plain <img>: album URLs are user-uploaded storage URLs, not known to next/image. */}
               <img src={p.url} alt={alt(p, i)} loading="lazy" decoding="async" />

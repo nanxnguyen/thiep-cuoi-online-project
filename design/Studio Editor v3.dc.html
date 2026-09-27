@@ -22,6 +22,7 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-b
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;scroll-behavior:auto !important}}
 </style>
+<script src="motion.js" data-lite=""></script>
 </helmet>
 <div style="height:100vh;display:flex;flex-direction:column;overflow:hidden">
 
@@ -305,9 +306,9 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-b
                 <sc-if value="{{ act.couple }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
                 <span style="font-size:10px;letter-spacing:.35em;opacity:.7">CÔ DÂU &amp; CHÚ RỂ</span>
                 <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;width:100%">
-                  <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="width:112px;height:140px;border-radius:56px 56px 8px 8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="ed3-groom" shape="rect" placeholder="Chú rể"></image-slot></div><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:.75">{{ rankB }}</span><span style="font-family:{{ hf }};font-size:21px;line-height:1.2">{{ b }}</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="width:112px;height:140px;border-radius:56px 56px 8px 8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="ed3-groom" src="assets/photos/vest-xanh-navy.jpg" shape="rect" placeholder="Chú rể"></image-slot></div><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:.75">{{ rankB }}</span><span style="font-family:{{ hf }};font-size:21px;line-height:1.2">{{ b }}</span></div>
                   <span style="font-family:'Great Vibes',cursive;font-size:34px;color:{{ c.gold }}">&amp;</span>
-                  <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="width:112px;height:140px;border-radius:56px 56px 8px 8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="ed3-bride" shape="rect" placeholder="Cô dâu"></image-slot></div><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:.75">{{ rankA }}</span><span style="font-family:{{ hf }};font-size:21px;line-height:1.2">{{ a }}</span></div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:10px"><div style="width:112px;height:140px;border-radius:56px 56px 8px 8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="ed3-bride" src="assets/photos/studio-hoa-trang.jpg" shape="rect" placeholder="Cô dâu"></image-slot></div><span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;opacity:.75">{{ rankA }}</span><span style="font-family:{{ hf }};font-size:21px;line-height:1.2">{{ a }}</span></div>
                 </div>
               </section>
 
@@ -381,7 +382,7 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-b
                   <sc-if value="{{ act.album }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:8px;left:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:#a3161c;color:#fff">ĐANG SỬA</span></sc-if>
                   <span style="font-family:{{ hf }};font-size:26px;text-align:center">Khoảnh khắc</span>
                   <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:104px;gap:6px">
-                    <sc-for list="{{ album }}" as="p" hint-placeholder-count="6"><div style="grid-column:{{ p.span }};grid-row:{{ p.span }};border-radius:8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="{{ p.id }}" shape="rect" placeholder="Ảnh"></image-slot></div></sc-for>
+                    <sc-for list="{{ album }}" as="p" hint-placeholder-count="6"><div style="grid-column:{{ p.span }};grid-row:{{ p.span }};border-radius:8px;overflow:hidden;position:relative;background:{{ c.tint }}"><image-slot id="{{ p.id }}" src="{{ p.src }}" shape="rect" placeholder="Ảnh"></image-slot></div></sc-for>
                   </div>
                 </section>
               </sc-if>
@@ -660,7 +661,7 @@ class Component extends DCLogic {
       tgMod: { ...this.sw(s.moderate), fn: () => this.setState(st => ({ moderate: !st.moderate })) },
       cd: [[Math.floor(diff / 86400), 'Ngày'], [Math.floor(diff % 86400 / 3600), 'Giờ'], [Math.floor(diff % 3600 / 60), 'Phút'], [diff % 60, 'Giây']].map(([v, l]) => ({ v: pad(v), l })),
       albumOpts: [3, 6, 9].map(n => { const a = n === s.albumN; return { label: `${n} ảnh`, bg: a ? '#1a1412' : '#fff', fg: a ? '#fff' : '#1a1412', bd: a ? '#1a1412' : '#ddd2c4', pick: () => this.setState({ albumN: n }) }; }),
-      album: Array.from({ length: s.albumN }, (_, i) => ({ id: `ed3-album-${i}`, span: i === 0 && s.albumN > 3 ? 'span 2' : 'auto' })),
+      album: Array.from({ length: s.albumN }, (_, i) => ({ id: `ed3-album-${i}`, src: 'assets/photos/' + ['lau-dai-trang','studio-hoa-trang','hoa-hong-phan','o-hoa','sofa-han-quoc','om-hem-nui','vuon-xanh','han-quoc-toi-gian','retro-pho-cho'][i] + '.jpg', span: i === 0 && s.albumN > 3 ? 'span 2' : 'auto' })),
       tracks: TRACKS.map(([name, mood, len], i) => { const a = i === s.track; return { name, mood, len, bg: a ? '#faf7f2' : '#fff', iconBg: a ? '#a3161c' : '#f4f0e9', iconFg: a ? '#fff' : '#5e534b', icon: a ? '❚❚' : '▶', pick: () => this.setState({ track: i }) }; }),
       eqEl: this.eq(), musicRing: edit && s.sec === 'music' ? '3px' : '0px',
       qOpts: Q.map(([k, label]) => ({ label, ...this.sw(s.qs[k]), fn: () => this.setState(st => ({ qs: { ...st.qs, [k]: !st.qs[k] } })) })),

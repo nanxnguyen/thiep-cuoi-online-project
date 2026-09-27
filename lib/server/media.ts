@@ -63,3 +63,13 @@ export async function uploadMedia(
   if (error) throw new HttpError(502, "Không lưu được file lên kho lưu trữ, hãy thử lại.");
   return { url: client.storage.from("media").getPublicUrl(path).data.publicUrl };
 }
+
+export async function deleteInvitationMedia(client: SupabaseClient, invitationId: string): Promise<void> {
+  // ponytail: one-level listing capped at 1000 objects; add paginated cleanup if media volume grows beyond this.
+  const { data, error } = await client.storage.from("media").list(invitationId, { limit: 1000 });
+  if (error) throw new HttpError(502, "Chưa dọn được file của thiệp.");
+  const paths = (data ?? []).map((item) => `${invitationId}/${item.name}`);
+  if (!paths.length) return;
+  const { error: removeError } = await client.storage.from("media").remove(paths);
+  if (removeError) throw new HttpError(502, "Chưa dọn được file của thiệp.");
+}

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { contentSchema } from "@/lib/content";
-import { getInvitation, updateInvitation } from "@/lib/server/invitations";
+import { deleteInvitation, getInvitation, updateInvitation } from "@/lib/server/invitations";
+import { requireUser } from "@/lib/server/auth";
+import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
 import { parseJson, routeResponse } from "@/lib/server/http";
 import { invitationRequestAccess } from "@/lib/server/invitation-request";
 
@@ -26,5 +28,15 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const input = await parseJson(request, patchSchema);
     const auth = await invitationRequestAccess(request, id);
     return auth.applyCookies(NextResponse.json(await updateInvitation(auth.admin, id, input, auth.editKey, auth.userId)));
+  });
+}
+
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  return routeResponse(request, async () => {
+    const { id } = await context.params;
+    const { client, applyCookies } = createRouteClient(request);
+    const user = await requireUser(client);
+    await deleteInvitation(createAdminClient(), id, user.id);
+    return applyCookies(new NextResponse(null, { status: 204 }));
   });
 }

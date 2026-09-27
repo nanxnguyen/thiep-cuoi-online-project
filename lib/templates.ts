@@ -1,13 +1,11 @@
 export const archetypes = ["editorial", "minimal", "classic", "botanical", "traditional", "korean"] as const;
 export type Archetype = (typeof archetypes)[number];
-export type FontKey = "playfair" | "fraunces" | "cormorant" | "newsreader" | "notoDisplay" | "jakarta" | "allura";
 export type Palette = { bg: string; surface: string; ink: string; muted: string; accent: string; accentInk: string };
 export type ColorKey = "do" | "dodam" | "nau" | "lam" | "tim" | "xanh" | "hong" | "vang" | "oliu" | "cam" | "muc";
 export type CoverFamily = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O";
 export type Template = {
   id: string; name: string; family: CoverFamily; archetype: Archetype; blurb: string;
   colors: readonly ColorKey[]; palette: Palette;
-  fonts: { display: FontKey; body: FontKey; script?: FontKey };
 };
 
 // Color tokens transcribed from design/Mau Thiep v2.dc.html.
@@ -90,16 +88,11 @@ export function getPalette(template: Pick<Template, "family" | "colors">, key = 
 }
 
 export const templates: readonly Template[] = catalog.map(([id, name, family, archetype, blurb, paletteKeys]) => {
-  const t = { id, name, family, archetype, blurb, colors: paletteKeys, fonts: { display: "playfair" as const, body: "jakarta" as const } };
+  const t = { id, name, family, archetype, blurb, colors: paletteKeys };
   return { ...t, palette: getPalette(t) };
 });
 
 export const getTemplate = (id: string): Template | undefined => templates.find((t) => t.id === (legacy.get(id) ?? id));
-
-export const FONT_VARS: Record<FontKey, string> = {
-  playfair: "var(--font-playfair)", fraunces: "var(--font-fraunces)", cormorant: "var(--font-cormorant)",
-  newsreader: "var(--font-newsreader)", notoDisplay: "var(--font-noto-display)", jakarta: "var(--font-jakarta)", allura: "var(--font-allura)",
-};
 
 /** Gallery card data from design/Mau Thiep v2.dc.html (T): style/motif labels, badge, popularity and the sample couple,
  * date and place each card previews with. Keyed by template id. */

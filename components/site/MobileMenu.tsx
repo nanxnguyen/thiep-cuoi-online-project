@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
+import type { ReactNode } from "react";
 
 // The phone menu: a native <details> (works without JS, keyboard-accessible). Keyed by the path so it closes itself
 // after a link is followed. Hidden on wide screens, where the inline nav is shown instead.
-export function MobileMenu({ links }: { links: readonly { href: string; label: string }[] }) {
+export function MobileMenu({ links, extra }: { links: readonly { href: string; label: string }[]; extra?: ReactNode }) {
   const path = usePathname();
   return (
     <details className="nav-menu" key={path}>
@@ -19,6 +20,7 @@ export function MobileMenu({ links }: { links: readonly { href: string; label: s
             {l.label}
           </Link>
         ))}
+        {extra}
       </nav>
     </details>
   );

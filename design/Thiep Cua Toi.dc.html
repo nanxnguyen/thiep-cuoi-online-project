@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,16px)}100%{opacity:1;transform:translate(-50%,0)}}
+</style>
+<script src="motion.js"></script>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column">
+  <dc-import name="Site Header" active="mine" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+
+  <sc-if value="{{ guest }}" hint-placeholder-val="{{ false }}">
+    <section style="flex:1;display:grid;place-items:center;padding:96px 32px">
+      <div style="max-width:460px;display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;animation:fadeUp .7s both">
+        <span style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600">THIỆP CỦA TÔI</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(36px,4.4vw,52px);line-height:1.08">Đăng nhập để xem <em style="color:#8a6425">thiệp của bạn</em></h1>
+        <p style="margin:0;font-size:15px;line-height:1.7;color:#5e534b;text-wrap:pretty">Mọi thiệp bạn tạo khi đã đăng nhập sẽ nằm ở đây, kèm số khách xác nhận và lời chúc.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+          <button onClick="{{ openLogin }}" style="font-family:inherit;font-size:15px;font-weight:500;padding:15px 28px;border-radius:999px;border:0;background:#a3161c;color:#fff;cursor:pointer" style-hover="background:#7d0f14">Đăng nhập với Google</button>
+          <a href="Studio.dc.html" style="font-size:15px;padding:15px 24px;border-radius:999px;border:1px solid #1a1412;color:#1a1412" style-hover="background:#1a1412;color:#f8f4ee">Tạo thiệp trước</a>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}">
+    <main style="flex:1;width:100%;max-width:1180px;margin:0 auto;padding:72px 32px 120px;display:flex;flex-direction:column;gap:40px">
+      <div style="display:flex;align-items:end;gap:24px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:12px;letter-spacing:.24em;color:#8a6425;font-weight:600">XIN CHÀO, {{ hello }}</span>
+          <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(42px,5vw,64px);line-height:1">Thiệp của tôi</h1>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid #e8dfd3;padding-bottom:20px">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+          <button onClick="{{ f.pick }}" style="font-family:inherit;font-size:14px;padding:9px 16px;border-radius:999px;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s">{{ f.label }}<span style="font-size:12px;opacity:.7">{{ f.n }}</span></button>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:28px">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+          <article style="background:#fff;border-radius:20px;overflow:hidden;border:1px solid #efe6d9;display:flex;flex-direction:column;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s" style-hover="transform:translateY(-6px);box-shadow:0 30px 50px -24px rgba(26,20,18,.45)">
+            <div style="position:relative;background:{{ c.stage }};padding:32px 0 0;display:flex;justify-content:center;overflow:hidden;height:300px">
+              <div style="width:190px;flex:none;filter:drop-shadow(0 18px 22px rgba(26,20,18,.22))">
+                <dc-import name="Thiep Preview" family="{{ c.family }}" deep="{{ c.deep }}" paper="{{ c.paper }}" gold="{{ c.gold }}" a="{{ c.a }}" b="{{ c.b }}" date="{{ c.date }}" place="{{ c.place }}" fit="{{ true }}" max-w="100%" radius="10px" hint-size="190px,338px"></dc-import>
+              </div>
+              <span style="position:absolute;top:16px;left:16px;font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;background:{{ c.stBg }};color:{{ c.stFg }}">{{ c.status }}</span>
+            </div>
+            <div style="padding:22px 22px 20px;display:flex;flex-direction:column;gap:16px;border-top:1px solid #efe6d9">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:12px;letter-spacing:.14em;color:#8a7d72;font-weight:500">{{ c.kind }}</span>
+                <span style="font-family:'Playfair Display',serif;font-size:22px;line-height:1.2">{{ c.a }} &amp; {{ c.b }}</span>
+                <span style="font-size:13px;color:#5e534b">{{ c.meta }}</span>
+              </div>
+              <sc-if value="{{ c.live }}" hint-placeholder-val="{{ true }}">
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #efe6d9;border-bottom:1px solid #efe6d9">
+                  <sc-for list="{{ c.stats }}" as="s" hint-placeholder-count="3">
+                    <div style="padding:12px 0;display:flex;flex-direction:column;gap:2px"><span style="font-family:'Playfair Display',serif;font-size:22px">{{ s.v }}</span><span style="font-size:12px;color:#8a7d72">{{ s.l }}</span></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ c.draft }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid #efe6d9;border-bottom:1px solid #efe6d9">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;color:#8a7d72"><span>Đã hoàn thiện</span><span style="color:#1a1412;font-weight:500">{{ c.pct }}%</span></div>
+                  <div style="height:6px;border-radius:999px;background:#efe6d9;overflow:hidden"><div style="height:100%;width:{{ c.pctW }};background:#c9a86a;border-radius:999px"></div></div>
+                </div>
+              </sc-if>
+              <div style="display:flex;gap:8px;align-items:center">
+                <a href="Studio Editor v3.dc.html" style="flex:1;text-align:center;padding:11px;border-radius:999px;background:#1a1412;color:#fff;font-size:13px;font-weight:500" style-hover="color:#fff;background:#3a2e28">Chỉnh sửa</a>
+                <a href="{{ c.view }}" style="flex:1;text-align:center;padding:11px;border-radius:999px;border:1px solid #ddd2c4;color:#1a1412;font-size:13px" style-hover="color:#1a1412;border-color:#1a1412">Xem thiệp</a>
+                <button onClick="{{ c.copy }}" title="Sao chép link" aria-label="Sao chép link" style="width:40px;height:40px;flex:none;border-radius:50%;border:1px solid #ddd2c4;background:#fff;cursor:pointer;display:grid;place-items:center" style-hover="border-color:#1a1412"><svg width="15" height="15" viewBox="0 0 16 16"><path d="M6.5 9.5a3 3 0 004.2 0l2.3-2.3a3 3 0 00-4.2-4.2l-.8.8M9.5 6.5a3 3 0 00-4.2 0L3 8.8A3 3 0 007.2 13l.8-.8" fill="none" stroke="#1a1412" stroke-width="1.3" stroke-linecap="round"></path></svg></button>
+                <button onClick="{{ c.remove }}" title="Xoá" aria-label="Xoá thiệp" style="width:40px;height:40px;flex:none;border-radius:50%;border:1px solid #ddd2c4;background:#fff;cursor:pointer;display:grid;place-items:center" style-hover="border-color:#a3161c;background:#f5e3e1"><svg width="15" height="15" viewBox="0 0 16 16"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5" fill="none" stroke="#8e1b1f" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+        <a href="Studio.dc.html" style="min-height:300px;border-radius:20px;border:1.5px dashed #d8ccbc;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#5e534b;transition:border-color .25s,background .25s" style-hover="border-color:#a3161c;background:#fff;color:#a3161c">
+          <span style="width:52px;height:52px;border-radius:50%;background:#efe6d9;display:grid;place-items:center;font-size:24px;color:#a3161c">+</span>
+          <span style="font-size:15px;font-weight:500">Tạo thiệp mới</span>
+          <span style="font-size:13px;color:#8a7d72">Chọn mẫu, điền thông tin, gửi link</span>
+        </a>
+      </div>
+
+      <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:0;font-size:14px;color:#8a7d72;text-align:center">Chưa có thiệp nào ở mục này.</p>
+      </sc-if>
+
+      <div style="background:#efe6d9;border-radius:20px;padding:28px 32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px;align-items:center">
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'Playfair Display',serif;font-size:22px">Đã tạo thiệp khi chưa đăng nhập?</span><span style="font-size:14px;line-height:1.6;color:#5e534b">Dán link sửa có dạng <code style="background:#f8f4ee;padding:2px 6px;border-radius:4px">…#k=…</code> để đưa thiệp vào danh sách.</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><input value="{{ claim }}" onInput="{{ onClaim }}" placeholder="https://moc.vn/studio/abc#k=…" style="flex:1;min-width:200px;font-family:inherit;font-size:14px;padding:13px 18px;border-radius:999px;border:1px solid #d8ccbc;background:#f8f4ee;outline:none"><button onClick="{{ doClaim }}" style="font-family:inherit;font-size:14px;font-weight:500;padding:13px 22px;border-radius:999px;border:0;background:#1a1412;color:#fff;cursor:pointer">Nhận thiệp</button></div>
+      </div>
+    </main>
+  </sc-if>
+
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:28px;z-index:90;background:#1c1012;color:#f1e7d6;border-radius:999px;padding:12px 14px 12px 22px;font-size:14px;display:flex;align-items:center;gap:14px;box-shadow:0 18px 36px -18px rgba(26,20,18,.6);animation:toast .35s cubic-bezier(.2,.7,.2,1) both">
+      <span>{{ toastText }}</span>
+      <sc-if value="{{ canUndo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ undo }}" style="font-family:inherit;font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;border:0;background:#f1e7d6;color:#1c1012;cursor:pointer">Hoàn tác</button></sc-if>
+    </div>
+  </sc-if>
+
+  <dc-import name="Site Footer" show-cta="{{ false }}" hint-size="100%,360px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const readUser = () => { try { return JSON.parse(localStorage.getItem('moc_user')) || null; } catch (e) { return null; } };
+const SEED = [
+  { id: 1, kind: 'TIỆC CƯỚI', a: 'Thu Hà', b: 'Quốc Bảo', family: 'A', deep: '#8e1b1f', paper: '#f7efe3', gold: '#e0bb74', stage: '#f5ece2', date: '12 · 12 · 2026', place: 'HÀ NỘI', meta: 'Mẫu Song Hỷ · 12/12/2026 · Hà Nội', status: 'Đã xuất bản', rsvp: 96, guests: 128, wish: 41, views: '1,2k', pct: 100, view: 'Thiep Mau Day Du.dc.html' },
+  { id: 2, kind: 'LỄ VU QUY', a: 'Thu Hà', b: 'Quốc Bảo', family: 'C', deep: '#24493a', paper: '#eef1ea', gold: '#c9a86a', stage: '#e9eee5', date: '10 · 12 · 2026', place: 'NAM ĐỊNH', meta: 'Mẫu Hoa Nhài · 10/12/2026 · Nam Định', status: 'Đã xuất bản', rsvp: 54, guests: 80, wish: 18, views: '640', pct: 100, view: 'Thiep Khach.dc.html' },
+  { id: 3, kind: 'TIỆC BÁO HỶ', a: 'Thu Hà', b: 'Quốc Bảo', family: 'F', deep: '#a4505f', paper: '#fbf1ef', gold: '#d8a977', stage: '#f7e9e6', date: '03 · 01 · 2027', place: 'TP. HỒ CHÍ MINH', meta: 'Mẫu Soft Type · 03/01/2027 · TP. HCM', status: 'Bản nháp', pct: 60, view: 'Thiep Khach.dc.html' },
+];
+class Component extends DCLogic {
+  state = { user: readUser(), filter: 'all', items: SEED, claim: '', toast: null };
+  componentDidMount() {
+    this.sync = () => this.setState({ user: readUser() });
+    addEventListener('moc-auth', this.sync); addEventListener('storage', this.sync);
+  }
+  componentWillUnmount() { removeEventListener('moc-auth', this.sync); removeEventListener('storage', this.sync); clearTimeout(this.tt); }
+  flash(text, undo) { clearTimeout(this.tt); this.setState({ toast: { text, undo } }); this.tt = setTimeout(() => this.setState({ toast: null }), 4000); }
+  renderVals() {
+    const s = this.state, u = s.user;
+    const pub = s.items.filter(i => i.pct === 100), dr = s.items.filter(i => i.pct < 100);
+    const list = s.filter === 'pub' ? pub : s.filter === 'draft' ? dr : s.items;
+    const filters = [['all','Tất cả',s.items.length],['pub','Đã xuất bản',pub.length],['draft','Bản nháp',dr.length]].map(([k,l,n]) => {
+      const on = s.filter === k;
+      return { label: l, n, bg: on ? '#1a1412' : 'transparent', fg: on ? '#f8f4ee' : '#1a1412', bd: on ? '#1a1412' : '#ddd2c4', pick: () => this.setState({ filter: k }) };
+    });
+    const cards = list.map(c => {
+      const live = c.pct === 100;
+      return { ...c, live, draft: !live, pctW: c.pct + '%',
+        stBg: live ? '#e7eee6' : '#efe6d9', stFg: live ? '#24493a' : '#8a7d72',
+        stats: live ? [{ v: c.rsvp + '/' + c.guests, l: 'Xác nhận' }, { v: c.wish, l: 'Lời chúc' }, { v: c.views, l: 'Lượt xem' }] : [],
+        copy: () => { const url = 'https://moc.vn/' + c.a.toLowerCase().replace(/\s+/g,'') + '-' + c.b.toLowerCase().replace(/\s+/g,'') + '/' + c.id; try { navigator.clipboard.writeText(url); } catch (e) {} this.flash('Đã sao chép link thiệp'); },
+        remove: () => { const prev = s.items; this.setState({ items: prev.filter(i => i.id !== c.id) }); this.flash('Đã xoá thiệp ' + c.kind.toLowerCase(), () => this.setState({ items: prev, toast: null })); },
+      };
+    });
+    return {
+      guest: !u, authed: !!u, hello: (u?.name || '').split(' ').pop().toUpperCase(),
+      filters, cards, empty: !cards.length,
+      openLogin: () => dispatchEvent(new Event('moc-open-login')),
+      claim: s.claim, onClaim: e => this.setState({ claim: e.target.value }),
+      doClaim: () => {
+        if (!s.claim.includes('#k=')) { this.flash('Link chưa đúng dạng …#k=…'); return; }
+        const n = { id: Date.now(), kind: 'THIỆP ĐÃ NHẬN', a: 'Thu Hà', b: 'Quốc Bảo', family: 'B', deep: '#1f3a5f', paper: '#eef1f4', gold: '#c9ab72', stage: '#e8ecf1', date: 'CHƯA ĐẶT NGÀY', place: '', meta: 'Mẫu Lam Ngọc · chưa đặt ngày', status: 'Bản nháp', pct: 30, view: 'Thiep Khach.dc.html' };
+        this.setState({ claim: '', filter: 'all', items: [n, ...s.items] }); this.flash('Đã nhận thiệp vào tài khoản');
+      },
+      hasToast: !!s.toast, toastText: s.toast?.text, canUndo: !!s.toast?.undo, undo: () => s.toast?.undo?.(),
+    };
+  }
+}
+</script>
+</body>
+</html>

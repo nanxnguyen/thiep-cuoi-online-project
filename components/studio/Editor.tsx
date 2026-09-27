@@ -7,32 +7,18 @@ import { api, ApiError } from "@/lib/api";
 import { persistable, type Content } from "@/lib/content";
 import { createLocalStore, invitationTitle, parseEditLink } from "@/lib/local-invitations";
 import { DEFAULT_TEMPLATE_ID, getTemplate } from "@/lib/templates";
-import { SECTION_GROUPS, SECTIONS, completion, missingReason, type SectionItem } from "@/lib/editor-sections";
+import { OPTIONAL, SECTION_GROUPS, SECTIONS, isOn, missingReason, progress, toggleOn, type SectionItem } from "@/lib/editor-sections";
 import { GuestsPanel } from "./GuestsPanel";
-import { CouplePanel } from "./panels/CouplePanel";
-import { EventsPanel } from "./panels/EventsPanel";
-import { GiftPanel } from "./panels/GiftPanel";
-import { MediaPanel } from "./panels/MediaPanel";
-import { RsvpPanel } from "./panels/RsvpPanel";
-import { TemplatePanel } from "./panels/TemplatePanel";
 import { PublishDialog, type PublishMeta } from "./PublishDialog";
+import { SectionForm } from "./SectionForm";
 import { ResponsesPanel } from "./ResponsesPanel";
 import { useAutosave, type SaveStatus } from "./useAutosave";
 
 type Draft = { templateId: string; content: Content };
 type Gate = "loading" | "nokey" | "notfound" | "error" | "ready";
 
-// Sections with an on/off switch that maps to a real content flag (the design has more; the rest wait for Supabase).
-const TOGGLES: Record<string, (c: Content) => boolean> = {
-  rsvp: (c) => c.rsvp.enabled,
-  guestbook: (c) => c.guestbook.enabled,
-  gift: (c) => c.gift.enabled,
-};
-const toggle = (key: string, c: Content): Content =>
-  key === "rsvp" ? { ...c, rsvp: { ...c.rsvp, enabled: !c.rsvp.enabled } }
-  : key === "guestbook" ? { ...c, guestbook: { enabled: !c.guestbook.enabled } }
-  : key === "gift" ? { ...c, gift: { ...c.gift, enabled: !c.gift.enabled } }
-  : c;
+// The design's 14 parts, in order (the "Quản lý" tools after them are not steps).
+const STEPS = SECTION_GROUPS.slice(0, 4).flatMap((g) => g.items);
 const GUESTS = ["Bạn thân mến", "Cô Lan & gia đình", "Anh Tuấn", "Chú Hải"];
 
 const STATUS: Record<SaveStatus, string> = { idle: "Đã lưu", saved: "Đã lưu", dirty: "Chưa lưu…", saving: "Đang lưu…", error: "Chưa lưu được" };
@@ -49,7 +35,7 @@ export function Editor({ id }: { id: string }) {
   const [mode, setMode] = useState<"edit" | "guest">("edit");
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
   const [sheet, setSheet] = useState<null | "outline" | "form">(null);
-  const [guestIdx, setGuestIdx] = useState(1);
+  const [guestIdx, setGuestIdx] = useState(0);
   const [narrow, setNarrow] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -121,10 +107,9 @@ export function Editor({ id }: { id: string }) {
     return () => mq.removeEventListener("change", on);
   }, []);
 
-  // Selecting a part scrolls the form to its PanelSection and the preview to the matching block, marked "ĐANG SỬA".
+  // Selecting a part resets the form scroll and scrolls the preview to the matching block, marked "ĐANG SỬA".
   useEffect(() => {
-    if (sec.anchor) formRef.current?.querySelector(`[data-section="${sec.anchor}"]`)?.scrollIntoView({ block: "start", behavior: "smooth" });
-    else formRef.current?.scrollTo({ top: 0 });
+    formRef.current?.scrollTo({ top: 0 });
   }, [sec]);
   useEffect(() => {
     const root = previewRef.current;
@@ -139,8 +124,7 @@ export function Editor({ id }: { id: string }) {
   }, [sec, mode, draft]);
 
   const setContent = (content: Content) => setDraft((d) => d && { ...d, content });
-  const setTemplate = (templateId: string) => setDraft((d) => d && { ...d, templateId, content: { ...d.content, paletteKey: "" } });
-  const setPalette = (paletteKey: string) => setDraft((d) => d && { ...d, content: { ...d.content, paletteKey } });
+  const setTemplate = (templateId: string) => setDraft((d) => d && { ...d, templateId, content: { ...d.content, paletteKey: getTemplate(templateId)?.colors.includes(d.content.paletteKey as never) ? d.content.paletteKey : "" } });
 
   function submitLink(e: FormEvent) {
     e.preventDefault();
@@ -218,7 +202,8 @@ export function Editor({ id }: { id: string }) {
   if (!draft || !meta) return null;
   const template = getTemplate(draft.templateId) ?? getTemplate(DEFAULT_TEMPLATE_ID)!;
   const media = { invitationId: id, editKey };
-  const pct = completion(draft.content);
+  const prog = progress(draft.content);
+  const pct = prog.pct;
   const missing = SECTIONS.map((x) => ({ x, why: missingReason(x.key, draft.content) })).filter((m) => m.why);
   const go = (x: SectionItem) => {
     setSec(x);
@@ -235,8 +220,9 @@ export function Editor({ id }: { id: string }) {
     e.stopPropagation();
     go(hit);
   };
-  const isOn = (key: string) => (TOGGLES[key] ? TOGGLES[key](draft.content) : true);
-  const pane = (panel: string) => ({ hidden: sec.panel !== panel });
+  const on = (key: string) => isOn(key, draft.content);
+  const step = STEPS.findIndex((x) => x.key === sec.key);
+  const next = STEPS[step + 1];
 
   return (
     <div className="ed" data-mode={mode} data-sheet={sheet ?? ""}>
@@ -260,14 +246,18 @@ export function Editor({ id }: { id: string }) {
             </span>
           </div>
           <div className="ed-ring" title="Mức độ hoàn thiện">
-            <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+            <svg width="34" height="34" viewBox="0 0 34 34" role="img" aria-label={`Hoàn thiện ${pct}%`}>
               <circle cx="17" cy="17" r="14" className="ed-ring__track" />
-              <circle cx="17" cy="17" r="14" className="ed-ring__value" strokeDasharray={`${(pct / 100) * 88} 88`} />
+              <circle cx="17" cy="17" r="14" className="ed-ring__value" strokeDasharray="88" strokeDashoffset={88 * (1 - pct / 100)} transform="rotate(-90 17 17)" />
+              <text x="17" y="21" textAnchor="middle">
+                {pct}
+              </text>
             </svg>
-            <span className="ed-ring__pct">{pct}%</span>
             {!narrow && (
               <span className="ed-ring__label">
-                {pct === 100 ? "Đã hoàn thiện" : `${missing.length} mục còn thiếu`}
+                {prog.done}/{prog.total} mục
+                <br />
+                <span>đã hoàn thiện</span>
               </span>
             )}
           </div>
@@ -290,7 +280,7 @@ export function Editor({ id }: { id: string }) {
             </div>
           )}
           <button type="button" className="button-primary ed-publish" onClick={() => setPublishOpen(true)}>
-            {meta.published ? "Chia sẻ" : "Xuất bản"}
+            Xuất bản
           </button>
         </div>
         <div className="ed-progress" aria-hidden="true">
@@ -314,19 +304,19 @@ export function Editor({ id }: { id: string }) {
               <span>{g.label}</span>
               {g.items.map((x) => {
                 const why = missingReason(x.key, draft.content);
-                const state = x.blocked ? "blocked" : why ? "missing" : "done";
+                const state = !on(x.key) ? "off" : why ? "missing" : "done";
                 return (
                   <div className="ed-item" key={x.key} data-active={sec.key === x.key} data-state={state}>
                     <button type="button" className="ed-item__main" aria-current={sec.key === x.key ? "true" : undefined} onClick={() => go(x)}>
                       <i aria-hidden="true" />
                       <span>
                         {x.label}
-                        {why && <small>{why}</small>}
-                        {!why && TOGGLES[x.key] && !isOn(x.key) && <small>Đang tắt</small>}
+                        {state === "off" && <small>Đang ẩn</small>}
+                        {state === "missing" && <small title={why ?? undefined}>Cần bổ sung</small>}
                       </span>
                     </button>
-                    {TOGGLES[x.key] && (
-                      <button type="button" role="switch" className="ed-switch" aria-checked={isOn(x.key)} aria-label={`Bật/tắt ${x.label}`} onClick={() => setContent(toggle(x.key, draft.content))}>
+                    {OPTIONAL.has(x.key) && (
+                      <button type="button" role="switch" className="ed-switch" aria-checked={on(x.key)} aria-label={`Bật/tắt ${x.label}`} onClick={() => setContent(toggleOn(x.key, draft.content))}>
                         <i />
                       </button>
                     )}
@@ -345,10 +335,15 @@ export function Editor({ id }: { id: string }) {
                   ← Các phần
                 </button>
               )}
-              {TOGGLES[sec.key] && (
+              {step >= 0 && (
+                <span className="ed-form__step">
+                  BƯỚC {step + 1} / {STEPS.length}
+                </span>
+              )}
+              {OPTIONAL.has(sec.key) && (
                 <label className="ed-form__toggle">
-                  {isOn(sec.key) ? "Đang bật" : "Đang tắt"}
-                  <button type="button" role="switch" className="ed-switch" aria-checked={isOn(sec.key)} aria-label={`Bật/tắt ${sec.label}`} onClick={() => setContent(toggle(sec.key, draft.content))}>
+                  {on(sec.key) ? "Đang hiện" : "Đang ẩn"}
+                  <button type="button" role="switch" className="ed-switch" aria-checked={on(sec.key)} aria-label={`Bật/tắt ${sec.label}`} onClick={() => setContent(toggleOn(sec.key, draft.content))}>
                     <i />
                   </button>
                 </label>
@@ -356,39 +351,35 @@ export function Editor({ id }: { id: string }) {
             </div>
             <h1>{sec.label}</h1>
             <p>{sec.desc}</p>
-            {sec.blocked && <p className="ed-form__blocked">{sec.blocked}</p>}
           </div>
-          <div className="ed-form__body" ref={formRef} key={sec.panel} data-off={TOGGLES[sec.key] && !isOn(sec.key) ? "" : undefined}>
-            {/* Panels stay mounted and are only hidden: an upload in flight must survive a section switch. */}
-            <div className="studio-pane" {...pane("couple")}>
-              <CouplePanel content={draft.content} onChange={setContent} media={media} />
-            </div>
-            <div className="studio-pane" {...pane("events")}>
-              <EventsPanel content={draft.content} onChange={setContent} />
-            </div>
-            <div className="studio-pane" {...pane("media")}>
-              <MediaPanel content={draft.content} onChange={setContent} media={media} />
-            </div>
-            <div className="studio-pane" {...pane("rsvp")}>
-              <RsvpPanel content={draft.content} onChange={setContent} />
-            </div>
-            {sec.panel === "guests" && (
-              <div className="studio-pane">
-                <GuestsPanel id={id} editKey={editKey} published={meta.published} />
-              </div>
+          <div className="ed-form__body" ref={formRef} key={sec.key} data-off={OPTIONAL.has(sec.key) && !on(sec.key) ? "" : undefined}>
+            {step >= 0 && (
+              <SectionForm
+                sec={sec.key}
+                content={draft.content}
+                onChange={setContent}
+                templateId={draft.templateId}
+                onTemplate={setTemplate}
+                media={media}
+                guests={GUESTS}
+                guestIdx={guestIdx}
+                onGuest={setGuestIdx}
+                onResponses={() => go(SECTIONS.find((x) => x.key === "responses")!)}
+              />
             )}
-            <div className="studio-pane" {...pane("gift")}>
-              <GiftPanel content={draft.content} onChange={setContent} />
-            </div>
-            <div className="studio-pane" {...pane("template")}>
-              <TemplatePanel templateId={draft.templateId} paletteKey={draft.content.paletteKey} onTemplate={setTemplate} onPalette={setPalette} />
-            </div>
-            {sec.panel === "responses" && (
-              <div className="studio-pane">
-                <ResponsesPanel id={id} editKey={editKey} questions={draft.content.rsvp.questions} published={meta.published} />
-              </div>
-            )}
+            {sec.panel === "guests" && <GuestsPanel id={id} editKey={editKey} published={meta.published} />}
+            {sec.panel === "responses" && <ResponsesPanel id={id} editKey={editKey} questions={draft.content.rsvp.questions} published={meta.published} />}
           </div>
+          {step >= 0 && (
+            <div className="ed-form__foot">
+              <button type="button" className="ed-form__prev" disabled={step === 0} onClick={() => go(STEPS[step - 1])}>
+                ← Trước
+              </button>
+              <button type="button" className="ed-form__next" onClick={() => (next ? go(next) : setPublishOpen(true))}>
+                {next ? `Tiếp: ${next.label} →` : "Xem lại & xuất bản"}
+              </button>
+            </div>
+          )}
         </aside>
 
         <main className="ed-canvas" ref={previewRef}>
@@ -426,7 +417,7 @@ export function Editor({ id }: { id: string }) {
                   key={mode === "guest" ? `guest-${guestIdx}` : "edit"}
                   mode="preview"
                   gate={mode === "guest"}
-                  guestName={mode === "guest" ? GUESTS[guestIdx] : ""}
+                  guestName={GUESTS[guestIdx]}
                   template={template}
                   content={draft.content}
                 />

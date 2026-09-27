@@ -1,5 +1,7 @@
-import type { Faq } from "@/lib/marketing/features";
+import type { Faq } from "@/lib/marketing/help";
 import { JsonLd } from "./JsonLd";
+
+export type { Faq };
 
 // Questions as native <details> (no JS). With `schema`, the same items are also emitted as FAQPage structured data.
 export function FaqList({ items, schema = false }: { items: readonly Faq[]; schema?: boolean }) {

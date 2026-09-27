@@ -12,14 +12,13 @@ export type SectionItem = {
   panel: PanelId;
   anchor?: string;
   preview?: string;
-  blocked?: string;
 };
 
 export const SECTION_GROUPS: { label: string; items: SectionItem[] }[] = [
   {
     label: "Mở đầu",
     items: [
-      { key: "envelope", label: "Phong bì", desc: "Màn hình đầu tiên khách thấy. Tên khách hiện trên phong bì theo link riêng.", panel: "couple", anchor: "Lời mời", preview: ".inv-cover" },
+      { key: "envelope", label: "Phong bì", desc: "Màn hình đầu tiên khách thấy. Tên khách hiện trên phong bì theo link riêng.", panel: "couple", anchor: "Lời mời", preview: ".inv-envelope-sec" },
       { key: "template", label: "Mẫu & kiểu chữ", desc: "Đổi mẫu bất cứ lúc nào, nội dung đã nhập được giữ nguyên.", panel: "template", preview: ".inv-cover" },
     ],
   },
@@ -28,8 +27,8 @@ export const SECTION_GROUPS: { label: string; items: SectionItem[] }[] = [
     items: [
       { key: "couple", label: "Cô dâu & chú rể", desc: "Tên hiển thị trên bìa, phong bì và lời cảm ơn.", panel: "couple", anchor: "Cô dâu và chú rể", preview: ".inv-couple" },
       { key: "family", label: "Gia đình hai bên", desc: "Tên bố mẹ hai bên, in trang trọng như thiệp giấy.", panel: "couple", anchor: "Gia đình hai bên", preview: ".inv-family" },
-      { key: "ceremony", label: "Lễ cưới", desc: "Lễ Vu Quy, Thành Hôn hoặc Tân Hôn — ngày, giờ và nơi làm lễ.", panel: "events", preview: ".inv-events" },
-      { key: "party", label: "Tiệc cưới", desc: "Giờ đón khách, giờ khai tiệc và địa chỉ nhà hàng có chỉ đường.", panel: "events", preview: ".inv-events" },
+      { key: "ceremony", label: "Lễ cưới", desc: "Lễ Vu Quy, Thành Hôn hoặc Tân Hôn — ngày, giờ và nơi làm lễ.", panel: "events", preview: ".inv-ceremony" },
+      { key: "party", label: "Tiệc cưới", desc: "Giờ đón khách, giờ khai tiệc và địa chỉ nhà hàng có chỉ đường.", panel: "events", preview: ".inv-party" },
       { key: "schedule", label: "Lịch trình trong ngày", desc: "Các mốc trong ngày để khách biết khi nào đến và khi nào có phần chính.", panel: "events", anchor: "Lịch trình trong ngày", preview: ".inv-schedule" },
       { key: "countdown", label: "Đếm ngược", desc: "Đồng hồ đếm ngược và nút lưu ngày cưới vào lịch điện thoại.", panel: "events", preview: ".inv-countdown" },
     ],
@@ -63,9 +62,32 @@ export const SECTIONS: SectionItem[] = SECTION_GROUPS.flatMap((g) => g.items);
 
 const has = (s: string) => s.trim() !== "";
 
-// Returns why a part is incomplete, or null when it is done / optional-and-off / has no rule.
+/** Parts with an on/off switch in the outline (design SECS third column). */
+export const OPTIONAL = new Set(["envelope", "schedule", "countdown", "album", "music", "rsvp", "guestbook", "gift", "thanks"]);
+type SectionFlag = "envelope" | "schedule" | "countdown" | "album" | "music" | "thanks";
+
+export function isOn(key: string, c: Content): boolean {
+  if (key === "rsvp") return c.rsvp.enabled;
+  if (key === "guestbook") return c.guestbook.enabled;
+  if (key === "gift") return c.gift.enabled;
+  return OPTIONAL.has(key) ? c.sections[key as SectionFlag] : true;
+}
+
+export function toggleOn(key: string, c: Content): Content {
+  if (key === "rsvp") return { ...c, rsvp: { ...c.rsvp, enabled: !c.rsvp.enabled } };
+  if (key === "guestbook") return { ...c, guestbook: { ...c.guestbook, enabled: !c.guestbook.enabled } };
+  if (key === "gift") return { ...c, gift: { ...c.gift, enabled: !c.gift.enabled } };
+  if (!OPTIONAL.has(key)) return c;
+  const k = key as SectionFlag;
+  return { ...c, sections: { ...c.sections, [k]: !c.sections[k] } };
+}
+
+// Returns why a part is incomplete, or null when it is done / switched off / has no rule (design MISS).
 export function missingReason(key: string, c: Content): string | null {
+  if (!isOn(key, c)) return null;
   switch (key) {
+    case "envelope":
+      return has(c.envelope.greeting) ? null : "Chưa có lời mời";
     case "couple":
       return has(c.couple.groom.name) && has(c.couple.bride.name) ? null : "Thiếu tên cô dâu hoặc chú rể";
     case "family": {
@@ -76,10 +98,12 @@ export function missingReason(key: string, c: Content): string | null {
       return c.events.some((e) => e.kind === "ceremony" && has(e.date) && has(e.venue)) ? null : "Thiếu ngày hoặc nơi làm lễ";
     case "party":
       return c.events.some((e) => e.kind === "reception" && has(e.venue) && has(e.address)) ? null : "Thiếu nhà hàng hoặc địa chỉ";
+    case "schedule":
+      return c.schedule.length > 0 ? null : "Chưa có mốc thời gian";
     case "rsvp":
-      return !c.rsvp.enabled || has(c.rsvp.deadline) ? null : "Chưa đặt hạn phản hồi";
+      return has(c.rsvp.deadline) ? null : "Chưa đặt hạn phản hồi";
     case "gift":
-      return !c.gift.enabled || (c.gift.accounts.length > 0 && c.gift.accounts.every((a) => has(a.accountNumber))) ? null : "Chưa đủ số tài khoản";
+      return (["groom", "bride"] as const).every((h) => c.gift.accounts.some((a) => a.holder === h && has(a.accountNumber))) ? null : "Chưa đủ số tài khoản hai bên";
     case "thanks":
       return has(c.thanks.message) ? null : "Chưa có lời cảm ơn";
     default:
@@ -87,10 +111,15 @@ export function missingReason(key: string, c: Content): string | null {
   }
 }
 
-const RULED = ["couple", "family", "ceremony", "party", "rsvp", "gift", "thanks"];
+const PARTS = SECTION_GROUPS.slice(0, 4).flatMap((g) => g.items.map((i) => i.key));
 
-/** Percentage of ruled parts that are complete (design's % ring). */
+/** The design's ring: parts switched on, and how many of them are complete. */
+export function progress(c: Content): { done: number; total: number; pct: number } {
+  const enabled = PARTS.filter((k) => isOn(k, c));
+  const done = enabled.filter((k) => missingReason(k, c) === null).length;
+  return { done, total: enabled.length, pct: enabled.length ? Math.round((done / enabled.length) * 100) : 100 };
+}
+
 export function completion(c: Content): number {
-  const done = RULED.filter((k) => missingReason(k, c) === null).length;
-  return Math.round((done / RULED.length) * 100);
+  return progress(c).pct;
 }

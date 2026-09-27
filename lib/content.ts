@@ -17,7 +17,7 @@ const timeStr = z.string().regex(/^(\d{2}:\d{2})?$/);
 const id = z.string().min(1).max(40);
 
 const side = z.object({ father: text(60), mother: text(60), address: text(200) });
-const person = z.object({ name: text(60), rank: text(30).default("") });
+const person = z.object({ name: text(60), rank: text(30).default(""), photo: optionalUrl.default("") });
 
 export const eventSchema = z.object({
   id,
@@ -35,6 +35,8 @@ export const eventSchema = z.object({
 export const contentSchema = z.object({
   v: z.literal(1),
   paletteKey: z.string().max(20).regex(/^[a-z]*$/).default(""),
+  // Studio Editor v3 "Mẫu & kiểu chữ": the font the couple's names are set in.
+  nameFont: z.enum(["playfair", "cormorant", "vibes"]).default("playfair"),
   envelope: z.object({ greeting: text(120) }).default({ greeting: "Trân trọng kính mời" }),
   couple: z.object({
     groom: person,
@@ -50,15 +52,18 @@ export const contentSchema = z.object({
   schedule: z.array(z.object({ id, time: timeStr, title: text(80) })).max(MAX_SCHEDULE_ITEMS).default([]),
   album: z.array(z.object({ url: httpUrl, alt: text(120) })).max(MAX_ALBUM),
   albumLayout: z.enum(["grid", "masonry", "filmstrip"]).default("grid"),
+  // Studio Editor v3 "Số ảnh hiển thị".
+  albumCount: z.union([z.literal(3), z.literal(6), z.literal(9)]).default(6),
   music: z.object({ url: httpUrl, title: text(80) }).nullable(),
   rsvp: z.object({
     enabled: z.boolean(),
     deadline: dateStr,
+    plusOnes: z.boolean().default(true),
     questions: z
       .array(z.object({ id, label: text(120), labelEn: text(120), type: z.enum(["text", "yesno"]) }))
       .max(MAX_QUESTIONS),
   }),
-  guestbook: z.object({ enabled: z.boolean() }),
+  guestbook: z.object({ enabled: z.boolean(), moderate: z.boolean().default(true) }),
   gift: z.object({
     enabled: z.boolean(),
     note: text(300),
@@ -76,6 +81,9 @@ export const contentSchema = z.object({
   }),
   thanks: z.object({ message: text(500), messageEn: text(500) }),
   sections: z.object({
+    envelope: z.boolean().default(true),
+    calendar: z.boolean().default(true),
+    music: z.boolean().default(true),
     couple: z.boolean().default(true),
     family: z.boolean().default(true),
     events: z.boolean().default(true),
@@ -86,7 +94,7 @@ export const contentSchema = z.object({
     guestbook: z.boolean().default(true),
     gift: z.boolean().default(true),
     thanks: z.boolean().default(true),
-  }).default({ couple: true, family: true, events: true, schedule: false, countdown: true, album: true, rsvp: true, guestbook: true, gift: true, thanks: true }),
+  }).default({ envelope: true, calendar: true, music: true, couple: true, family: true, events: true, schedule: false, countdown: true, album: true, rsvp: true, guestbook: true, gift: true, thanks: true }),
 });
 
 export type Content = z.infer<typeof contentSchema>;
@@ -102,10 +110,11 @@ export function defaultContent(now: Date = new Date()): Content {
   return {
     v: 1,
     paletteKey: "",
+    nameFont: "playfair",
     envelope: { greeting: "Trân trọng kính mời" },
     couple: {
-      groom: { name: SAMPLE_NAMES.groom, rank: "" },
-      bride: { name: SAMPLE_NAMES.bride, rank: "" },
+      groom: { name: SAMPLE_NAMES.groom, rank: "", photo: "" },
+      bride: { name: SAMPLE_NAMES.bride, rank: "", photo: "" },
       message:
         "Chúng mình sắp về chung một nhà. Rất mong bạn đến chung vui và chúc phúc cho ngày trọng đại của hai đứa.",
       messageEn: "",
@@ -122,12 +131,13 @@ export function defaultContent(now: Date = new Date()): Content {
     schedule: [],
     album: [],
     albumLayout: "grid",
+    albumCount: 6,
     music: null,
-    rsvp: { enabled: true, deadline: "", questions: [] },
-    guestbook: { enabled: true },
+    rsvp: { enabled: true, deadline: "", plusOnes: true, questions: [] },
+    guestbook: { enabled: true, moderate: true },
     gift: { enabled: false, note: "Sự hiện diện của bạn là niềm vui lớn nhất của chúng mình.", noteEn: "", accounts: [] },
     thanks: { message: "Cảm ơn bạn đã dành thời gian và tình cảm cho chúng mình.", messageEn: "" },
-    sections: { couple: true, family: true, events: true, schedule: false, countdown: true, album: true, rsvp: true, guestbook: true, gift: true, thanks: true },
+    sections: { envelope: true, calendar: true, music: true, couple: true, family: true, events: true, schedule: false, countdown: true, album: true, rsvp: true, guestbook: true, gift: true, thanks: true },
   };
 }
 
@@ -139,20 +149,33 @@ export function normalizeContent(input: unknown): Content {
 // not schema-valid: it is only ever rendered, never sent to the API.
 export function sampleContent(now: Date = new Date()): Content {
   const base = defaultContent(now);
+  const photo = (n: string) => `/photos/${n}.jpg`;
   return {
     ...base,
-    couple: { ...base.couple, heroPhoto: "/sample/photo-1.svg" },
-    album: [1, 2, 3, 4, 5, 6].map((n) => ({ url: `/sample/photo-${n}.svg`, alt: `Ảnh cưới ${n}` })),
-    rsvp: { enabled: true, deadline: "", questions: [{ id: "q1", label: "Bạn có cần chỗ đậu xe không?", labelEn: "Do you need parking?", type: "yesno" }] },
+    couple: {
+      ...base.couple,
+      groom: { name: "Minh Khôi", rank: "Trưởng nam", photo: photo("vest-xanh-navy") },
+      bride: { name: "Hạ Vy", rank: "Út nữ", photo: photo("studio-hoa-trang") },
+    },
+    events: base.events.map((e) => (e.kind === "ceremony" ? { ...e, time: "09:00", lunar: "Tức ngày 19 tháng 9 năm Bính Ngọ" } : e)),
+    schedule: [
+      ["17:30", "Đón khách"],
+      ["18:30", "Làm lễ & khai tiệc"],
+      ["19:30", "Cắt bánh, nâng ly"],
+      ["21:00", "Tiễn khách"],
+    ].map(([time, title], i) => ({ id: `s${i}`, time, title })),
+    album: ["lau-dai-trang", "studio-hoa-trang", "hoa-hong-phan", "o-hoa", "sofa-han-quoc", "om-hem-nui"].map((n, i) => ({ url: photo(n), alt: `Ảnh cưới ${i + 1}` })),
+    rsvp: { enabled: true, deadline: "", plusOnes: true, questions: [{ id: "bus", label: "Cần xe đưa đón", labelEn: "Need a shuttle", type: "yesno" }] },
     gift: {
       enabled: true,
       note: base.gift.note,
       noteEn: base.gift.noteEn,
       accounts: [
-        { holder: "groom", bankCode: "970436", accountNumber: "0123456789", accountName: "NGUYEN VAN MINH" },
-        { holder: "bride", bankCode: "970407", accountNumber: "9876543210", accountName: "LE THI AN" },
+        { holder: "groom", bankCode: "970436", accountNumber: "0123456789", accountName: "NGUYEN MINH KHOI" },
+        { holder: "bride", bankCode: "970407", accountNumber: "9876543210", accountName: "LE HA VY" },
       ],
     },
+    sections: { ...base.sections, schedule: true },
   };
 }
 

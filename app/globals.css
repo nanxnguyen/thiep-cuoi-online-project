@@ -208,6 +208,166 @@ h3 em {
 .site-actions > a[aria-current="page"] {
   color: var(--accent);
 }
+/* Login popup trigger / avatar menu (design/Site Header.dc.html) */
+@keyframes headerDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.site-login {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  padding: 4px 16px 4px 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s;
+}
+.site-login:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.site-login__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+}
+.site-login:hover .site-login__dot {
+  color: var(--ink);
+}
+.site-user {
+  position: relative;
+}
+.site-user__trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: inherit;
+  padding: 4px 12px 4px 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.site-user__trigger:hover {
+  border-color: var(--ink);
+}
+.site-avatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--jade);
+  color: var(--on-dark);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+.site-avatar--large {
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+}
+.site-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.site-user__name {
+  font-size: 14px;
+  color: var(--ink);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-user__caret {
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+.site-user__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: default;
+}
+.site-user__menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 60;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-float);
+  animation: headerDrop 0.22s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.site-user__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 14px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--paper-alt);
+  font-size: 14px;
+  color: var(--ink);
+  overflow: hidden;
+}
+.site-user__head span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.site-user__menu a,
+.site-user__menu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.site-user__menu a:hover {
+  background: var(--paper);
+}
+.site-user__logout {
+  color: var(--accent);
+}
+.site-user__logout:hover {
+  background: var(--danger-bg);
+}
 .nav-cta {
   padding: 10px 20px;
   border-radius: var(--radius-full);
@@ -255,13 +415,20 @@ h3 em {
   background: var(--surface);
   box-shadow: var(--shadow-lift);
 }
-.nav-menu nav a {
+.nav-menu nav a,
+.nav-menu nav button {
   padding: 12px 14px;
   border-radius: 10px;
   color: var(--ink);
+  font: inherit;
   font-size: 15px;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
 }
-.nav-menu nav a:hover {
+.nav-menu nav a:hover,
+.nav-menu nav button:hover {
   background: color-mix(in oklab, var(--gold) 16%, transparent);
 }
 .footer {

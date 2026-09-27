@@ -25,6 +25,7 @@ body{margin:0;background:#f7efe3;color:#1a1412;font-family:'Be Vietnam Pro',sans
 @keyframes popTick{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}}
 </style>
+<script src="motion.js"></script>
 </helmet>
 <div style="min-height:100vh;overflow-x:hidden">
 
@@ -56,7 +57,7 @@ body{margin:0;background:#f7efe3;color:#1a1412;font-family:'Be Vietnam Pro',sans
     <section style="min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;padding:80px 24px;position:relative">
       <div style="position:absolute;inset:0;pointer-events:none;opacity:.6">{{ petals }}</div>
       <span style="font-size:12px;letter-spacing:.35em;color:#8a6425;animation:fadeUp .8s both">TRÂN TRỌNG KÍNH MỜI<sc-if value="{{ hasGuest }}" hint-placeholder-val="{{ false }}"> · {{ guestName }}</sc-if></span>
-      <div style="width:220px;height:280px;border-radius:110px 110px 0 0;overflow:hidden;position:relative;background:#e9dcc4;box-shadow:0 30px 60px -30px rgba(80,20,20,.4);animation:cardRise 1s .1s cubic-bezier(.2,.8,.2,1) both"><image-slot id="guest-hero" shape="rect" placeholder="Ảnh cưới"></image-slot></div>
+      <div style="width:220px;height:280px;border-radius:110px 110px 0 0;overflow:hidden;position:relative;background:#e9dcc4;box-shadow:0 30px 60px -30px rgba(80,20,20,.4);animation:cardRise 1s .1s cubic-bezier(.2,.8,.2,1) both"><image-slot id="guest-hero" src="assets/photos/studio-hoa-trang.jpg" shape="rect" placeholder="Ảnh cưới"></image-slot></div>
       <span style="font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,54px);line-height:1.1;animation:fadeUp .9s .25s both">{{ cpl.a }} <em style="color:#8a6425;font-style:italic">&amp;</em> {{ cpl.b }}</span>
       <span style="font-size:13px;letter-spacing:.25em;color:#8a7d72;animation:fadeUp .9s .4s both">{{ cpl.date }} · {{ cpl.place }}</span>
     </section>
@@ -81,7 +82,7 @@ body{margin:0;background:#f7efe3;color:#1a1412;font-family:'Be Vietnam Pro',sans
     <section id="album" data-rv="1" style="max-width:900px;margin:0 auto;padding:72px 24px;display:flex;flex-direction:column;gap:32px">
       <span style="font-size:11px;letter-spacing:.3em;color:#8a6425;text-align:center">ALBUM ẢNH</span>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-        <sc-for list="{{ album }}" as="s" hint-placeholder-count="6"><div data-rv-item="1" style="aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:#efe0cb"><image-slot id="{{ s }}" shape="rect" placeholder="Ảnh"></image-slot></div></sc-for>
+        <sc-for list="{{ album }}" as="s" hint-placeholder-count="6"><div data-rv-item="1" style="aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:#efe0cb"><image-slot id="{{ s.id }}" src="{{ s.src }}" shape="rect" placeholder="Ảnh"></image-slot></div></sc-for>
       </div>
     </section>
 
@@ -182,7 +183,7 @@ class Component extends DCLogic {
       hasGuest: !!this._guest, guestName: this._guest,
       nav: [['gia-dinh','Gia đình'],['su-kien','Sự kiện'],['album','Album'],['tham-du','Tham dự'],['loi-chuc','Lời chúc'],['mung-cuoi','Mừng cưới']].map(([id,label]) => ({ id, label })),
       cdTiles: [{v:d,l:'NGÀY'},{v:pad(h),l:'GIỜ'},{v:pad(m),l:'PHÚT'},{v:pad(sec),l:'GIÂY'}],
-      album: Array.from({ length: 6 }, (_, i) => `guest-album-${i}`),
+      album: Array.from({ length: 6 }, (_, i) => ({ id: `guest-album-${i}`, src: 'assets/photos/' + ['studio-hoa-trang','hoa-hong-phan','sofa-han-quoc','o-hoa','lau-dai-trang','vest-xanh-navy','om-hem-nui','vuon-xanh','han-quoc-toi-gian'][i] + '.jpg' })),
       musicIcon: s.playing ? '❙❙' : '▶', toggleMusic: () => this.setState(st => ({ playing: !st.playing })),
       bars: Array.from({ length: 4 }, (_, i) => `eq ${0.7+i*.15}s ease-in-out ${-i*.1}s ${s.playing ? 'infinite' : 'paused'}`),
       rsvped: s.rsvped, guestCount: s.count, onCount: e => this.setState({ count: e.target.value }),

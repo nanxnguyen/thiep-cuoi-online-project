@@ -19,14 +19,14 @@ export function AddToCalendar({ event, uid, locale = "vi" }: { event: CalendarEv
   }
 
   return (
-    <div className="inv-actions">
+    <div className="inv-cal">
       {google && (
-        <a className="inv-btn" href={google} target="_blank" rel="noopener noreferrer">
+        <a href={google} target="_blank" rel="noopener noreferrer">
           {dict.addGoogleCal}
         </a>
       )}
-      <button type="button" className="inv-btn inv-btn--ghost" onClick={downloadIcs}>
-        {dict.downloadIcs}
+      <button type="button" onClick={downloadIcs} aria-label={dict.downloadIcs}>
+        {dict.addAppleCal}
       </button>
     </div>
   );

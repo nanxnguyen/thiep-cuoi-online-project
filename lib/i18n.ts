@@ -1,5 +1,8 @@
 import type { Archetype } from "./templates";
 import type { EventItem } from "./content";
+import { formatDateEn, formatDateVi } from "./datetime.ts";
+
+const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
 // Phase 5 (đa ngôn ngữ): chrome text (nhãn, nút, thông báo) của trang khách — không đụng nội dung do chủ
 // thiệp gõ (đó là "song ngữ theo trường", xem lib/content.ts couple.messageEn/thanks.messageEn/gift.noteEn
@@ -75,6 +78,7 @@ interface ChromeText {
   no: string;
   submitRsvp: string;
   sending: string;
+  rsvpDone: string;
   doneAttending: string;
   doneNotAttending: string;
   doneBody: string;
@@ -103,6 +107,26 @@ interface ChromeText {
   addGoogleCal: string;
   downloadIcs: string;
 
+  /** Studio Editor v3 invitation body (design/Studio Editor v3.dc.html preview pane). */
+  toAttend(kind: string): string;
+  coupleTitle: string;
+  ceremonyKicker: string;
+  atTimeOn(time: string, weekday: string): string;
+  monthYear(month: string, year: string): string;
+  atPlace(place: string): string;
+  partyKicker: string;
+  welcomeLabel: string;
+  dinnerLabel: string;
+  longDate(date: string): string;
+  scheduleTitle: string;
+  rsvpBy(date: string): string;
+  wishTo(names: string): string;
+  thankYou: string;
+  madeWith: string;
+  tapToOpen: string;
+  addAppleCal: string;
+  noAccount: string;
+
   kindlyInvites: string;
   defaultGuest: string;
   openInvitation: string;
@@ -113,7 +137,7 @@ interface ChromeText {
 }
 
 const VI: ChromeText = {
-  countdownLabel: "Đếm ngược",
+  countdownLabel: "CÒN LẠI",
   countdownLead: (title) => `Còn bao lâu nữa đến ${title}`,
   days: "Ngày",
   hours: "Giờ",
@@ -139,15 +163,15 @@ const VI: ChromeText = {
 
   nav: ["Gia đình", "Sự kiện", "Album", "Tham dự", "Lời chúc", "Mừng cưới"],
   familyTitle: "Hai họ",
-  groomSideTitle: "Nhà trai",
-  brideSideTitle: "Nhà gái",
+  groomSideTitle: "NHÀ TRAI",
+  brideSideTitle: "NHÀ GÁI",
 
   eventsTitle: "Thời gian và địa điểm",
   eventKindTitle: { engagement: "Lễ đính hôn", ceremony: "Lễ thành hôn", reception: "Tiệc cưới", custom: "Sự kiện" },
   atTime: (time) => `Vào lúc ${time}`,
 
-  giftTitle: "Hộp mừng cưới",
-  holderLabel: { groom: "chú rể", bride: "cô dâu" },
+  giftTitle: "HỘP MỪNG CƯỚI",
+  holderLabel: { groom: "CHÚ RỂ", bride: "CÔ DÂU" },
   accountTitle: (holder) => `Mừng ${holder}`,
   qrAlt: (holder, accountName) => `Mã QR chuyển khoản mừng ${holder}, tài khoản ${accountName}`,
   bankLabel: "Ngân hàng",
@@ -157,24 +181,25 @@ const VI: ChromeText = {
   copied: "Đã chép",
   copyNumber: "Chép số",
 
-  albumTitle: "Khoảnh khắc của chúng mình",
+  albumTitle: "Khoảnh khắc",
   photoAlt: (n) => `Ảnh cưới ${n}`,
   viewPhotoLabel: (n, total) => `Xem ảnh ${n} trên ${total}`,
   lightbox: { Close: "Đóng", Previous: "Ảnh trước", Next: "Ảnh sau", "Zoom in": "Phóng to", "Zoom out": "Thu nhỏ", Lightbox: "Xem ảnh" },
 
-  rsvpTitle: "Xác nhận tham dự",
+  rsvpTitle: "XÁC NHẬN THAM DỰ",
   rsvpLead: "Sự hiện diện của bạn là niềm vui của chúng mình.",
   rsvpDeadlineNote: (date) => ` Bạn báo giúp chúng mình trước ${date} nhé.`,
   yourName: "Tên của bạn",
   attendingQuestion: "Bạn có tham dự không?",
-  attendingYes: "Mình sẽ đến",
-  attendingNo: "Mình không đến được",
+  attendingYes: "Sẽ tham dự",
+  attendingNo: "Rất tiếc",
   guestsCount: "Số người đi cùng (tính cả bạn)",
   noteLabel: "Lời nhắn (không bắt buộc)",
   yes: "Có",
   no: "Không",
   submitRsvp: "Gửi xác nhận",
   sending: "Đang gửi…",
+  rsvpDone: "Đã ghi nhận, cảm ơn bạn!",
   doneAttending: "Hẹn gặp bạn nhé!",
   doneNotAttending: "Cảm ơn bạn đã báo cho chúng mình.",
   doneBody: "Chúng mình đã nhận được phản hồi của bạn. Cần đổi ý, bạn cứ gửi lại.",
@@ -200,11 +225,34 @@ const VI: ChromeText = {
   hideMap: "Ẩn bản đồ",
   mapTitle: (title) => `Bản đồ: ${title}`,
 
-  addGoogleCal: "Thêm vào Google Calendar",
+  addGoogleCal: "+ Google Calendar",
   downloadIcs: "Tải lịch (.ics)",
 
+  toAttend: (kind) => `tới dự ${kind} của`,
+  coupleTitle: "CÔ DÂU & CHÚ RỂ",
+  ceremonyKicker: "TRÂN TRỌNG BÁO TIN",
+  atTimeOn: (time, weekday) => `Vào lúc ${time} · ${weekday}`,
+  monthYear: (month, year) => `THÁNG ${month} · ${year}`,
+  atPlace: (place) => `Tại ${place}`,
+  partyKicker: "TIỆC CƯỚI",
+  welcomeLabel: "ĐÓN KHÁCH",
+  dinnerLabel: "KHAI TIỆC",
+  longDate: (date) => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+    const wd = formatDateVi(date).split(",")[0];
+    return m && wd ? `${wd}, ngày ${m[3]} tháng ${m[2]} năm ${m[1]}` : "";
+  },
+  scheduleTitle: "LỊCH TRÌNH",
+  rsvpBy: (date) => `Vui lòng phản hồi trước ngày ${date}`,
+  wishTo: (names) => `Gửi lời chúc đến ${names}…`,
+  thankYou: "Thank you",
+  madeWith: "TẠO BẰNG MỘC",
+  tapToOpen: "CHẠM ĐỂ MỞ THIỆP",
+  addAppleCal: "+ Apple Calendar",
+  noAccount: "Chưa nhập số TK",
+
   kindlyInvites: "Trân trọng kính mời",
-  defaultGuest: "Quý khách",
+  defaultGuest: "Bạn thân mến",
   openInvitation: "Mở thiệp",
   autoScrollStart: "Tự cuộn thiệp từ đầu đến cuối",
   autoScrollStop: "Dừng tự cuộn",
@@ -213,7 +261,7 @@ const VI: ChromeText = {
 };
 
 const EN: ChromeText = {
-  countdownLabel: "Countdown",
+  countdownLabel: "TIME LEFT",
   countdownLead: (title) => `Counting down to ${title}`,
   days: "Days",
   hours: "Hours",
@@ -239,15 +287,15 @@ const EN: ChromeText = {
 
   nav: ["Family", "Events", "Album", "RSVP", "Wishes", "Gift"],
   familyTitle: "Families",
-  groomSideTitle: "Groom's Family",
-  brideSideTitle: "Bride's Family",
+  groomSideTitle: "GROOM'S FAMILY",
+  brideSideTitle: "BRIDE'S FAMILY",
 
   eventsTitle: "When & Where",
   eventKindTitle: { engagement: "Engagement", ceremony: "Wedding Ceremony", reception: "Reception", custom: "Event" },
   atTime: (time) => `At ${time}`,
 
-  giftTitle: "Wedding Gift",
-  holderLabel: { groom: "the groom", bride: "the bride" },
+  giftTitle: "WEDDING GIFT",
+  holderLabel: { groom: "GROOM", bride: "BRIDE" },
   accountTitle: (holder) => `For ${holder}`,
   qrAlt: (holder, accountName) => `QR code to gift ${holder}, account ${accountName}`,
   bankLabel: "Bank",
@@ -257,7 +305,7 @@ const EN: ChromeText = {
   copied: "Copied",
   copyNumber: "Copy number",
 
-  albumTitle: "Our Moments",
+  albumTitle: "Moments",
   photoAlt: (n) => `Wedding photo ${n}`,
   viewPhotoLabel: (n, total) => `View photo ${n} of ${total}`,
   lightbox: { Close: "Close", Previous: "Previous", Next: "Next", "Zoom in": "Zoom in", "Zoom out": "Zoom out", Lightbox: "Lightbox" },
@@ -267,14 +315,15 @@ const EN: ChromeText = {
   rsvpDeadlineNote: (date) => ` Please let us know by ${date}.`,
   yourName: "Your name",
   attendingQuestion: "Will you be attending?",
-  attendingYes: "I'll be there",
-  attendingNo: "I can't make it",
+  attendingYes: "Will attend",
+  attendingNo: "Regretfully no",
   guestsCount: "Number of guests (including you)",
   noteLabel: "Message (optional)",
   yes: "Yes",
   no: "No",
   submitRsvp: "Submit RSVP",
   sending: "Sending…",
+  rsvpDone: "Received, thank you!",
   doneAttending: "See you there!",
   doneNotAttending: "Thanks for letting us know.",
   doneBody: "We've received your RSVP. Changed your mind? Just send it again.",
@@ -300,11 +349,30 @@ const EN: ChromeText = {
   hideMap: "Hide map",
   mapTitle: (title) => `Map: ${title}`,
 
-  addGoogleCal: "Add to Google Calendar",
+  addGoogleCal: "+ Google Calendar",
   downloadIcs: "Download calendar (.ics)",
 
+  toAttend: (kind) => `to the ${kind} of`,
+  coupleTitle: "BRIDE & GROOM",
+  ceremonyKicker: "WE JOYFULLY ANNOUNCE",
+  atTimeOn: (time, weekday) => `At ${time} · ${weekday}`,
+  monthYear: (month, year) => `${MONTHS[Number(month) - 1] ?? month} · ${year}`,
+  atPlace: (place) => `At ${place}`,
+  partyKicker: "RECEPTION",
+  welcomeLabel: "WELCOME",
+  dinnerLabel: "DINNER",
+  longDate: (date) => formatDateEn(date),
+  scheduleTitle: "SCHEDULE",
+  rsvpBy: (date) => `Please reply by ${date}`,
+  wishTo: (names) => `Send your wishes to ${names}…`,
+  thankYou: "Thank you",
+  madeWith: "MADE WITH MỘC",
+  tapToOpen: "TAP TO OPEN",
+  addAppleCal: "+ Apple Calendar",
+  noAccount: "No account number yet",
+
   kindlyInvites: "You are cordially invited",
-  defaultGuest: "Dear guest",
+  defaultGuest: "Dear friend",
   openInvitation: "Open invitation",
   autoScrollStart: "Auto-scroll the invitation end to end",
   autoScrollStop: "Stop auto-scroll",

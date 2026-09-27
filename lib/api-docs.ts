@@ -72,6 +72,18 @@ export const apiOpenApiDoc = {
         responses: { "204": { description: "Đã đăng xuất" } },
       },
     },
+    "/api/auth/forgot-password": {
+      post: { tags: ["Auth"], summary: "Gửi email đặt lại mật khẩu", requestBody: { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/EmailInput" } } } }, responses: { "200": { description: "Đã tiếp nhận" }, "429": { $ref: "#/components/responses/Problem" } } },
+    },
+    "/api/auth/resend-verification": {
+      post: { tags: ["Auth"], summary: "Gửi lại email xác minh", requestBody: { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/EmailInput" } } } }, responses: { "200": { description: "Đã gửi" }, "429": { $ref: "#/components/responses/Problem" } } },
+    },
+    "/api/auth/reset-password": {
+      post: { tags: ["Auth"], summary: "Đặt mật khẩu mới", security: [{ cookieAuth: [] }], requestBody: { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/PasswordInput" } } } }, responses: { "200": { description: "Đã đổi mật khẩu" }, "401": { $ref: "#/components/responses/Problem" } } },
+    },
+    "/api/auth/google": {
+      get: { tags: ["Auth"], summary: "Bắt đầu đăng nhập Google", responses: { "302": { description: "Redirect tới Google" } } },
+    },
     "/api/account/invitations": {
       get: {
         tags: ["Account"],
@@ -140,6 +152,12 @@ export const apiOpenApiDoc = {
           "401": { $ref: "#/components/responses/Problem" },
         },
       },
+      delete: {
+        tags: ["Invitations"], summary: "Xoá vĩnh viễn thiệp của chủ tài khoản", security: [{ cookieAuth: [] }], parameters: [{ $ref: "#/components/parameters/InvitationId" }], responses: { "204": { description: "Đã xoá" }, "403": { $ref: "#/components/responses/Problem" }, "404": { $ref: "#/components/responses/Problem" } },
+      },
+    },
+    "/api/invitations/{id}/analytics": {
+      get: { tags: ["Invitations"], summary: "Xem thống kê lượt xem", security: [{ cookieAuth: [] }], parameters: [{ $ref: "#/components/parameters/InvitationId" }], responses: { "200": { description: "Lượt xem và người xem" }, "403": { $ref: "#/components/responses/Problem" } } },
     },
     "/api/invitations/{id}/responses": {
       get: {
@@ -318,6 +336,12 @@ export const apiOpenApiDoc = {
         },
       },
     },
+    "/api/public/invitations/{slug}/view": {
+      post: { tags: ["Public"], summary: "Ghi nhận lượt xem thiệp", parameters: [{ $ref: "#/components/parameters/Slug" }], responses: { "200": { description: "Đã ghi nhận" }, "404": { $ref: "#/components/responses/Problem" } } },
+    },
+    "/api/webhooks/{provider}": {
+      post: { tags: ["Public"], summary: "Nhận webhook Donate Casso/SePay", parameters: [{ name: "provider", in: "path", required: true, schema: { type: "string", enum: ["casso", "sepay"] } }, { name: "x-signature", in: "header", required: true, schema: { type: "string" } }], responses: { "200": { description: "Đã nhận" }, "401": { $ref: "#/components/responses/Problem" } } },
+    },
   },
   components: {
     securitySchemes: {
@@ -345,11 +369,13 @@ export const apiOpenApiDoc = {
         required: ["email", "password"],
         properties: { email: { type: "string", format: "email", maxLength: 254 }, password: { type: "string", minLength: 8, maxLength: 72 } },
       },
+      EmailInput: { type: "object", required: ["email"], properties: { email: { type: "string", format: "email" } } },
+      PasswordInput: { type: "object", required: ["password"], properties: { password: { type: "string", minLength: 8, maxLength: 72 } } },
       AccountUser: { type: "object", required: ["id", "email"], properties: { id: { type: "string" }, email: { type: "string" } } },
       AuthResponse: {
         type: "object",
-        required: ["accessToken", "user"],
-        properties: { accessToken: { type: "string" }, user: { $ref: "#/components/schemas/AccountUser" } },
+        required: ["user"],
+        properties: { accessToken: { type: "string" }, emailConfirmationRequired: { type: "boolean" }, user: { $ref: "#/components/schemas/AccountUser" } },
       },
       AccountInvitation: {
         type: "object",

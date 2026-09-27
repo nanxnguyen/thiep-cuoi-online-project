@@ -5,6 +5,7 @@ import { isValidSlug, randomSlug } from "../slug.ts";
 import { createEditKey, hashEditKey, requireInvitationAccess, type InvitationAccessRow } from "./edit-key.ts";
 import { HttpError } from "./http.ts";
 import { toAccountInvitation } from "./auth.ts";
+import { deleteInvitationMedia } from "./media.ts";
 
 type InvitationRow = InvitationAccessRow & {
   slug: string;
@@ -47,7 +48,7 @@ export function validateInvitationPatch(
   return { templateId, content: content.data, slug, published };
 }
 
-export async function createInvitation(client: SupabaseClient, templateId: string, input: unknown): Promise<CreatedInvitation> {
+export async function createInvitation(client: SupabaseClient, templateId: string, input: unknown, ownerId?: string): Promise<CreatedInvitation> {
   const content = contentSchema.safeParse(input);
   if (!content.success || !templateId || templateId.length > 80) throw new HttpError(400, "Thông tin thiệp chưa hợp lệ.");
   const key = createEditKey();
@@ -55,7 +56,7 @@ export async function createInvitation(client: SupabaseClient, templateId: strin
   for (let attempt = 0; attempt < 5; attempt++) {
     const { data, error } = await client
       .from("invitations")
-      .insert({ slug: randomSlug(), template_id: templateId, content: content.data, edit_key_hash: editKeyHash })
+      .insert({ slug: randomSlug(), template_id: templateId, content: content.data, edit_key_hash: editKeyHash, owner_id: ownerId ?? null })
       .select("id,slug")
       .single();
     if (!error && data) return { id: data.id, slug: data.slug, key };
@@ -102,6 +103,16 @@ export async function updateInvitation(
     if (error?.code !== "23505") throw new HttpError(500, "Chưa lưu được thiệp.");
   }
   throw new HttpError(409, "Đường dẫn thiệp đã được dùng, bạn đổi tên khác nhé.");
+}
+
+export async function deleteInvitation(client: SupabaseClient, id: string, userId: string): Promise<void> {
+  const { data: row, error: readError } = await client.from("invitations").select("id,owner_id").eq("id", id).maybeSingle();
+  if (readError) throw new HttpError(500, "Chưa kiểm tra được thiệp.");
+  if (!row) throw new HttpError(404, "Không tìm thấy nội dung này.");
+  if (row.owner_id !== userId) throw new HttpError(403, "Bạn không có quyền xoá thiệp này.");
+  const { error } = await client.from("invitations").delete().eq("id", id).eq("owner_id", userId);
+  if (error) throw new HttpError(500, "Chưa xoá được thiệp.");
+  await deleteInvitationMedia(client, id);
 }
 
 export async function claimInvitation(client: SupabaseClient, id: string, editKey: string) {

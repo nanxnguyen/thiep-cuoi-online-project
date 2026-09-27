@@ -4,7 +4,13 @@ import { HttpError } from "./http.ts";
 
 function userDto(user: User): AccountUser {
   if (!user.email) throw new HttpError(401, "Phiên đăng nhập không hợp lệ.");
-  return { id: user.id, email: user.email };
+  const metadata = user.user_metadata as Record<string, unknown> | undefined;
+  const avatarUrl = typeof metadata?.avatar_url === "string"
+    ? metadata.avatar_url
+    : typeof metadata?.picture === "string" ? metadata.picture : undefined;
+  return avatarUrl && /^https:\/\//i.test(avatarUrl)
+    ? { id: user.id, email: user.email, avatarUrl }
+    : { id: user.id, email: user.email };
 }
 
 export async function registerUser(client: SupabaseClient, email: string, password: string): Promise<AuthResponse> {
@@ -13,8 +19,11 @@ export async function registerUser(client: SupabaseClient, email: string, passwo
     throw new HttpError(409, "Email này đã có tài khoản.");
   }
   if (error) throw new HttpError(error.status === 429 ? 429 : 400, error.message);
-  if (!data.user || !data.session) throw new HttpError(503, "Chưa tạo được phiên đăng nhập.");
-  return { accessToken: data.session.access_token, user: userDto(data.user) };
+  if (!data.user) throw new HttpError(503, "Chưa tạo được tài khoản.");
+  const user = userDto(data.user);
+  return data.session
+    ? { accessToken: data.session.access_token, user }
+    : { user, emailConfirmationRequired: true };
 }
 
 export async function loginUser(client: SupabaseClient, email: string, password: string): Promise<AuthResponse> {
@@ -32,6 +41,32 @@ export async function requireUser(client: SupabaseClient): Promise<AccountUser> 
 export async function logoutUser(client: SupabaseClient): Promise<void> {
   const { error } = await client.auth.signOut();
   if (error) throw new HttpError(400, "Chưa đăng xuất được, bạn thử lại nhé.");
+}
+
+export async function resendSignupEmail(client: SupabaseClient, email: string): Promise<void> {
+  const { error } = await client.auth.resend({ type: "signup", email });
+  if (error) throw new HttpError(error.status === 429 ? 429 : 400, "Chưa gửi lại được email xác minh.");
+}
+
+export async function resetPasswordEmail(client: SupabaseClient, email: string, redirectTo: string): Promise<void> {
+  const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error) throw new HttpError(error.status === 429 ? 429 : 400, "Chưa gửi được email đặt lại mật khẩu.");
+}
+
+export async function updatePassword(client: SupabaseClient, password: string): Promise<void> {
+  const { error } = await client.auth.updateUser({ password });
+  if (error) throw new HttpError(401, "Liên kết đặt lại mật khẩu đã hết hạn.");
+}
+
+export async function startGoogleOAuth(client: SupabaseClient, redirectTo: string): Promise<string> {
+  const { data, error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
+  if (error || !data.url) throw new HttpError(400, "Chưa mở được đăng nhập Google.");
+  return data.url;
+}
+
+export async function exchangeAuthCode(client: SupabaseClient, code: string): Promise<void> {
+  const { error } = await client.auth.exchangeCodeForSession(code);
+  if (error) throw new HttpError(400, "Liên kết xác minh đã hết hạn hoặc không hợp lệ.");
 }
 
 type InvitationRow = {

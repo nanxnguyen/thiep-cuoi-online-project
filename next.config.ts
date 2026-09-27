@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: Object.entries(securityHeaders()).map(([key, value]) => ({ key, value })) }];
   },
+  // Trang /tinh-nang/* đã bỏ: giữ link cũ không gãy (SEO/bookmark).
+  async redirects() {
+    return [{ source: "/tinh-nang/:slug*", destination: "/", permanent: true }];
+  },
 };
 
 export default nextConfig;

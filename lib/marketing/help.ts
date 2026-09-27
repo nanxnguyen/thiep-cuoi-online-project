@@ -1,4 +1,4 @@
-import type { Faq } from "./features.ts";
+export type Faq = { q: string; a: string };
 
 // Help centre content. Answers describe what the product really does today (see the plan's "Nguyên tắc nội dung").
 export type HelpGroup = { id: string; title: string; items: Faq[] };

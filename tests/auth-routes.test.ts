@@ -4,7 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { authCookieOptions } from "../lib/server/supabase.ts";
 import { HttpError, parseJson } from "../lib/server/http.ts";
-import { loginUser, logoutUser, registerUser, requireUser, resendSignupEmail, resetPasswordEmail, toAccountInvitation, updatePassword } from "../lib/server/auth.ts";
+import { listAccountInvitations, loginUser, logoutUser, registerUser, requireUser, resendSignupEmail, resetPasswordEmail, toAccountInvitation, updatePassword } from "../lib/server/auth.ts";
 
 type AuthResult = { data?: unknown; error?: { code?: string; message: string; status?: number } | null };
 
@@ -87,9 +87,9 @@ test("login maps invalid credentials to 401", async () => {
 
 test("requireUser trusts getUser after refresh and cleanly rejects an expired session", async () => {
   const refreshed = clientWith({
-    getUser: async () => ({ data: { user: { id: "user-1", email: "a@example.com" } }, error: null }),
+    getUser: async () => ({ data: { user: { id: "user-1", email: "a@example.com", user_metadata: { avatar_url: "https://lh3.googleusercontent.com/avatar" } } }, error: null }),
   });
-  assert.deepEqual(await requireUser(refreshed), { id: "user-1", email: "a@example.com" });
+  assert.deepEqual(await requireUser(refreshed), { id: "user-1", email: "a@example.com", avatarUrl: "https://lh3.googleusercontent.com/avatar" });
 
   const expired = clientWith({
     getUser: async () => ({ data: { user: null }, error: { message: "expired", status: 401 } }),
@@ -134,4 +134,18 @@ test("account invitation mapping exposes card fields but no private hashes", () 
     paletteKey: "do",
   });
   assert.equal("editKeyHash" in dto, false);
+});
+
+test("account invitation list is scoped to the authenticated owner", async () => {
+  const filters: unknown[] = [];
+  const rows = [{ id: "inv-1", slug: "minh-an", template_id: "song-hy", published: true, updated_at: "2026-09-26T10:00:00Z", content: {} }];
+  const query = {
+    select: () => query,
+    eq: (...args: unknown[]) => { filters.push(args); return query; },
+    order: async () => ({ data: rows, error: null }),
+  };
+  const client = { from: () => query } as unknown as SupabaseClient;
+  const result = await listAccountInvitations(client, "user-1");
+  assert.deepEqual(filters, [["owner_id", "user-1"]]);
+  assert.equal(result[0]?.published, true);
 });

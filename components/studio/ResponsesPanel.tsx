@@ -18,12 +18,15 @@ export function ResponsesPanel({ id, editKey, questions, published }: Props) {
   const [data, setData] = useState<ResponsesDto | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [views, setViews] = useState<{ views: number; visitors: number } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      setData(await api.getResponses(id, editKey));
+      const responses = await api.getResponses(id, editKey);
+      setData(responses);
+      try { setViews(await api.getViewSummary(id)); } catch { setViews(null); }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Chưa tải được phản hồi.");
     } finally {
@@ -69,6 +72,10 @@ export function ResponsesPanel({ id, editKey, questions, published }: Props) {
 
       {data && (
         <>
+          {views && <div className="resp-summary" aria-label="Lượt xem thiệp">
+            <div className="resp-stat"><strong>{views.views}</strong><span>Lượt xem 30 ngày</span></div>
+            <div className="resp-stat"><strong>{views.visitors}</strong><span>Người xem ước tính</span></div>
+          </div>}
           <div className="resp-summary" aria-label="Tổng hợp">
             <div className="resp-stat">
               <strong>{data.summary.attending}</strong>

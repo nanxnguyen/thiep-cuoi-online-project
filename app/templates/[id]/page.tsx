@@ -48,7 +48,7 @@ export default async function TemplatePreviewPage({
           <Link className="nav-cta" href={`/studio?template=${template.id}&color=${paletteKey}`}>Dùng mẫu này →</Link>
         </span>
       </div>
-      <InvitationRenderer mode="preview" gate={gate === "1"} guestName={gate === "1" ? "Chú Ba" : undefined} template={template} content={{ ...sampleContent(), paletteKey }} />
+      <InvitationRenderer showcase mode="preview" gate={gate === "1"} guestName={gate === "1" ? "Chú Ba" : undefined} template={template} content={{ ...sampleContent(), paletteKey }} />
     </>
   );
 

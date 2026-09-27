@@ -14,8 +14,11 @@ Hai phần: **Supabase** (Postgres + Auth + Storage + Edge Function) và **Netli
    ```
    Kiểm tra Dashboard → Table Editor có đủ 5 bảng: `invitations`, `guests`, `rsvps`, `wishes`, `rate_limits`.
 3. **Storage:** bucket `media` đã có, **Public** (thiệp hiển thị ảnh/nhạc cho khách không đăng nhập). Upload chỉ qua server đã authorize; browser không có quyền ghi.
-4. **Auth:** Dashboard → Authentication → Sign In/Up: tắt **Confirm email** (app cần session ngay sau đăng ký). Dùng email/mật khẩu.
-5. **Edge Function `public-write`** (RSVP/lời chúc, rate limit, chống bot):
+4. **Auth:** Dashboard → Authentication → Sign In/Up: TẮT **Confirm email** (`mailer_autoconfirm: true`) để tài khoản mới có session ngay. Đăng nhập chỉ dùng **Google OAuth** (không email/mật khẩu — quyết định 2026-09-27).
+5. **Google OAuth:** Dashboard → Authentication → Providers → Google → bật provider, nhập Google Client ID/Secret. Trong Google Cloud Console, thêm Authorized redirect URI:
+   `https://iehmucsshklgjmxqyggp.supabase.co/auth/v1/callback`
+   và thêm `https://<domain-cua-ban>/auth/callback` vào Supabase Additional Redirect URLs. Local dùng `http://127.0.0.1:54321/auth/v1/callback` và các biến `SUPABASE_AUTH_EXTERNAL_GOOGLE_*` trong `.env`.
+6. **Edge Function `public-write`** (RSVP/lời chúc, rate limit, chống bot):
    ```bash
    npx supabase secrets set EDGE_SHARED_SECRET=<cùng-giá-trị-với-Netlify-và-.env.local>
    npx supabase functions deploy public-write

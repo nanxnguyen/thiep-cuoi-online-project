@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { templates, getTemplate, getPalette, DEFAULT_TEMPLATE_ID, archetypes, FONT_VARS } from "../lib/templates.ts";
+import { templates, getTemplate, getPalette, DEFAULT_TEMPLATE_ID, archetypes } from "../lib/templates.ts";
 
 const channel = (v: number) => {
   const c = v / 255;
@@ -59,10 +59,6 @@ test("palettes are hex and every text pair meets WCAG AA 4.5:1", () => {
     for (const v of Object.values(t.palette)) assert.match(v, /^#[0-9a-f]{6}$/i, t.id);
     for (const [fg, bg] of pairs) assert.ok(ratio(t.palette[fg], t.palette[bg]) >= 4.5, `${t.id} ${fg}/${bg}`);
   }
-});
-
-test("fonts reference known keys", () => {
-  for (const t of templates) for (const f of Object.values(t.fonts)) assert.ok(f in FONT_VARS, `${t.id} ${f}`);
 });
 
 test("every cover family has a layout description", async () => {

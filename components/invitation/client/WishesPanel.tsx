@@ -6,9 +6,9 @@ import { api, type PublicWish } from "@/lib/api";
 import { t, type Locale } from "@/lib/i18n";
 import { subscribeToWishes } from "@/lib/supabase-browser";
 
-type Props = { slug?: string; invitationId?: string; preview: boolean; guestName: string; initial: PublicWish[]; locale?: Locale };
+type Props = { slug?: string; invitationId?: string; preview: boolean; guestName: string; initial: PublicWish[]; placeholder: string; locale?: Locale };
 
-export function WishesPanel({ slug, invitationId, preview, guestName, initial, locale = "vi" }: Props) {
+export function WishesPanel({ slug, invitationId, preview, guestName, initial, placeholder, locale = "vi" }: Props) {
   const dict = t(locale);
   const [listRef] = useAutoAnimate<HTMLUListElement>();
   const [wishes, setWishes] = useState(initial);
@@ -45,19 +45,22 @@ export function WishesPanel({ slug, invitationId, preview, guestName, initial, l
   }
 
   return (
-    <div className="inv-wishes">
-      <form className="inv-form" onSubmit={submit} noValidate>
+    <>
+      {wishes.length > 0 && (
+        <ul className="inv-wishlist" ref={listRef}>
+          {wishes.map((w) => (
+            <li className="inv-wish" key={w.id}>
+              <span className="inv-wish__msg">{w.message}</span>
+              <span className="inv-wish__by">— {w.name}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <form className="inv-wishform" onSubmit={submit} noValidate>
         <fieldset disabled={preview || status === "sending"}>
           <legend className="inv-sr-only">{dict.wishLegend}</legend>
-          <label className="inv-field">
-            <span>{dict.yourName}</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} maxLength={80} autoComplete="name" />
-          </label>
-          <label className="inv-field">
-            <span>{dict.wishLabel}</span>
-            <textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} rows={4} />
-            <small className="inv-count">{message.length}/500</small>
-          </label>
+          {!preview && <input aria-label={dict.yourName} placeholder={dict.yourName} value={name} onChange={(e) => setName(e.target.value)} maxLength={80} autoComplete="name" />}
+          <textarea aria-label={dict.wishLabel} placeholder={placeholder} value={message} onChange={(e) => setMessage(e.target.value)} maxLength={500} rows={preview ? 1 : 3} />
           <div className="inv-hp" aria-hidden="true">
             <label>
               Website
@@ -74,25 +77,13 @@ export function WishesPanel({ slug, invitationId, preview, guestName, initial, l
               {dict.wishSentMsg}
             </p>
           )}
-          <button type="submit" className="inv-btn inv-btn--block">
-            {status === "sending" ? dict.sending : dict.submitWish}
-          </button>
-          {preview && <p className="inv-hint">{dict.wishPreviewHint}</p>}
+          {!preview && (
+            <button type="submit" className="inv-wishform__send">
+              {status === "sending" ? dict.sending : dict.submitWish}
+            </button>
+          )}
         </fieldset>
       </form>
-
-      {wishes.length > 0 ? (
-        <ul className="inv-wishlist" ref={listRef}>
-          {wishes.map((w) => (
-            <li className="inv-wish" key={w.id}>
-              <p className="inv-wish__msg">{w.message}</p>
-              <p className="inv-wish__by">{w.name}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="inv-hint">{dict.wishEmpty}</p>
-      )}
-    </div>
+    </>
   );
 }

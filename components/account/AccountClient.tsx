@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
-import { api, type AccountInvitation } from "@/lib/api";
+import { api, type AccountInvitation, type AccountUser } from "@/lib/api";
 import { accountToken, parseClaimLink } from "@/lib/account";
+import { AuthForm, broadcastAuth } from "./AuthForm";
 import { getTemplate, getPalette } from "@/lib/templates";
 import "./account.css";
 
@@ -13,41 +14,24 @@ const readKeys = (): Record<string, string> => {
 };
 
 export function AccountClient() {
-  const [register, setRegister] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [link, setLink] = useState("");
   const [items, setItems] = useState<AccountInvitation[]>([]);
   const [keys, setKeys] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<AccountUser | null>(null);
 
   const refresh = async (value: string) => { setItems(await api.listAccountInvitations(value)); setKeys(readKeys()); };
   useEffect(() => {
     const saved = accountToken.get();
-    api.me(saved).then(async () => {
+    api.me(saved).then(async (currentUser) => {
+      setProfile(currentUser);
       accountToken.set("session");
       setToken("session");
       await refresh("session");
-    }).catch(() => { accountToken.clear(); setToken(""); }).finally(() => setLoading(false));
+    }).catch(() => { accountToken.clear(); setToken(""); setProfile(null); }).finally(() => setLoading(false));
   }, []);
-
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    if (loading) return;
-    if (!/^\S+@\S+\.\S+$/.test(email) || password.length < 8) { setError("Nhập email hợp lệ và mật khẩu ít nhất 8 ký tự."); return; }
-    setLoading(true);
-    setError("");
-    try {
-      await (register ? api.register(email, password) : api.login(email, password));
-      accountToken.set("session");
-      setToken("session");
-      await refresh("session");
-    } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Chưa thực hiện được, hãy thử lại.");
-    } finally { setLoading(false); }
-  }
 
   async function claim(event: FormEvent) {
     event.preventDefault();
@@ -78,8 +62,14 @@ export function AccountClient() {
             <span className="acc-kicker">XIN CHÀO</span>
             <h1>Thiệp của bạn</h1>
           </div>
+          <div className="acc-dash__identity">
+            <div className="acc-avatar" aria-hidden={!profile?.avatarUrl}>
+              {profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" /> : profile?.email.slice(0, 1).toUpperCase()}
+            </div>
+            <span>{profile?.email}</span>
+          </div>
           <div>
-            <button type="button" className="acc-outline" onClick={() => { void api.logout().finally(() => { accountToken.clear(); setToken(""); setItems([]); }); }}>
+            <button type="button" className="acc-outline" onClick={() => { void api.logout().finally(() => { accountToken.clear(); setToken(""); setProfile(null); setItems([]); broadcastAuth(null); }); }}>
               Đăng xuất
             </button>
             <Link className="acc-new" href="/studio">
@@ -88,6 +78,7 @@ export function AccountClient() {
           </div>
         </div>
         <form className="acc-claim" noValidate onSubmit={claim}>
+          <div className="acc-claim__mark" aria-hidden="true">囍</div>
           <div>
             <span>Nhận thiệp cũ vào tài khoản</span>
             <span>
@@ -121,6 +112,11 @@ export function AccountClient() {
                     <div>
                       <Link href={keys[item.id] ? `/studio/${item.id}#k=${encodeURIComponent(keys[item.id])}` : `/studio/${item.id}`}>Chỉnh sửa</Link>
                       {item.published && <Link href={`/invite/${item.slug}`}>Xem thiệp</Link>}
+                      <button type="button" className="link-quiet" onClick={async () => {
+                        if (!window.confirm(`Xoá vĩnh viễn thiệp “${names}”?\n\nDanh sách khách, RSVP, lời chúc và media sẽ bị xoá.`)) return;
+                        try { await api.deleteInvitation(item.id); await refresh(token); }
+                        catch (failure) { setError(failure instanceof Error ? failure.message : "Chưa xoá được thiệp."); }
+                      }}>Xoá thiệp</button>
                     </div>
                   </div>
                 </div>
@@ -128,9 +124,15 @@ export function AccountClient() {
             })}
           </div>
         ) : (
-          <p className="acc-empty">
-            Chưa có thiệp trong tài khoản. <Link href="/studio">Tạo thiệp đầu tiên →</Link>
-          </p>
+          <section className="acc-empty-card">
+            <div className="acc-empty-card__seal" aria-hidden="true">囍</div>
+            <div>
+              <span className="acc-kicker">CHƯA CÓ THIỆP</span>
+              <h2>Bắt đầu câu chuyện của bạn</h2>
+              <p>Tạo một tấm thiệp mang dấu ấn riêng, rồi gửi đến những người bạn thương.</p>
+              <Link className="acc-empty-card__cta" href="/studio">Tạo thiệp đầu tiên <span aria-hidden="true">→</span></Link>
+            </div>
+          </section>
         )}
       </main>
     );
@@ -152,38 +154,7 @@ export function AccountClient() {
         </div>
       </div>
       <div className="acc-access">
-        <div>
-          <div className="acc-tabs" role="group" aria-label="Chọn đăng nhập hoặc đăng ký">
-            <button type="button" aria-pressed={!register} onClick={() => { setRegister(false); setError(""); }}>
-              Đăng nhập
-            </button>
-            <button type="button" aria-pressed={register} onClick={() => { setRegister(true); setError(""); }}>
-              Đăng ký
-            </button>
-          </div>
-          <div className="acc-access__title">
-            <h2>{register ? "Tạo tài khoản" : "Chào mừng trở lại"}</h2>
-            <span>{register ? "Chỉ cần email và mật khẩu." : "Đăng nhập để xem thiệp của bạn."}</span>
-          </div>
-          <form className="acc-form" noValidate onSubmit={submit}>
-            <label>
-              Email
-              <input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="ban@email.com" />
-            </label>
-            <label>
-              Mật khẩu
-              <input type="password" autoComplete={register ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Ít nhất 8 ký tự" />
-            </label>
-            <button disabled={loading}>
-              {loading && <span className="acc-spin" aria-hidden="true" />}
-              {loading ? "Đang xử lý…" : register ? "Tạo tài khoản" : "Đăng nhập"}
-            </button>
-          </form>
-          {error && <p className="form-error" role="alert">{error}</p>}
-          <span className="acc-alt">
-            Chưa muốn đăng ký? <Link href="/studio">Tạo thiệp không cần tài khoản</Link>
-          </span>
-        </div>
+        <AuthForm />
       </div>
     </section>
   );

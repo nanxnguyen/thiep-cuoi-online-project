@@ -52,6 +52,14 @@ test("createInvitation retries a generated slug collision", async () => {
   assert.equal(calls.length, 2);
 });
 
+test("createInvitation attaches a signed-in owner while keeping the edit key private", async () => {
+  const calls: { url: string; init?: RequestInit }[] = [];
+  const client = queuedClient([{ body: { id: "inv-1", slug: "abc12345" }, status: 201 }], calls);
+  await createInvitation(client, "song-hy", defaultContent(), "user-1");
+  const stored = JSON.parse(String(calls[0].init?.body));
+  assert.equal(stored.owner_id, "user-1");
+});
+
 test("patch validation merges only allowed fields and blocks invalid publishing", () => {
   const current = {
     templateId: "song-hy",

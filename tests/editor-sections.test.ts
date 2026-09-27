@@ -9,8 +9,6 @@ test("section list follows the design's 14 parts plus the owner tools", () => {
   assert.deepEqual(keys.slice(0, 14), ["envelope", "template", "couple", "family", "ceremony", "party", "schedule", "countdown", "album", "music", "rsvp", "guestbook", "gift", "thanks"]);
   assert.ok(keys.includes("guests") && keys.includes("responses"));
   assert.equal(new Set(keys).size, keys.length);
-  assert.equal(SECTION_GROUPS.flatMap((g) => g.items).find((item) => item.key === "envelope")?.blocked, undefined);
-  assert.equal(SECTION_GROUPS.flatMap((g) => g.items).find((item) => item.key === "schedule")?.blocked, undefined);
 });
 
 test("an empty draft reports what is missing, a filled one does not", () => {
@@ -34,4 +32,25 @@ test("completion is a whole percentage between 0 and 100", () => {
     const p = completion(c);
     assert.ok(Number.isInteger(p) && p >= 0 && p <= 100, String(p));
   }
+});
+
+test("progress counts the parts that are switched on, as the design's ring does", async () => {
+  const { progress, isOn, toggleOn, OPTIONAL } = await import("../lib/editor-sections.ts");
+  assert.deepEqual([...OPTIONAL].sort(), ["album", "countdown", "envelope", "gift", "guestbook", "music", "rsvp", "schedule", "thanks"]);
+  const c = sampleContent();
+  const all = progress(c);
+  assert.equal(all.total, 14);
+  const off = toggleOn("schedule", c);
+  assert.equal(isOn("schedule", off), false);
+  assert.equal(progress(off).total, 13);
+  assert.equal(isOn("rsvp", toggleOn("rsvp", c)), false);
+  assert.equal(toggleOn("rsvp", c).rsvp.enabled, false);
+});
+
+test("envelope, schedule and a one-sided gift report what is missing", () => {
+  const c = defaultContent();
+  assert.equal(missingReason("envelope", { ...c, envelope: { greeting: " " } }), "Chưa có lời mời");
+  assert.equal(missingReason("schedule", { ...c, sections: { ...c.sections, schedule: true }, schedule: [] }), "Chưa có mốc thời gian");
+  const oneSide = { ...c, gift: { ...c.gift, enabled: true, accounts: [{ holder: "groom" as const, bankCode: "970436", accountNumber: "1", accountName: "A" }] } };
+  assert.equal(missingReason("gift", oneSide), "Chưa đủ số tài khoản hai bên");
 });

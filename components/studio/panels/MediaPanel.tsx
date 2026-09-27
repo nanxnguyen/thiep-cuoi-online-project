@@ -13,7 +13,7 @@ const isHttpsUrl = (v: string) => isHttpUrl(v) && v.toLowerCase().startsWith("ht
 // "Ngay_cuoi_cua_em.mp3" -> "Ngay cuoi cua em": a starting point the couple can edit.
 const titleFromFile = (name: string) => name.replace(/\.[^.]+$/, "").replace(/_+/g, " ").trim().slice(0, 80);
 
-export function MediaPanel({ content, onChange, media }: PanelProps & { media: MediaProps }) {
+export function MediaPanel({ content, onChange, media, only }: PanelProps & { media: MediaProps; only?: "album" | "music" }) {
   const { album, music } = content;
   const photos = useUploader(media);
   const songs = useUploader(media);
@@ -87,6 +87,7 @@ export function MediaPanel({ content, onChange, media }: PanelProps & { media: M
 
   return (
     <div className="pn-stack">
+      {only !== "music" && (
       <PanelSection
         title="Album ảnh"
         description="Ảnh hiện gọn trên thiệp, khách chạm vào để xem lớn từng tấm. Ảnh được tự thu nhỏ trước khi tải lên."
@@ -146,7 +147,9 @@ export function MediaPanel({ content, onChange, media }: PanelProps & { media: M
         </ul>
         {album.length > 0 ? <p className="pn-hint">Mô tả ngắn giúp người dùng trình đọc màn hình biết trong ảnh có gì.</p> : null}
       </PanelSection>
+      )}
 
+      {only !== "album" && (
       <PanelSection title="Nhạc nền" description="Nhạc bắt đầu khi khách bấm Mở thiệp và lặp lại. Khách có thể tắt bất cứ lúc nào.">
         {music ? (
           <div className="pn-music">
@@ -208,6 +211,7 @@ export function MediaPanel({ content, onChange, media }: PanelProps & { media: M
         )}
         <UploadList items={songs.items} onDismiss={songs.dismiss} />
       </PanelSection>
+      )}
     </div>
   );
 }

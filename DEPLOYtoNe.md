@@ -1,5 +1,3 @@
-# Tự deploy MỘC Wedding
-
 Copy-paste từng khối theo thứ tự. Lần đầu làm hết từ 0, lần sau chỉ cần khối 4.
 
 ## 0. Cài đặt (lần đầu)
@@ -53,8 +51,10 @@ netlify deploy --prod --build
 ```bash
 B="https://moc-wedding.netlify.app"
 curl -s -o /dev/null -w "home %{http_code}\n" "$B/"
-curl -s -o /dev/null -w "invite %{http_code}\n" "$B/invite/ho6my9vg?to=Khach"
+curl -s -o /dev/null -w "invite %{http_code}\n" "$B/invite/ho6my9vg"
 curl -s -o /dev/null -w "api-docs %{http_code}\n" "$B/api/docs"
+# Link khách dùng ?g=<token> lấy từ Studio tab Khách (không còn ?to=Tên):
+# mở tay "$B/invite/<slug>?g=<token>" ở tab ẩn danh: phong bì ghi đúng tên hộ.
 ```
 
 ## 6. Rollback

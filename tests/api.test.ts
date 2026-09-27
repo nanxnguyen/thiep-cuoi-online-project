@@ -85,6 +85,22 @@ test("account calls rely on the HttpOnly cookie and logout clears the server ses
   assert.equal(loggedOut.calls[0].init.method, "POST");
 });
 
+test("account dashboard API covers list, claim, analytics, and delete actions", async () => {
+  const { api, calls } = fake(200, { id: "inv-1", slug: "minh-an", key: "key" });
+  await api.listAccountInvitations("legacy-token");
+  await api.claimInvitation("legacy-token", "inv-1", "key");
+  await api.getViewSummary("inv-1");
+  await api.deleteInvitation("inv-1");
+  assert.deepEqual(calls.map((call) => [call.url, call.init.method]), [
+    ["http://be/api/account/invitations", undefined],
+    ["http://be/api/account/invitations/claim", "POST"],
+    ["http://be/api/invitations/inv-1/analytics", undefined],
+    ["http://be/api/invitations/inv-1", "DELETE"],
+  ]);
+  assert.equal(calls[0].init.cache, "no-store");
+  assert.equal(calls[2].init.cache, "no-store");
+});
+
 test("uploadMedia posts multipart with kind and file", async () => {
   const { api, calls } = fake(201, { url: "https://cdn/x.webp" });
   const out = await api.uploadMedia("i", "k", "image", new Blob(["x"], { type: "image/webp" }), "a.webp");

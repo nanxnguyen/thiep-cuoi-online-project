@@ -52,7 +52,7 @@ export function PreviewDemo() {
         </div>
         <div className="demo-hero__note">
           <p>Một bản xem thử đủ dài để cảm nhận nhịp của tấm thiệp: từ bìa, câu chuyện hai gia đình đến xác nhận tham dự và mừng cưới.</p>
-          <span>10 kiểu bìa · nhiều bảng màu · một trình biên tập</span>
+          <span>{families.length} kiểu bìa · nhiều bảng màu · một trình biên tập</span>
         </div>
       </section>
 
@@ -118,7 +118,7 @@ export function PreviewDemo() {
             <p>Thay nội dung mẫu bằng câu chuyện của hai bạn trong Studio. Những phần như RSVP, lưu bút và mừng cưới sẽ sẵn sàng để khách tương tác.</p>
           </div>
           <div className="demo-full__frame">
-            <InvitationRenderer mode="preview" gate={false} now={DEMO_NOW} template={template} content={content} />
+            <InvitationRenderer showcase mode="preview" gate={false} now={DEMO_NOW} template={template} content={content} />
           </div>
         </section>
       )}
