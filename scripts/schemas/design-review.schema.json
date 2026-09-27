@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "status", "summary", "findings", "checks", "browserEvidence", "lessons"],
+  "properties": {
+    "kind": { "type": "string", "enum": ["SECURITY", "QC"] },
+    "status": { "type": "string", "enum": ["PASS", "FAIL", "BLOCKED"] },
+    "summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "location", "problem", "requiredFix"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["Critical", "High", "Medium", "Low"] },
+          "location": { "type": "string" },
+          "problem": { "type": "string" },
+          "requiredFix": { "type": "string" }
+        }
+      }
+    },
+    "checks": { "type": "array", "items": { "type": "string" } },
+    "browserEvidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["route", "designSource", "viewport", "parityPercent", "consoleErrors", "horizontalOverflow", "brokenImages", "evidence"],
+        "properties": {
+          "route": { "type": "string" },
+          "designSource": { "type": "string" },
+          "viewport": { "type": "integer", "enum": [390, 1280] },
+          "parityPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+          "consoleErrors": { "type": "integer", "minimum": 0 },
+          "horizontalOverflow": { "type": "boolean" },
+          "brokenImages": { "type": "integer", "minimum": 0 },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "symptom", "rootCause", "prevention", "verification"],
+        "properties": {
+          "title": { "type": "string" },
+          "symptom": { "type": "string" },
+          "rootCause": { "type": "string" },
+          "prevention": { "type": "string" },
+          "verification": { "type": "string" }
+        }
+      }
+    }
+  }
+}

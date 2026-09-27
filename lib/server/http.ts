@@ -9,6 +9,10 @@ export class HttpError extends Error {
   }
 }
 
+export function requestOriginUrl(request: { url: string; nextUrl: URL }, path: string): URL {
+  return new URL(path, request.nextUrl.origin);
+}
+
 export async function parseJson<T>(request: Request, schema: ZodType<T>, maxBytes = 1024 * 1024): Promise<T> {
   const contentLength = request.headers.get("content-length");
   if (contentLength && Number.isSafeInteger(Number(contentLength)) && Number(contentLength) > maxBytes) {

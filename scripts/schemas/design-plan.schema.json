@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "summary", "designFiles", "affectedRoutes", "files", "reuse", "tasks", "tests", "seo", "performance", "security", "decisions"],
+  "properties": {
+    "status": { "type": "string", "enum": ["PLAN_READY", "NEEDS_DECISION"] },
+    "summary": { "type": "string" },
+    "designFiles": { "type": "array", "items": { "type": "string" } },
+    "affectedRoutes": { "type": "array", "items": { "type": "string" } },
+    "files": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["create", "modify", "delete"],
+      "properties": {
+        "create": { "type": "array", "items": { "type": "string" } },
+        "modify": { "type": "array", "items": { "type": "string" } },
+        "delete": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "reuse": { "type": "array", "items": { "type": "string" } },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "files", "action", "verification"],
+        "properties": {
+          "title": { "type": "string" },
+          "files": { "type": "array", "items": { "type": "string" } },
+          "action": { "type": "string" },
+          "verification": { "type": "string" }
+        }
+      }
+    },
+    "tests": { "type": "array", "items": { "type": "string" } },
+    "seo": { "type": "array", "items": { "type": "string" } },
+    "performance": { "type": "array", "items": { "type": "string" } },
+    "security": { "type": "array", "items": { "type": "string" } },
+    "decisions": { "type": "array", "items": { "type": "string" } }
+  }
+}

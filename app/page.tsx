@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import { CountdownText, CountdownTiles, GuestInvite, ScrollProgress, StatsRow, Tilt, WishRotator } from "@/components/home/HomeLive";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
@@ -116,16 +117,16 @@ export default function HomePage() {
                 THIỆP CƯỚI ONLINE · MIỄN PHÍ
               </div>
               <h1>
-                <span className="hm-h1a">Một tấm thiệp,</span>
+                <span className="hm-h1a">Một tấm thiệp cưới online,</span>
                 <em className="hm-h1b">trao tận tay</em>
                 <span className="hm-h1c">người thương.</span>
               </h1>
               <p className="hm-hero__lede">Chọn mẫu, điền thông tin, gửi cho mỗi vị khách một đường link mang tên họ. Xác nhận tham dự, sổ lưu bút và mừng cưới QR nằm gọn trong một tấm thiệp.</p>
               <div className="hm-hero__actions">
-                <Link className="hm-btn-red" href="/studio">
+                <Link className="hm-btn-red" href="/studio" prefetch={false}>
                   Tạo thiệp miễn phí
                 </Link>
-                <Link className="hm-btn-line" href="/templates">
+                <Link className="hm-btn-line" href="/templates" prefetch={false}>
                   Xem {templates.length} mẫu thiệp
                 </Link>
               </div>
@@ -308,7 +309,7 @@ export default function HomePage() {
                   </div>
                   <div className="hm-album__c">
                     <div>
-                      <img src="/photos/o-hoa.jpg" alt="" />
+                      <Image src="/photos/o-hoa.jpg" alt="Ảnh cưới mẫu trong album thiệp online" width={274} height={410} sizes="(max-width: 640px) 40vw, 274px" loading="lazy" style={{ width: "100%", height: "auto" }} />
                     </div>
                   </div>
                 </div>

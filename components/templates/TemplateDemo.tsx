@@ -77,7 +77,7 @@ export function TemplateDemo({ template, colorKey, onClose }: { template: Templa
       <div className="gal-demo__phone" onClick={stop} onMouseEnter={pause} onMouseLeave={resume} onTouchStart={pause} onTouchEnd={resumeLater}>
         <div className="gal-demo__scroller" ref={scroller} style={{ background: c.paper }}>
           <div className="gal-demo__zoom">
-            <ThiepPreview full fit maxW="100%" radius="0" family={template.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} />
+            <ThiepPreview full fit maxW="100%" radius="0" eager family={template.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} />
           </div>
         </div>
       </div>

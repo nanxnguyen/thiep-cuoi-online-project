@@ -1,6 +1,6 @@
 # Guide: convert `design/*.dc.html` sang Next.js đúng 100%
 
-Dành cho mọi AI agent (Claude Code, Codex, …) khi port hoặc cập nhật UI từ `design/`. Đây là luật, không phải gợi ý. Mỗi mục đều từ lỗi đã gặp thật trên dự án này.
+Dành cho mọi AI agent (Claude Code, Codex, OpenCode, …) khi port hoặc cập nhật UI từ `design/`. Đây là luật, không phải gợi ý. Mỗi mục đều từ lỗi đã gặp thật trên dự án này.
 
 Mục tiêu: màu, font, kích thước, khoảng cách, bố cục, animation và **mọi thành phần** giống design. Không thiếu phần tử, không thêm UI tự chế.
 
@@ -8,17 +8,18 @@ Mục tiêu: màu, font, kích thước, khoảng cách, bố cục, animation v
 
 ## 0. Thứ tự bắt buộc trước khi code
 
-1. Đọc `PROGRESS.md`, mục ▶. Đọc `CLAUDE.md` phần "Visual fidelity" và "Stack direction".
-2. Đọc `design/README.md`, nhất là mục **"Nhật ký thay đổi"**. Đó là danh sách việc của đợt design mới: trang mới, trang xoá, trang tạm ẩn, link bị bỏ, ảnh mới.
-3. **Tìm thay đổi thật bằng git, không đọc lại toàn bộ:**
+1. Đọc `business.md` để hiểu mục tiêu, khách hàng, phạm vi và những điều không được làm.
+2. Đọc `PROGRESS.md`, mục ▶. Đọc `CLAUDE.md` phần "Visual fidelity" và "Stack direction".
+3. Đọc `design/README.md`, nhất là mục **"Nhật ký thay đổi"**. Đó là danh sách việc của đợt design mới: trang mới, trang xoá, trang tạm ẩn, link bị bỏ, ảnh mới.
+4. **Tìm thay đổi thật bằng git, không đọc lại toàn bộ:**
    ```bash
    git status --short | cat                    # file design mới (??), bị xoá (D)
    git diff --stat HEAD -- design/ | cat       # file nào đổi nhiều
    git diff HEAD -- "design/<Trang>.dc.html"   # xem đổi gì
    ```
    Diff chỉ 1 dòng `<script src="motion.js">` nghĩa là không đổi UI. Diff lớn thì phải port lại.
-4. Đối chiếu 3 nguồn: README design, `PROGRESS.md`, working tree. Chỗ nào lệch thì sửa `PROGRESS.md` ngay: dòng nào lỗi thời thì xoá, viết gap list mới vào mục ▶.
-5. Việc nhiều bước thì hỏi `advisor()` trước khi đập đi làm lại một khối lớn (renderer, Editor).
+5. Đối chiếu 4 nguồn: business, README design, `PROGRESS.md`, working tree. Chỗ nào lệch thì dừng để chốt business conflict; nếu chỉ là trạng thái lỗi thời thì sửa `PROGRESS.md`, xoá dòng cũ và viết gap list mới vào mục ▶.
+6. Việc nhiều bước phải có plan quyết định đầy đủ trước khi sửa code; không vừa dò thiết kế vừa code.
 
 ---
 
@@ -106,7 +107,7 @@ Design là prototype không có backend. Chỉ port **giao diện và chuyển �
 cd design && python3 -m http.server 4100     # design
 npm run dev                                   # app, cổng 3000
 ```
-Dùng Chrome DevTools MCP (Claude Code) hoặc Playwright MCP (Codex). Chỉ mở browser khi **xong cả một trang / section / tính năng**, không mở sau mỗi lần sửa.
+Dùng browser automation có sẵn của agent (Chrome DevTools MCP, Playwright MCP, browser-use hoặc tương đương). Chỉ mở browser khi **xong cả một trang / section / tính năng**, không mở sau mỗi lần sửa.
 
 ### 3.2 Đo, không đoán
 - **So chiều cao từng section:** chạy cùng một script `evaluate_script` trên cả 2 trang, lấy `getBoundingClientRect().height` của từng section con. Cùng dữ liệu mà lệch vài px là thiếu hoặc thừa phần tử, sai font hoặc sai gap. Lệch do dữ liệu khác nhau thì ghi rõ nguyên nhân.
@@ -167,3 +168,19 @@ Lỗi typecheck trong `.next/types/*` sau khi xoá route là file sinh ra cũ, c
 | `Thiep Cua Toi` | `/account` (`components/account/*`) |
 | `Tinh Nang*` | đã xoá khỏi design, route đã xoá |
 | `Ung Ho`, `Tai Khoan` | tạm ẩn: bỏ link (footer design vẫn giữ "Ủng hộ") |
+
+---
+
+## 6. Sai lầm đã gặp và cách phòng tránh
+
+Chỉ thêm một mục khi lỗi đã được tái hiện, root cause đã xác minh và cách kiểm chứng chạy được. Tìm trong file trước để không ghi trùng. Lỗi chỉ thuộc một lần chạy nằm trong `process.md` hoặc artifact `.design-workflow/`, không ghi ở đây.
+
+Mẫu ghi:
+
+```markdown
+### Tên lỗi ngắn
+- Dấu hiệu: lỗi nhìn thấy hoặc kết quả đo sai.
+- Root cause: nguyên nhân kỹ thuật đã xác minh.
+- Cách phòng tránh: quy tắc cần làm ở lần port sau.
+- Cách kiểm chứng: lệnh hoặc phép đo chứng minh lỗi không còn.
+```

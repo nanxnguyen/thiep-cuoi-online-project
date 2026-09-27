@@ -123,6 +123,36 @@ export const helpGroups: readonly HelpGroup[] = [
     ],
   },
   {
+    id: "chia-se",
+    title: "Gửi thiệp cho khách",
+    items: [
+      {
+        q: "Cách gửi thiệp cưới qua Zalo cho nhiều khách?",
+        a: "Sau khi xuất bản, thêm từng hộ vào tab Khách mời trong Studio rồi sao chép link riêng của từng hộ. Mỗi link mở ra đều chào đúng tên hộ đó. Gửi link qua Zalo, Messenger hoặc SMS như tin nhắn bình thường.",
+      },
+      {
+        q: "Thiệp cưới online có miễn phí thật không?",
+        a: "Có. Hiện tại MỘC miễn phí toàn bộ: tạo thiệp, chọn mẫu, ảnh nhạc, xác nhận tham dự, sổ lưu bút và mã QR mừng cưới. Bạn không cần nhập thẻ hay đăng ký gói nào.",
+      },
+      {
+        q: "Khách không mở được link thiệp thì làm sao?",
+        a: "Hầu hết do link bị cắt khi sao chép: hãy gửi lại nguyên đường link. Thiệp chạy trên mọi trình duyệt điện thoại đời mới, không cần cài app. Nếu vẫn không được, thử mở bằng trình duyệt khác.",
+      },
+      {
+        q: "Tôi muốn đổi ngày cưới sau khi đã gửi thiệp?",
+        a: "Mở link chỉnh sửa, sửa ngày ở phần Lịch trình rồi lưu. Thiệp cập nhật ngay, khách mở lại link cũ sẽ thấy ngày mới — không cần gửi lại link.",
+      },
+      {
+        q: "Có in thiệp MỘC ra giấy được không?",
+        a: "MỘC làm thiệp online để gửi qua link. Nếu muốn bản giấy, bạn có thể chụp màn hình thiệp hoặc dùng công cụ tạo mã QR để in mã lên thiệp giấy, khách quét là tới thiệp online.",
+      },
+      {
+        q: "Một thiệp dùng cho cả nhà trai và nhà gái được không?",
+        a: "Được nếu hai họ chung ngày giờ, địa điểm. Thiệp có phần Hai họ để ghi tên cha mẹ hai bên. Nếu lễ và tiệc khác ngày giờ, bạn nên tạo hai thiệp riêng cho rõ.",
+      },
+    ],
+  },
+  {
     id: "rieng-tu",
     title: "Quyền riêng tư và dữ liệu",
     items: [

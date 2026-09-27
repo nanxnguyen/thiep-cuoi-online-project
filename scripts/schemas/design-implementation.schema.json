@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "summary", "filesChanged", "checks", "blockers", "lessons"],
+  "properties": {
+    "status": { "type": "string", "enum": ["IMPLEMENTATION_DONE", "IMPLEMENTATION_BLOCKED"] },
+    "summary": { "type": "string" },
+    "filesChanged": { "type": "array", "items": { "type": "string" } },
+    "checks": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "lessons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "symptom", "rootCause", "prevention", "verification"],
+        "properties": {
+          "title": { "type": "string" },
+          "symptom": { "type": "string" },
+          "rootCause": { "type": "string" },
+          "prevention": { "type": "string" },
+          "verification": { "type": "string" }
+        }
+      }
+    }
+  }
+}

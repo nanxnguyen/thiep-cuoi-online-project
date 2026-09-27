@@ -22,7 +22,11 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    api.me(accountToken.get()).then((user) => { accountToken.set("session"); setProfile(user); }).catch(() => setProfile(null));
+    // Không có gợi ý phiên thì bỏ qua: tránh request 401 vô ích cho mọi khách chưa đăng nhập
+    // (browser log lỗi network dù đã catch). Tab mới chưa có hint thì header hiện logged-out
+    // cho tới khi vào /account hoặc đăng nhập lại.
+    if (!accountToken.get()) setProfile(null);
+    else api.me(accountToken.get()).then((user) => { accountToken.set("session"); setProfile(user); }).catch(() => setProfile(null));
     const onAuth = (event: Event) => setProfile((event as CustomEvent<AccountUser | null>).detail);
     window.addEventListener("moc-auth", onAuth);
     return () => window.removeEventListener("moc-auth", onAuth);
@@ -43,7 +47,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <Link className="brand" href="/">
+        <Link className="brand" href="/" prefetch={false}>
           <span className="brand-mark" aria-hidden="true">
             M
           </span>
@@ -51,7 +55,7 @@ export function SiteHeader() {
         </Link>
         <nav className="site-nav" aria-label="Chính">
           {NAV_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} aria-current={current(l.href)}>
+            <Link key={l.href} href={l.href} prefetch={false} aria-current={current(l.href)}>
               {l.label}
             </Link>
           ))}
@@ -95,7 +99,7 @@ export function SiteHeader() {
               Đăng nhập
             </button>
           )}
-          <Link className="nav-cta" href="/studio">
+          <Link className="nav-cta" href="/studio" prefetch={false}>
             Tạo thiệp
           </Link>
           <MobileMenu

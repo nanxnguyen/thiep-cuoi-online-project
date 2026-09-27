@@ -13,6 +13,7 @@ export function ToolPage({
   width = 900,
   gap = 28,
   ledeWidth = 520,
+  guide,
   children,
 }: {
   /** Breadcrumb label, e.g. "Tạo mã QR". */
@@ -24,6 +25,8 @@ export function ToolPage({
   /** Each design page's own main gap (QR 32, most 28, guest list 24). */
   gap?: number;
   ledeWidth?: number;
+  /** SEO guide section rendered below the tool (keywords + internal links). */
+  guide?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -44,6 +47,7 @@ export function ToolPage({
         {/* keeps heading levels contiguous: tools use h3/h4 inside */}
         <h2 className="tool-sr">{name}</h2>
         {children}
+        {guide && <section className="tool-guide" aria-label={`Hướng dẫn dùng ${name}`}>{guide}</section>}
       </main>
       <SiteFooter />
     </>

@@ -63,7 +63,7 @@ export function PreviewDemo() {
             <span>9 : 16</span>
           </div>
           <div className="demo-cover-frame">
-            <ThiepPreview fit maxW="100%" family={template.family} deep={colors[paletteKey].deep} paper={colors[paletteKey].paper} gold={colors[paletteKey].gold} a={templateSamples[template.id].a} b={templateSamples[template.id].b} date={templateSamples[template.id].date} place={templateSamples[template.id].place} />
+            <ThiepPreview fit maxW="100%" eager family={template.family} deep={colors[paletteKey].deep} paper={colors[paletteKey].paper} gold={colors[paletteKey].gold} a={templateSamples[template.id].a} b={templateSamples[template.id].b} date={templateSamples[template.id].date} place={templateSamples[template.id].place} />
           </div>
           <div className="demo-workbench__caption">
             <strong>{template.name}</strong>

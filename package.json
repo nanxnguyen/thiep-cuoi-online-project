@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "design": "node scripts/design-workflow.mjs",
     "dev": "next dev",
     "build": "npm run build:next && opennextjs-cloudflare build --skipNextBuild --skipWranglerConfigCheck && node scripts/prepare-sites-worker.mjs",
     "build:next": "next build",

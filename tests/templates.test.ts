@@ -65,3 +65,11 @@ test("every cover family has a layout description", async () => {
   const { familyLayout, templates: all } = await import("../lib/templates.ts");
   for (const t of all) assert.ok(familyLayout[t.family], `familyLayout missing for ${t.family}`);
 });
+
+test("every template has a unique SEO description fitting a search result", () => {
+  const seos = templates.map((t) => t.seo);
+  assert.equal(new Set(seos).size, templates.length, "duplicate seo description");
+  for (const t of templates) {
+    assert.ok(t.seo.length >= 100 && t.seo.length <= 161, `${t.id}: ${t.seo.length}`);
+  }
+});

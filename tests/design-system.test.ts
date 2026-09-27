@@ -17,7 +17,7 @@ const EXPECTED: Record<string, string> = {
   "--accent": "#a3161c", "--accent-hover": "#7d0f14", "--accent-deep": "#8e1b1f",
   "--gold": "#c9a86a", "--gold-deep": "#8a6425", "--gold-light": "#e0bb74",
   "--night": "#1c1012", "--on-dark": "#f1e7d6", "--on-dark-muted": "#a8998c", "--line-on-dark": "#4a3a36",
-  "--on-dark-body": "#d8cbbb", "--on-dark-soft": "#b8ab9b", "--on-dark-faint": "#7d7067", "--line-on-dark-soft": "#2e2522",
+  "--on-dark-body": "#d8cbbb", "--on-dark-soft": "#b8ab9b", "--on-dark-faint": "#8a7d72", "--line-on-dark-soft": "#2e2522",
   "--ok-bg": "#e7eee6", "--ok-fg": "#24493a", "--warn-bg": "#f5efe0", "--warn-fg": "#7a5a22",
   "--neutral-bg": "#efe6d9", "--danger-bg": "#f5e3e1", "--danger-fg": "#8e1b1f",
   "--radius-s": "8px", "--radius": "14px", "--radius-l": "24px", "--radius-full": "999px",
@@ -38,13 +38,13 @@ const lum = (hex: string) => {
 const ratio = (a: string, b: string) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 const resolve = (t: Map<string, string>, v: string): string => { const m = /^var\((--[a-z0-9-]+)\)$/.exec(v); return m ? resolve(t, t.get(m[1])!) : v; };
 
-// --faint and --on-dark-faint are design values below AA; the owner chose design fidelity (2026-09-27).
+// --faint is decorative-only; every token used for text is checked here.
 test("site text pairs pass WCAG AA (4.5:1)", () => {
   const t = tokens();
   const pairs: [string, string][] = [
     ["--ink", "--paper"], ["--muted", "--paper"], ["--muted", "--surface"],
     ["--gold-deep", "--paper"], ["--accent", "--paper"], ["--surface", "--accent"], ["--surface", "--accent-hover"],
-    ["--on-dark", "--night"], ["--on-dark-muted", "--night"], ["--gold", "--night"], ["--on-dark-body", "--night"], ["--on-dark-soft", "--night"],
+    ["--on-dark", "--night"], ["--on-dark-muted", "--night"], ["--gold", "--night"], ["--on-dark-body", "--night"], ["--on-dark-soft", "--night"], ["--on-dark-faint", "--night"],
     ["--ok-fg", "--ok-bg"], ["--warn-fg", "--warn-bg"], ["--neutral-fg", "--neutral-bg"], ["--danger-fg", "--danger-bg"],
   ];
   for (const [fg, bg] of pairs) {

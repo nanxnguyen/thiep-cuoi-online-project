@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!template) return {};
   return {
     title: `Mẫu ${template.name}`,
-    description: template.blurb,
+    description: template.seo,
     alternates: { canonical: `/templates/${template.id}` },
   };
 }
@@ -61,7 +61,7 @@ export default async function TemplatePreviewPage({
       <main className="tdt">
         <div className="tdt__stage">
           <div className="tdt__card">
-            <ThiepPreview family={template.family} deep={pal.deep} paper={pal.paper} gold={pal.gold} a={sample.a} b={sample.b} date={sample.date} place={sample.place} radius="14px" />
+            <ThiepPreview family={template.family} deep={pal.deep} paper={pal.paper} gold={pal.gold} a={sample.a} b={sample.b} date={sample.date} place={sample.place} radius="14px" eager />
           </div>
         </div>
         <div className="tdt__info">
@@ -76,6 +76,7 @@ export default async function TemplatePreviewPage({
             </span>
             <h1>{template.name}</h1>
             <p>{familyLayout[template.family]}</p>
+            <p>{template.seo}</p>
           </div>
           <div className="tdt__colors">
             <span>Chọn màu để xem trước</span>

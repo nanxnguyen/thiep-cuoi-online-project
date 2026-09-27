@@ -68,7 +68,7 @@
 .tpE__polaroid { position: absolute; left: 17cqw; top: 36cqw; width: 66cqw; padding: 3cqw 3cqw 12cqw; background: var(--surface); transform: rotate(-4deg); box-shadow: 0 2cqw 6cqw rgba(0, 0, 0, .18); }
 .tpE__photo { height: 74cqw; position: relative; overflow: hidden; background: var(--tp-tint); }
 .tpE__seal { position: absolute; left: 50%; bottom: 44cqw; transform: translateX(-50%); width: 13cqw; height: 13cqw; border-radius: 50%; background: var(--tp-gold); display: grid; place-items: center; font-family: var(--script); font-style: italic; font-size: 6cqw; color: var(--tp-deep); box-shadow: 0 1cqw 3cqw rgba(0, 0, 0, .3); }
-.tpE__names { position: absolute; left: 0; right: 0; bottom: 14cqw; text-align: center; font-family: var(--display); font-style: italic; font-size: 8.5cqw; line-height: 1.2; color: var(--tp-paper); }
+.tpE__names { position: absolute; left: 0; right: 0; bottom: 14cqw; text-align: center; font-family: var(--display); font-style: italic; font-size: 8.5cqw; line-height: 1.2; color: var(--surface); }
 
 /* F: magazine cover */
 .tpF__photo { position: absolute; inset: 0; background: var(--tp-tint); }

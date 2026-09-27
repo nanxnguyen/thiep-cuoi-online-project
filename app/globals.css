@@ -502,7 +502,7 @@ h3 em {
   line-height: 1.7;
 }
 .footer__title {
-  color: var(--on-dark-faint);
+  color: var(--on-dark-soft);
   font-size: 12px;
   letter-spacing: 0.18em;
 }
@@ -517,7 +517,7 @@ h3 em {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
-  color: var(--on-dark-faint);
+  color: var(--on-dark-soft);
   font-size: 13px;
 }
 

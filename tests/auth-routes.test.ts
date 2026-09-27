@@ -3,7 +3,7 @@ import test from "node:test";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { authCookieOptions } from "../lib/server/supabase.ts";
-import { HttpError, parseJson } from "../lib/server/http.ts";
+import { HttpError, parseJson, requestOriginUrl } from "../lib/server/http.ts";
 import { listAccountInvitations, loginUser, logoutUser, registerUser, requireUser, resendSignupEmail, resetPasswordEmail, toAccountInvitation, updatePassword } from "../lib/server/auth.ts";
 
 type AuthResult = { data?: unknown; error?: { code?: string; message: string; status?: number } | null };
@@ -11,6 +11,14 @@ type AuthResult = { data?: unknown; error?: { code?: string; message: string; st
 function clientWith(auth: Record<string, (...args: never[]) => Promise<AuthResult>>) {
   return { auth } as unknown as SupabaseClient;
 }
+
+test("OAuth redirects use Next's normalized origin instead of Netlify's deploy URL", () => {
+  const request = {
+    url: "https://deploy-id--moc-wedding.netlify.app/auth/callback",
+    nextUrl: new URL("https://moc-wedding.netlify.app/auth/callback"),
+  };
+  assert.equal(requestOriginUrl(request, "/account").href, "https://moc-wedding.netlify.app/account");
+});
 
 test("parseJson rejects invalid auth input with status 400", async () => {
   const request = new Request("http://localhost/api/auth/register", {

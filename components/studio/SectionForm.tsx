@@ -96,7 +96,7 @@ function PhotoButton({ label, url, busy, onPick, onClear }: { label: string; url
   const input = useRef<HTMLInputElement>(null);
   return (
     <div className="edf-photo">
-      <span className="edf-photo__thumb">{url ? <img src={url} alt="" /> : null}</span>
+      <span className="edf-photo__thumb">{url ? <img src={url} alt="Ảnh đã tải lên" /> : null}</span>
       <span className="edf-photo__label">{label}</span>
       <button type="button" className="edf-mini" onClick={() => input.current?.click()} disabled={busy}>
         {busy ? "Đang tải…" : url ? "Đổi ảnh" : "Chọn ảnh"}

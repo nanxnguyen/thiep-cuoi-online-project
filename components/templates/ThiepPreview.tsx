@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import Image from "next/image";
 import { familyPhotos, type CoverFamily } from "@/lib/templates";
 import { ThiepPreviewFull } from "./ThiepPreviewFull";
 import "./thiep-preview.css";
@@ -31,6 +32,8 @@ export type ThiepPreviewProps = {
   parents?: [[string, string], [string, string]];
   /** Design `full`: the sample invitation sections follow the cover. */
   full?: boolean;
+  /** Above-fold hero: eager load + high fetch priority instead of lazy. */
+  eager?: boolean;
   className?: string;
   style?: CSSProperties;
 };
@@ -38,8 +41,21 @@ export type ThiepPreviewProps = {
 const TRACKS = [["01", "Lễ gia tiên", "09:00"], ["02", "Rước dâu", "11:00"], ["03", "Đón khách", "17:30"], ["04", "Khai tiệc", "18:30"]];
 const WEEKDAYS = ["CHỦ NHẬT", "THỨ HAI", "THỨ BA", "THỨ TƯ", "THỨ NĂM", "THỨ SÁU", "THỨ BẢY"];
 
-function Slot({ photo, caption, circle }: { photo?: string; caption: string; circle?: boolean }) {
-  if (photo) return <img className="tp-slot tp-slot--img" src={photo} alt="" style={circle ? { borderRadius: "50%" } : undefined} />;
+function Slot({ photo, caption, circle, eager }: { photo?: string; caption: string; circle?: boolean; eager?: boolean }) {
+  if (photo?.startsWith("/photos/"))
+    return (
+      <Image
+        className="tp-slot tp-slot--img"
+        src={photo}
+        alt={caption}
+        fill
+        sizes="(max-width: 640px) 50vw, 400px"
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        style={circle ? { borderRadius: "50%" } : undefined}
+      />
+    );
+  if (photo) return <img className="tp-slot tp-slot--img" src={photo} alt={caption} style={circle ? { borderRadius: "50%" } : undefined} />;
   return (
     <div className="tp-slot" style={circle ? { borderRadius: "50%" } : undefined} aria-hidden="true">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -61,7 +77,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
   const year = parts[2] ?? "";
   const vars = { "--tp-deep": deep, "--tp-paper": paper, "--tp-gold": gold, "--tp-tint": tint } as CSSProperties;
   const arcId = `tp-arc-${[...`${a}|${b}|${date}|${deep}`].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7).toString(36)}`;
-  const S = (photo: string | undefined, caption: string, circle?: boolean) => <Slot photo={photo} caption={caption} circle={circle} />;
+  const S = (photo: string | undefined, caption: string, circle?: boolean) => <Slot photo={photo} caption={caption} circle={circle} eager={p.eager} />;
   const def = familyPhotos[f];
   const [rankB, rankA] = [p.ranks?.[0] || "Trưởng Nam", p.ranks?.[1] || "Út Nữ"];
   const [pg, pb] = p.parents ?? [["Ông Trần Văn Tuấn", "Bà Trần Thị Mai"], ["Ông Lê Văn Hùng", "Bà Hồ Thị Lan"]];
