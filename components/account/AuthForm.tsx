@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import type { AccountUser } from "@/lib/api";
+import { accountToken } from "@/lib/account";
 import "./account.css";
 
 // Broadcast so any mounted SiteHeader picks up a logout without a page reload. Login has no such moment: Google is
-// a full-page redirect, so the header just re-checks the session itself once the browser returns.
+// a full-page redirect, so the Google link leaves a session hint (sessionStorage survives the same-tab round trip)
+// and the header re-checks the session itself once the browser returns.
 export function broadcastAuth(user: AccountUser | null) {
   window.dispatchEvent(new CustomEvent<AccountUser | null>("moc-auth", { detail: user }));
 }
@@ -32,7 +34,7 @@ export function AuthForm({ googleNext, variant = "page" }: Props) {
         )}
         <span>{variant === "modal" ? "Lưu thiệp vào tài khoản để mở trên mọi thiết bị và theo dõi khách xác nhận." : "Dùng tài khoản Google để xem và quản lý thiệp của bạn."}</span>
       </div>
-      <a className="acc-google" href={googleNext ? `/api/auth/google?next=${encodeURIComponent(googleNext)}` : "/api/auth/google"}>
+      <a className="acc-google" onClick={() => accountToken.set("session")} href={googleNext ? `/api/auth/google?next=${encodeURIComponent(googleNext)}` : "/api/auth/google"}>
         <span className="acc-google__icon" aria-hidden="true">G</span>
         <span>Tiếp tục với Google</span>
       </a>

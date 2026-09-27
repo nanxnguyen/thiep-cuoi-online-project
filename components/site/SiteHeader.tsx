@@ -26,7 +26,7 @@ export function SiteHeader() {
     // (browser log lỗi network dù đã catch). Tab mới chưa có hint thì header hiện logged-out
     // cho tới khi vào /account hoặc đăng nhập lại.
     if (!accountToken.get()) setProfile(null);
-    else api.me(accountToken.get()).then((user) => { accountToken.set("session"); setProfile(user); }).catch(() => setProfile(null));
+    else api.me(accountToken.get()).then((user) => { accountToken.set("session"); setProfile(user); }).catch(() => { accountToken.clear(); setProfile(null); });
     const onAuth = (event: Event) => setProfile((event as CustomEvent<AccountUser | null>).detail);
     window.addEventListener("moc-auth", onAuth);
     return () => window.removeEventListener("moc-auth", onAuth);

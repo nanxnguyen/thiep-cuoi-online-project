@@ -28,6 +28,7 @@ export function AccountClient() {
     api.me(saved).then(async (currentUser) => {
       setProfile(currentUser);
       accountToken.set("session");
+      broadcastAuth(currentUser);
       setToken("session");
       await refresh("session");
     }).catch(() => { accountToken.clear(); setToken(""); setProfile(null); }).finally(() => setLoading(false));
