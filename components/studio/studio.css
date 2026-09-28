@@ -428,6 +428,11 @@
   .studio-create-layout .pick-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .studio-create-aside { padding:22px; }
   .studio-create-selected { grid-template-columns:130px 1fr; gap:18px; }
+  .ed-bar__row { gap:8px; padding:8px 12px; }
+  .ed-bar__brand { display:none; }
+  .ed-bar__title strong { font-size:14px; }
+  .ed-seg button { font-size:11px; }
+  .ed-publish { padding:9px 14px; font-size:12px; }
   .pick-grid {
     gap: 18px 12px;
   }
@@ -543,6 +548,13 @@
 @media (max-width:1023px) {
   .ed-bar__row { flex-wrap:wrap; gap:10px; }
   .ed-bar__sep { display:none; }
+  /* Narrow header: title owns the first row with back + ring; the mode
+     switch and publish share a full-width second row so nothing overlaps. */
+  .ed-bar__title { flex:1 1 calc(100% - 140px); min-width:0; }
+  .ed-bar .save-status { min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+  .ed-seg { order:2; flex:1 1 auto; min-width:0; }
+  .ed-seg button { flex:1 1 0; justify-content:center; padding:8px 6px; white-space:nowrap; }
+  .ed-publish { order:2; flex:none; margin-left:auto; }
   .ed-grid { grid-template-columns:minmax(0,1fr); }
   .ed-outline, .ed-form { position:absolute; top:18%; right:0; bottom:0; left:0; z-index:40; display:none; border-radius:20px 20px 0 0; animation:edSlideUp .3s cubic-bezier(.2,.8,.2,1) both; }
   .ed-outline[data-open="true"], .ed-form[data-open="true"] { display:flex; }
