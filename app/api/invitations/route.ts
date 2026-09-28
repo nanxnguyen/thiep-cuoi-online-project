@@ -3,7 +3,7 @@ import { z } from "zod";
 import { contentSchema } from "@/lib/content";
 import { createInvitation } from "@/lib/server/invitations";
 import { HttpError, INVITATION_JSON_MAX_BYTES, parseJson, routeResponse } from "@/lib/server/http";
-import { consumeRateLimit } from "@/lib/server/rate-limit";
+import { enforceRateLimit } from "@/lib/server/rate-limit";
 import { requestFingerprint } from "@/lib/server/public-write";
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
 
@@ -15,9 +15,7 @@ export async function POST(request: NextRequest) {
     const { client: authClient, applyCookies } = createRouteClient(request);
     const { data: { user } } = await authClient.auth.getUser();
     const client = createAdminClient();
-    if (!await consumeRateLimit(client, `create:${requestFingerprint(request.headers)}`, 10, 3600)) {
-      throw new HttpError(429, "Bạn tạo thiệp quá nhanh, hãy thử lại sau.");
-    }
+    await enforceRateLimit(client, `create:${requestFingerprint(request.headers)}`, 10, 3600);
     return applyCookies(NextResponse.json(await createInvitation(client, input.templateId, input.content, user?.id), { status: 201 }));
   });
 }

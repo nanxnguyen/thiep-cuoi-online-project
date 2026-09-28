@@ -41,6 +41,7 @@ test("production fingerprint fails closed without a valid Cloudflare address", (
 test("development fingerprint accepts the local forwarding header", () => {
   const headers = new Headers({ "x-forwarded-for": "203.0.113.9, 10.0.0.1" });
   assert.equal(requestFingerprint(headers, false), requestFingerprint(new Headers({ "x-forwarded-for": "203.0.113.9" }), false));
+  assert.doesNotThrow(() => requestFingerprint(new Headers(), false));
 });
 
 test("public RSVP and wish routes parse through the 64 KiB bounded JSON reader", () => {

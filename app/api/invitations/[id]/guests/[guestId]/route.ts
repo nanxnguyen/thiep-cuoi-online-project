@@ -3,6 +3,7 @@ import { z } from "zod";
 import { deleteGuest, updateGuest } from "@/lib/server/guests";
 import { HttpError, parseJson, routeResponse } from "@/lib/server/http";
 import { invitationRequestAccess } from "@/lib/server/invitation-request";
+import { enforceRateLimit } from "@/lib/server/rate-limit";
 
 const patchSchema = z.object({
   household: z.string().optional(),
@@ -24,6 +25,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
     const { id, guestId } = await params(context);
     const input = await parseJson(request, patchSchema);
     const auth = await invitationRequestAccess(request, id);
+    await enforceRateLimit(auth.admin, `owner-write:${auth.actorKey}:${id}`, 120, 60);
     return auth.applyCookies(NextResponse.json(await updateGuest(auth.admin, id, guestId, input, auth.editKey, auth.userId)));
   });
 }
@@ -32,6 +34,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
   return routeResponse(request, async () => {
     const { id, guestId } = await params(context);
     const auth = await invitationRequestAccess(request, id);
+    await enforceRateLimit(auth.admin, `owner-write:${auth.actorKey}:${id}`, 120, 60);
     await deleteGuest(auth.admin, id, guestId, auth.editKey, auth.userId);
     return auth.applyCookies(new NextResponse(null, { status: 204 }));
   });

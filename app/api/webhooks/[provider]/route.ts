@@ -3,11 +3,15 @@ import { normalizeDonation, recordDonation, verifyWebhookSignature, verifyWebhoo
 import { serverEnv } from "@/lib/server/env";
 import { HttpError, JSON_MAX_BYTES, readBody, routeResponse } from "@/lib/server/http";
 import { createAdminClient } from "@/lib/server/supabase";
+import { enforceRateLimit } from "@/lib/server/rate-limit";
+import { requestFingerprint } from "@/lib/server/public-write";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ provider: string }> }) {
   return routeResponse(request, async () => {
     const provider = (await context.params).provider as DonationProvider;
     if (provider !== "casso" && provider !== "sepay") throw new HttpError(404, "Không tìm thấy webhook.");
+    const admin = createAdminClient();
+    await enforceRateLimit(admin, `webhook:${requestFingerprint(request.headers)}:${provider}`, 20, 60);
     const body = new TextDecoder().decode(await readBody(request, JSON_MAX_BYTES));
     const env = serverEnv();
     const secret = provider === "casso" ? env.cassoWebhookSecret : env.sepayWebhookSecret;
@@ -33,7 +37,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ pr
         : [payload];
     for (const transaction of transactions) {
       if (!transaction || typeof transaction !== "object" || Array.isArray(transaction)) throw new HttpError(400, "Payload giao dịch không hợp lệ.");
-      await recordDonation(createAdminClient(), normalizeDonation(provider, transaction as Record<string, unknown>), payload);
+      await recordDonation(admin, normalizeDonation(provider, transaction as Record<string, unknown>), payload);
     }
     return NextResponse.json({ success: true });
   });
