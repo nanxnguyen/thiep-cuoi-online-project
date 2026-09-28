@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { forwardPublicWrite, parsePublicPayload, requestFingerprint } from "../lib/server/public-write.ts";
 import { HttpError } from "../lib/server/http.ts";
+import { readFileSync } from "node:fs";
 
 const previous = { ...process.env };
 process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
@@ -20,12 +21,35 @@ test("public payload validation preserves the API contract", () => {
   assert.throws(() => parsePublicPayload("rsvp", { ...rsvp, guests: 101 }), (error: unknown) => error instanceof HttpError && error.status === 400);
 });
 
-test("fingerprint is deterministic HMAC and never contains the forwarded IP", () => {
-  const headers = new Headers({ "x-nf-client-connection-ip": "203.0.113.9" });
-  const value = requestFingerprint(headers);
+test("production fingerprint trusts Cloudflare, normalizes it, and ignores forwarded headers", () => {
+  const headers = new Headers({
+    "cf-connecting-ip": " 2001:DB8::1 ",
+    "x-forwarded-for": "203.0.113.9",
+    "x-nf-client-connection-ip": "203.0.113.10",
+  });
+  const value = requestFingerprint(headers, true);
   assert.match(value, /^[0-9a-f]{64}$/);
-  assert.equal(value, requestFingerprint(headers));
-  assert.equal(value.includes("203.0.113.9"), false);
+  assert.equal(value, requestFingerprint(new Headers({ "cf-connecting-ip": "2001:db8::1", "x-forwarded-for": "198.51.100.1" }), true));
+  assert.equal(value.includes("2001:db8::1"), false);
+});
+
+test("production fingerprint fails closed without a valid Cloudflare address", () => {
+  assert.throws(() => requestFingerprint(new Headers({ "x-forwarded-for": "203.0.113.9" }), true), (error: unknown) => error instanceof HttpError && error.status === 400);
+  assert.throws(() => requestFingerprint(new Headers({ "cf-connecting-ip": "not-an-ip" }), true), (error: unknown) => error instanceof HttpError && error.status === 400);
+});
+
+test("development fingerprint accepts the local forwarding header", () => {
+  const headers = new Headers({ "x-forwarded-for": "203.0.113.9, 10.0.0.1" });
+  assert.equal(requestFingerprint(headers, false), requestFingerprint(new Headers({ "x-forwarded-for": "203.0.113.9" }), false));
+  assert.doesNotThrow(() => requestFingerprint(new Headers(), false));
+});
+
+test("public RSVP and wish routes parse through the 64 KiB bounded JSON reader", () => {
+  for (const action of ["rsvp", "wishes"]) {
+    const source = readFileSync(new URL(`../app/api/public/invitations/[slug]/${action}/route.ts`, import.meta.url), "utf8");
+    assert.match(source, /parseJson\(request, z\.unknown\(\), JSON_MAX_BYTES\)/);
+    assert.doesNotMatch(source, /request\.json\(/);
+  }
 });
 
 test("Edge adapter forwards only its internal contract and secret", async () => {

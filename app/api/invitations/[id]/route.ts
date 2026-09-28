@@ -4,8 +4,10 @@ import { contentSchema } from "@/lib/content";
 import { deleteInvitation, getInvitation, updateInvitation } from "@/lib/server/invitations";
 import { requireUser } from "@/lib/server/auth";
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
-import { parseJson, routeResponse } from "@/lib/server/http";
-import { invitationRequestAccess } from "@/lib/server/invitation-request";
+import { INVITATION_JSON_MAX_BYTES, parseJson, routeResponse } from "@/lib/server/http";
+import { invitationActorKey, invitationRequestAccess } from "@/lib/server/invitation-request";
+import { enforceRateLimit } from "@/lib/server/rate-limit";
+import { assertSameOrigin } from "@/lib/server/security";
 
 const patchSchema = z.object({
   templateId: z.string().min(1).max(80).optional(),
@@ -24,19 +26,24 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const { id } = await context.params;
-    const input = await parseJson(request, patchSchema);
+    const input = await parseJson(request, patchSchema, INVITATION_JSON_MAX_BYTES);
     const auth = await invitationRequestAccess(request, id);
+    await enforceRateLimit(auth.admin, `owner-write:${auth.actorKey}:${id}`, 120, 60);
     return auth.applyCookies(NextResponse.json(await updateInvitation(auth.admin, id, input, auth.editKey, auth.userId)));
   });
 }
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const { id } = await context.params;
     const { client, applyCookies } = createRouteClient(request);
     const user = await requireUser(client);
-    await deleteInvitation(createAdminClient(), id, user.id);
+    const admin = createAdminClient();
+    await enforceRateLimit(admin, `owner-write:${invitationActorKey(user.id)}:${id}`, 120, 60);
+    await deleteInvitation(admin, id, user.id);
     return applyCookies(new NextResponse(null, { status: 204 }));
   });
 }

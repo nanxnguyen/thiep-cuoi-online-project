@@ -1,4 +1,5 @@
 import { createHmac } from "node:crypto";
+import { isIP } from "node:net";
 import type { RsvpInput, WishInput } from "../api.ts";
 import { parsePayload, type PublicAction } from "../../supabase/functions/_shared/public-write.ts";
 import { traceId } from "../../supabase/functions/_shared/logging.ts";
@@ -15,9 +16,12 @@ export function parsePublicPayload(action: PublicAction, input: unknown): RsvpIn
   }
 }
 
-export function requestFingerprint(headers: Headers): string {
-  const forwarded = process.env.NODE_ENV === "production" ? null : headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = headers.get("x-nf-client-connection-ip")?.trim() || forwarded || "unknown";
+export function requestFingerprint(headers: Headers, production = process.env.NODE_ENV === "production"): string {
+  const raw = production
+    ? headers.get("cf-connecting-ip")?.trim()
+    : headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("cf-connecting-ip")?.trim() || "127.0.0.1";
+  const ip = raw?.toLowerCase();
+  if (!ip || !isIP(ip)) throw new HttpError(400, "Không xác định được nguồn yêu cầu.");
   return createHmac("sha256", serverEnv().rateLimitHmacSecret).update(`client-ip:${ip}`).digest("hex");
 }
 

@@ -3,7 +3,7 @@ import test from "node:test";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { authCookieOptions } from "../lib/server/supabase.ts";
-import { HttpError, parseJson, requestOriginUrl } from "../lib/server/http.ts";
+import { HttpError, JSON_MAX_BYTES, parseJson, readBody, requestOriginUrl } from "../lib/server/http.ts";
 import { listAccountInvitations, loginUser, logoutUser, registerUser, requireUser, resendSignupEmail, resetPasswordEmail, toAccountInvitation, updatePassword } from "../lib/server/auth.ts";
 
 type AuthResult = { data?: unknown; error?: { code?: string; message: string; status?: number } | null };
@@ -42,6 +42,26 @@ test("parseJson rejects oversized JSON before parsing it", async () => {
     () => parseJson(request, z.object({}), 1024 * 1024),
     (error: unknown) => error instanceof HttpError && error.status === 413,
   );
+});
+
+test("readBody stops a chunked request as soon as it exceeds the limit", async () => {
+  let cancelled = false;
+  const body = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(new Uint8Array(40_000));
+      controller.enqueue(new Uint8Array(40_000));
+      controller.enqueue(new Uint8Array(40_000));
+    },
+    cancel() { cancelled = true; },
+  });
+  const request = new Request("http://localhost/api/auth/register", { method: "POST", body, duplex: "half" } as RequestInit);
+  await assert.rejects(() => readBody(request, JSON_MAX_BYTES), (error: unknown) => error instanceof HttpError && error.status === 413);
+  assert.equal(cancelled, true);
+});
+
+test("parseJson rejects malformed JSON after a bounded read", async () => {
+  const request = new Request("http://localhost/api/auth/register", { method: "POST", body: "{" });
+  await assert.rejects(() => parseJson(request, z.object({})), (error: unknown) => error instanceof HttpError && error.status === 400);
 });
 
 test("register maps duplicate users to 409 and returns a live session on success", async () => {

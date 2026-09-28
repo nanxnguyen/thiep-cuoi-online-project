@@ -5,11 +5,13 @@ import { HttpError, parseJson, routeResponse } from "@/lib/server/http";
 import { consumeRateLimit } from "@/lib/server/rate-limit";
 import { requestFingerprint } from "@/lib/server/public-write";
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
+import { assertSameOrigin } from "@/lib/server/security";
 
 const schema = z.object({ email: z.email().max(254), password: z.string().min(8).max(72) });
 
 export async function POST(request: NextRequest) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const input = await parseJson(request, schema);
     if (!await consumeRateLimit(createAdminClient(), `register:${requestFingerprint(request.headers)}`, 5, 3600)) {
       throw new HttpError(429, "Bạn đăng ký quá nhanh, hãy thử lại sau.");

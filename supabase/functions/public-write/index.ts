@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { handlePublicWrite, type PublicAction, type PublicWriteStore, type StoredWrite } from "../_shared/public-write.ts";
-import { MAX_LOG_BODY_BYTES, redactHeaders, redactJsonText, sha256Text, traceId } from "../_shared/logging.ts";
+import { MAX_LOG_BODY_BYTES, redactHeaders, redactJsonText, sha256Text, shouldRecordTelemetry, traceId } from "../_shared/logging.ts";
 
 const required = (name: string) => {
   const value = Deno.env.get(name)?.trim();
@@ -67,6 +67,7 @@ async function bodySnapshot(request: Request | Response) {
 }
 
 async function recordEdgeLog(request: Request, response: Response, trace: string, startedAt: number) {
+  if (!shouldRecordTelemetry(request.method, "/functions/v1/public-write", response.status, trace)) return;
   try {
     const [requestBody, responseBody] = await Promise.all([bodySnapshot(request), bodySnapshot(response)]);
     await supabase.from("api_request_logs").insert({

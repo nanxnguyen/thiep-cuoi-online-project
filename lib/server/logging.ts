@@ -1,5 +1,5 @@
 import { createAdminClient } from "./supabase.ts";
-import { MAX_LOG_BODY_BYTES, redactHeaders, redactJsonText, sha256Text, traceId } from "../../supabase/functions/_shared/logging.ts";
+import { MAX_LOG_BODY_BYTES, redactHeaders, redactJsonText, sha256Text, shouldRecordTelemetry, traceId } from "../../supabase/functions/_shared/logging.ts";
 
 type BodySnapshot = { body: unknown; hash: string | null };
 
@@ -36,6 +36,8 @@ export async function recordApiRequest({
   error?: unknown;
 }): Promise<void> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) return;
+  const route = new URL(request.url).pathname;
+  if (!shouldRecordTelemetry(request.method, route, response.status, trace)) return;
   try {
     const [requestBody, responseBody] = await Promise.all([snapshot(request), snapshot(response)]);
     const client = createAdminClient();
@@ -43,7 +45,7 @@ export async function recordApiRequest({
       trace_id: trace,
       service: "next-api",
       method: request.method,
-      route: new URL(request.url).pathname,
+      route,
       status_code: response.status,
       duration_ms: Math.max(0, Date.now() - startedAt),
       request_headers: redactHeaders(request.headers),
