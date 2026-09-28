@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { forwardPublicWrite, parsePublicPayload, requestFingerprint } from "../lib/server/public-write.ts";
 import { HttpError } from "../lib/server/http.ts";
+import { readFileSync } from "node:fs";
 
 const previous = { ...process.env };
 process.env.NEXT_PUBLIC_SUPABASE_URL = "https://project.supabase.co";
@@ -40,6 +41,14 @@ test("production fingerprint fails closed without a valid Cloudflare address", (
 test("development fingerprint accepts the local forwarding header", () => {
   const headers = new Headers({ "x-forwarded-for": "203.0.113.9, 10.0.0.1" });
   assert.equal(requestFingerprint(headers, false), requestFingerprint(new Headers({ "x-forwarded-for": "203.0.113.9" }), false));
+});
+
+test("public RSVP and wish routes parse through the 64 KiB bounded JSON reader", () => {
+  for (const action of ["rsvp", "wishes"]) {
+    const source = readFileSync(new URL(`../app/api/public/invitations/[slug]/${action}/route.ts`, import.meta.url), "utf8");
+    assert.match(source, /parseJson\(request, z\.unknown\(\), JSON_MAX_BYTES\)/);
+    assert.doesNotMatch(source, /request\.json\(/);
+  }
 });
 
 test("Edge adapter forwards only its internal contract and secret", async () => {

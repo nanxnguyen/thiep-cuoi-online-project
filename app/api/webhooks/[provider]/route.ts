@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { normalizeDonation, recordDonation, verifyWebhookSignature, verifyWebhookToken, type DonationProvider } from "@/lib/server/donate-webhook";
 import { serverEnv } from "@/lib/server/env";
-import { HttpError, routeResponse } from "@/lib/server/http";
+import { HttpError, JSON_MAX_BYTES, readBody, routeResponse } from "@/lib/server/http";
 import { createAdminClient } from "@/lib/server/supabase";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ provider: string }> }) {
   return routeResponse(request, async () => {
     const provider = (await context.params).provider as DonationProvider;
     if (provider !== "casso" && provider !== "sepay") throw new HttpError(404, "Không tìm thấy webhook.");
-    const body = await request.text();
-    if (body.length > 65536) throw new HttpError(413, "Payload webhook quá lớn.");
+    const body = new TextDecoder().decode(await readBody(request, JSON_MAX_BYTES));
     const env = serverEnv();
     const secret = provider === "casso" ? env.cassoWebhookSecret : env.sepayWebhookSecret;
     const signature = request.headers.get("x-signature") ?? request.headers.get("x-webhook-signature");

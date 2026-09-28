@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createHmac } from "node:crypto";
 import { normalizeDonation, verifyWebhookSignature, verifyWebhookToken } from "../lib/server/donate-webhook.ts";
+import { readFileSync } from "node:fs";
 
 test("Casso and SePay payloads normalize to the same donation shape", () => {
   assert.deepEqual(normalizeDonation("casso", { id: "tx-1", amount: 100000, description: "Ung ho MOC", when: "2026-09-27T00:00:00Z" }), {
@@ -26,4 +27,10 @@ test("plain provider webhook tokens use constant-time equality semantics", () =>
   assert.equal(verifyWebhookToken("secret", "secret"), true);
   assert.equal(verifyWebhookToken("secret", "other"), false);
   assert.equal(verifyWebhookToken("secret", null), false);
+});
+
+test("webhook route bounds the raw body before signature verification", () => {
+  const source = readFileSync(new URL("../app/api/webhooks/[provider]/route.ts", import.meta.url), "utf8");
+  assert.match(source, /readBody\(request, JSON_MAX_BYTES\)/);
+  assert.doesNotMatch(source, /await request\.text\(\)/);
 });

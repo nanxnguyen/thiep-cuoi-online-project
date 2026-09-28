@@ -1,6 +1,9 @@
 import type { ZodType } from "zod";
 import { recordApiRequest, requestTraceId } from "./logging.ts";
 
+export const JSON_MAX_BYTES = 64 * 1024;
+export const INVITATION_JSON_MAX_BYTES = 1024 * 1024;
+
 export class HttpError extends Error {
   status: number;
   headers?: HeadersInit;
@@ -15,15 +18,40 @@ export function requestOriginUrl(request: { url: string; nextUrl: URL }, path: s
   return new URL(path, request.nextUrl.origin);
 }
 
-export async function parseJson<T>(request: Request, schema: ZodType<T>, maxBytes = 1024 * 1024): Promise<T> {
+export async function readBody(request: Request, maxBytes: number): Promise<Uint8Array> {
   const contentLength = request.headers.get("content-length");
   if (contentLength && Number.isSafeInteger(Number(contentLength)) && Number(contentLength) > maxBytes) {
     throw new HttpError(413, "Nội dung yêu cầu quá lớn.");
   }
+  if (!request.body) return new Uint8Array();
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let length = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    length += value.byteLength;
+    if (length > maxBytes) {
+      await reader.cancel();
+      throw new HttpError(413, "Nội dung yêu cầu quá lớn.");
+    }
+    chunks.push(value);
+  }
+  const body = new Uint8Array(length);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return body;
+}
+
+export async function parseJson<T>(request: Request, schema: ZodType<T>, maxBytes = JSON_MAX_BYTES): Promise<T> {
   let value: unknown;
   try {
-    value = await request.json();
-  } catch {
+    value = JSON.parse(new TextDecoder().decode(await readBody(request, maxBytes)));
+  } catch (error) {
+    if (error instanceof HttpError) throw error;
     throw new HttpError(400, "Nội dung JSON không hợp lệ.");
   }
   const result = schema.safeParse(value);

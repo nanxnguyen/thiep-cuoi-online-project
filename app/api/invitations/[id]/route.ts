@@ -4,7 +4,7 @@ import { contentSchema } from "@/lib/content";
 import { deleteInvitation, getInvitation, updateInvitation } from "@/lib/server/invitations";
 import { requireUser } from "@/lib/server/auth";
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
-import { parseJson, routeResponse } from "@/lib/server/http";
+import { INVITATION_JSON_MAX_BYTES, parseJson, routeResponse } from "@/lib/server/http";
 import { invitationRequestAccess } from "@/lib/server/invitation-request";
 
 const patchSchema = z.object({
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
     const { id } = await context.params;
-    const input = await parseJson(request, patchSchema);
+    const input = await parseJson(request, patchSchema, INVITATION_JSON_MAX_BYTES);
     const auth = await invitationRequestAccess(request, id);
     return auth.applyCookies(NextResponse.json(await updateInvitation(auth.admin, id, input, auth.editKey, auth.userId)));
   });
