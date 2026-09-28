@@ -1,5 +1,5 @@
 begin;
-select plan(30);
+select plan(36);
 
 select tables_are(
   'public',
@@ -12,6 +12,9 @@ select has_index('public', 'invitations', 'invitations_slug_key', 'slug is uniqu
 select has_index('public', 'api_request_logs', 'api_request_logs_trace_idx', 'request logs are indexed by trace');
 select has_function('public', 'purge_api_request_logs', array['timestamp with time zone'], 'request log retention function exists');
 select ok((select count(*) from cron.job where jobname = 'purge-api-request-logs') = 1, 'request log purge is scheduled daily');
+select has_index('public', 'rate_limits', 'rate_limits_window_started_idx', 'rate limits are indexed for retention');
+select has_function('public', 'purge_rate_limits', array['timestamp with time zone'], 'rate-limit retention function exists');
+select ok((select count(*) from cron.job where jobname = 'purge-rate-limits') = 1, 'rate-limit purge is scheduled daily');
 select ok(
   (select bool_and(relrowsecurity) from pg_class where oid in (
     'public.invitations'::regclass,
@@ -126,6 +129,19 @@ select is((select count(*)::integer from public.guests where invitation_id = '30
 select ok(public.consume_rate_limit('wish:test', 2, 60), 'first request is allowed');
 select ok(public.consume_rate_limit('wish:test', 2, 60), 'request at the limit is allowed');
 select is(public.consume_rate_limit('wish:test', 2, 60), false, 'request over the limit is denied atomically');
+
+insert into public.rate_limits (key, window_started, count)
+values ('old:test', now() - interval '2 days', 1), ('recent:test', now(), 1);
+select is(public.purge_rate_limits(now() - interval '24 hours'), 1, 'expired rate-limit rows are purged');
+select is((select count(*)::integer from public.rate_limits where key = 'recent:test'), 1, 'current rate-limit windows remain');
+set local role anon;
+select throws_ok(
+  $$select public.purge_rate_limits(now())$$,
+  '42501',
+  null,
+  'only the service role can purge rate limits'
+);
+reset role;
 
 insert into public.api_request_logs (trace_id, service, method, route, status_code, duration_ms, created_at)
 values

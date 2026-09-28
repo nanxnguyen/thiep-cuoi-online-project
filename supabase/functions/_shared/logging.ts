@@ -10,6 +10,13 @@ export function traceId(headers: Headers): string {
     : crypto.randomUUID();
 }
 
+export function shouldRecordTelemetry(method: string, route: string, status: number, trace: string): boolean {
+  if (status >= 500 || [401, 403, 413, 429].includes(status)) return true;
+  if (status >= 400) return false;
+  if ((method === "GET" && route.startsWith("/api/public/")) || route.endsWith("/view")) return false;
+  return Number.parseInt(trace.slice(0, 8), 16) % 100 === 0;
+}
+
 export function redactValue(value: unknown, depth = 0): unknown {
   if (depth > 5) return "[TRUNCATED]";
   if (Array.isArray(value)) return value.slice(0, 100).map((item) => redactValue(item, depth + 1));
