@@ -10,6 +10,7 @@ dist
 .design-workflow/
 .qc-report/
 .tmp-test/
+.worktrees/
 
 # Local Netlify folder
 .netlify
