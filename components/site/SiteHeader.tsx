@@ -61,6 +61,9 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="site-actions">
+          <Link className="nav-cta" href="/studio" prefetch={false}>
+            Tạo thiệp
+          </Link>
           {profile ? (
             <div className="site-user">
               <button type="button" className="site-user__trigger" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>
@@ -99,9 +102,6 @@ export function SiteHeader() {
               Đăng nhập
             </button>
           )}
-          <Link className="nav-cta" href="/studio" prefetch={false}>
-            Tạo thiệp
-          </Link>
           <MobileMenu
             links={[...NAV_LINKS, { href: "/bang-gia", label: "Bảng giá" }]}
             extra={

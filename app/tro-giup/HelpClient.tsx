@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { HelpGroup } from "@/lib/marketing/help";
 import "./help.css";
 
@@ -20,6 +20,14 @@ export function HelpClient({ groups }: { groups: readonly HelpGroup[] }) {
     .filter((group) => group.items.length);
   if (selected !== null && !phrase) shown = shown.filter((group) => group.id === selected);
   const topics = [{ id: null as string | null, title: "Tất cả", count: total }, ...groups.map((g) => ({ id: g.id as string | null, title: g.title, count: g.items.length }))];
+  // Mobile: topics become a horizontal scroll row (help.css). Keep the active tab in view on select.
+  const sidebarRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const active = sidebarRef.current?.querySelector('[aria-pressed="true"]');
+    if (!active) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    active.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reduce ? "auto" : "smooth" });
+  }, [selected]);
 
   return (
     <>
@@ -36,7 +44,7 @@ export function HelpClient({ groups }: { groups: readonly HelpGroup[] }) {
         </div>
       </section>
       <div className="help-layout">
-        <aside className="help-sidebar">
+        <aside className="help-sidebar" ref={sidebarRef}>
           {topics.map((t) => (
             <button type="button" key={t.title} aria-pressed={selected === t.id} onClick={() => { setSelected(t.id); setQuery(""); }}>
               {t.title}
