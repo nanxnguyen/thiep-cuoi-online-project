@@ -4,6 +4,7 @@ import { createGuest, listGuests } from "@/lib/server/guests";
 import { parseJson, routeResponse } from "@/lib/server/http";
 import { invitationRequestAccess } from "@/lib/server/invitation-request";
 import { enforceRateLimit } from "@/lib/server/rate-limit";
+import { assertSameOrigin } from "@/lib/server/security";
 
 const createSchema = z.object({
   household: z.string(),
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const { id } = await context.params;
     const input = await parseJson(request, createSchema);
     const auth = await invitationRequestAccess(request, id);

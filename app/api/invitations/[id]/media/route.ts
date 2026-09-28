@@ -4,9 +4,11 @@ import { invitationRequestAccess } from "@/lib/server/invitation-request";
 import { assertUploadRequestSize, uploadMedia, type MediaKind } from "@/lib/server/media";
 import { enforceRateLimit } from "@/lib/server/rate-limit";
 import { requestFingerprint } from "@/lib/server/public-write";
+import { assertSameOrigin } from "@/lib/server/security";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const { id } = await context.params;
     assertUploadRequestSize(request);
     const auth = await invitationRequestAccess(request, id);

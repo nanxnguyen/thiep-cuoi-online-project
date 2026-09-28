@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { securityHeaders } from "../lib/server/security.ts";
+import { assertSameOrigin, securityHeaders } from "../lib/server/security.ts";
 import { enforceRateLimit, consumeRateLimit } from "../lib/server/rate-limit.ts";
 import { routeResponse } from "../lib/server/http.ts";
 import { readFileSync } from "node:fs";
@@ -18,6 +18,39 @@ test("security headers are fresh objects for each response", () => {
   const first = securityHeaders();
   first["X-Frame-Options"] = "bad";
   assert.equal(securityHeaders()["X-Frame-Options"], "DENY");
+});
+
+test("same-origin guard accepts the canonical origin and rejects missing or foreign origins", () => {
+  const canonical = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  assert.doesNotThrow(() => assertSameOrigin(new Request(`${canonical}/api/auth/logout`, { headers: { origin: canonical } })));
+  assert.throws(() => assertSameOrigin(new Request(`${canonical}/api/auth/logout`)), /Nguồn yêu cầu không hợp lệ/);
+  assert.throws(
+    () => assertSameOrigin(new Request(`${canonical}/api/auth/logout`, { headers: { origin: "https://evil.example" } })),
+    /Nguồn yêu cầu không hợp lệ/,
+  );
+});
+
+test("cookie and owner mutation routes call the same-origin guard", () => {
+  const expected: Record<string, number> = {
+    "app/api/auth/forgot-password/route.ts": 1,
+    "app/api/auth/login/route.ts": 1,
+    "app/api/auth/logout/route.ts": 1,
+    "app/api/auth/register/route.ts": 1,
+    "app/api/auth/resend-verification/route.ts": 1,
+    "app/api/auth/reset-password/route.ts": 1,
+    "app/api/account/invitations/claim/route.ts": 1,
+    "app/api/invitations/route.ts": 1,
+    "app/api/invitations/[id]/route.ts": 2,
+    "app/api/invitations/[id]/guests/route.ts": 1,
+    "app/api/invitations/[id]/guests/import/route.ts": 1,
+    "app/api/invitations/[id]/guests/[guestId]/route.ts": 2,
+    "app/api/invitations/[id]/media/route.ts": 1,
+    "app/api/invitations/[id]/wishes/[wishId]/route.ts": 1,
+  };
+  for (const [path, count] of Object.entries(expected)) {
+    const source = readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+    assert.equal(source.match(/assertSameOrigin\(request\)/g)?.length, count, path);
+  }
 });
 
 test("rate limit denies only after the database says the window is exhausted", async () => {

@@ -7,6 +7,7 @@ import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
 import { INVITATION_JSON_MAX_BYTES, parseJson, routeResponse } from "@/lib/server/http";
 import { invitationActorKey, invitationRequestAccess } from "@/lib/server/invitation-request";
 import { enforceRateLimit } from "@/lib/server/rate-limit";
+import { assertSameOrigin } from "@/lib/server/security";
 
 const patchSchema = z.object({
   templateId: z.string().min(1).max(80).optional(),
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
 
 export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const { id } = await context.params;
     const input = await parseJson(request, patchSchema, INVITATION_JSON_MAX_BYTES);
     const auth = await invitationRequestAccess(request, id);
@@ -35,6 +37,7 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ i
 
 export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   return routeResponse(request, async () => {
+    assertSameOrigin(request);
     const { id } = await context.params;
     const { client, applyCookies } = createRouteClient(request);
     const user = await requireUser(client);
