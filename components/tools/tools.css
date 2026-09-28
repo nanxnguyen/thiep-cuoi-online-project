@@ -129,9 +129,9 @@ a.button-primary[aria-disabled="true"] { opacity:.4; pointer-events:none; }
 .tool-spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--paper-alt); border-top-color: var(--accent); animation: spin .7s linear infinite; align-self: center; }
 /* Invite message (design/CC Tin Nhan) */
 @keyframes toastTn { 0% { opacity: 0; transform: translate(-50%, 8px); } 15%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -6px); } }
-.tool-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.tool-form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
-.tool-form-grid input { font-family: inherit; font-size: 15px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line-strong); outline: none; }
+.tool-form-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.tool-form-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); min-width: 0; }
+.tool-form-grid input { font-family: inherit; font-size: 15px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line-strong); outline: none; width: 100%; max-width: 100%; min-width: 0; }
 .tool-field--full { grid-column: 1 / -1; }
 .tool-segment { display: flex; padding: 4px; background: var(--segment); border-radius: 999px; width: fit-content; }
 .tool-segment button { font-family: inherit; font-size: 13px; padding: 10px 18px; border: 0; border-radius: 999px; cursor: pointer; background: transparent; color: var(--faint); }

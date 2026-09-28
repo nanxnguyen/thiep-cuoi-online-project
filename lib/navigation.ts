@@ -26,7 +26,6 @@ export const FOOTER_COLUMNS: readonly { title: string; links: readonly Navigatio
     links: [
       { href: "/cong-cu-dam-cuoi", label: "Tất cả công cụ" },
       { href: "/cong-cu/danh-sach-khach", label: "Danh sách khách" },
-      { href: "/cong-cu/so-do-cho-ngoi", label: "Sơ đồ chỗ ngồi" },
       { href: "/cong-cu/save-the-date", label: "Save the date" },
     ],
   },

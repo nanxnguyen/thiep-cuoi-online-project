@@ -1,5 +1,8 @@
 /* design/Thiep Preview.dc.html, value for value (cqw = 1% of the card width). */
 .tp-root { aspect-ratio: 9 / 16; width: 100%; margin: 0 auto; position: relative; overflow: hidden; container-type: inline-size; background: var(--tp-paper); line-height: normal; font-family: var(--sans); }
+/* Not from the design source: a wrap-safety net for real (long, no-space) couple names. .tp-root clips overflow, so
+   without this an over-long unbroken name silently disappears past the card edge instead of wrapping. */
+.tp-root [class*="__name"] { overflow-wrap: anywhere; max-width: 100%; white-space: normal !important; }
 @media (min-width: 860px) { .tp-root--std { width: 70% !important; max-width: 70% !important; } }
 .tp-slot { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; background: rgba(127, 127, 127, .08); font: 13px/1.3 system-ui, -apple-system, sans-serif; overflow: hidden; }
 .tp-slot svg { opacity: .45; }

@@ -31,10 +31,10 @@
 .sh__name span:nth-child(1) { font-size: 12px; letter-spacing: .2em; color: var(--gold-deep); font-weight: 600; }
 .sh__name span:nth-child(2) { font-family: var(--display); font-size: 30px; line-height: 1.1; }
 .sh__name span:nth-child(3) { font-size: 14px; color: var(--faint); }
-.sh__fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.sh__fields label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.sh__fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.sh__fields label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); min-width: 0; }
 .sh__full { grid-column: 1 / -1; }
-.sh__fields input { font-family: inherit; font-size: 15px; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--field-bg); outline: none; min-width: 0; }
+.sh__fields input { font-family: inherit; font-size: 15px; padding: 13px 14px; border-radius: 12px; border: 1px solid var(--line-strong); background: var(--field-bg); outline: none; width: 100%; max-width: 100%; min-width: 0; }
 .sh__go { text-align: center; background: var(--accent); color: var(--surface); padding: 17px; border: 0; border-radius: 999px; font-family: inherit; font-size: 15px; font-weight: 500; display: flex; gap: 10px; justify-content: center; align-items: center; box-shadow: 0 14px 28px -14px rgba(163, 22, 28, .7); cursor: pointer; }
 .sh__go:hover { background: var(--accent-hover); }
 .sh__spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .4); border-top-color: var(--surface); animation: shSpin .7s linear infinite; }

@@ -5,7 +5,7 @@ import { templates } from "@/lib/templates";
 const pages = ["", "/templates", "/demo", "/bang-gia", "/tro-giup", "/thiep-cuoi-online-mien-phi", "/tao-thiep-cuoi", "/qr-tien-mung", "/tin-nhan-moi-cuoi", "/cong-cu-dam-cuoi", "/ung-ho"];
 const legal = ["/dieu-khoan", "/quyen-rieng-tu"];
 // Phase 4: công cụ độc lập đã lên (xem docs/superpowers/plans/2026-09-22-tools-phase4.md), thêm URL khi từng cái ra mắt.
-const tools = ["/cong-cu/tao-qr", "/cong-cu/nen-anh", "/cong-cu/tin-nhan-moi", "/cong-cu/danh-sach-khach", "/cong-cu/so-do-cho-ngoi", "/cong-cu/save-the-date", "/cong-cu/nen-video"];
+const tools = ["/cong-cu/tao-qr", "/cong-cu/nen-anh", "/cong-cu/tin-nhan-moi", "/cong-cu/danh-sach-khach", "/cong-cu/save-the-date", "/cong-cu/nen-video"];
 
 // Marketing pages, feature and template previews, and legal pages.
 export default function sitemap(): MetadataRoute.Sitemap {

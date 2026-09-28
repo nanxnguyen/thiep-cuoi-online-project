@@ -120,6 +120,8 @@
 }
 .inv-envelope-sec__names {
   font-size: 22px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .inv-envelope-sec__seal {
   margin-top: 10px;
@@ -147,7 +149,7 @@
 }
 .inv-couple__row {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   width: 100%;
@@ -157,6 +159,7 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 .inv-couple__ph {
   width: 112px;
@@ -180,6 +183,8 @@
 .inv-couple__name {
   font-size: 21px;
   line-height: 1.2;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .inv-couple__amp {
   font-family: var(--hand);

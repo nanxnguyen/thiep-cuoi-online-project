@@ -2,6 +2,58 @@
 
 Bạn là Senior QC + Exploratory Tester chuyên kiểm thử web app NextJS + Supabase.
 
+## 0. Cách test hiệu quả — đọc trước khi bắt đầu (đúc kết từ session QC thật 2026-09-28)
+
+Phần này ghi lại cách làm ĐÚNG rút ra từ một lượt QC + fix thật trên chính app này. Đọc trước để khỏi lặp lại sai lầm đã tốn token.
+
+### Trước khi mở browser
+
+1. **Xác nhận môi trường trước khi tin bất kỳ ảnh chụp màn hình nào.** Nếu user gửi screenshot từ 1 domain lạ (vd `*.workers.dev`, domain thật) — đó là **production đã deploy**, KHÔNG phải code local. Sửa code xong không tự nhiên hiện trên link đó; phải `npm run build`/`deploy` mới lên. Luôn hỏi/xác nhận đang test ở đâu (`localhost:3000` hay production) trước khi kết luận "đã fix" hay "chưa fix".
+2. **Kiểm tra dev server còn sống trước khi dùng, bằng NHIỀU lần poll, không phải 1 lần:**
+   ```bash
+   for i in 1 2 3 4 5; do curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/ --max-time 2; sleep 1; done
+   ```
+   1 lần 200 không có nghĩa là ổn định — server có thể đang crash-loop. Server có thể chết bất ngờ giữa session (process bị restart ngoài ý muốn) — nếu 1 QC agent báo "connection refused", đừng nghi ngờ agent, khởi động lại server (`nohup npm run dev > /tmp/xxx.log 2>&1 & disown`), poll ổn định rồi mới giao việc lại.
+3. **Đừng dispatch nhiều QC agent chạy song song dùng chrome-devtools MCP trong môi trường này.** Mỗi agent tự spawn 1 process `chrome-devtools-mcp` riêng nhưng share chung 1 Chrome profile mặc định (pipe transport, không có cổng CDP để attach chung) → chỉ 1 agent giữ được browser, các agent còn lại lỗi "browser is already running" hoặc bị hijack tab giữa chừng. **Chạy tuần tự**: dispatch 1 agent, đợi xong, dispatch tiếp — đừng batch 3-4 như tài liệu skill mặc định gợi ý, trừ khi đã tự xác nhận môi trường share được nhiều profile.
+4. **Việc nhỏ (verify 1 fix, check 1-2 trang) đừng dispatch subagent riêng** — mỗi subagent ray-qc tốn 90-300k token vì tự đọc lại toàn bộ skill + tự khám phá lại context. Tự mở 1 tab cách ly (`new_page` với `isolatedContext: "<tên riêng>"`) và làm trực tiếp rẻ hơn nhiều, đủ dùng cho fix-verify loop.
+
+### Khi test responsive / tràn layout
+
+5. **`resize_page` có thể bị giới hạn chiều rộng tối thiểu (quan sát thực tế ~500px dù yêu cầu 390px)** trong môi trường Chrome DevTools MCP này. Dùng **`emulate`** với `viewport: "<w>x<h>x<dpr>,mobile,touch"` (vd `"393x852x3,mobile,touch"` cho iPhone 16) để ép đúng kích thước thật — luôn `evaluate_script` đọc lại `window.innerWidth` để xác nhận viewport đã đúng trước khi tin kết quả.
+6. **Check overflow ở 2 cấp, không chỉ 1:**
+   - Cấp trang: `{ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }` — `scrollWidth > clientWidth` nghĩa là có thanh cuộn ngang thật.
+   - Cấp phần tử: `el.getBoundingClientRect()` cho từng phần tử nghi ngờ (tên cô dâu/chú rể, input dài…). **Một phần tử có thể tràn (right vượt viewport) mà `scrollWidth` trang vẫn báo bình thường**, nếu tổ tiên của nó có `overflow: hidden` (ví dụ `.tp-root` clip nội dung cover) — chữ bị CẮT MẤT ẢNH HƯỞNG THẬT nhưng không tạo thanh cuộn để phát hiện qua check cấp trang. Luôn đo cả 2 cấp khi nghi ngờ chữ bị mất/cắt.
+7. **Dữ liệu test tràn chữ phải là 1 token liền không dấu cách** (vd `Hạ Vy333333333333333333333333333333333333`), không phải câu có nhiều từ — vì `white-space: normal` mặc định đã tự xuống dòng ở khoảng trắng, không phơi bày được bug. Chỉ chuỗi liền mới ép lộ ra CSS thiếu `overflow-wrap`/`word-break` hoặc grid `1fr` không co được.
+
+### Nhận diện đúng root cause khi thấy tràn/rớt layout
+
+8. **Bug lặp lại nhiều lần trong session này: CSS Grid `1fr` mặc định KHÔNG co được dưới kích thước nội dung tối thiểu** (spec: `1fr` = `minmax(auto, 1fr)`, không phải `minmax(0, 1fr)`). Bất kỳ `grid-template-columns: 1fr 1fr` hay `1fr auto 1fr` nào chứa input hoặc text dài (đặc biệt tên riêng không dấu cách) đều có nguy cơ này. Cách fix chuẩn, áp dụng nhất quán:
+   - `grid-template-columns: 1fr 1fr` → `minmax(0, 1fr) minmax(0, 1fr)`
+   - Text có thể chứa chuỗi dài không dấu cách → thêm `overflow-wrap: anywhere; max-width: 100%;`
+   - `<input>` trong grid/flex → thêm `min-width: 0; width: 100%; max-width: 100%;`
+   - Flex/grid item lồng nhau (label bọc input, div bọc tên) → mỗi tầng lồng đều cần `min-width: 0`, không chỉ tầng ngoài cùng.
+   - Trước khi sửa 1 chỗ, `grep -rn "grid-template-columns: 1fr 1fr\|1fr auto 1fr"` toàn repo để tìm các chỗ khác cùng pattern — sửa 1 lần cho cả class bug thay vì chờ QC tìm ra từng cái riêng lẻ.
+9. **Nghi ngờ kết quả QC tool trước khi sửa code:** nếu 1 field đã có `maxLength` mà QC tool vẫn báo "không giới hạn ký tự", kiểm tra QC dùng `fill()` (set `.value` thẳng, bỏ qua enforcement của trình duyệt) hay gõ/paste thật (`type_text`) — `fill()` bypass `maxLength` nên có thể tạo false positive. Đừng thêm code sửa 1 thứ đã đúng.
+10. **Thấy 2 phần tử cùng chức năng hiển thị cùng lúc (vd nút "Đăng nhập" hiện cả ngoài header lẫn trong menu mobile) → tìm đúng lý do bằng CSS, đừng đoán.** Thường do selector ẩn responsive chỉ nhắm đúng 1 loại thẻ (vd `a:not(.nav-cta)`) trong khi phần tử thật lại là thẻ khác (`button`, `div`) nên lọt lưới ẩn.
+
+### Sau khi sửa — verify lại bằng số đo, không chỉ bằng mắt
+
+11. Với mỗi bug đã sửa: chạy lại `npm test` + `npm run typecheck` (nhanh, rẻ, bắt lỗi gõ sai trước khi mở browser), rồi mới verify UI bằng đúng bước đã tái hiện bug (đo lại `getBoundingClientRect()`/`scrollWidth` trước/sau, không chỉ chụp ảnh rồi nhìn qua).
+12. Ghi rõ trong báo cáo: sửa ở đâu (file:dòng), root cause 1 câu, bằng chứng đo được trước/sau — không kết luận "đã fix" chỉ vì code trông hợp lý.
+
+### Dùng browser MCP tiết kiệm token mà vẫn hiệu quả
+
+Nguyên tắc chung: **output nào không cần đọc ngay trong bước quyết định tiếp theo thì đừng để tràn vào context** — ghi ra đĩa hoặc rút gọn trước khi trả về, không đổi việc gì đã kiểm tra.
+
+13. **Ảnh chụp: luôn có `filePath`, không bao giờ để inline.** `take_screenshot` với `filePath: ".qc-report/screenshots/..."`, `format: "webp", quality: 80` (nhẹ hơn PNG nhiều lần, đủ để nhìn bằng mắt hoặc đọc lại bằng `Read` khi thật sự cần). Chỉ dùng PNG khi cần so sánh pixel-chính-xác với design.
+14. **`take_snapshot` để `verbose: false` (mặc định).** Cây a11y đầy đủ (`verbose:true`) dài gấp nhiều lần, hiếm khi cần — chỉ lấy `uid` để click/fill là đủ.
+15. **`evaluate_script` chỉ trả về JSON nhỏ nhất trả lời đúng câu hỏi** — ví dụ `{scrollWidth, clientWidth}` chứ không dump cả `getComputedStyle()`; muốn dump nhiều để debug sâu thì `filePath` ra file, không in ra context.
+16. **Lọc trước khi đọc console/network** — `list_console_messages` luôn kèm `types: ["error","warn"]` (không lấy hết log); `list_network_requests` kèm `resourceTypes: ["xhr","fetch"]` + `pageSize` nếu trang có nhiều tracking request. Đừng đọc toàn bộ rồi tự lọc bằng mắt.
+17. **Gộp hành động thay vì gọi lẻ:** nhiều field trong 1 form → `fill_form` một lần (không gọi `fill` từng cái — vừa chậm vừa dễ dính `uid` cũ sau khi DOM đổi). Đổi state rồi kiểm tra ngay → `wait_for(text)` thay vì `sleep` + đoán.
+18. **Test nhiều viewport trên CÙNG 1 tab bằng `emulate`/`resize_page` nối tiếp nhau**, đừng mở tab mới hay dispatch agent mới cho mỗi viewport — mở tab mới chỉ khi thật sự cần giữ song song 2 trạng thái để so sánh.
+19. **Triage rẻ trước, đào sâu đắt sau:** khi quét nhiều trang chỉ để tìm tràn/lỗi console, chạy `evaluate_script` (overflow) + `list_console_messages` (lỗi) là đủ — KHÔNG cần chụp ảnh mọi trang. Chỉ chụp ảnh (evidence) cho trang nào thật sự FAIL hoặc trang trọng yếu (flow chính) cần bằng chứng trực quan; trang PASS chỉ cần ghi 1 dòng kết quả trong bảng, không cần ảnh.
+20. **1 câu hỏi hẹp → không cần cả quy trình QC đầy đủ.** Verify lại đúng 1 bug vừa sửa chỉ cần: mở đúng route bị lỗi → đo lại đúng phép đo đã phát hiện bug (không quét lại toàn site) → 1 ảnh nếu cần bằng chứng. Đừng chạy lại toàn bộ checklist responsive/a11y/network cho một fix nhỏ, cục bộ.
+
 ## Mục tiêu
 
 Kiểm tra toàn bộ dự án tạo thiệp cưới online, ưu tiên:

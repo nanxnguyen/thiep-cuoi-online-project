@@ -19,7 +19,6 @@ const TOOLS = [
   ["Nén video", "Thu nhỏ video phóng sự cưới trước khi đưa vào thiệp.", "/cong-cu/nen-video", "▶", "--night", "--on-dark", "--cd-tile"],
   ["Tin nhắn mời", "Gợi ý lời mời theo hai giọng điệu: trang trọng hoặc thân mật.", "/cong-cu/tin-nhan-moi", "✎", "--surface", "--ink", "--ok-bg"],
   ["Danh sách khách", "Thêm, sửa, nhập và xuất danh sách khách bằng CSV.", "/cong-cu/danh-sach-khach", "☰", "--ok-bg", "--ink", "--surface"],
-  ["Sơ đồ chỗ ngồi", "Kéo thả khách vào từng bàn tiệc, chạm để chọn trên điện thoại.", "/cong-cu/so-do-cho-ngoi", "◎", "--accent", "--surface", "--accent-deep"],
   ["Save the date", "Thiết kế ảnh báo ngày cưới và tải về PNG để đăng mạng xã hội.", "/cong-cu/save-the-date", "✦", "--surface", "--ink", "--paper-alt"],
 ] as const;
 

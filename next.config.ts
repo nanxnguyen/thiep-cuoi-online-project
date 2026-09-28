@@ -16,7 +16,10 @@ const nextConfig: NextConfig = {
   },
   // Trang /tinh-nang/* đã bỏ: giữ link cũ không gãy (SEO/bookmark).
   async redirects() {
-    return [{ source: "/tinh-nang/:slug*", destination: "/", permanent: true }];
+    return [
+      { source: "/tinh-nang/:slug*", destination: "/", permanent: true },
+      { source: "/cong-cu/so-do-cho-ngoi", destination: "/cong-cu-dam-cuoi", permanent: true },
+    ];
   },
 };
 

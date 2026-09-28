@@ -46,7 +46,6 @@ const TOOLS = [
   ["Nén video", "Thu nhỏ video phóng sự cưới để đăng lên thiệp.", "/cong-cu/nen-video"],
   ["Tin nhắn mời", "Gợi ý lời mời theo hai giọng: trang trọng hoặc thân mật.", "/cong-cu/tin-nhan-moi"],
   ["Danh sách khách", "Thêm, sửa, nhập và xuất danh sách khách bằng CSV.", "/cong-cu/danh-sach-khach"],
-  ["Sơ đồ chỗ ngồi", "Kéo thả khách vào từng bàn tiệc.", "/cong-cu/so-do-cho-ngoi"],
   ["Save the date", "Thiết kế ảnh báo ngày cưới và tải về PNG.", "/cong-cu/save-the-date"],
 ] as const;
 const PETAL_COLORS = ["var(--petal-1)", "var(--petal-2)", "var(--petal-3)", "var(--petal-4)", "var(--petal-5)"];
