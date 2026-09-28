@@ -16,6 +16,16 @@ export function parsePublicPayload(action: PublicAction, input: unknown): RsvpIn
   }
 }
 
+export function turnstileToken(input: unknown): string {
+  const token = input && typeof input === "object" && !Array.isArray(input)
+    ? (input as Record<string, unknown>).turnstileToken
+    : undefined;
+  if (typeof token !== "string" || !token || token.length > 2048) {
+    throw new HttpError(403, "Vui lòng xác minh bạn không phải robot.");
+  }
+  return token;
+}
+
 export function requestFingerprint(headers: Headers, production = process.env.NODE_ENV === "production"): string {
   const raw = production
     ? headers.get("cf-connecting-ip")?.trim()

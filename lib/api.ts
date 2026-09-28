@@ -165,9 +165,9 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
         throw e;
       }
     },
-    submitRsvp: (slug: string, input: RsvpInput) =>
+    submitRsvp: (slug: string, input: RsvpInput & { turnstileToken: string }) =>
       call<void>(`/api/public/invitations/${slug}/rsvp`, { ...json("POST", input), headers: { "Idempotency-Key": crypto.randomUUID() } }),
-    submitWish: (slug: string, input: WishInput) =>
+    submitWish: (slug: string, input: WishInput & { turnstileToken: string }) =>
       call<PublicWish>(`/api/public/invitations/${slug}/wishes`, { ...json("POST", input), headers: { "Idempotency-Key": crypto.randomUUID() } }),
     listGuests: (id: string, key: string) => call<{ guests: GuestDto[] }>(`/api/invitations/${id}/guests`, {}, key),
     createGuest: (id: string, key: string, input: GuestInput & { household: string }) =>

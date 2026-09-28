@@ -8,6 +8,14 @@ Production uses `https://thiep-cuoi-online.nguyenvtt18.workers.dev`. There is no
 
 The application trusts only `CF-Connecting-IP` in production. A missing or invalid value is rejected. Route limits return `429` with `Retry-After`; JSON bodies default to 64 KiB and invitation/import payloads to 1 MiB.
 
+RSVP and wish submissions also require a Cloudflare Turnstile token with the expected hostname and action. Store the rotated secret only in the Worker:
+
+```sh
+npx wrangler secret put TURNSTILE_SECRET_KEY
+```
+
+The Site key is public and may be overridden at build time with `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. Never put the secret in `wrangler.jsonc`, a `NEXT_PUBLIC_*` variable, screenshots, logs, or source control.
+
 When a custom domain is acquired, put it in a Cloudflare zone, attach the Worker route, add managed WAF/rate-limit rules, update `NEXT_PUBLIC_SITE_URL`, verify OAuth redirects, then disable `workers.dev`.
 
 ## Daily signals and alert thresholds

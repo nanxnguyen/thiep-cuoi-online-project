@@ -43,9 +43,9 @@ test("getPublicInvitation returns null on 404 and does not cache", async () => {
 
 test("public writes include a fresh idempotency key", async () => {
   const first = fake(204, undefined);
-  await first.api.submitRsvp("minh-an", { name: "Lan", attending: true, guests: 2, note: "", answers: {}, guestLabel: "", guestToken: "", website: "" });
+  await first.api.submitRsvp("minh-an", { name: "Lan", attending: true, guests: 2, note: "", answers: {}, guestLabel: "", guestToken: "", website: "", turnstileToken: "token" });
   const second = fake(201, { id: "w1", name: "Lan", message: "Chúc mừng", createdAt: "2026-09-26T00:00:00Z" });
-  await second.api.submitWish("minh-an", { name: "Lan", message: "Chúc mừng", website: "" });
+  await second.api.submitWish("minh-an", { name: "Lan", message: "Chúc mừng", website: "", turnstileToken: "token" });
   const firstKey = new Headers(first.calls[0].init.headers).get("idempotency-key");
   const secondKey = new Headers(second.calls[0].init.headers).get("idempotency-key");
   assert.match(firstKey ?? "", /^[0-9a-f-]{36}$/);

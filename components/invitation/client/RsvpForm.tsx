@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { api } from "@/lib/api";
 import { celebrate } from "@/lib/celebrate";
 import { pick, t, type Locale } from "@/lib/i18n";
+import { TurnstileWidget } from "./TurnstileWidget";
 
 type Question = { id: string; label: string; labelEn: string; type: "text" | "yesno" };
 type Props = { slug?: string; preview: boolean; guestName: string; guestToken?: string; questions: Question[]; plusOnes: boolean; locale?: Locale };
@@ -17,6 +18,8 @@ export function RsvpForm({ slug, preview, guestName, guestToken = "", questions,
   const [website, setWebsite] = useState(""); // honeypot: real people never see or fill this
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileReset, setTurnstileReset] = useState(0);
 
   const fail = (message: string) => {
     setError(message);
@@ -39,10 +42,12 @@ export function RsvpForm({ slug, preview, guestName, guestToken = "", questions,
         guestLabel: guestName,
         guestToken,
         website,
+        turnstileToken,
       });
       setStatus("done");
       if (attending) void celebrate();
     } catch (err) {
+      setTurnstileReset((value) => value + 1);
       fail(err instanceof Error ? err.message : dict.errGeneric);
     }
   }
@@ -115,13 +120,15 @@ export function RsvpForm({ slug, preview, guestName, guestToken = "", questions,
           </label>
         </div>
 
+        {!preview && <TurnstileWidget action="rsvp" locale={locale} onToken={setTurnstileToken} resetSignal={turnstileReset} />}
+
         {status === "error" && (
           <p className="inv-error" role="alert">
             {error}
           </p>
         )}
         {!preview && (
-          <button type="submit" className="inv-rsvp__submit">
+          <button type="submit" className="inv-rsvp__submit" disabled={!turnstileToken}>
             {status === "sending" ? dict.sending : dict.submitRsvp}
           </button>
         )}

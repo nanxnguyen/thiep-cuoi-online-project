@@ -588,6 +588,11 @@
   color: var(--c-deep);
   cursor: pointer;
 }
+.inv-rsvp__submit:disabled,
+.inv-wishform__send:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
 .inv-done {
   background: #fff;
   color: #1a1412;
@@ -631,6 +636,10 @@
   margin: 0;
   font-size: 13px;
   font-weight: 500;
+}
+.inv-turnstile {
+  min-height: 65px;
+  width: 100%;
 }
 
 /* guestbook */
