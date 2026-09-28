@@ -39,9 +39,16 @@ test("production fingerprint trusts Cloudflare, normalizes it, and ignores forwa
   assert.equal(value.includes("2001:db8::1"), false);
 });
 
-test("production fingerprint fails closed without a valid Cloudflare address", () => {
+test("production fingerprint fails closed without a valid platform address", () => {
   assert.throws(() => requestFingerprint(new Headers({ "x-forwarded-for": "203.0.113.9" }), true), (error: unknown) => error instanceof HttpError && error.status === 400);
   assert.throws(() => requestFingerprint(new Headers({ "cf-connecting-ip": "not-an-ip" }), true), (error: unknown) => error instanceof HttpError && error.status === 400);
+});
+
+test("production fingerprint accepts the Netlify client IP when Cloudflare is absent", () => {
+  const headers = new Headers({ "x-nf-client-connection-ip": " 203.0.113.10 ", "x-forwarded-for": "198.51.100.1" });
+  const value = requestFingerprint(headers, true);
+  assert.match(value, /^[0-9a-f]{64}$/);
+  assert.equal(value, requestFingerprint(new Headers({ "x-nf-client-connection-ip": "203.0.113.10" }), true));
 });
 
 test("development fingerprint accepts the local forwarding header", () => {

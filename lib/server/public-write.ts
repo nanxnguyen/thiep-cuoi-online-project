@@ -27,9 +27,11 @@ export function turnstileToken(input: unknown): string {
 }
 
 export function requestFingerprint(headers: Headers, production = process.env.NODE_ENV === "production"): string {
+  // Prod trusts only platform-set client-IP headers (spoof-resistant): Cloudflare or Netlify.
+  // x-forwarded-for is client-spoofable, so it is dev-only.
   const raw = production
-    ? headers.get("cf-connecting-ip")?.trim()
-    : headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("cf-connecting-ip")?.trim() || "127.0.0.1";
+    ? headers.get("cf-connecting-ip")?.trim() || headers.get("x-nf-client-connection-ip")?.trim()
+    : headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("cf-connecting-ip")?.trim() || headers.get("x-nf-client-connection-ip")?.trim() || "127.0.0.1";
   const ip = raw?.toLowerCase();
   if (!ip || !isIP(ip)) throw new HttpError(400, "Không xác định được nguồn yêu cầu.");
   return createHmac("sha256", serverEnv().rateLimitHmacSecret).update(`client-ip:${ip}`).digest("hex");

@@ -21,8 +21,9 @@ type Props = {
   resetSignal: number;
 };
 
-// Public identifier, safe to bundle. The env override keeps staging widgets possible.
-const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "0x4AAAAAAFHPVcQO332JTP27";
+// Public identifier, safe to bundle. Empty when unconfigured so the UI shows
+// the "not configured" state instead of silently using another env's key.
+const siteKey = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "").trim();
 
 export function TurnstileWidget({ action, locale, onToken, resetSignal }: Props) {
   const container = useRef<HTMLDivElement>(null);
