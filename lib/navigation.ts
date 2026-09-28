@@ -3,6 +3,7 @@ export type NavigationLink = { href: string; label: string };
 export const NAV_LINKS: readonly NavigationLink[] = [
   { href: "/templates", label: "Mẫu thiệp" },
   { href: "/cong-cu-dam-cuoi", label: "Công cụ" },
+  { href: "/ung-ho", label: "Ủng hộ" },
 ] as const;
 
 export function isNavActive(pathname: string, href: string): boolean {

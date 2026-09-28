@@ -6,7 +6,7 @@ import { PUBLIC_ROUTES } from "../lib/route-inventory.ts";
 test("primary navigation exposes the complete product discovery routes", () => {
   assert.deepEqual(
     NAV_LINKS.map((link) => link.href),
-    ["/templates", "/cong-cu-dam-cuoi"],
+    ["/templates", "/cong-cu-dam-cuoi", "/ung-ho"],
   );
 });
 
