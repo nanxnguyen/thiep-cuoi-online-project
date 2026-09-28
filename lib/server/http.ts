@@ -3,9 +3,11 @@ import { recordApiRequest, requestTraceId } from "./logging.ts";
 
 export class HttpError extends Error {
   status: number;
-  constructor(status: number, message: string) {
+  headers?: HeadersInit;
+  constructor(status: number, message: string, headers?: HeadersInit) {
     super(message);
     this.status = status;
+    this.headers = headers;
   }
 }
 
@@ -29,8 +31,8 @@ export async function parseJson<T>(request: Request, schema: ZodType<T>, maxByte
   return result.data;
 }
 
-export function problem(status: number, detail: string): Response {
-  return Response.json({ detail }, { status });
+export function problem(status: number, detail: string, headers?: HeadersInit): Response {
+  return Response.json({ detail }, { status, headers });
 }
 
 export async function routeResponse(action: () => Promise<Response>): Promise<Response>;
@@ -47,7 +49,7 @@ export async function routeResponse(requestOrAction: Request | (() => Promise<Re
   try {
     response = await action();
   } catch (error) {
-    response = error instanceof HttpError ? problem(error.status, error.message) : problem(500, "Máy chủ đang bận, bạn thử lại sau nhé.");
+    response = error instanceof HttpError ? problem(error.status, error.message, error.headers) : problem(500, "Máy chủ đang bận, bạn thử lại sau nhé.");
     if (!(error instanceof HttpError)) console.error(error);
     if (request && trace) {
       response.headers.set("x-request-id", trace);

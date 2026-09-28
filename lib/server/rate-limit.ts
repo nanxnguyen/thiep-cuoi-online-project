@@ -15,3 +15,14 @@ export async function consumeRateLimit(
   if (error) throw new HttpError(500, "Chưa kiểm tra được giới hạn yêu cầu.");
   return data === true;
 }
+
+export async function enforceRateLimit(
+  client: Pick<SupabaseClient, "rpc">,
+  key: string,
+  limit: number,
+  windowSeconds: number,
+): Promise<void> {
+  if (!await consumeRateLimit(client, key, limit, windowSeconds)) {
+    throw new HttpError(429, "Bạn thao tác quá nhanh, hãy thử lại sau.", { "Retry-After": String(windowSeconds) });
+  }
+}
