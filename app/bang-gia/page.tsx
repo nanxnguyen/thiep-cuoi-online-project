@@ -21,7 +21,7 @@ const included = [
   "Link riêng cho từng khách",
   "Tài khoản lưu và quản lý thiệp",
   "Thiệp song ngữ Việt · Anh",
-  "7 công cụ đám cưới miễn phí",
+  "6 công cụ đám cưới miễn phí",
 ];
 
 const planned = ["Video trong thiệp"];

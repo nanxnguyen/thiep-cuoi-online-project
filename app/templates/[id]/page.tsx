@@ -3,9 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { ThiepPreview } from "@/components/templates/ThiepPreview";
+import { JsonLd } from "@/components/marketing/JsonLd";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { sampleContent } from "@/lib/content";
+import { SITE_URL } from "@/lib/site";
 import { colors, familyLayout, getTemplate, templateSamples, templates } from "@/lib/templates";
 import "./detail.css";
 
@@ -58,6 +60,16 @@ export default async function TemplatePreviewPage({
   return (
     <>
       <SiteHeader />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Mẫu thiệp", item: `${SITE_URL}/templates` },
+            { "@type": "ListItem", position: 2, name: template.name },
+          ],
+        }}
+      />
       <main className="tdt">
         <div className="tdt__stage">
           <div className="tdt__card">

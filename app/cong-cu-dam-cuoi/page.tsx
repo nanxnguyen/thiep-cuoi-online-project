@@ -8,7 +8,7 @@ import "@/components/tools/tools.css";
 
 export const metadata: Metadata = {
   title: "Công cụ đám cưới miễn phí",
-  description: "Các công cụ miễn phí cho đám cưới: tạo mã QR, nén ảnh, nén video, soạn tin nhắn mời, danh sách khách, sơ đồ chỗ ngồi và ảnh save the date — chạy ngay trên trình duyệt, không cần đăng nhập.",
+  description: "Các công cụ miễn phí cho đám cưới: tạo mã QR, nén ảnh, nén video, soạn tin nhắn mời, danh sách khách và ảnh save the date — chạy ngay trên trình duyệt, không cần đăng nhập.",
   alternates: { canonical: "/cong-cu-dam-cuoi" },
 };
 
@@ -34,7 +34,7 @@ export default function Page() {
             CÔNG CỤ ĐÁM CƯỚI
           </div>
           <h1>
-            Bảy việc nhỏ,
+            Sáu việc nhỏ,
             <br />
             <em>làm ngay tại đây.</em>
           </h1>

@@ -7,6 +7,7 @@ import "./demo.css";
 export const metadata: Metadata = {
   title: "Demo thiệp cưới",
   description: "Xem thử các kiểu bìa và toàn bộ trải nghiệm thiệp cưới MỘC.",
+  alternates: { canonical: "/demo" },
 };
 
 export default function DemoPage() {

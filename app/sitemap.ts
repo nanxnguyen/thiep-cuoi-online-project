@@ -9,10 +9,11 @@ const tools = ["/cong-cu/tao-qr", "/cong-cu/nen-anh", "/cong-cu/tin-nhan-moi", "
 
 // Marketing pages, feature and template previews, and legal pages.
 export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
   return [
-    ...pages.map((path, index) => ({ url: `${base}${path}`, priority: index === 0 ? 1 : 0.8, changeFrequency: "weekly" as const })),
-    ...tools.map((path) => ({ url: `${base}${path}`, priority: 0.7, changeFrequency: "monthly" as const })),
-    ...templates.map((t) => ({ url: `${base}/templates/${t.id}`, priority: 0.7, changeFrequency: "monthly" as const })),
-    ...legal.map((path) => ({ url: `${base}${path}`, priority: 0.3, changeFrequency: "yearly" as const })),
+    ...pages.map((path, index) => ({ url: `${base}${path}`, lastModified, priority: index === 0 ? 1 : 0.8, changeFrequency: "weekly" as const })),
+    ...tools.map((path) => ({ url: `${base}${path}`, lastModified, priority: 0.7, changeFrequency: "monthly" as const })),
+    ...templates.map((t) => ({ url: `${base}/templates/${t.id}`, lastModified, priority: 0.7, changeFrequency: "monthly" as const })),
+    ...legal.map((path) => ({ url: `${base}${path}`, lastModified, priority: 0.3, changeFrequency: "yearly" as const })),
   ];
 }

@@ -371,7 +371,7 @@ export default function HomePage() {
             <div className="hm-tools__intro" data-reveal="1">
               <span className="hm-kicker">CÔNG CỤ MIỄN PHÍ</span>
               <h2>
-                Bảy việc nhỏ <em>trước ngày cưới</em>
+                Sáu việc nhỏ <em>trước ngày cưới</em>
               </h2>
               <p>Chạy ngay trên trình duyệt, không cần đăng nhập. Dữ liệu của bạn ở lại trên máy của bạn.</p>
               <Link className="hm-more" href="/cong-cu-dam-cuoi">

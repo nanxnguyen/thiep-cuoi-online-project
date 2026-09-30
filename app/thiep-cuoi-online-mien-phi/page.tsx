@@ -22,7 +22,7 @@ export default function Page() {
           "Bản đồ, đếm ngược, album, nhạc nền",
           "Link riêng cho từng khách, không tính phí thêm",
           "Tài khoản lưu nhiều thiệp",
-          "7 công cụ đám cưới chạy trên trình duyệt",
+          "6 công cụ đám cưới chạy trên trình duyệt",
         ]}
       />
     </SeoLandingPage>

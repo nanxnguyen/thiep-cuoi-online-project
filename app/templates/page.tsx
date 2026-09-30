@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/marketing/JsonLd";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { GalleryCatalog, GalleryFaq } from "@/components/templates/GalleryCatalog";
@@ -109,6 +110,17 @@ export default function TemplatesPage() {
             </h2>
           </div>
           <GalleryFaq items={FAQ} />
+          <JsonLd
+            data={{
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: FAQ.map(([question, answer]) => ({
+                "@type": "Question",
+                name: question,
+                acceptedAnswer: { "@type": "Answer", text: answer },
+              })),
+            }}
+          />
         </div>
       </section>
       <SiteFooter />

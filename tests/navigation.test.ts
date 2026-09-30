@@ -22,3 +22,19 @@ test("navigation marks a section active for its index and nested routes", () => 
   assert.equal(isNavActive("/templates/lua-son", "/templates"), true);
   assert.equal(isNavActive("/bang-gia", "/templates"), false);
 });
+
+test("footer links every SEO landing page and every free tool, not just the featured ones", () => {
+  const hrefs = FOOTER_LINKS.map((link) => link.href);
+  for (const href of [
+    "/thiep-cuoi-online-mien-phi",
+    "/tao-thiep-cuoi",
+    "/qr-tien-mung",
+    "/tin-nhan-moi-cuoi",
+    "/cong-cu/tao-qr",
+    "/cong-cu/nen-anh",
+    "/cong-cu/nen-video",
+    "/cong-cu/tin-nhan-moi",
+  ]) {
+    assert.ok(hrefs.includes(href), `footer missing ${href}`);
+  }
+});

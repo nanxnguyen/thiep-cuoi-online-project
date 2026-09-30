@@ -28,6 +28,19 @@ export const FOOTER_COLUMNS: readonly { title: string; links: readonly Navigatio
       { href: "/cong-cu-dam-cuoi", label: "Tất cả công cụ" },
       { href: "/cong-cu/danh-sach-khach", label: "Danh sách khách" },
       { href: "/cong-cu/save-the-date", label: "Save the date" },
+      { href: "/cong-cu/tao-qr", label: "Tạo mã QR" },
+      { href: "/cong-cu/nen-anh", label: "Nén ảnh" },
+      { href: "/cong-cu/nen-video", label: "Nén video" },
+      { href: "/cong-cu/tin-nhan-moi", label: "Tin nhắn mời" },
+    ],
+  },
+  {
+    title: "Khám phá",
+    links: [
+      { href: "/thiep-cuoi-online-mien-phi", label: "Thiệp cưới online miễn phí" },
+      { href: "/tao-thiep-cuoi", label: "Tạo thiệp cưới" },
+      { href: "/qr-tien-mung", label: "QR tiền mừng cưới" },
+      { href: "/tin-nhan-moi-cuoi", label: "Tin nhắn mời cưới" },
     ],
   },
   {
