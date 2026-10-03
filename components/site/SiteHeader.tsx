@@ -57,6 +57,11 @@ export function SiteHeader() {
           {NAV_LINKS.map((l) => (
             <Link key={l.href} href={l.href} prefetch={false} aria-current={current(l.href)}>
               {l.label}
+              {l.href === "/ung-ho" && (
+                <span className="nav-heart nav-heart--after" aria-hidden="true">
+                  ♥
+                </span>
+              )}
             </Link>
           ))}
         </nav>

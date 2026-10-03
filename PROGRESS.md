@@ -14,6 +14,8 @@
 
 ## ▶ BẮT ĐẦU PHIÊN MỚI Ở ĐÂY
 
+**Đang chờ duyệt implementation plan 30 mẫu mới:** spec Hybrid đã được duyệt và `docs/superpowers/plans/2026-10-04-thirty-new-templates-plan.md` đã được viết lại thành 12 task. Chủ dự án chốt 20 mẫu hiện tại là baseline bất biến, chỉ thêm 30 mẫu mới để đạt 50. Sau khi chủ dự án xác nhận plan và chọn cách thực thi, bắt đầu Task 1 (asset gate + section-profile foundation); chưa triển khai code/template trước cổng duyệt này.
+
 **Git khác production.** Bản deploy 2026-10-04 build từ cây thư mục hiện tại, còn ~61 file chưa commit (SEO metadata các trang, `lib/seo.ts`/`lib/jsonld.ts`, trang thiết kế riêng, nhạc có sẵn, hiện tên Google, script cào tham khảo, `wrangler.jsonc` thêm `NEXT_PUBLIC_CONTACT_ZALO`). Commit gần nhất: `4737863` (e2e), `c61368c` (blog). Việc của chủ dự án: rà `git status` và commit trước khi ai build từ git, vì `MarketingLayout` đã sửa mà `PageJsonLd.tsx`/`manifest.ts` còn untracked thì CI kéo từ git sẽ không build được.
 
 **Việc đang chờ chủ dự án (theo mức rủi ro):**
@@ -105,6 +107,9 @@ Danh sách việc ưu tiên nằm ở mục ▶. Còn lại:
 
 ## 4. Nhật ký (mới nhất ở trên, giữ ~15 dòng)
 
+- **2026-10-04 Chốt phạm vi 20 → 50:** 20 mẫu hiện tại không sửa; spec/plan bổ sung invariant đóng băng registry, cover/thumbnail, thứ tự section và visual mặc định, cùng baseline regression trước khi thêm 30 mẫu mới.
+- **2026-10-04 Plan 30 mẫu mới:** viết lại plan cover-only thành 12 task TDD: asset/profile foundation, content v2, video upload, bốn Studio/editor section, profile-driven renderer, 6 batch × 5 mẫu và release gate. Kiểm chứng: đủ 30 family trùng spec, 12 task, không placeholder, `git diff --check` sạch.
+- **2026-10-04 Spec 30 mẫu mới:** kiểm kê 51 snapshot trong `refs/` và 20 mẫu hiện có; thay thiết kế cover-only bằng kiến trúc Hybrid, chốt 30 concept/6 collection, section profile, bốn section mới và asset audit. Kiểm chứng: 30 family slug duy nhất, không placeholder, `git diff --check` sạch sau khi sửa.
 - **2026-10-04 Rà soát PROGRESS.md:** bỏ handoff "Bước A/B" (BE Java + H2, `/tinh-nang`, số test cũ), các blocker Netlify/tên miền (đã chạy Cloudflare + domain thật), mục migration "TIẾP THEO" (đã làm); thêm production, git≠production, migration chưa xác minh, Turnstile đã gỡ, scraper, hiện tên Google, `CLAUDE.md` lỗi thời. Kiểm chứng: đối chiếu với `git log/status`, `app/`, `supabase/migrations`, `package.json`, `wrangler.jsonc`, docs.
 - **2026-10-04 Deploy Cloudflare Workers** (`e0f3ebe1`): gate xanh (test 224/224, tsc, diff-check), build với `NEXT_PUBLIC_SITE_URL` chính thức, smoke test trên workers.dev và domain chính (`/`, `/blog`, bài, sitemap 7 URL blog, 404 slug sai, ảnh `/_next/image`). Bản chứa trang thiết kế riêng nhưng form lỗi do thiếu migration.
 - **2026-10-04 E2E tạo thiệp:** `playwright.config.ts`, `e2e/create-invitation.spec.ts` (14 test), `e2e/support/mock-api.ts`. 14/14 trên 7 project; WebKit desktop trên macOS tự abort khi gõ trong editor (NSTextInputContext), test dùng `setText` qua DOM cho nhánh đó.

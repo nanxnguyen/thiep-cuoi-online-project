@@ -62,12 +62,11 @@ export default function DonatePage() {
                 <span className="donate-card__bank">{bank}</span>
               </div>
               <div className="donate-card__qr">
-                <img src={qrUrl} alt={`Mã QR chuyển khoản ${bank} tới ${DONATE_ACCOUNT.accountName}`} width={320} height={320} loading="lazy" />
+                <img src={qrUrl} alt={`Mã QR chuyển khoản ${bank}`} width={320} height={320} loading="lazy" />
               </div>
               <CopyRows
                 rows={[
                   ["Ngân hàng", bank],
-                  ["Chủ tài khoản", DONATE_ACCOUNT.accountName],
                   ["Số tài khoản", DONATE_ACCOUNT.accountNumber],
                   ["Nội dung", DONATE_MESSAGE],
                 ]}

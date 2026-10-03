@@ -208,6 +208,35 @@ h3 em {
 .site-actions > a[aria-current="page"] {
   color: var(--accent);
 }
+/* Beating heart on the Ủng hộ nav link (desktop + mobile menu). */
+@keyframes navHeartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.25);
+  }
+  45% {
+    transform: scale(1);
+  }
+}
+.nav-heart {
+  display: inline-block;
+  margin-right: 5px;
+  color: var(--accent);
+  animation: navHeartbeat 1.6s ease-in-out infinite;
+  transform-origin: center;
+}
+.nav-heart--after {
+  margin-right: 0;
+  margin-left: 5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-heart {
+    animation: none;
+  }
+}
 /* Login popup trigger / avatar menu (design/Site Header.dc.html) */
 @keyframes headerDrop {
   from {

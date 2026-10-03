@@ -20,6 +20,11 @@ export function MobileMenu({ links, extra }: { links: readonly { href: string; l
         {links.map((l) => (
           <Link key={l.href} href={l.href}>
             {l.label}
+            {l.href === "/ung-ho" && (
+              <span className="nav-heart nav-heart--after" aria-hidden="true">
+                ♥
+              </span>
+            )}
           </Link>
         ))}
         {extra}

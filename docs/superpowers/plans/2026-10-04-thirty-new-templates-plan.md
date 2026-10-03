@@ -1,829 +1,815 @@
-# 30 mẫu thiệp mới (20 → 50) Implementation Plan
+# 30 mẫu thiệp mới từ bộ tham khảo — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Thêm 30 mẫu thiệp mới, mỗi mẫu một bố cục cover riêng, đưa catalog từ 20 lên 50 mẫu, giao theo 6 đợt × 5 mẫu.
+**Goal:** Giữ nguyên 20 mẫu hiện tại và bổ sung đúng 30 visual identity hoàn toàn mới để nâng catalog từ 20 lên 50, thêm section profile cho 30 mẫu mới và bổ sung Story, Video, Dress Code, Venue mà không làm hỏng thiệp v1.
 
-**Architecture:** Mỗi bố cục mới (family) là một component thuần trong `components/templates/covers/<family>.tsx`, đăng ký qua `Record<NewCoverFamily, CoverRenderer>` (typecheck bắt buộc đủ renderer). Metadata thuần của family (nhãn, mô tả, ảnh mẫu, nền tối) ở `lib/covers.ts` để test Node chạy được. `ThiepPreview` thêm một nhánh dispatch, 15 family cũ không đổi. Thân thiệp (các section sau cover) dùng chung, đổi theo `archetype`.
+**Architecture:** Đóng băng catalog và visual output của 20 mẫu cũ, đồng thời giữ một `InvitationRenderer` và một bộ shared section. Mỗi mẫu mới có cover component riêng và toàn trang được phối bằng `SectionProfile`; content v1 được nâng trong `normalizeContent()` sang content v2, còn asset chỉ được ship qua manifest đã audit.
 
-**Tech Stack:** Next.js 16 / React 19, CSS container units (`cqw`), `node --test` với type-stripping, token `--tp-*` của `ThiepPreview`.
+**Tech Stack:** Next.js 16.3 App Router, React 19.1, TypeScript 5.8, Zod 4.6, Supabase Storage, CSS container units, Node 22 `node:test`, Playwright.
 
-**Spec:** nằm nguyên văn ở Phần 1 của file này (và bản gốc `docs/superpowers/specs/2026-10-04-thirty-new-templates-design.md`).
+**Spec:** `docs/superpowers/specs/2026-10-04-thirty-new-templates-design.md`
 
 ## Global Constraints
-- Không `git commit` bởi agent: quyền bị chặn; cuối mỗi task chỉ in lệnh commit cho chủ dự án chạy. Mọi `Commit` step trong plan nghĩa là "đưa lệnh cho chủ dự án".
-- Không hex thô trong `components/` và `app/` ngoài `app/styles/tokens.css` (test `tests/design-system.test.ts` quét cả `.css` và `.tsx`; `components/invitation/` được miễn, `components/templates/` **không**). Màu cover chỉ dùng `var(--tp-deep|paper|gold|tint)`, `rgba(...)`, `currentColor`; trong data-URI SVG dùng `%23`.
-- Palette mỗi mẫu: mọi cặp chữ đạt WCAG AA 4.5:1 (`tests/templates.test.ts`). Mẫu nào thêm vào `colors` bắt buộc `ColorKey` có sẵn, **không thêm key màu mới**.
-- Font: chỉ `var(--display)` (Playfair), `var(--sans)`, `var(--script)` (Cormorant italic), `var(--hand)` (Great Vibes) và font mono hệ thống `ui-monospace, "SFMono-Regular", Menlo, monospace`. **Không thêm font mới.**
-- Hoạ tiết tự vẽ bằng CSS/SVG. Không copy hoa, ảnh, ornament, font từ `refs/`.
-- `lib/*.ts` được test import: dùng import tương đối có đuôi `.ts`, không enum, không parameter property, không `@/`.
-- Mỗi `seo` duy nhất, 100–161 ký tự (`.length`). Mỗi tên mẫu và id duy nhất. Style trong `templateSamples` chỉ dùng nhãn lọc có sẵn của gallery: `Truyền thống`, `Tối giản`, `Hoa`, `Cổ điển`, `Lãng mạn`, `Hiện đại`.
-- Cover phải co giãn theo `cqw`, không tràn ngang ở 390px và 1280px, tôn trọng `prefers-reduced-motion`.
-- Quy ước tên: trong `ThiepPreview`, `a` = cô dâu, `b` = chú rể; cover hiển thị chú rể trước (`{b} & {a}`) trừ khi card nói khác.
-- Gate mỗi đợt: `npm run typecheck && npm test && npm run build` xanh. Duyệt trình duyệt (Chrome DevTools MCP, 390px và 1280px) chỉ làm **một lần ở cuối mỗi đợt**, theo quy ước repo, không làm từng bước.
+
+- Kết quả cuối có đúng 50 template: 20 cũ không đổi id, tên, metadata/SEO, family, archetype, palette, sample, cover, thumbnail, thứ tự section hoặc giao diện mặc định; 30 mới có family riêng.
+- Profile/variant/ornament mới chỉ gán cho 30 mẫu mới; visual selector A–O và catalog row của 20 mẫu cũ là baseline bất biến.
+- Giao theo 6 đợt × 5 mẫu; gate và chủ dự án duyệt xong một đợt mới sang đợt tiếp theo.
+- Không tạo 30 full-page renderer. `InvitationRenderer` và shared sections là owner duy nhất của hành vi.
+- Asset trong `refs/` mặc định là `reference-only`; chỉ `owned`, `licensed` hoặc `original` được chép vào `public/templates/`.
+- Không import production trực tiếp từ `refs/`; không giữ tên file hash của scraper.
+- Không thêm dependency frontend hoặc animation mới.
+- Không hex thô ngoài `app/styles/tokens.css` và palette registry hiện có; mọi cặp chữ/nền phải đạt WCAG AA.
+- Video chỉ nhận MP4/WebM, tối đa 50 MiB; không autoplay có âm thanh; poster đi qua pipeline ảnh.
+- Ảnh, album và video dưới fold lazy-load; gallery 50 card chỉ mount `ThiepPreview`.
+- Mọi motion trang trí phải có nhánh `prefers-reduced-motion: reduce`.
+- Mọi thay đổi Next.js phải đọc guide liên quan trong `node_modules/next/dist/docs/` trước khi code; task video đọc `01-app/02-guides/videos.md`, task CSS đọc `01-app/01-getting-started/11-css.md`.
+- `lib/*.ts` được test trực tiếp phải dùng TypeScript erasable và import tương đối có đuôi `.ts`.
+- Gate tự động của mỗi task: test đích → `npm run typecheck` → `npm test`; `npm run build:next` ở cuối mỗi task lớn và cuối mỗi batch.
+- Agent không chạy `git commit`; bước Commit chỉ đưa đúng lệnh cho chủ dự án.
+- Sau mỗi task/batch, cập nhật bảng trạng thái, nhật ký và mục “▶ BẮT ĐẦU” trong `PROGRESS.md`.
+
+## Review Focus
+
+1. **Payload v1 đang tồn tại:** `normalizeContent()` phải trả content v2 đầy đủ, không đổi dữ liệu cặp đôi/sự kiện; Task 2 thêm test fixture v1.
+2. **Profile có section bị tắt hoặc dữ liệu rỗng:** renderer không để khoảng trắng/nav item và không đổi thứ tự phần còn lại; Task 5 thêm test resolver.
+3. **Video giả MIME, quá 50 MiB hoặc URL đang gõ dở:** client và server cùng từ chối, autosave không kẹt; Task 3 thêm test magic-byte/size/persistable.
+4. **Asset chưa rõ quyền sử dụng:** build/test phải fail nếu asset production không có trạng thái hợp lệ; Task 1 thêm manifest audit test.
+5. **Tên, địa chỉ, VI/EN dài và media thiếu:** cover/section không tràn ngang ở 390px, fallback vẫn đọc được; Tasks 5–11 dùng fixture stress và QA browser.
+
+Baseline bắt buộc: trước Task 1, lưu registry snapshot và ảnh browser đại diện của 20 mẫu hiện tại; mọi batch phải chạy regression để chứng minh 20 mẫu cũ không đổi.
 
 ---
 
-# Phần 1 — Spec (nguyên văn)
+## File Structure
 
-## 30 mẫu thiệp mới (20 → 50) — thiết kế
+### Tạo
 
-Ngày: 2026-10-04. Chủ dự án yêu cầu thêm 30 mẫu để catalog đạt 50, hiện đại và ấn tượng hơn, tham khảo `refs/` (51 trang của chungdoi.com và m-invite.com).
+- `lib/covers.ts` — registry family mới đang active và metadata cover thuần.
+- `lib/section-profiles.ts` — section key, variants, sáu profile và resolver thứ tự.
+- `lib/template-assets.ts` — manifest asset production và kiểm tra trạng thái quyền sử dụng.
+- `docs/design/template-asset-audit.md` — provenance/license của asset theo family.
+- `components/templates/covers/types.ts` — `CoverProps`, `CoverRenderer`.
+- `components/templates/covers/index.ts` — `coverRenderers` exhaustive theo family active.
+- `components/templates/covers/{heritage,garden,editorial,quiet-luxury,story,expressive}.css` — CSS theo collection.
+- `components/templates/covers/<family>.tsx` × 30 — một cover/một file.
+- `components/invitation/section-renderer.tsx` — map profile order sang shared sections.
+- `components/invitation/sections/{Story,Video,DressCode,Venue}.tsx` — bốn section mới.
+- `components/studio/panels/{StoryPanel,VideoPanel,DressCodePanel,VenuePanel}.tsx` — editor riêng, `SectionForm` chỉ dispatch.
+- `tests/{covers,section-profiles,template-assets}.test.ts` — invariant registry/profile/asset.
 
-## Quyết định đã chốt
-- **30 bố cục cover riêng**, mỗi mẫu một family mới (không tái dùng family cũ).
-- **6 đợt × 5 mẫu**, chủ dự án duyệt từng đợt trước khi sang đợt sau. Catalog tăng 20 → 25 → … → 50.
-- **Kiến trúc A:** mỗi family mới là một file `components/templates/covers/<Family>.tsx`.
+### Sửa
 
-## Phạm vi và ngoài phạm vi
-Trong: 30 cover, 30 dòng catalog (palette, SEO riêng), CSS riêng từng cover, test, tài liệu.
-Ngoài: đổi thân thiệp (các section sau cover) — vẫn dùng chung và đổi theo `archetype`; đổi 20 mẫu cũ; thêm ảnh mẫu mới khi chưa hỏi chủ dự án.
-
-## Tham khảo, không sao chép
-`refs/` chỉ cho ý tưởng bố cục, nhịp section, cặp font. Hoa màu nước, ảnh, ornament, font thương mại của các site đó có bản quyền: **không dùng**. Mọi hoạ tiết tự vẽ bằng CSS/SVG.
-
-## Kiến trúc
-- `CoverFamily` (lib/templates.ts) hiện là union 15 chữ cái A–O. Giữ nguyên, thêm `NewCoverFamily` là union 30 slug (ví dụ `"monogram"`), và `CoverFamily = LegacyFamily | NewCoverFamily`.
-- `ThiepPreview.tsx` thêm một nhánh: nếu family thuộc `NewCoverFamily` thì render component trong `covers/` qua bảng `coverRenderers: Record<NewCoverFamily, (props) => ReactNode>` (`covers/index.ts`). Không động tới 15 family cũ.
-- Props cover mới giống props `ThiepPreview` (tên, ngày, nơi, ảnh, palette `--tp-*`), dùng lại `Slot`. Một cover = một file TSX + một khối CSS trong `covers/covers.css` (prefix `cv-<family>-`).
-- `familyLayout` (mô tả một dòng cho trang `/templates/[id]`) và `familyPhotos` (ảnh mẫu, tái dùng `public/photos`) thêm mục cho family mới. Bản đồ này vốn dùng cho mọi family, nên kiểu của chúng đổi thành `Record<CoverFamily, …>` đã bao gồm family mới.
-- Font: nếu mẫu cần font ngoài bộ hiện có thì thêm vào `lib/fonts.ts` (nạp theo template, tối đa 2 font mỗi mẫu).
-
-## Danh sách 30 mẫu (tên tạm, chốt khi làm từng đợt)
-| Đợt | Chủ đề | Family (slug → tên mẫu) |
-|---|---|---|
-| 1 | Chữ làm nhân vật | monogram → Chữ Lồng · stack → Tên Xếp Chồng · outline → Nét Rỗng · split → Đôi Nửa · marquee → Băng Chữ |
-| 2 | Ảnh là chính | bleed → Tràn Viền · window → Cửa Sổ Vòm · collage → Ảnh Dán · diagonal → Chéo Đôi · strip → Dải Dọc |
-| 3 | Đồ vật đời thường | receipt → Biên Lai · passport → Hộ Chiếu · matchbox → Hộp Diêm · notebook → Sổ Tay · sticky → Giấy Nhắn |
-| 4 | Truyền thống kiểu mới | lantern → Lồng Đèn · bamboo → Trúc Xanh · lotus → Sen Hồng · ceramic → Gốm Men · drum → Trống Đồng |
-| 5 | Sang và tinh tế | velvet → Nhung Vàng · marble → Cẩm Thạch · aurora → Cực Quang · glass → Kính Mờ · leaf → Lá Mảnh |
-| 6 | Vui và cá tính | chat → Khung Chat · sticker → Dán Sticker · y2k → Y2K · pixel → Điểm Ảnh · pin → Ghim Bản Đồ |
-
-Mỗi mẫu có `archetype` (editorial/minimal/classic/botanical/traditional/korean) và 2–4 `colors` hợp tông; không ép đều mỗi archetype.
-
-## Quy tắc chất lượng
-- Không hex thô ngoài `app/styles/tokens.css` / `lib/templates.ts` (test `design-system` giữ nguyên); palette mọi cặp chữ đạt WCAG AA 4.5:1 (test `templates.test.ts`).
-- Cover co giãn theo container như các family cũ, không tràn ngang ở 390px và 1280px; tôn trọng `prefers-reduced-motion`.
-- Mỗi mẫu có `seo` riêng, duy nhất, 100–161 ký tự, không bịa tính năng.
-- Chữ trong cover chỉ là tên, ngày, nơi, và nhãn tĩnh có nghĩa với mẫu (ví dụ "Vé", "Side A"); không số liệu bịa.
-
-## Chỗ phụ thuộc số lượng mẫu (kiểm lại mỗi đợt)
-- `tests/templates.test.ts`: số mẫu và số family (hiện cứng 20 và 15). Đổi sang đếm theo catalog thật và thêm kiểm: mỗi `NewCoverFamily` có renderer, `familyLayout`, `familyPhotos`.
-- Sitemap, `generateStaticParams`, gallery `/templates`, `/templates/[id]`: đọc từ `templates`, kiểm lại sau mỗi đợt. SEO test độ dài title/description cho 30 trang mới.
-- `PROGRESS.md`, `CLAUDE.md` (câu "16 templates"), `DESIGN.md` (family mới không có mockup trong `design/`, như K–O).
-
-## Kiểm chứng mỗi đợt
-1. `npm run typecheck && npm test && npm run build` xanh.
-2. Một lượt Chrome DevTools MCP ở 390px và 1280px cho `/templates` và trang chi tiết các mẫu mới: 0 lỗi console, không tràn ngang, không ảnh hỏng, đúng font. Không mở trình duyệt từng bước.
-3. Chủ dự án duyệt đợt trên `/templates`; chỉ sau đó mới sang đợt kế.
-
-## Rủi ro
-- Ảnh mẫu trong `public/photos` có logo studio (đã ghi trong PROGRESS): family mới tái dùng bộ này nên rủi ro bản quyền giữ nguyên, không tăng.
-- Số family tăng làm bundle JS của ThiepPreview lớn hơn: mỗi cover là component thuần không state, kiểm kích thước route `/templates` sau đợt 2 và đợt 6.
-
+- `lib/content.ts` — content v2, upgrade v1, limits và defaults.
+- `lib/templates.ts` — `CoverFamily`, profile key, 30 catalog rows/palettes/samples.
+- `lib/editor-sections.ts` — outline, toggle, missing reason và progress cho section mới.
+- `lib/i18n.ts` — nhãn VI/EN của bốn section.
+- `lib/api.ts`, `lib/server/media.ts`, `app/api/invitations/[id]/media/route.ts` — media kind video và limit 50 MiB.
+- `components/studio/panels/useUploader.ts`, `MediaPanel.tsx`, `SectionForm.tsx`, `panels.css` — upload/edit section mới.
+- `components/templates/ThiepPreview.tsx`, `PreviewDemo.tsx`, `thiep-preview.css` — dispatch cover mới.
+- `components/invitation/InvitationRenderer.tsx`, `invitation.css` — profile-driven render và style shared variants.
+- `tests/{content,editor-sections,media-route,templates,demo,i18n,design-system}.test.ts` — hồi quy.
+- `DESIGN.md`, `PROGRESS.md`, `CLAUDE.md`, `Guide-convert-html-design-to-code.md`, `lib/seo.ts` — tài liệu và số lượng cuối phase.
 
 ---
 
-# Phần 2 — File Structure
+### Task 1: Asset gate và section-profile foundation
 
-**Tạo**
-- `lib/covers.ts`: `NEW_FAMILIES`, `NewCoverFamily`, `familyMeta` (nhãn, mô tả, ảnh mẫu, nền tối), `isNewFamily`. Dữ liệu thuần, test chạy được.
-- `components/templates/covers/types.ts`: `CoverProps`, `CoverRenderer`.
-- `components/templates/covers/util.ts`: `initial`, `mrz`.
-- `components/templates/covers/index.ts`: `coverRenderers: Record<NewCoverFamily, CoverRenderer>` và `import "./covers.css"`.
-- `components/templates/covers/<family>.tsx` × 30 (mỗi file một cover).
-- `components/templates/covers/covers.css`: mọi style `cv-<family>-*`, thêm dần theo đợt.
-- `tests/covers.test.ts`: test metadata, catalog khớp family, SEO, mẫu.
-
-**Sửa**
-- `lib/templates.ts`: `CoverFamily` mở rộng; `familyLayout`/`familyPhotos` gộp metadata mới; `getPalette` nhận biết nền tối của family mới; thêm dòng catalog và `templateSamples` theo đợt.
-- `components/templates/ThiepPreview.tsx`: nhánh dispatch `isNewFamily`.
-- `components/templates/PreviewDemo.tsx`: `familyLabels` gồm family mới.
-- `tests/templates.test.ts`, `tests/demo.test.ts`: bỏ số cứng 20/15.
-- `lib/seo.ts` (đợt 6): "Hơn 20 mẫu" → "Hơn 50 mẫu".
-- `PROGRESS.md`, `CLAUDE.md`, `DESIGN.md`, `Guide-convert-html-design-to-code.md` (đợt 6 + cuối mỗi đợt cho PROGRESS).
-
----
-
-# Phần 3 — Tasks
-
-### Task 1: Hạ tầng family mới + cover mẫu Chữ Lồng
-
-Deliverable: catalog 21 mẫu (20 cũ + Chữ Lồng) chạy end-to-end: render ở gallery, trang chi tiết, Studio, demo; tất cả test xanh. Task này khoá mọi hợp đồng mà 29 cover còn lại dùng.
+**Deliverable:** Hạ tầng profile/asset chạy với 20 mẫu cũ, chưa thêm template mới và registry/visual output của 20 mẫu vẫn khớp baseline.
 
 **Files:**
-- Create: `lib/covers.ts`, `components/templates/covers/{types.ts,util.ts,index.ts,monogram.tsx,covers.css}`, `tests/covers.test.ts`
-- Modify: `lib/templates.ts`, `components/templates/ThiepPreview.tsx`, `components/templates/PreviewDemo.tsx`, `tests/templates.test.ts`, `tests/demo.test.ts`
+
+- Create: `lib/section-profiles.ts`
+- Create: `lib/template-assets.ts`
+- Create: `docs/design/template-asset-audit.md`
+- Create: `tests/section-profiles.test.ts`
+- Create: `tests/template-assets.test.ts`
+- Modify: `lib/templates.ts`
+- Modify: `tests/templates.test.ts`
 
 **Interfaces:**
-- Produces:
-  - `lib/covers.ts`: `NEW_FAMILIES: readonly [...]`, `type NewCoverFamily`, `type FamilyMeta = { label: string; layout: string; photos: string[]; dark: boolean }`, `familyMeta: Record<NewCoverFamily, FamilyMeta>`, `isNewFamily(f: string): f is NewCoverFamily`.
-  - `components/templates/covers/types.ts`: `CoverProps = { a: string; b: string; date: string; dm: string; year: string; day: string; month: string; weekday: string; place: string; slot: (index: 0 | 1 | 2, caption: string, circle?: boolean) => ReactNode }`, `CoverRenderer = (p: CoverProps) => ReactNode`.
-  - `components/templates/covers/util.ts`: `initial(s: string): string`, `mrz(s: string): string`.
-  - `lib/templates.ts`: `type CoverFamily = LegacyFamily | NewCoverFamily`.
 
-- [ ] **Step 1: Viết test thất bại cho metadata và catalog**
-
-Tạo `tests/covers.test.ts`:
+- Produces: `InvitationSectionKey`, `SectionVariants`, `SectionProfileKey`, `SectionProfile`, `DEFAULT_SECTION_PROFILE`, `SECTION_PROFILES`, `resolveSectionOrder(profile, isEnabled)`.
+- Produces: `AssetStatus = "owned" | "licensed" | "original" | "reference-only"`, `TemplateAsset`, `TEMPLATE_ASSETS`, `productionAssets()`.
+- `Template` adds `profile: SectionProfileKey`; all 20 legacy entries use `"default"`.
 
 ```ts
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { NEW_FAMILIES, familyMeta, isNewFamily } from "../lib/covers.ts";
-import { templates, templateSamples, familyLayout, familyPhotos, getPalette } from "../lib/templates.ts";
-
-test("every new family has complete metadata", () => {
-  for (const f of NEW_FAMILIES) {
-    const m = familyMeta[f];
-    assert.ok(m, f);
-    assert.ok(m.label.length > 0 && m.layout.length > 20, f);
-    assert.ok(m.photos.length >= 1 && m.photos.every((p) => /^\/photos\/[a-z0-9-]+\.jpg$/.test(p)), f);
-  }
-});
-
-test("isNewFamily separates legacy letters from new slugs", () => {
-  assert.equal(isNewFamily("A"), false);
-  assert.equal(isNewFamily("monogram"), true);
-  assert.equal(isNewFamily("nope"), false);
-});
-
-test("each new family is used by exactly one template, and legacy families by none of the new ones", () => {
-  for (const f of NEW_FAMILIES) {
-    const users = templates.filter((t) => t.family === f);
-    assert.equal(users.length, 1, `${f} used by ${users.length} templates`);
-  }
-});
-
-test("family tables cover every family a template uses", () => {
-  for (const t of templates) {
-    assert.ok(familyLayout[t.family], `${t.id}: familyLayout`);
-    assert.ok(familyPhotos[t.family]?.length, `${t.id}: familyPhotos`);
-    assert.ok(templateSamples[t.id], `${t.id}: templateSamples`);
-  }
-});
-
-test("dark new families use the deep colour as background", async () => {
-  const { colors } = await import("../lib/templates.ts");
-  for (const t of templates.filter((x) => isNewFamily(x.family))) {
-    const deep = colors[t.colors[0]];
-    const p = getPalette(t);
-    const dark = familyMeta[t.family as keyof typeof familyMeta].dark;
-    assert.equal(p.bg, dark ? deep.deep : deep.paper, t.id);
-  }
-});
-```
-
-- [ ] **Step 2: Chạy test, xác nhận thất bại**
-
-Run: `node --test tests/covers.test.ts`
-Expected: FAIL — `Cannot find module '../lib/covers.ts'`.
-
-- [ ] **Step 3: Tạo `lib/covers.ts` với đúng một family**
-
-```ts
-// Metadata of the cover layouts added after design/Thiep Preview.dc.html (families A–O). Pure data so node --test can
-// import it; the matching React components live in components/templates/covers/.
-export const NEW_FAMILIES = ["monogram"] as const;
-export type NewCoverFamily = (typeof NEW_FAMILIES)[number];
-export type FamilyMeta = { label: string; layout: string; photos: string[]; dark: boolean };
-
-const ph = (...names: string[]) => names.map((n) => `/photos/${n}.jpg`);
-
-export const familyMeta: Record<NewCoverFamily, FamilyMeta> = {
-  monogram: { label: "Chữ lồng", layout: "Hai chữ cái đầu lồng nhau trong một vòng tròn lớn, không cần ảnh.", photos: ph("han-quoc-toi-gian"), dark: false },
+type SectionVariants = {
+  story: "timeline" | "cards" | "editorial";
+  venue: "card" | "editorial" | "illustrated";
+  album: "grid" | "masonry" | "filmstrip";
+  dressCode: "swatches" | "text";
 };
-
-export const isNewFamily = (f: string): f is NewCoverFamily => (NEW_FAMILIES as readonly string[]).includes(f);
-```
-
-(Các family còn lại thêm dần ở đợt 1–6.)
-
-- [ ] **Step 4: Mở rộng `lib/templates.ts`**
-
-Thêm import và sửa kiểu ở đầu file:
-
-```ts
-import { familyMeta, isNewFamily, NEW_FAMILIES, type NewCoverFamily } from "./covers.ts";
-```
-
-Đổi dòng `export type CoverFamily = ...` thành:
-
-```ts
-export type LegacyFamily = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O";
-export type CoverFamily = LegacyFamily | NewCoverFamily;
-```
-
-Đổi `familyLayout` và `familyPhotos` để gộp metadata mới (giữ nguyên nội dung cũ làm `legacyLayout`/`legacyPhotos`):
-
-```ts
-const legacyLayout: Record<LegacyFamily, string> = { /* nội dung familyLayout cũ, A..O, không đổi */ };
-export const familyLayout: Record<CoverFamily, string> = {
-  ...legacyLayout,
-  ...(Object.fromEntries(NEW_FAMILIES.map((f) => [f, familyMeta[f].layout])) as Record<NewCoverFamily, string>),
+type SectionProfile = {
+  order: readonly InvitationSectionKey[];
+  variants: SectionVariants;
+  density: "airy" | "balanced" | "ceremonial";
+  ornament: "none" | "heritage" | "garden" | "editorial" | "luxury" | "story" | "expressive";
 };
-
-const legacyPhotos: Record<LegacyFamily, string[]> = { /* nội dung familyPhotos cũ, không đổi */ };
-export const familyPhotos: Record<CoverFamily, string[]> = {
-  ...legacyPhotos,
-  ...(Object.fromEntries(NEW_FAMILIES.map((f) => [f, familyMeta[f].photos])) as Record<NewCoverFamily, string[]>),
+type TemplateAsset = {
+  path: `/templates/${string}`;
+  family: string;
+  source: string;
+  status: AssetStatus;
+  licenseNote: string;
 };
 ```
 
-Sửa `getPalette` dòng `const dark = ...`:
+`productionAssets(): TemplateAsset[]` chỉ trả `owned|licensed|original` và throw nếu manifest có entry production không hợp lệ.
+
+- [ ] **Step 0: Chốt baseline bất biến của 20 mẫu hiện tại**
+
+Trong `tests/templates.test.ts`, lưu snapshot có chủ đích cho 20 catalog row hiện tại gồm id, name, family, archetype, palette, sample và SEO. Chụp browser baseline 390px/1280px cho ít nhất một mẫu thuộc mỗi archetype hiện có; không cập nhật baseline để hợp thức hóa diff trong phase này.
+
+- [ ] **Step 1: Viết test thất bại cho profile mặc định**
+
+`tests/section-profiles.test.ts` phải assert:
 
 ```ts
-  const dark = ["A", "D", "F", "J", "L"].includes(template.family) || (isNewFamily(template.family) && familyMeta[template.family].dark);
+assert.deepEqual(DEFAULT_SECTION_PROFILE.order, [
+  "cover", "couple", "family", "events", "venue", "schedule", "countdown",
+  "dressCode", "story", "album", "video", "rsvp", "guestbook", "gift", "thanks",
+]);
+assert.equal(new Set(DEFAULT_SECTION_PROFILE.order).size, DEFAULT_SECTION_PROFILE.order.length);
+for (const template of templates) assert.ok(SECTION_PROFILES[template.profile]);
 ```
 
-Thêm dòng catalog đầu tiên vào mảng `catalog` (sau dòng `lich-bloc`):
+- [ ] **Step 2: Viết test thất bại cho asset gate**
+
+`tests/template-assets.test.ts` phải reject production path dưới `public/templates/` nếu status là `reference-only`, thiếu `source`, hoặc thiếu `licenseNote` với status `licensed`.
+
+- [ ] **Step 3: Chạy test đỏ**
+
+Run: `node --test tests/section-profiles.test.ts tests/template-assets.test.ts`
+
+Expected: FAIL vì hai module chưa tồn tại.
+
+- [ ] **Step 4: Tạo profile types và sáu profile đã chốt**
+
+`SECTION_PROFILES` có đúng bảy key:
+
+| Key | Density | Story | Venue | Album |
+|---|---|---|---|---|
+| `default` | balanced | timeline | card | grid |
+| `heritage` | ceremonial | timeline | illustrated | grid |
+| `garden` | airy | cards | illustrated | masonry |
+| `editorial-photo` | balanced | editorial | editorial | masonry |
+| `quiet-luxury` | airy | timeline | card | grid |
+| `story-led` | balanced | cards | editorial | filmstrip |
+| `expressive` | balanced | editorial | illustrated | masonry |
+
+Mỗi order chứa mọi `InvitationSectionKey` đúng một lần; `resolveSectionOrder` loại section tắt nhưng giữ thứ tự ổn định.
+
+Order chính xác:
 
 ```ts
-  ["chu-long", "Chữ Lồng", "monogram", "minimal", "Chữ cái lồng · tối giản", ["muc", "dodam", "nau"], undefined, "Mẫu thiệp cưới Chữ Lồng với hai chữ cái đầu của cô dâu chú rể lồng vào nhau thật lớn, tối giản và sang. Tạo thiệp online miễn phí, không cần tài khoản."],
+default: ["cover", "couple", "family", "events", "venue", "schedule", "countdown", "dressCode", "story", "album", "video", "rsvp", "guestbook", "gift", "thanks"];
+heritage: ["cover", "family", "couple", "events", "venue", "countdown", "schedule", "dressCode", "story", "album", "video", "rsvp", "guestbook", "gift", "thanks"];
+garden: ["cover", "couple", "family", "story", "events", "venue", "countdown", "album", "dressCode", "video", "rsvp", "gift", "guestbook", "thanks", "schedule"];
+"editorial-photo": ["cover", "couple", "events", "countdown", "story", "album", "video", "venue", "dressCode", "family", "schedule", "rsvp", "gift", "guestbook", "thanks"];
+"quiet-luxury": ["cover", "family", "couple", "events", "venue", "countdown", "dressCode", "album", "story", "video", "schedule", "rsvp", "gift", "guestbook", "thanks"];
+"story-led": ["cover", "story", "couple", "family", "events", "venue", "countdown", "schedule", "album", "video", "dressCode", "rsvp", "guestbook", "gift", "thanks"];
+expressive: ["cover", "couple", "story", "family", "events", "schedule", "countdown", "album", "video", "venue", "dressCode", "rsvp", "guestbook", "gift", "thanks"];
 ```
 
-và mục vào `templateSamples`:
+Signature resolver: `resolveSectionOrder(profile: SectionProfile, isEnabled: (key: InvitationSectionKey) => boolean): InvitationSectionKey[]`.
 
-```ts
-  "chu-long": { style: "Tối giản", motif: "Chữ lồng", badge: "MỚI", pop: 70, isNew: true, a: "Minh Anh", b: "Gia Bảo", date: "12 · 12 · 2026", place: "HÀ NỘI" },
-```
+- [ ] **Step 5: Tạo manifest rỗng an toàn và audit doc**
 
-- [ ] **Step 5: Tạo hợp đồng cover**
+`TEMPLATE_ASSETS` ban đầu là `[]`; audit doc ghi 51 snapshot là `reference-only` theo mặc định và mô tả ba trạng thái có thể ship.
 
-`components/templates/covers/types.ts`:
+- [ ] **Step 6: Thêm `profile: "default"` cho 20 template**
 
-```ts
-import type { ReactNode } from "react";
+Giữ nguyên tuyệt đối id, name, family, archetype, palette, sample, SEO và visual selector của 20 mẫu; test snapshot ở Step 0 phải tiếp tục xanh.
 
-// Everything a cover needs, prepared by ThiepPreview. `slot` renders the family's sample/real photo n (0–2) in the
-// shared Slot (empty drop-zone when the invitation has no photo). a = bride, b = groom.
-export type CoverProps = {
-  a: string;
-  b: string;
-  date: string;
-  dm: string;
-  year: string;
-  day: string;
-  month: string;
-  weekday: string;
-  place: string;
-  slot: (index: 0 | 1 | 2, caption: string, circle?: boolean) => ReactNode;
-};
-export type CoverRenderer = (p: CoverProps) => ReactNode;
-```
+- [ ] **Step 7: Chạy gate**
 
-`components/templates/covers/util.ts`:
+Run: `node --test tests/section-profiles.test.ts tests/template-assets.test.ts tests/templates.test.ts && npm run typecheck && npm test && npm run build:next`
 
-```ts
-const strip = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+Expected: PASS; catalog vẫn 20 và snapshot registry của 20 mẫu không đổi.
 
-/** First letter of a name, upper-cased with Vietnamese rules ("đức" → "Đ"). */
-export const initial = (s: string): string => [...s.trim()][0]?.toLocaleUpperCase("vi") ?? "";
-
-/** Passport-style machine-readable text: A–Z and "<" only, e.g. "Hạ Vy" → "HA<VY". */
-export const mrz = (s: string): string => strip(s).toUpperCase().replace(/[^A-Z]+/g, "<").replace(/^<|<$/g, "");
-```
-
-`components/templates/covers/monogram.tsx`:
-
-```tsx
-import type { CoverRenderer } from "./types";
-import { initial } from "./util";
-
-export const Monogram: CoverRenderer = ({ a, b, date, place }) => (
-  <div className="cv-monogram">
-    <span className="cv-monogram__kicker">SAVE THE DATE</span>
-    <div className="cv-monogram__mark" aria-hidden="true">
-      <span className="cv-monogram__a">{initial(b)}</span>
-      <span className="cv-monogram__b">{initial(a)}</span>
-    </div>
-    <span className="cv-monogram__name">
-      {b} &amp; {a}
-    </span>
-    <i className="cv-monogram__rule" />
-    <span className="cv-monogram__date">{date}</span>
-    <span className="cv-monogram__place">{place}</span>
-  </div>
-);
-```
-
-`components/templates/covers/index.ts`:
-
-```ts
-import type { NewCoverFamily } from "@/lib/covers";
-import type { CoverRenderer } from "./types";
-import { Monogram } from "./monogram";
-import "./covers.css";
-
-// Record<NewCoverFamily, …>: adding a family to NEW_FAMILIES without a renderer fails typecheck.
-export const coverRenderers: Record<NewCoverFamily, CoverRenderer> = {
-  monogram: Monogram,
-};
-```
-
-`components/templates/covers/covers.css`:
-
-```css
-/* Covers added after design/Thiep Preview.dc.html. Same rules as thiep-preview.css: sizes in cqw (1% of the card
-   width), colours only from --tp-*, no raw hex. */
-
-/* monogram: two initials interlocked in a ring */
-.cv-monogram { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5cqw; padding: 12cqw 10cqw; text-align: center; color: var(--tp-deep); }
-.cv-monogram__kicker { font-size: 2.6cqw; letter-spacing: .4em; }
-.cv-monogram__mark { position: relative; width: 62cqw; height: 62cqw; display: grid; place-items: center; border: 1px solid var(--tp-deep); border-radius: 50%; }
-.cv-monogram__a, .cv-monogram__b { grid-area: 1 / 1; font-family: var(--display); font-size: 44cqw; line-height: 1; }
-.cv-monogram__a { transform: translateX(-9cqw); }
-.cv-monogram__b { transform: translateX(9cqw); color: var(--tp-gold); mix-blend-mode: multiply; }
-.cv-monogram__name { font-family: var(--script); font-style: italic; font-size: 8cqw; line-height: 1.1; }
-.cv-monogram__rule { width: 14cqw; height: 1px; background: var(--tp-deep); opacity: .4; }
-.cv-monogram__date { font-family: var(--display); font-size: 6.5cqw; }
-.cv-monogram__place { font-size: 2.4cqw; letter-spacing: .3em; opacity: .75; }
-```
-
-- [ ] **Step 6: Nối dispatch vào `ThiepPreview.tsx`**
-
-Thêm import (đầu file):
-
-```tsx
-import { isNewFamily } from "@/lib/covers";
-import { coverRenderers } from "./covers";
-```
-
-Đổi dòng `if (f === "A")` thành khối sau (đổi `if (f === "A")` thành `else if (f === "A")`, thêm nhánh mới ngay trước):
-
-```tsx
-  let body: ReactNode = null;
-  if (isNewFamily(f))
-    body = coverRenderers[f]({
-      a,
-      b,
-      date,
-      dm,
-      year,
-      day: pad(d || 1),
-      month: pad(m || 1),
-      weekday: Number.isNaN(when.getTime()) ? "" : WEEKDAYS[when.getDay()],
-      place,
-      slot: (i, caption, circle) => S([ph, ph2, ph3][i], caption, circle),
-    });
-  else if (f === "A")
-```
-
-- [ ] **Step 7: Sửa `PreviewDemo.tsx`**
-
-Đổi khai báo `familyLabels` để gộp nhãn mới:
-
-```tsx
-import { NEW_FAMILIES, familyMeta, type NewCoverFamily } from "@/lib/covers";
-
-const legacyLabels = { A: "Song hỷ", B: "Nét mực", /* … giữ nguyên A..O … */ O: "Lịch bloc" };
-const familyLabels = {
-  ...legacyLabels,
-  ...(Object.fromEntries(NEW_FAMILIES.map((f) => [f, familyMeta[f].label])) as Record<NewCoverFamily, string>),
-} as Record<CoverFamily, string>;
-```
-
-- [ ] **Step 8: Cập nhật hai test cũ không còn đúng**
-
-`tests/templates.test.ts`, thay test đầu tiên:
-
-```ts
-test("design catalog has distinct ids and names, and one cover family per new template", () => {
-  assert.equal(new Set(templates.map((t) => t.id)).size, templates.length);
-  assert.equal(new Set(templates.map((t) => t.name)).size, templates.length);
-  assert.deepEqual(templates.slice(0, 3).map((t) => t.name), ["Song Hỷ", "Nét Mực", "Hoa Nhài"]);
-  assert.ok(templates.length >= 20);
-});
-```
-
-`tests/demo.test.ts`, đổi test:
-
-```ts
-import { NEW_FAMILIES } from "../lib/covers.ts";
-
-test("demo route is public and covers every invitation family", () => {
-  assert.ok(PUBLIC_ROUTES.includes("/demo"));
-  const legacy = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"];
-  assert.deepEqual([...new Set(templates.map((template) => template.family))].sort(), [...legacy, ...NEW_FAMILIES].sort());
-});
-```
-
-- [ ] **Step 9: Chạy gate**
-
-Run: `npm run typecheck && npm test && npm run build`
-Expected: PASS. Nếu `tests/design-system.test.ts` báo hex trong `covers.css` hoặc `*.tsx`, thay bằng `var(--tp-*)`/`rgba()`.
-
-- [ ] **Step 10: Commit (đưa lệnh cho chủ dự án)**
+- [ ] **Step 8: Cập nhật PROGRESS và handoff commit**
 
 ```bash
-git add lib/covers.ts lib/templates.ts components/templates tests
-git commit -m "feat: add scaffold for new cover families with Chu Long monogram"
+git add lib/section-profiles.ts lib/template-assets.ts lib/templates.ts tests/section-profiles.test.ts tests/template-assets.test.ts tests/templates.test.ts docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: add invitation profile and template asset contracts"
 ```
 
 ---
 
-### Task 2–7: Đợt 1–6
+### Task 2: Content v2 và nâng cấp dữ liệu v1
 
-Mỗi đợt dùng chung **quy trình Batch**:
-
-- [ ] **B1. Thêm family vào `lib/covers.ts`**: bổ sung slug vào `NEW_FAMILIES` và các dòng vào `familyMeta` (khối "Metadata" của đợt). Chạy `npm run typecheck`: lỗi `coverRenderers` thiếu key là **mong đợi** (đây là bước đỏ của TDD).
-- [ ] **B2. Viết cover**: với mỗi family, tạo `components/templates/covers/<family>.tsx` theo thẻ thiết kế của nó, theo đúng mẫu `monogram.tsx` (một component xuất ra `CoverRenderer`, class `cv-<family>__*`), thêm CSS vào `covers.css` dưới comment `/* <family>: … */`, thêm key vào `coverRenderers`.
-- [ ] **B3. Thêm catalog và samples**: dán khối "Catalog" vào mảng `catalog` ở `lib/templates.ts` và khối "Samples" vào `templateSamples`.
-- [ ] **B4. Gate**: `npm run typecheck && npm test && npm run build`. Sửa tới xanh (hex thô, seo sai độ dài, tương phản palette).
-- [ ] **B5. Duyệt trình duyệt (một lần)**: `npm run build && npx next start -p 3100`, rồi Chrome DevTools MCP một lượt `evaluate_script` qua `/templates` và `/templates/<id>` của 5 mẫu mới ở 390px và 1280px: 0 lỗi console, `scrollWidth <= clientWidth`, không ảnh hỏng. Chụp một ảnh mỗi mẫu lưu vào `.playwright-mcp/` (không đưa vào context) rồi tắt `next start`.
-- [ ] **B6. Cổng duyệt**: báo chủ dự án 5 mẫu mới (link `/templates`), **dừng chờ duyệt** trước khi sang đợt sau. Sửa theo góp ý rồi lặp B4–B5 cho phần đã đổi.
-- [ ] **B7. Ghi PROGRESS.md**: cập nhật số mẫu, một dòng nhật ký có cách kiểm chứng, mục "▶ BẮT ĐẦU"; xoá dòng lỗi thời trong cùng lần sửa. Đưa lệnh commit cho chủ dự án.
-
-### Task 2: Đợt 1 — Chữ làm nhân vật (catalog 20 → 25)
-
-Chạy quy trình Batch (B1–B7) ở trên. Chữ Lồng (`monogram`) đã làm ở Task 1; đợt này làm 4 family còn lại. Family đợt này: `monogram` (Chữ Lồng), `stack` (Tên Xếp Chồng), `outline` (Nét Rỗng), `split` (Đôi Nửa), `marquee` (Băng Chữ).
-
-**Files:** Create `components/templates/covers/{stack,outline,split,marquee}.tsx`; Modify `lib/covers.ts`, `lib/templates.ts`, `components/templates/covers/{index.ts,covers.css}`.
-
-**B1 — Metadata** (dán vào `familyMeta`; thêm slug vào `NEW_FAMILIES`: "stack", "outline", "split", "marquee"):
-
-```ts
-  stack: { label: "Tên xếp chồng", layout: "Tên hai người xếp chồng thành khối chữ cực lớn, dấu & nhỏ ở giữa.", photos: ph("han-quoc-toi-gian"), dark: false },
-  outline: { label: "Nét rỗng", layout: "Tên khổng lồ dạng chữ rỗng chỉ có nét viền, năm cưới đặc ở dưới.", photos: ph("han-quoc-toi-gian"), dark: false },
-  split: { label: "Đôi nửa", layout: "Màn hình chia dọc: nửa ảnh cưới, nửa nền đậm với chữ xoay dọc.", photos: ph("vest-xanh-navy"), dark: false },
-  marquee: { label: "Băng chữ", layout: "Ba dải chữ nghiêng lặp tên và ngày, ảnh tròn nằm ở giữa.", photos: ph("vuon-bong-bong"), dark: true },
-```
-
-**B2 — Thẻ thiết kế từng cover** (mỗi cover là một component `CoverRenderer` theo mẫu `monogram.tsx`, class `cv-<family>__*`):
-
-#### `stack` — Tên Xếp Chồng
-- DOM: `.cv-stack` (flex column, căn trái, padding `12cqw 9cqw`) → `__top` (năm, cỡ `2.6cqw`, tracking `.35em`, căn phải) → `__line` ×2 (tên chú rể rồi tên cô dâu: `font-family: var(--display)`, `font-size: 21cqw`, `line-height: .86`, `letter-spacing: -.03em`) với `__amp` giữa (`var(--script)` italic, `13cqw`, màu `--tp-gold`) → `__date` + `__place` ở đáy (`margin-top: auto`).
-- Không ảnh. Nền `--tp-paper`, chữ `--tp-deep`.
-- Tên dài: `.tp-root [class*="__name"]` đã có wrap-safety; đặt class `cv-stack__name` cho cả hai dòng tên.
-
-#### `outline` — Nét Rỗng
-- DOM: `.cv-outline` (flex column, `justify-content: space-between`, padding `11cqw 8cqw`) → `__kicker` → `__name` ×2 → `__year` → `__place`.
-- `__name`: `font-family: var(--display)`, `font-size: 19cqw`, `line-height: .9`, `color: transparent`, `-webkit-text-stroke: .35cqw var(--tp-deep)`. Văn bản thật vẫn nằm trong DOM nên đọc màn hình được.
-- `__year`: `font-size: 30cqw`, chữ đặc `--tp-deep`, đè lên cạnh dưới (`margin-bottom: -4cqw`).
-
-#### `split` — Đôi Nửa
-- DOM: `.cv-split` (grid 2 cột `1fr 1fr`, `position:absolute; inset:0`) → `__photo` (slot 0, cột trái, `position:relative`) + `__panel` (cột phải, nền `--tp-deep`, chữ `--tp-paper`).
-- `__panel` chứa `__name` ×2 với `writing-mode: vertical-rl; transform: rotate(180deg)`, `font-size: 9cqw`, và `__date` ngang ở đáy.
-- Ảnh trống: `Slot` đã có khung rỗng, không cần xử lý riêng.
-
-#### `marquee` — Băng Chữ
-- DOM: `.cv-marquee` → `__photo` (slot 0, tròn 42cqw, căn giữa, `z-index: 2`) và ba `__band` (nghiêng `-8deg`, rộng `140%`, `font-size: 6cqw`, tracking `.2em`), xen kẽ nền `--tp-deep` / `--tp-gold`.
-- Mỗi band lặp chuỗi `{b} · {date} · {a} ·` bốn lần, `white-space: nowrap`. Dải chuyển động bằng `@keyframes cv-marquee { to { transform: translateX(-25%) } }` 18s linear infinite, tắt trong `@media (prefers-reduced-motion: reduce)`.
-- Chữ trên band gold dùng `--tp-deep` để đạt tương phản; chữ trên band deep dùng `--tp-paper`.
-
-**B3 — Catalog** (dán vào mảng `catalog`, sau dòng cuối hiện có):
-
-```ts
-  ["ten-xep-chong", "Tên Xếp Chồng", "stack", "editorial", "Tên khổng lồ · đậm nét", ["do", "muc", "lam"], undefined, "Mẫu thiệp cưới Tên Xếp Chồng: tên cô dâu và chú rể xếp thành khối chữ lớn, nhìn là nhớ ngay. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["net-rong", "Nét Rỗng", "outline", "editorial", "Chữ viền rỗng · gọn gàng", ["muc", "xanh", "hong"], undefined, "Mẫu thiệp cưới Nét Rỗng với chữ viền rỗng cỡ lớn trên nền phẳng, hiện đại và gọn gàng. Tạo thiệp cưới online miễn phí, chia sẻ bằng một đường link."],
-  ["doi-nua", "Đôi Nửa", "split", "editorial", "Chia đôi · ảnh và chữ", ["lam", "nau", "dodam"], undefined, "Mẫu thiệp cưới Đôi Nửa chia đôi màn hình: một nửa ảnh cưới, một nửa chữ, cân đối và đương đại. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["bang-chu", "Băng Chữ", "marquee", "editorial", "Dải chữ chạy · trẻ trung", ["muc", "cam", "hong"], undefined, "Mẫu thiệp cưới Băng Chữ với dải chữ chạy ngang tên và ngày cưới, năng động và trẻ trung. Tạo thiệp cưới online miễn phí, gửi khách bằng link riêng."],
-```
-
-**B3 — Samples** (dán vào `templateSamples`):
-
-```ts
-  "ten-xep-chong": { style: "Hiện đại", motif: "Chữ xếp chồng", badge: "MỚI", pop: 77, isNew: true, a: "Thuỳ Dương", b: "Hoàng Việt", date: "05 · 12 · 2026", place: "SÀI GÒN" },
-  "net-rong": { style: "Hiện đại", motif: "Chữ rỗng", badge: "MỚI", pop: 84, isNew: true, a: "Bích Ngọc", b: "Đăng Khoa", date: "19 · 12 · 2026", place: "ĐÀ NẴNG" },
-  "doi-nua": { style: "Hiện đại", motif: "Chia đôi", badge: "MỚI", pop: 91, isNew: true, a: "Khánh Vy", b: "Tuấn Anh", date: "26 · 12 · 2026", place: "HẢI PHÒNG" },
-  "bang-chu": { style: "Hiện đại", motif: "Dải chữ", badge: "MỚI", pop: 72, isNew: true, a: "Mai Chi", b: "Hải Đăng", date: "03 · 01 · 2027", place: "HUẾ" },
-```
-
-**B4–B7:** như quy trình Batch. Sau đợt này `templates.length` phải là 25.
-
-### Task 3: Đợt 2 — Ảnh là chính (catalog 25 → 30)
-
-Chạy quy trình Batch (B1–B7) ở trên. Family đợt này: `bleed` (Tràn Viền), `window` (Cửa Sổ Vòm), `collage` (Ảnh Dán), `diagonal` (Chéo Đôi), `strip` (Dải Dọc).
-
-**Files:** Create `components/templates/covers/{bleed,window,collage,diagonal,strip}.tsx`; Modify `lib/covers.ts`, `lib/templates.ts`, `components/templates/covers/{index.ts,covers.css}`.
-
-**B1 — Metadata** (dán vào `familyMeta`; thêm slug vào `NEW_FAMILIES`: "bleed", "window", "collage", "diagonal", "strip"):
-
-```ts
-  bleed: { label: "Tràn viền", layout: "Ảnh cưới phủ kín màn hình, chữ nổi trên lớp phủ tối phía dưới.", photos: ph("nang-chieu"), dark: true },
-  window: { label: "Cửa sổ vòm", layout: "Ảnh cưới sau khung cửa sổ vòm có chấn song, bệ cửa và rèm hai bên.", photos: ph("cua-so-vom"), dark: false },
-  collage: { label: "Ảnh dán", layout: "Ba ảnh nghiêng chồng nhau như dán trong album, có băng dính.", photos: ph("o-hoa", "sofa-han-quoc", "vuon-xanh"), dark: false },
-  diagonal: { label: "Chéo đôi", layout: "Hai ảnh cắt theo đường chéo, mỗi bên một người, đường chéo vàng ở giữa.", photos: ph("vest-xanh-navy", "o-hoa"), dark: false },
-  strip: { label: "Dải dọc", layout: "Dải ảnh cao bên trái, cột chữ bên phải với năm cưới xoay dọc.", photos: ph("vuon-xanh"), dark: false },
-```
-
-**B2 — Thẻ thiết kế từng cover** (mỗi cover là một component `CoverRenderer` theo mẫu `monogram.tsx`, class `cv-<family>__*`):
-
-#### `bleed` — Tràn Viền
-- DOM: `.cv-bleed` (nền `--tp-deep`) → `__photo` (slot 0, `position:absolute; inset:0`) → `__shade` (`linear-gradient(to top, rgba(0,0,0,.7), transparent 58%)`) → `__text` (đáy, padding `10cqw 8cqw`, chữ `--tp-paper`).
-- `__text`: `__kicker` (WE ARE GETTING MARRIED, `2.6cqw`), `__name` (display `11cqw`), `__date`, `__place`.
-- Khi ảnh trống, lớp nền `--tp-deep` giữ chữ đọc được.
-
-#### `window` — Cửa Sổ Vòm
-- DOM: `.cv-window` (nền `--tp-paper`) → `__frame` (`width: 62cqw; height: 88cqw; border-radius: 31cqw 31cqw 0 0; border: 1.6cqw solid var(--tp-deep)`) chứa `__photo` (slot 0) và `__bars` (hai đường mảnh thập tự bằng `linear-gradient` nền) → `__sill` (bệ cửa, thanh rộng `72cqw` cao `3cqw`) → hai `__curtain` SVG hai bên (path cong, `fill: var(--tp-tint)`, `stroke: var(--tp-deep)`).
-- Tên bằng `var(--script)` italic `9cqw` dưới bệ, ngày bên dưới.
-
-#### `collage` — Ảnh Dán
-- DOM: `.cv-collage` → ba `__card` (slot 0/1/2) có viền paper `2.2cqw`, `box-shadow` nhẹ, xoay `-6deg`, `4deg`, `-2deg`, vị trí so le; hai `__tape` (hình chữ nhật mờ `rgba(255,255,255,.55)`, xoay) kẹp mép trên.
-- Tên `var(--hand)` `13cqw` ở dưới, ngày và nơi nhỏ. Nền `--tp-tint`.
-- Thiếu ảnh 2 hoặc 3: `ThiepPreview` đã truyền `ph2`/`ph3` mặc định bằng ảnh 1.
-
-#### `diagonal` — Chéo Đôi
-- DOM: `.cv-diagonal` → `__half--a` (slot 0, `clip-path: polygon(0 0, 100% 0, 0 100%)`) và `__half--b` (slot 1, `clip-path: polygon(100% 0, 100% 100%, 0 100%)`) cùng `position:absolute; inset:0` → `__line` (đường chéo gold bằng `linear-gradient` 1px) → `__nameA` góc dưới trái, `__nameB` góc trên phải (`display`, `8cqw`, chữ có `text-shadow` rgba) → `__date` giữa đáy.
-- Ảnh trống: hai nửa dùng `--tp-tint` và `--tp-deep` để phân biệt.
-
-#### `strip` — Dải Dọc
-- DOM: `.cv-strip` (grid `38cqw 1fr`) → `__photo` (slot 0, full height) + `__col` (padding `12cqw 7cqw`, flex column, `justify-content: space-between`) chứa `__year` (`writing-mode: vertical-rl`, `22cqw`, display, `--tp-gold`), `__name` ×2 (`9cqw`), `__rule`, `__date`, `__place`.
-
-**B3 — Catalog** (dán vào mảng `catalog`, sau dòng cuối hiện có):
-
-```ts
-  ["tran-vien", "Tràn Viền", "bleed", "editorial", "Ảnh tràn màn hình", ["muc", "dodam", "xanh"], undefined, "Mẫu thiệp cưới Tràn Viền dùng ảnh cưới phủ kín màn hình, chữ trắng nổi bật phía dưới. Tạo thiệp cưới online miễn phí, không cần tài khoản, sửa ảnh dễ dàng."],
-  ["cua-so-vom", "Cửa Sổ Vòm", "window", "classic", "Cửa sổ vòm · thanh lịch", ["nau", "lam", "oliu"], undefined, "Mẫu thiệp cưới Cửa Sổ Vòm đặt ảnh cưới trong khung cửa sổ vòm như nhìn ra một ngày đẹp. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["anh-dan", "Ảnh Dán", "collage", "korean", "Album dán · ấm áp", ["hong", "nau", "xanh"], undefined, "Mẫu thiệp cưới Ảnh Dán xếp nhiều ảnh nghiêng như dán trong cuốn album, ấm áp và gần gũi. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["cheo-doi", "Chéo Đôi", "diagonal", "editorial", "Cắt chéo · cô dâu chú rể", ["muc", "lam", "do"], undefined, "Mẫu thiệp cưới Chéo Đôi cắt ảnh theo đường chéo, một bên cô dâu một bên chú rể, mạnh và hiện đại. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["dai-doc", "Dải Dọc", "strip", "minimal", "Dải ảnh dọc · tạp chí", ["muc", "oliu", "hong"], undefined, "Mẫu thiệp cưới Dải Dọc với dải ảnh dài chạy dọc cạnh tên và ngày cưới, gọn như trang tạp chí. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-```
-
-**B3 — Samples** (dán vào `templateSamples`):
-
-```ts
-  "tran-vien": { style: "Hiện đại", motif: "Ảnh tràn viền", badge: "MỚI", pop: 79, isNew: true, a: "Hà My", b: "Quốc Bảo", date: "10 · 01 · 2027", place: "VŨNG TÀU" },
-  "cua-so-vom": { style: "Cổ điển", motif: "Cửa sổ", badge: "MỚI", pop: 86, isNew: true, a: "Diễm Quỳnh", b: "Anh Tú", date: "17 · 01 · 2027", place: "ĐÀ LẠT" },
-  "anh-dan": { style: "Lãng mạn", motif: "Ảnh dán", badge: "MỚI", pop: 93, isNew: true, a: "Phương Linh", b: "Nhật Minh", date: "24 · 01 · 2027", place: "HỘI AN" },
-  "cheo-doi": { style: "Hiện đại", motif: "Cắt chéo", badge: "MỚI", pop: 74, isNew: true, a: "Ngọc Trâm", b: "Đức Thịnh", date: "31 · 01 · 2027", place: "NHA TRANG" },
-  "dai-doc": { style: "Tối giản", motif: "Dải ảnh", badge: "MỚI", pop: 81, isNew: true, a: "Thanh Thảo", b: "Việt Hoàng", date: "07 · 02 · 2027", place: "CẦN THƠ" },
-```
-
-**B4–B7:** như quy trình Batch. Sau đợt này `templates.length` phải là 30.
-
-### Task 4: Đợt 3 — Đồ vật đời thường (catalog 30 → 35)
-
-Chạy quy trình Batch (B1–B7) ở trên. Family đợt này: `receipt` (Biên Lai), `passport` (Hộ Chiếu), `matchbox` (Hộp Diêm), `notebook` (Sổ Tay), `sticky` (Giấy Nhắn).
-
-**Files:** Create `components/templates/covers/{receipt,passport,matchbox,notebook,sticky}.tsx`; Modify `lib/covers.ts`, `lib/templates.ts`, `components/templates/covers/{index.ts,covers.css}`.
-
-**B1 — Metadata** (dán vào `familyMeta`; thêm slug vào `NEW_FAMILIES`: "receipt", "passport", "matchbox", "notebook", "sticky"):
-
-```ts
-  receipt: { label: "Biên lai", layout: "Tờ biên lai in nhiệt răng cưa ghi khách, ngày, địa điểm và mã vạch.", photos: ph("han-quoc-toi-gian"), dark: true },
-  passport: { label: "Hộ chiếu", layout: "Trang hộ chiếu với ảnh, dòng MRZ và con dấu tròn ghi ngày cưới.", photos: ph("cua-so-vom"), dark: false },
-  matchbox: { label: "Hộp diêm", layout: "Hộp diêm cổ có nhãn tên, que diêm xếp hàng và dải ráp đỏ.", photos: ph("retro-pho-cho"), dark: false },
-  notebook: { label: "Sổ tay", layout: "Trang sổ kẻ dòng có gáy lò xo, lề đỏ và ảnh dán băng dính.", photos: ph("sofa-han-quoc"), dark: false },
-  sticky: { label: "Giấy nhắn", layout: "Ba tờ giấy nhớ lệch nhau ghi lời mời, ảnh kẹp bằng kẹp giấy.", photos: ph("vuon-bong-bong"), dark: false },
-```
-
-**B2 — Thẻ thiết kế từng cover** (mỗi cover là một component `CoverRenderer` theo mẫu `monogram.tsx`, class `cv-<family>__*`):
-
-#### `receipt` — Biên Lai
-- DOM: `.cv-receipt` (nền `--tp-deep`, padding `10cqw`) → `__slip` (`background: var(--tp-paper); color: var(--tp-deep); font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; padding: 8cqw 7cqw`) với mép răng cưa trên/dưới bằng `mask` (`radial-gradient` lặp).
-- Dòng: `KHÁCH MỜI: ...`, `NGÀY: {date}`, `ĐỊA ĐIỂM: {place}`, vạch `- - -`, `TỔNG: MỘT ĐỜI`, `__barcode` (`repeating-linear-gradient(90deg, currentColor 0 .6cqw, transparent .6cqw 1.4cqw)`, cao `10cqw`).
-- Không dùng số liệu bịa: mọi dòng là nhãn tĩnh hoặc dữ liệu cặp đôi.
-
-#### `passport` — Hộ Chiếu
-- DOM: `.cv-passport` (nền `--tp-deep`) → `__page` (thẻ `--tp-paper`, bo `3cqw`) chứa `__head` (PASSPORT · WEDDING), `__photo` (slot 0, vuông `34cqw`), `__fields` (Tên, Ngày, Nơi: nhãn nhỏ + giá trị), `__mrz` (hai dòng mono `P<WED<<{TÊN}<<<<` viết hoa, bỏ dấu bằng `normalize("NFD")`) và `__stamp` (vòng tròn viền kép xoay `-12deg`, chứa ngày, `opacity: .8`).
-- Hàm `mrz(s)` nằm trong `covers/util.ts`, trả chuỗi A–Z và `<`.
-
-#### `matchbox` — Hộp Diêm
-- DOM: `.cv-matchbox` (nền `--tp-tint`) → `__box` (hộp `70cqw × 96cqw`, nền `--tp-deep`, viền `--tp-gold` mảnh) → `__strike` (dải ráp, `linear-gradient` đỏ nhám cạnh dưới) → `__label` (nhãn paper ở giữa, viền kép, chứa `__photo` tròn 26cqw (slot 0), tên `var(--hand)`, ngày) → hàng `__stick` ×7 (que diêm: thân `--tp-gold`, đầu `--tp-deep`) cuối hộp.
-
-#### `notebook` — Sổ Tay
-- DOM: `.cv-notebook` (nền `--tp-paper`) → `__rings` (cột trái: hàng chấm tròn `radial-gradient`) → `__sheet` (`background-image: repeating-linear-gradient(transparent 0 7cqw, rgba(0,0,0,.12) 7cqw 7.3cqw)`, lề đỏ dọc `border-left: .5cqw solid var(--tp-deep)` ở `14cqw`) chứa `__photo` (slot 0, nghiêng `3deg`, `__tape`), tên `var(--hand)` `12cqw`, ngày, nơi.
-
-#### `sticky` — Giấy Nhắn
-- DOM: `.cv-sticky` (nền `--tp-tint`) → ba `__note` (`background: var(--tp-gold)`/`var(--tp-paper)`, bóng nhẹ, xoay `-4deg`, `3deg`, `-1deg`): "Nhớ nhé!", tên hai người, ngày + nơi. Ghim đỏ `__pin` (chấm tròn `--tp-deep` có highlight) và `__clip` (SVG kẹp giấy) giữ `__photo` (slot 0).
-- Chữ trên giấy: `--tp-deep` trên `--tp-paper` để đạt AA; tờ nền gold chỉ chứa chữ đậm cỡ lớn `>= 5cqw`.
-
-**B3 — Catalog** (dán vào mảng `catalog`, sau dòng cuối hiện có):
-
-```ts
-  ["bien-lai", "Biên Lai", "receipt", "editorial", "Biên lai · vui mắt", ["muc", "do", "lam"], undefined, "Mẫu thiệp cưới Biên Lai trình bày ngày giờ và địa điểm như một tờ biên lai in nhiệt, vui mắt và độc đáo. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["ho-chieu", "Hộ Chiếu", "passport", "editorial", "Hộ chiếu · cùng đi", ["lam", "dodam", "xanh"], undefined, "Mẫu thiệp cưới Hộ Chiếu như trang hộ chiếu cho chuyến đi chung của hai người, có dấu mộc ngày cưới. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["hop-diem", "Hộp Diêm", "matchbox", "traditional", "Hộp diêm · hoài niệm", ["do", "nau", "cam"], undefined, "Mẫu thiệp cưới Hộp Diêm mang dáng hộp diêm cổ với nhãn tên và ngày cưới, hoài niệm và ấm áp. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["so-tay", "Sổ Tay", "notebook", "korean", "Sổ kẻ dòng · thân mật", ["nau", "hong", "oliu"], undefined, "Mẫu thiệp cưới Sổ Tay như trang sổ kẻ dòng với nét chữ viết tay và ảnh dán, thân mật. Tạo thiệp cưới online miễn phí, không cần tài khoản, chia sẻ bằng link."],
-  ["giay-nhan", "Giấy Nhắn", "sticky", "minimal", "Giấy nhớ · dí dỏm", ["cam", "hong", "muc"], undefined, "Mẫu thiệp cưới Giấy Nhắn như tờ giấy nhớ dán lời mời ngày cưới, nhẹ nhàng và dí dỏm. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-```
-
-**B3 — Samples** (dán vào `templateSamples`):
-
-```ts
-  "bien-lai": { style: "Hiện đại", motif: "Biên lai", badge: "MỚI", pop: 88, isNew: true, a: "Cẩm Tú", b: "Thành Đạt", date: "14 · 02 · 2027", place: "SÀI GÒN" },
-  "ho-chieu": { style: "Hiện đại", motif: "Hộ chiếu", badge: "MỚI", pop: 95, isNew: true, a: "Hồng Nhung", b: "Gia Huy", date: "21 · 02 · 2027", place: "PHÚ QUỐC" },
-  "hop-diem": { style: "Truyền thống", motif: "Hộp diêm", badge: "MỚI", pop: 76, isNew: true, a: "Lan Hương", b: "Văn Toàn", date: "28 · 02 · 2027", place: "HÀ NỘI" },
-  "so-tay": { style: "Lãng mạn", motif: "Sổ tay", badge: "MỚI", pop: 83, isNew: true, a: "Thu Trang", b: "Hữu Phước", date: "07 · 03 · 2027", place: "ĐÀ LẠT" },
-  "giay-nhan": { style: "Hiện đại", motif: "Giấy nhớ", badge: "MỚI", pop: 90, isNew: true, a: "Gia Hân", b: "Bảo Long", date: "14 · 03 · 2027", place: "SÀI GÒN" },
-```
-
-**B4–B7:** như quy trình Batch. Sau đợt này `templates.length` phải là 35.
-
-### Task 5: Đợt 4 — Truyền thống kiểu mới (catalog 35 → 40)
-
-Chạy quy trình Batch (B1–B7) ở trên. Family đợt này: `lantern` (Lồng Đèn), `bamboo` (Trúc Xanh), `lotus` (Sen Hồng), `ceramic` (Gốm Men), `drum` (Trống Đồng).
-
-**Files:** Create `components/templates/covers/{lantern,bamboo,lotus,ceramic,drum}.tsx`; Modify `lib/covers.ts`, `lib/templates.ts`, `components/templates/covers/{index.ts,covers.css}`.
-
-**B1 — Metadata** (dán vào `familyMeta`; thêm slug vào `NEW_FAMILIES`: "lantern", "bamboo", "lotus", "ceramic", "drum"):
-
-```ts
-  lantern: { label: "Lồng đèn", layout: "Chùm lồng đèn vẽ tay treo trên nền đậm, ảnh tròn nhỏ ở dưới.", photos: ph("ao-dai-do"), dark: true },
-  bamboo: { label: "Trúc xanh", layout: "Hai thân trúc đốt mảnh hai bên, tên xếp dọc, ảnh ở giữa.", photos: ph("vuon-xanh"), dark: false },
-  lotus: { label: "Sen hồng", layout: "Đoá sen nhiều cánh nổi trên mặt nước, ảnh tròn phía trên.", photos: ph("khoi-hong"), dark: false },
-  ceramic: { label: "Gốm men", layout: "Ảnh trong đĩa gốm tròn có vành đôi, viền hoa văn lam lặp quanh thiệp.", photos: ph("lau-dai-trang"), dark: false },
-  drum: { label: "Trống đồng", layout: "Vòng hoa văn đồng tâm kiểu trống đồng quanh ảnh tròn ở tâm.", photos: ph("hy-phuc-do"), dark: true },
-```
-
-**B2 — Thẻ thiết kế từng cover** (mỗi cover là một component `CoverRenderer` theo mẫu `monogram.tsx`, class `cv-<family>__*`):
-
-#### `lantern` — Lồng Đèn
-- DOM: `.cv-lantern` (nền `--tp-deep`) → `__string` (đường ngang gold mảnh) → ba `__lamp` SVG (`viewBox 0 0 60 90`: thân elip, hai nắp, tua; `fill: var(--tp-paper)` pha `opacity`, nét gold) treo ở các độ cao khác nhau → tên `var(--script)` gold `10cqw` → `__photo` (slot 0, tròn `32cqw`) → ngày + nơi.
-- Đung đưa nhẹ `@keyframes cv-sway` ±2deg, tắt khi reduced-motion.
-
-#### `bamboo` — Trúc Xanh
-- DOM: `.cv-bamboo` (nền `--tp-paper`) → hai `__stalk` SVG dọc (`rect` đốt xếp chồng, `stroke: var(--tp-deep)`, lá `path` nhọn) trái/phải → `__center` (căn giữa): `__photo` (slot 0, `46cqw × 58cqw`, bo `2cqw`), tên đứng thẳng, ngày.
-- Chỉ nét mảnh, không tô nặng; lá dùng `fill: var(--tp-tint)`.
-
-#### `lotus` — Sen Hồng
-- DOM: `.cv-lotus` (nền `--tp-paper`) → `__photo` (slot 0, tròn `40cqw`, ở trên) → tên `var(--hand)` → `__water` (ba đường sóng SVG `stroke: var(--tp-deep)`, `opacity: .35`) → `__flower` SVG (`viewBox 0 0 120 80`, 9 cánh `path` đối xứng quanh tâm, `fill: var(--tp-tint)`, `stroke: var(--tp-deep)`) ở đáy.
-- Cánh sen tạo bằng một `path` cánh `<use>` xoay `-60…60deg` (một định nghĩa, nhiều lần dùng).
-
-#### `ceramic` — Gốm Men
-- DOM: `.cv-ceramic` (nền `--tp-paper`) → `__border` (viền hoa văn lặp: `background` dùng SVG pattern nhúng `data:` URI **không dùng ký tự `#`**, mã hoá `%23` hoặc dùng `currentColor`) → `__plate` (đĩa tròn `60cqw`, viền đôi `--tp-deep`, bóng trong) chứa `__photo` (slot 0, tròn) → tên `display` `8cqw` → ngày.
-- Test hex chặn `#rrggbb` trong CSS; dùng `%23` hoặc `currentColor`/`var()`.
-
-#### `drum` — Trống Đồng
-- DOM: `.cv-drum` (nền `--tp-deep`) → `__rings` (một `div` vuông `92cqw` với `repeating-radial-gradient(circle, transparent 0 4cqw, var(--tp-gold) 4cqw 4.4cqw)` mờ `.6`) + `__star` SVG (ngôi sao 12 cánh, `fill: none; stroke: var(--tp-gold)`) → `__photo` (slot 0, tròn `34cqw`, căn giữa tâm vòng) → tên `display` `8cqw` paper ở đáy → ngày, nơi.
-
-**B3 — Catalog** (dán vào mảng `catalog`, sau dòng cuối hiện có):
-
-```ts
-  ["long-den", "Lồng Đèn", "lantern", "traditional", "Lồng đèn · rộn ràng", ["dodam", "do", "vang"], undefined, "Mẫu thiệp cưới Lồng Đèn với chùm lồng đèn đỏ vẽ tay treo trên nền đậm, rộn ràng và trang trọng. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["truc-xanh", "Trúc Xanh", "bamboo", "botanical", "Nét trúc · thanh nhã", ["xanh", "oliu", "muc"], undefined, "Mẫu thiệp cưới Trúc Xanh với nét trúc mảnh vẽ tay, thanh nhã và yên tĩnh, hợp lễ cưới giản dị. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["sen-hong", "Sen Hồng", "lotus", "botanical", "Đoá sen · thuần Việt", ["hong", "xanh", "tim"], undefined, "Mẫu thiệp cưới Sen Hồng với đoá sen vẽ nét mảnh trên nền dịu, thanh khiết và thuần Việt. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["gom-men", "Gốm Men", "ceramic", "classic", "Men gốm · tinh tế", ["lam", "nau", "xanh"], undefined, "Mẫu thiệp cưới Gốm Men gợi men gốm với hoa văn lam trên nền trắng ngà, tinh tế và truyền thống. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["trong-dong", "Trống Đồng", "drum", "traditional", "Trống đồng · đậm chất Việt", ["dodam", "muc", "vang"], undefined, "Mẫu thiệp cưới Trống Đồng với vòng hoa văn trống đồng đồng tâm quanh ảnh cưới, đậm chất Việt. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-```
-
-**B3 — Samples** (dán vào `templateSamples`):
-
-```ts
-  "long-den": { style: "Truyền thống", motif: "Lồng đèn", badge: "MỚI", pop: 71, isNew: true, a: "Kim Ngân", b: "Trọng Nghĩa", date: "21 · 03 · 2027", place: "HỘI AN" },
-  "truc-xanh": { style: "Hoa", motif: "Trúc", badge: "MỚI", pop: 78, isNew: true, a: "Bảo Châu", b: "Minh Triết", date: "28 · 03 · 2027", place: "HUẾ" },
-  "sen-hong": { style: "Hoa", motif: "Hoa sen", badge: "MỚI", pop: 85, isNew: true, a: "Ngọc Lan", b: "Quang Vinh", date: "04 · 04 · 2027", place: "NINH BÌNH" },
-  "gom-men": { style: "Cổ điển", motif: "Gốm men", badge: "MỚI", pop: 92, isNew: true, a: "Thanh Mai", b: "Đình Phong", date: "11 · 04 · 2027", place: "BÁT TRÀNG" },
-  "trong-dong": { style: "Truyền thống", motif: "Trống đồng", badge: "MỚI", pop: 73, isNew: true, a: "Yến Nhi", b: "Mạnh Cường", date: "18 · 04 · 2027", place: "THANH HOÁ" },
-```
-
-**B4–B7:** như quy trình Batch. Sau đợt này `templates.length` phải là 40.
-
-### Task 6: Đợt 5 — Sang và tinh tế (catalog 40 → 45)
-
-Chạy quy trình Batch (B1–B7) ở trên. Family đợt này: `velvet` (Nhung Vàng), `marble` (Cẩm Thạch), `aurora` (Cực Quang), `glass` (Kính Mờ), `leaf` (Lá Mảnh).
-
-**Files:** Create `components/templates/covers/{velvet,marble,aurora,glass,leaf}.tsx`; Modify `lib/covers.ts`, `lib/templates.ts`, `components/templates/covers/{index.ts,covers.css}`.
-
-**B1 — Metadata** (dán vào `familyMeta`; thêm slug vào `NEW_FAMILIES`: "velvet", "marble", "aurora", "glass", "leaf"):
-
-```ts
-  velvet: { label: "Nhung vàng", layout: "Nền nhung tối, khung và chữ vàng foil, ảnh vòm nhỏ ở giữa.", photos: ph("lau-dai-trang"), dark: true },
-  marble: { label: "Cẩm thạch", layout: "Nền vân đá sáng, đường chỉ vàng mảnh, tên display ở giữa.", photos: ph("studio-hoa-trang"), dark: false },
-  aurora: { label: "Cực quang", layout: "Những vệt sáng loang chuyển động chậm trên nền đêm, tên lớn ở giữa.", photos: ph("khoi-hong"), dark: true },
-  glass: { label: "Kính mờ", layout: "Ảnh cưới phủ kín, tấm kính mờ đặt chữ ở giữa.", photos: ph("om-hem-nui"), dark: false },
-  leaf: { label: "Lá mảnh", layout: "Hai nhành lá vẽ nét mảnh ôm tên, ảnh bầu dục nhỏ phía trên.", photos: ph("voan-hoa-kho"), dark: false },
-```
-
-**B2 — Thẻ thiết kế từng cover** (mỗi cover là một component `CoverRenderer` theo mẫu `monogram.tsx`, class `cv-<family>__*`):
-
-#### `velvet` — Nhung Vàng
-- DOM: `.cv-velvet` (nền `--tp-deep` + `radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.08), transparent 60%)`) → `__frame` (viền `1px` gold ba lớp lồng nhau, inset `5cqw/7cqw/9cqw`) → `__photo` (slot 0, vòm `38cqw × 50cqw`, viền gold) → tên `var(--script)` italic `11cqw` có `background: linear-gradient(90deg, var(--tp-gold), var(--tp-paper), var(--tp-gold)); -webkit-background-clip: text; color: transparent;` (hiệu ứng foil) → ngày.
-- Nếu `-webkit-background-clip: text` không có: khai báo `color: var(--tp-gold)` trước, gradient sau trong `@supports`.
-
-#### `marble` — Cẩm Thạch
-- DOM: `.cv-marble` (nền `--tp-paper`) → `__veins` (SVG `feTurbulence` baseFrequency `.012`, `numOctaves 3`, tô bằng `feColorMatrix` xám nhạt, `opacity: .35`, `position:absolute; inset:0`) → `__line` (hai đường vàng mảnh ngang trên/dưới) → `__kicker`, `__name` ×2 (display `12cqw`, căn giữa), `&` script gold, `__date`, `__place`.
-- Không ảnh.
-
-#### `aurora` — Cực Quang
-- DOM: `.cv-aurora` (nền `--tp-deep`) → ba `__blob` (`position:absolute; width:90cqw; height:90cqw; border-radius:50%; filter: blur(14cqw); opacity:.5` với `background: var(--tp-gold)` / `var(--tp-paper)` / `var(--tp-tint)`, mỗi blob animation `cv-drift` 16–24s `ease-in-out infinite alternate`, tắt khi reduced-motion) → `__text` (tên `display` `13cqw`, `--tp-paper`, căn giữa, `z-index: 1`), ngày, nơi.
-- Giữ tương phản: chữ paper trên nền deep, blob chỉ làm nền mờ.
-
-#### `glass` — Kính Mờ
-- DOM: `.cv-glass` → `__photo` (slot 0, phủ kín) → `__pane` (`position:absolute; left:8cqw; right:8cqw; bottom:12cqw; padding: 8cqw; background: rgba(255,255,255,.22); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.45); border-radius: 5cqw`) chứa kicker, tên display `10cqw`, ngày.
-- `@supports not (backdrop-filter: blur(1px))`: `__pane` nền `--tp-deep` đặc, chữ paper. Chữ trong pane phải là `--tp-paper` trên lớp tối `rgba(0,0,0,.3)` thêm để đạt tương phản trên ảnh sáng.
-
-#### `leaf` — Lá Mảnh
-- DOM: `.cv-leaf` (nền `--tp-paper`) → hai `__branch` SVG (`viewBox 0 0 60 120`, thân `path` cong + 7 lá `ellipse` xoay, `fill: none; stroke: var(--tp-deep); stroke-width: .8`) trái và phản chiếu phải bằng `scaleX(-1)` → `__photo` (slot 0, bầu dục `34cqw × 44cqw`, `border-radius: 50%`) → tên `var(--script)` italic `10cqw` → ngày, nơi.
-
-**B3 — Catalog** (dán vào mảng `catalog`, sau dòng cuối hiện có):
-
-```ts
-  ["nhung-vang", "Nhung Vàng", "velvet", "classic", "Nhung tối · chữ vàng", ["dodam", "muc", "tim"], undefined, "Mẫu thiệp cưới Nhung Vàng với nền nhung tối và chữ vàng foil, sang trọng cho tiệc tối. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["cam-thach", "Cẩm Thạch", "marble", "classic", "Đá cẩm thạch · thanh lịch", ["muc", "lam", "hong"], undefined, "Mẫu thiệp cưới Cẩm Thạch với vân đá cẩm thạch sáng và đường chỉ vàng mảnh, thanh lịch và tinh tế. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["cuc-quang", "Cực Quang", "aurora", "minimal", "Cực quang · mơ màng", ["muc", "tim", "lam"], undefined, "Mẫu thiệp cưới Cực Quang với dải màu loang như cực quang trên nền đêm, mơ màng và hiện đại. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["kinh-mo", "Kính Mờ", "glass", "minimal", "Kính mờ · nhẹ nhàng", ["hong", "lam", "xanh"], undefined, "Mẫu thiệp cưới Kính Mờ đặt chữ trên tấm kính mờ phủ lên ảnh cưới, nhẹ và hiện đại. Tạo thiệp cưới online miễn phí, không cần tài khoản, chia sẻ bằng một link."],
-  ["la-manh", "Lá Mảnh", "leaf", "botanical", "Lá line-art · nhẹ", ["oliu", "xanh", "nau"], undefined, "Mẫu thiệp cưới Lá Mảnh với những nhành lá line-art vẽ tay quanh tên cô dâu chú rể, nhẹ nhàng và sang. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-```
-
-**B3 — Samples** (dán vào `templateSamples`):
-
-```ts
-  "nhung-vang": { style: "Cổ điển", motif: "Nhung", badge: "MỚI", pop: 80, isNew: true, a: "Bảo Anh", b: "Hoài Nam", date: "25 · 04 · 2027", place: "SÀI GÒN" },
-  "cam-thach": { style: "Cổ điển", motif: "Cẩm thạch", badge: "MỚI", pop: 87, isNew: true, a: "Thảo Vy", b: "Anh Quân", date: "02 · 05 · 2027", place: "HÀ NỘI" },
-  "cuc-quang": { style: "Hiện đại", motif: "Cực quang", badge: "MỚI", pop: 94, isNew: true, a: "Hải Yến", b: "Đức Minh", date: "09 · 05 · 2027", place: "ĐÀ NẴNG" },
-  "kinh-mo": { style: "Hiện đại", motif: "Kính mờ", badge: "MỚI", pop: 75, isNew: true, a: "Tâm Như", b: "Hùng Dũng", date: "16 · 05 · 2027", place: "NHA TRANG" },
-  "la-manh": { style: "Hoa", motif: "Lá line-art", badge: "MỚI", pop: 82, isNew: true, a: "Diệu Hiền", b: "Công Danh", date: "23 · 05 · 2027", place: "ĐÀ LẠT" },
-```
-
-**B4–B7:** như quy trình Batch. Sau đợt này `templates.length` phải là 45.
-
-### Task 7: Đợt 6 — Vui và cá tính (catalog 45 → 50)
-
-Chạy quy trình Batch (B1–B7) ở trên. Family đợt này: `chat` (Khung Chat), `sticker` (Dán Sticker), `y2k` (Y2K), `pixel` (Điểm Ảnh), `pin` (Ghim Bản Đồ).
-
-**Files:** Create `components/templates/covers/{chat,sticker,y2k,pixel,pin}.tsx`; Modify `lib/covers.ts`, `lib/templates.ts`, `components/templates/covers/{index.ts,covers.css}`.
-
-**B1 — Metadata** (dán vào `familyMeta`; thêm slug vào `NEW_FAMILIES`: "chat", "sticker", "y2k", "pixel", "pin"):
-
-```ts
-  chat: { label: "Khung chat", layout: "Lời mời trong khung chat, hai bong bóng và dòng Đã xem, ảnh là ảnh đại diện.", photos: ph("sofa-han-quoc"), dark: false },
-  sticker: { label: "Dán sticker", layout: "Ảnh bo góc dán nhiều sticker vẽ tay xoay lệch, viền trắng dày.", photos: ph("vuon-bong-bong"), dark: false },
-  y2k: { label: "Y2K", layout: "Nền gradient pastel, chữ bóng nhiều lớp, ảnh trong cửa sổ phần mềm cũ.", photos: ph("retro-do-hoa-hong"), dark: false },
-  pixel: { label: "Điểm ảnh", layout: "Khung bậc thang kiểu game 8-bit, thanh LOADING và trái tim pixel.", photos: ph("han-quoc-toi-gian"), dark: true },
-  pin: { label: "Ghim bản đồ", layout: "Tờ bản đồ giấy có đường và dòng sông, ghim đỏ đánh dấu địa điểm tiệc.", photos: ph("nang-chieu"), dark: false },
-```
-
-**B2 — Thẻ thiết kế từng cover** (mỗi cover là một component `CoverRenderer` theo mẫu `monogram.tsx`, class `cv-<family>__*`):
-
-#### `chat` — Khung Chat
-- DOM: `.cv-chat` (nền `--tp-tint`) → `__bar` (thanh trên: avatar `__photo` tròn `9cqw` (slot 0) + tên) → `__thread`: bong bóng trái `__bubble--in` (nền `--tp-paper`, chữ `--tp-deep`, bo `4cqw 4cqw 4cqw 1cqw`) "Mình cưới nhé!", `__bubble--out` (nền `--tp-deep`, chữ `--tp-paper`, bo ngược) với ngày + nơi, bong bóng `in` thứ ba "Nhất định rồi!", dòng `__seen` "Đã xem" nhỏ → `__input` (ô nhập giả cuối thẻ, không focus được, `aria-hidden`).
-- Không icon emoji; mọi chữ tiếng Việt cố định.
-
-#### `sticker` — Dán Sticker
-- DOM: `.cv-sticker` (nền `--tp-paper`) → `__photo` (slot 0, `66cqw × 82cqw`, `border-radius: 8cqw`, viền paper `2cqw`, bóng) → bốn `__sticker` SVG `position:absolute` xoay lệch: ngôi sao, trái tim, vòng cười, nhãn `YES!`; mỗi sticker có `stroke: var(--tp-paper)` dày `1.5cqw` làm viền trắng, `fill` dùng `--tp-deep`/`--tp-gold` → tên `var(--hand)` `12cqw`.
-
-#### `y2k` — Y2K
-- DOM: `.cv-y2k` (nền `linear-gradient(160deg, var(--tp-tint), var(--tp-paper) 55%, var(--tp-gold))`) → `__win` (cửa sổ phần mềm cũ: thanh tiêu đề `--tp-deep` có ba nút tròn và chữ `wedding.exe`, thân chứa `__photo` slot 0) → tên `display` `13cqw` với `text-shadow: .5cqw .5cqw 0 var(--tp-gold), 1cqw 1cqw 0 var(--tp-deep)` → hai ngôi sao bốn cánh SVG xoay.
-
-#### `pixel` — Điểm Ảnh
-- DOM: `.cv-pixel` (nền `--tp-deep`, `font-family: ui-monospace, Menlo, monospace`, `image-rendering: pixelated`) → `__window` (khung bậc thang bằng `box-shadow: 0 -1cqw 0 0 var(--tp-gold), 0 1cqw 0 0 var(--tp-gold), -1cqw 0 0 0 var(--tp-gold), 1cqw 0 0 0 var(--tp-gold)`) chứa `__photo` (slot 0, `image-rendering: pixelated`), tên mono hoa `7cqw`, `__bar` (LOADING: nền gold chạy `width: 100%`), `__heart` (trái tim pixel dựng bằng `box-shadow` nhiều ô `1.6cqw`), dòng `PRESS START: {date}`.
-- Không font pixel mới: dùng font mono hệ thống (quyết định giữ 0 font mới ở mọi đợt).
-
-#### `pin` — Ghim Bản Đồ
-- DOM: `.cv-pin` (nền `--tp-paper`) → `__map` (lưới kẻ `repeating-linear-gradient` hai hướng `rgba(0,0,0,.08)`, một `path` SVG dòng sông `stroke: var(--tp-tint)` rộng `4cqw`, vài khối `__block` hình chữ nhật mờ) → `__pin` SVG lớn (`viewBox 0 0 40 56`, giọt nước `fill: var(--tp-deep)`, chấm tròn paper) ở giữa kèm bóng elip → `__tag` (thẻ nhãn paper chứa `{place}`, viền deep) → tên và ngày ở đáy; `__photo` (slot 0, tròn `20cqw`) góc trên phải như ảnh đại diện địa điểm.
-
-**B3 — Catalog** (dán vào mảng `catalog`, sau dòng cuối hiện có):
-
-```ts
-  ["khung-chat", "Khung Chat", "chat", "korean", "Trò chuyện · gần gũi", ["lam", "hong", "xanh"], undefined, "Mẫu thiệp cưới Khung Chat trình bày lời mời như một cuộc trò chuyện, gần gũi và hài hước. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["dan-sticker", "Dán Sticker", "sticker", "korean", "Sticker · trẻ trung", ["hong", "cam", "lam"], undefined, "Mẫu thiệp cưới Dán Sticker với ảnh cưới và những miếng sticker vẽ tay vui mắt, trẻ trung. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["y2k", "Y2K", "y2k", "editorial", "Y2K · pastel bóng", ["hong", "tim", "lam"], undefined, "Mẫu thiệp cưới Y2K gợi không khí những năm 2000 với chữ bóng và màu pastel, cá tính. Tạo thiệp cưới online miễn phí, không cần đăng ký tài khoản."],
-  ["diem-anh", "Điểm Ảnh", "pixel", "editorial", "Pixel · game cổ điển", ["muc", "xanh", "tim"], undefined, "Mẫu thiệp cưới Điểm Ảnh theo phong cách pixel của game cổ điển, vui nhộn cho cặp đôi mê game. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-  ["ghim-ban-do", "Ghim Bản Đồ", "pin", "editorial", "Bản đồ · rõ ràng", ["xanh", "do", "lam"], undefined, "Mẫu thiệp cưới Ghim Bản Đồ đánh dấu địa điểm tiệc bằng ghim đỏ trên tờ bản đồ, rõ ràng và dễ nhớ. Tạo thiệp cưới online miễn phí, không cần tài khoản."],
-```
-
-**B3 — Samples** (dán vào `templateSamples`):
-
-```ts
-  "khung-chat": { style: "Hiện đại", motif: "Khung chat", badge: "MỚI", pop: 89, isNew: true, a: "Mỹ Duyên", b: "Tiến Đạt", date: "30 · 05 · 2027", place: "SÀI GÒN" },
-  "dan-sticker": { style: "Hiện đại", motif: "Sticker", badge: "MỚI", pop: 70, isNew: true, a: "Nhã Phương", b: "Tuấn Kiệt", date: "06 · 06 · 2027", place: "VŨNG TÀU" },
-  "y2k": { style: "Hiện đại", motif: "Y2K", badge: "MỚI", pop: 77, isNew: true, a: "Khả Hân", b: "Gia Khải", date: "13 · 06 · 2027", place: "HÀ NỘI" },
-  "diem-anh": { style: "Hiện đại", motif: "Pixel", badge: "MỚI", pop: 84, isNew: true, a: "Minh Thư", b: "Hoàng Sơn", date: "20 · 06 · 2027", place: "SÀI GÒN" },
-  "ghim-ban-do": { style: "Hiện đại", motif: "Bản đồ", badge: "MỚI", pop: 91, isNew: true, a: "Ánh Tuyết", b: "Văn Hiếu", date: "27 · 06 · 2027", place: "ĐÀ NẴNG" },
-```
-
-**B4–B7:** như quy trình Batch. Sau đợt này `templates.length` phải là 50.
-
-
-
----
-
-### Task 8: Hoàn tất 50 mẫu (tài liệu và rà soát cuối)
+**Deliverable:** Content v2 chứa Story, Video, Dress Code và Venue; mọi payload v1 hợp lệ được nâng tự động.
 
 **Files:**
-- Modify: `lib/seo.ts`, `tests/seo.test.ts` (nếu có số cứng), `PROGRESS.md`, `CLAUDE.md`, `DESIGN.md`, `Guide-convert-html-design-to-code.md`
 
-- [ ] **Step 1: Sửa mô tả SEO trang `/templates`**
+- Modify: `lib/content.ts`
+- Modify: `tests/content.test.ts`
+- Modify: fixtures trong tests đang chứa `v: 1`
 
-`lib/seo.ts` dòng `"/templates": page(...)`: đổi "Hơn 20 mẫu thiệp cưới online" thành "Hơn 50 mẫu thiệp cưới online" (giữ description 70–160 ký tự; kiểm bằng `node --test tests/seo.test.ts`).
+**Interfaces:**
 
-- [ ] **Step 2: Cập nhật tài liệu**
-  - `CLAUDE.md`: câu "`lib/templates.ts` holds the 16 templates…" → "50 templates: 20 from `design/` (families A–O) and 30 added later (families in `lib/covers.ts`, components in `components/templates/covers/`, no mockup in `design/`)".
-  - `DESIGN.md` dòng 83 ("Dùng đúng tên 16 mẫu…"): ghi 20 mẫu có mockup + 30 mẫu không có mockup, dựng từ token và primitive; ngoại lệ fidelity giống K–O.
-  - `Guide-convert-html-design-to-code.md` dòng 164: `Mau Thiep v2 (20 mẫu…)` giữ nguyên, thêm một dòng nói 30 mẫu sau không có file mockup.
-  - `PROGRESS.md`: dòng trạng thái 50 mẫu, nhật ký, mục ▶.
+- Produces: `legacyContentV1Schema`, `contentV2Schema`, `contentSchema`, `Content`, `upgradeV1(input)`, `normalizeContent(input)`.
+- Constants: `MAX_STORY_ITEMS = 6`, `MAX_DRESS_COLORS = 5`, `MAX_VIDEO_URL = 500`.
+- `Content` output luôn có `v: 2`.
 
-- [ ] **Step 3: Rà soát cuối**
+Content mới:
 
-Run: `npm run typecheck && npm test && npm run build`
-Expected: PASS. Rồi `grep -rn "20 mẫu\|16 mẫu\|16 templates" app components lib docs/*.md *.md` và sửa chỗ còn lại không thuộc lịch sử.
+```ts
+story: { enabled: boolean; items: { id: string; date: string; title: string; body: string; photo: string; alt: string }[] };
+video: { enabled: boolean; url: string; posterUrl: string; title: string };
+dressCode: { enabled: boolean; title: string; note: string; colors: { value: string; label: string }[] };
+events[n]: EventV1 & { venuePhoto: string; directionsNote: string; parkingNote: string };
+```
 
-- [ ] **Step 4: Lighthouse mobile**
+Giới hạn field: story `date 40`, `title 100`, `body 500`, `photo URL 500`, `alt 120`; video `url/posterUrl 500`, `title 120`; dress code `title 80`, `note 300`, mỗi label `40`; venue `venuePhoto URL 500`, `directionsNote 300`, `parkingNote 300`.
 
-Chrome DevTools MCP `lighthouse_audit` mobile cho `/templates` và một `/templates/<id>` mẫu mới (lưu kết quả bằng `outputDirPath`). Ghi điểm Performance/SEO/Accessibility vào PROGRESS.md; nếu Performance của `/templates` tụt rõ so với trước (đo trước khi bắt đầu đợt 1), xử lý riêng (lazy-load cover ngoài viewport).
+`sections` thêm `story`, `video`, `dressCode`, `venue`; defaults của cả bốn là `false`. `upgradeV1` giữ nguyên mọi field cũ và điền object/field mới rỗng.
 
-- [ ] **Step 5: Commit (đưa lệnh cho chủ dự án)**
+- [ ] **Step 1: Chụp fixture v1 hồi quy trong test**
+
+Assert tên, event, album, RSVP, gift và `sections` cũ giữ nguyên sau normalize; assert output `v === 2` và bốn section mới tắt.
+
+- [ ] **Step 2: Viết test validation v2**
+
+Cover các trường hợp: 7 story item, 6 dress color, màu không theo `^#[0-9a-fA-F]{6}$`, video URL không HTTPS/public storage, title/body vượt giới hạn và event note dài.
+
+- [ ] **Step 3: Chạy test đỏ**
+
+Run: `node --test tests/content.test.ts`
+
+Expected: FAIL vì schema chỉ nhận `v: 1`.
+
+- [ ] **Step 4: Tách schema v1 và định nghĩa schema v2**
+
+Giữ schema v1 byte-compatible; `contentSchema` nhận v1/v2 nhưng transform về v2. `defaultContent()` và `sampleContent()` trả v2.
+
+- [ ] **Step 5: Đồng bộ canonical toggle**
+
+Trong normalize, `story.enabled`, `video.enabled`, `dressCode.enabled` được mirror sang `sections.*`; mọi mutation Studio về sau phải cập nhật cả hai trong cùng object update. `venue` chỉ dùng `sections.venue` vì dữ liệu nằm trong event.
+
+- [ ] **Step 6: Kiểm tra persistable**
+
+Thêm test URL video/poster/venuePhoto đang gõ dở bị xóa khỏi payload persistable nhưng draft gốc không bị mutate.
+
+- [ ] **Step 7: Mở rộng publish validation**
+
+`publishIssues()` báo lỗi khi section đang bật nhưng thiếu dữ liệu tối thiểu: Story chưa có item hoàn chỉnh; Video thiếu URL hoặc poster; Dress Code thiếu title hoặc label màu; Venue thiếu reception venue/address. Draft vẫn cho phép các field rỗng để autosave.
+
+- [ ] **Step 8: Chạy gate**
+
+Run: `node --test tests/content.test.ts && npm run typecheck && npm test && npm run build:next`
+
+Expected: PASS.
+
+- [ ] **Step 9: Cập nhật PROGRESS và handoff commit**
 
 ```bash
-git add lib/seo.ts PROGRESS.md CLAUDE.md DESIGN.md Guide-convert-html-design-to-code.md
-git commit -m "docs: record 50-template catalog"
+git add lib/content.ts tests PROGRESS.md
+git commit -m "feat: add backward-compatible invitation content v2"
 ```
 
 ---
 
-# Phần 4 — Self-review (đã chạy)
+### Task 3: Video upload end-to-end
 
-- **Spec coverage:** 30 family riêng (Task 1 + đợt 1–6), 6 đợt × 5 mẫu có cổng duyệt (B6), kiến trúc A (Phần 2, Task 1), ngoài phạm vi giữ nguyên, quy tắc chất lượng (Global Constraints), chỗ phụ thuộc số lượng mẫu (Task 1 Step 8, Task 8), kiểm chứng mỗi đợt (B4–B5), rủi ro bundle (Task 8 Step 4).
-- **Placeholder scan:** card của từng family đủ DOM, class, kích thước; catalog, samples, metadata đầy đủ chuỗi. Phần `Task 1 Step 4` ghi "nội dung cũ không đổi" vì đó là di chuyển nguyên văn, không phải nội dung mới.
-- **Type consistency:** `NewCoverFamily`/`NEW_FAMILIES`/`familyMeta`/`isNewFamily` (lib/covers.ts), `CoverProps`/`CoverRenderer` (covers/types.ts), `coverRenderers` (covers/index.ts) dùng thống nhất ở mọi task.
+**Deliverable:** Studio/API/Storage nhận MP4 hoặc WebM tối đa 50 MiB và từ chối file giả MIME bằng magic bytes.
+
+**Files:**
+
+- Modify: `lib/server/media.ts`
+- Modify: `lib/api.ts`
+- Modify: `app/api/invitations/[id]/media/route.ts`
+- Modify: `components/studio/panels/useUploader.ts`
+- Modify: `tests/media-route.test.ts`
+- Modify: `tests/api.test.ts`
+
+**Interfaces:**
+
+- `MediaKind = "image" | "audio" | "video"` ở server và client.
+- `VIDEO_MAX_BYTES = 50 * 1024 * 1024`.
+- `UPLOAD_REQUEST_MAX_BYTES = VIDEO_MAX_BYTES + 256 * 1024`.
+- `detectMedia("video", bytes)` trả `{ extension: "mp4" | "webm"; contentType: "video/mp4" | "video/webm" }`.
+
+- [ ] **Step 1: Đọc Next.js video guide hiện tại**
+
+Read: `node_modules/next/dist/docs/01-app/02-guides/videos.md`.
+
+- [ ] **Step 2: Viết test server thất bại**
+
+Test MP4 có `ftyp`, WebM có EBML header, MIME giả, file rỗng, 50 MiB + 1 byte và request content-length vượt budget.
+
+- [ ] **Step 3: Chạy test đỏ**
+
+Run: `node --test tests/media-route.test.ts tests/api.test.ts`
+
+Expected: FAIL vì `video` chưa thuộc `MediaKind`.
+
+- [ ] **Step 4: Mở rộng media detection và route**
+
+Không tin `File.type`; xác định MP4/WebM từ bytes như image/audio hiện tại. Giữ access check, rate limit và public URL flow hiện có.
+
+- [ ] **Step 5: Mở rộng client uploader**
+
+`useUploader.uploadFiles(files, "video", onUrl)` kiểm extension/MIME và 50 MiB trước khi gọi API; error copy nêu đúng định dạng/dung lượng.
+
+- [ ] **Step 6: Chạy gate**
+
+Run: `node --test tests/media-route.test.ts tests/api.test.ts && npm run typecheck && npm test && npm run build:next`
+
+Expected: PASS.
+
+- [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib/server/media.ts lib/api.ts app/api/invitations/[id]/media/route.ts components/studio/panels/useUploader.ts tests/media-route.test.ts tests/api.test.ts PROGRESS.md
+git commit -m "feat: support validated wedding video uploads"
+```
+
+---
+
+### Task 4: Studio editors cho bốn section mới
+
+**Deliverable:** Outline có bốn mục mới; người dùng thêm/sửa/xóa dữ liệu, toggle và upload media bằng bàn phím.
+
+**Files:**
+
+- Create: `components/studio/panels/StoryPanel.tsx`
+- Create: `components/studio/panels/VideoPanel.tsx`
+- Create: `components/studio/panels/DressCodePanel.tsx`
+- Create: `components/studio/panels/VenuePanel.tsx`
+- Modify: `components/studio/SectionForm.tsx`
+- Modify: `components/studio/panels.css`
+- Modify: `lib/editor-sections.ts`
+- Modify: `tests/editor-sections.test.ts`
+- Modify: `tests/design-system.test.ts`
+
+**Interfaces:**
+
+- Mỗi panel nhận `PanelProps`; panel có upload nhận thêm `media: MediaProps`.
+- `StoryPanel`: add/move/remove tối đa 6 item, dùng `newId`, `move`, `removeAt`, `updateAt`.
+- `VideoPanel`: một video + poster, URL HTTPS hoặc upload; không autoplay preview.
+- `DressCodePanel`: tối đa 5 `{ value, label }`; color input luôn kèm text label.
+- `VenuePanel`: sửa `venuePhoto`, `directionsNote`, `parkingNote` trên reception event duy nhất.
+
+- [ ] **Step 1: Viết test outline/progress thất bại**
+
+Assert `SECTIONS` có `venue`, `story`, `dressCode`, `video`; optional toggle đúng; missing reason lần lượt là thiếu story item, video URL/poster, dress-code title/label và venue/address.
+
+- [ ] **Step 2: Chạy test đỏ**
+
+Run: `node --test tests/editor-sections.test.ts`
+
+Expected: FAIL vì key chưa tồn tại.
+
+- [ ] **Step 3: Mở rộng outline**
+
+Vị trí:
+
+- “Thông tin chính”: `venue`, `dressCode` sau `countdown`.
+- Đổi “Ảnh & âm nhạc” thành “Câu chuyện & media”: `story`, `album`, `video`, `music`.
+
+`toggleOn()` cập nhật đồng thời object.enabled và `sections.*` cho story/video/dressCode.
+
+- [ ] **Step 4: Tạo bốn panel tập trung**
+
+Giữ `SectionForm` là dispatcher. Không nhét bốn form dài trực tiếp vào switch; mỗi case chỉ render panel tương ứng.
+
+- [ ] **Step 5: Thêm trạng thái upload/validation accessible**
+
+Video input `accept=".mp4,.webm,video/mp4,video/webm"`; poster dùng image uploader. Mỗi lỗi nằm inline và trong live region hiện có.
+
+- [ ] **Step 6: Chạy gate**
+
+Run: `node --test tests/editor-sections.test.ts tests/design-system.test.ts && npm run typecheck && npm test && npm run build:next`
+
+Expected: PASS.
+
+- [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add components/studio lib/editor-sections.ts tests/editor-sections.test.ts tests/design-system.test.ts PROGRESS.md
+git commit -m "feat: add story video dress code and venue editors"
+```
+
+---
+
+### Task 5: Shared sections và profile-driven renderer
+
+**Deliverable:** Bốn section mới render được và profile đổi thứ tự/variant cho 30 mẫu mới; 20 mẫu cũ giữ nguyên thứ tự, DOM và giao diện mặc định.
+
+**Files:**
+
+- Create: `components/invitation/section-renderer.tsx`
+- Create: `components/invitation/sections/Story.tsx`
+- Create: `components/invitation/sections/Video.tsx`
+- Create: `components/invitation/sections/DressCode.tsx`
+- Create: `components/invitation/sections/Venue.tsx`
+- Modify: `components/invitation/InvitationRenderer.tsx`
+- Modify: `components/invitation/invitation.css`
+- Modify: `lib/i18n.ts`
+- Modify: `tests/section-profiles.test.ts`
+- Modify: `tests/i18n.test.ts`
+- Modify: `tests/design-system.test.ts`
+
+**Interfaces:**
+
+- `SectionRenderContext = { content; template; mode; slug?; invitationId?; guestName; guestToken; wishes; now; locale; showcase }`.
+- `renderInvitationSection(key: InvitationSectionKey, ctx: SectionRenderContext): ReactNode`.
+- Bốn component mới nhận `{ content, variant, locale }`; Video nhận thêm `preview`.
+
+- [ ] **Step 1: Viết test resolver cho disabled/empty profile**
+
+Assert section tắt bị loại, order còn lại ổn định, default profile trả đúng thứ tự legacy và key không xác định không thể compile. Thêm fixture cho 20 mẫu cũ để khẳng định profile đều là `default` và không nhận variant/ornament mới.
+
+- [ ] **Step 2: Viết test i18n thất bại**
+
+Thêm VI/EN cho story, video, dress code, venue, directions, parking, video fallback và empty copy.
+
+- [ ] **Step 3: Chạy test đỏ**
+
+Run: `node --test tests/section-profiles.test.ts tests/i18n.test.ts`
+
+Expected: FAIL vì resolver/render labels chưa đủ.
+
+- [ ] **Step 4: Tạo shared sections**
+
+Story render ba variant không carousel; Video dùng `<video controls preload="metadata" poster>` và fallback link; DressCode hiện label cạnh swatch; Venue lấy reception event và CTA map qua `lib/maps.ts`.
+
+- [ ] **Step 5: Refactor renderer theo profile**
+
+Envelope, view tracker, language toggle và shell giữ nguyên vị trí/hành vi. Bên trong `<main>`, map `resolveSectionOrder(SECTION_PROFILES[template.profile], content)` qua `renderInvitationSection`.
+
+- [ ] **Step 6: Thêm data attributes và shared variant CSS**
+
+`.inv-stage` nhận `data-profile`, `data-density`, `data-ornament`. CSS giữ layout ổn định khi media lỗi, nội dung dài hoặc section tắt.
+
+- [ ] **Step 7: Chạy gate**
+
+Run: `node --test tests/section-profiles.test.ts tests/i18n.test.ts tests/design-system.test.ts && npm run typecheck && npm test && npm run build:next`
+
+Expected: PASS; 20 mẫu cũ render cùng order và registry snapshot vẫn khớp baseline.
+
+- [ ] **Step 8: Browser smoke một lần cho hạ tầng**
+
+Kiểm `/templates/song-hy`, `/templates/net-muc`, một mẫu đại diện cho mỗi archetype cũ và một preview Studio ở 390px/1280px: không overflow, không console error, section cũ đúng thứ tự và ảnh so sánh không có visual diff ngoài ngưỡng chống nhiễu đã chốt.
+
+- [ ] **Step 9: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add components/invitation lib/i18n.ts lib/section-profiles.ts tests PROGRESS.md
+git commit -m "feat: render invitation sections from template profiles"
+```
+
+---
+
+### Task 6: Cover infrastructure và Đợt 1 — Di sản Việt tái hiện (20 → 25)
+
+**Deliverable:** Registry cover mới hoạt động end-to-end; năm mẫu heritage được duyệt.
+
+**Files:**
+
+- Create: `lib/covers.ts`
+- Create: `components/templates/covers/types.ts`
+- Create: `components/templates/covers/index.ts`
+- Create: `components/templates/covers/heritage.css`
+- Create: `components/templates/covers/{lacquer-seal,phoenix-fold,lotus-scroll,porcelain-blue,silk-knot}.tsx`
+- Create: `tests/covers.test.ts`
+- Modify: `lib/templates.ts`, `lib/section-profiles.ts`, `lib/template-assets.ts`
+- Modify: `components/templates/ThiepPreview.tsx`, `PreviewDemo.tsx`
+- Modify: `tests/templates.test.ts`, `tests/demo.test.ts`
+
+**Interfaces:**
+
+- `NEW_FAMILIES` chứa các family đã active; sau task này có 5 key.
+- `NewCoverFamily = (typeof NEW_FAMILIES)[number]`.
+- `CoverProps` chứa `a`, `b`, `date`, `dm`, `year`, `day`, `month`, `weekday`, `place`, `slot`.
+- `coverRenderers: Record<NewCoverFamily, CoverRenderer>`.
+- `familyMeta: Record<NewCoverFamily, { label; layout; photos; dark; profile; ornament }>`.
+
+```ts
+type CoverProps = {
+  a: string; b: string; date: string; dm: string; year: string;
+  day: string; month: string; weekday: string; place: string;
+  slot: (index: 0 | 1 | 2, caption: string, circle?: boolean) => ReactNode;
+};
+type CoverRenderer = (props: CoverProps) => ReactNode;
+```
+
+Catalog chính xác:
+
+| id | name | family | archetype | profile | colors |
+|---|---|---|---|---|---|
+| `an-son` | Ấn Son | `lacquer-seal` | traditional | heritage | `do,dodam,muc` |
+| `phung-vu` | Phụng Vũ | `phoenix-fold` | traditional | heritage | `do,dodam,lam` |
+| `lien-hoa` | Liên Hoa | `lotus-scroll` | traditional | heritage | `xanh,hong,nau` |
+| `lam-su` | Lam Sứ | `porcelain-blue` | classic | heritage | `lam,muc,xanh` |
+| `to-hong` | Tơ Hồng | `silk-knot` | classic | heritage | `do,hong,dodam` |
+
+- [ ] **Step 1: Viết test đỏ cho cover contract**
+
+Assert mỗi family active có đúng một renderer, metadata, profile, sample, layout/photos và đúng một template; catalog sau task là 25.
+
+- [ ] **Step 2: Chạy test đỏ**
+
+Run: `node --test tests/covers.test.ts tests/templates.test.ts tests/demo.test.ts`
+
+Expected: FAIL vì registry chưa tồn tại.
+
+- [ ] **Step 3: Tạo registry và dispatch**
+
+Nhánh `isNewFamily(f)` trong `ThiepPreview` render registry; A–O giữ nguyên. Import `heritage.css` từ covers index.
+
+- [ ] **Step 4: Dựng năm cover theo signature spec**
+
+Một risk có chủ đích mỗi mẫu:
+
+- Ấn Son: triện tròn/dập chìm, không ảnh bắt buộc.
+- Phụng Vũ: hai cánh gấp mở vào một ảnh; phoenix là SVG original.
+- Liên Hoa: cuộn dọc + sen line-art, lịch âm là dữ liệu thật từ event.
+- Lam Sứ: viền men lam tự vẽ, không copy pattern ref.
+- Tơ Hồng: một dải lụa CSS/SVG nối tên-ngày-địa điểm.
+
+- [ ] **Step 5: Thêm catalog/sample/SEO và asset audit**
+
+SEO mỗi mẫu 100–161 ký tự, không bịa tính năng. Ornament original được ghi manifest; asset ref vẫn `reference-only`.
+
+- [ ] **Step 6: Chạy gate batch**
+
+Run: `node --test tests/covers.test.ts tests/templates.test.ts tests/demo.test.ts && npm run typecheck && npm test && npm run build:next`
+
+Expected: PASS; 25 templates, 20 legacy + 5 new.
+
+- [ ] **Step 7: Browser QA và cổng duyệt**
+
+Kiểm `/templates` và năm route mới ở 390px/1280px, stress tên/địa chỉ dài, reduced motion, ảnh trống; lưu ảnh QA dưới `.playwright-mcp/`. Dừng chờ chủ dự án duyệt Đợt 1.
+
+- [ ] **Step 8: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib/covers.ts lib/templates.ts lib/section-profiles.ts lib/template-assets.ts components/templates tests docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: add five modern Vietnamese heritage templates"
+```
+
+---
+
+### Task 7: Đợt 2 — Vườn hoa và địa điểm (25 → 30)
+
+**Deliverable:** Năm mẫu garden active, không copy watercolor/ornament từ refs.
+
+**Files:**
+
+- Create: `components/templates/covers/garden.css`
+- Create: `components/templates/covers/{glasshouse,white-orchid,pressed-garden,venue-sketch,midnight-bloom}.tsx`
+- Modify: registries, catalog, tests, asset audit và `PROGRESS.md` như Task 6.
+
+**Catalog:**
+
+| id | name | family | archetype | profile | colors |
+|---|---|---|---|---|---|
+| `vuon-kinh` | Vườn Kính | `glasshouse` | botanical | garden | `hong,xanh,oliu` |
+| `mai-lan` | Mai Lan | `white-orchid` | minimal | garden | `muc,xanh,nau` |
+| `vuon-ep-hoa` | Vườn Ép Hoa | `pressed-garden` | botanical | garden | `xanh,cam,hong` |
+| `noi-minh-hen` | Nơi Mình Hẹn | `venue-sketch` | classic | garden | `nau,lam,oliu` |
+| `da-hoa` | Dạ Hoa | `midnight-bloom` | botanical | garden | `muc,dodam,tim` |
+
+- [ ] **Step 1: Mở rộng test expected count lên 30 và thêm năm family**
+- [ ] **Step 2: Chạy test đỏ; typecheck phải báo thiếu renderer**
+- [ ] **Step 3: Dựng cover + CSS** — vòm kính; cành lan trắng; herbarium; venue line-art; hoa đêm. Mỗi mẫu chỉ có một signature.
+- [ ] **Step 4: Thêm metadata/catalog/sample/SEO/asset provenance**
+- [ ] **Step 5: Chạy `node --test tests/covers.test.ts tests/templates.test.ts && npm run typecheck && npm test && npm run build:next`**
+- [ ] **Step 6: Browser QA 390/1280 + 200% zoom cho Mai Lan; dừng chờ duyệt Đợt 2**
+- [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib components/templates tests docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: add five botanical and venue-led templates"
+```
+
+---
+
+### Task 8: Đợt 3 — Editorial ảnh cưới (30 → 35)
+
+**Deliverable:** Năm cover photo-led xử lý ảnh thiếu và crop khác tỷ lệ an toàn.
+
+**Files:**
+
+- Create: `components/templates/covers/editorial.css`
+- Create: `components/templates/covers/{cinema-bleed,mono-contact,split-portrait,gallery-notes,fashion-grid}.tsx`
+- Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
+
+**Catalog:**
+
+| id | name | family | archetype | profile | colors |
+|---|---|---|---|---|---|
+| `khung-dien-anh` | Khung Điện Ảnh | `cinema-bleed` | editorial | editorial-photo | `muc,dodam,lam` |
+| `phong-toi` | Phòng Tối | `mono-contact` | editorial | editorial-photo | `muc,do,nau` |
+| `song-anh` | Song Ảnh | `split-portrait` | editorial | editorial-photo | `lam,muc,hong` |
+| `ghi-chu-ben-anh` | Ghi Chú Bên Ảnh | `gallery-notes` | korean | editorial-photo | `nau,hong,xanh` |
+| `tap-chi-cuoi` | Tạp Chí Cưới | `fashion-grid` | editorial | editorial-photo | `muc,cam,do` |
+
+- [ ] **Step 1: Mở rộng test count lên 35; thêm fixture ảnh 1/2/3 bị thiếu**
+- [ ] **Step 2: Chạy test đỏ**
+- [ ] **Step 3: Dựng cover + CSS** — full bleed cinematic; contact sheet mono; split 40/60; collage caption; fashion grid.
+- [ ] **Step 4: Thêm catalog/sample/SEO và không đưa ảnh ref vào manifest production**
+- [ ] **Step 5: Chạy gate đầy đủ và ghi bundle size `/templates`, `/templates/[id]` làm baseline giữa phase**
+- [ ] **Step 6: Browser QA + 200% zoom cho Tạp Chí Cưới; dừng chờ duyệt Đợt 3**
+- [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib components/templates tests docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: add five editorial photo wedding templates"
+```
+
+---
+
+### Task 9: Đợt 4 — Quiet luxury (35 → 40)
+
+**Deliverable:** Năm mẫu sang trọng nhờ type/spacing/material, không dựa vào gradient hoặc trang trí dày.
+
+**Files:**
+
+- Create: `components/templates/covers/quiet-luxury.css`
+- Create: `components/templates/covers/{ivory-letterpress,velvet-frame,champagne-line,pearl-arch,stone-window}.tsx`
+- Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
+
+**Catalog:**
+
+| id | name | family | archetype | profile | colors |
+|---|---|---|---|---|---|
+| `dap-noi-nga` | Dập Nổi Ngà | `ivory-letterpress` | minimal | quiet-luxury | `nau,muc,vang` |
+| `nhung-dem` | Nhung Đêm | `velvet-frame` | classic | quiet-luxury | `muc,dodam,lam` |
+| `sam-panh` | Sâm Panh | `champagne-line` | classic | quiet-luxury | `vang,nau,hong` |
+| `ngoc-trai` | Ngọc Trai | `pearl-arch` | minimal | quiet-luxury | `muc,hong,lam` |
+| `thach-van` | Thạch Vân | `stone-window` | classic | quiet-luxury | `nau,lam,muc` |
+
+- [ ] **Step 1: Mở rộng test count lên 40 và contrast assertions cho năm palette**
+- [ ] **Step 2: Chạy test đỏ**
+- [ ] **Step 3: Dựng cover + CSS** — letterpress bằng shadow/border; velvet frame; line vàng; pearl dots; stone wash bằng CSS/SVG original.
+- [ ] **Step 4: Thêm catalog/sample/SEO/asset audit**
+- [ ] **Step 5: Chạy gate đầy đủ**
+- [ ] **Step 6: Browser QA + 200% zoom cho Dập Nổi Ngà; dừng chờ duyệt Đợt 4**
+- [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib components/templates tests docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: add five quiet luxury wedding templates"
+```
+
+---
+
+### Task 10: Đợt 5 — Kỷ vật và câu chuyện (40 → 45)
+
+**Deliverable:** Năm mẫu story-led làm nổi bật section Story mới, không lặp Tem Thư/Vé Hạnh Phúc/Cuộn Phim hiện có.
+
+**Files:**
+
+- Create: `components/templates/covers/story.css`
+- Create: `components/templates/covers/{story-journal,route-map,cafe-card,calendar-mark,heirloom-album}.tsx`
+- Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
+
+**Catalog:**
+
+| id | name | family | archetype | profile | colors |
+|---|---|---|---|---|---|
+| `nhat-ky-doi-minh` | Nhật Ký Đôi Mình | `story-journal` | korean | story-led | `nau,hong,xanh` |
+| `chung-mot-hanh-trinh` | Chung Một Hành Trình | `route-map` | editorial | story-led | `lam,oliu,do` |
+| `quan-quen` | Quán Quen | `cafe-card` | classic | story-led | `nau,cam,muc` |
+| `ngay-minh-chon` | Ngày Mình Chọn | `calendar-mark` | minimal | story-led | `do,xanh,hong` |
+| `gia-bao` | Gia Bảo | `heirloom-album` | classic | story-led | `nau,dodam,lam` |
+
+- [ ] **Step 1: Mở rộng test count lên 45 và profile order assertions**
+- [ ] **Step 2: Chạy test đỏ**
+- [ ] **Step 3: Dựng cover + CSS** — journal; route line; café menu; calendar hero; heirloom album. Không dùng barcode/passport/receipt motif.
+- [ ] **Step 4: Thêm catalog/sample/SEO/asset audit**
+- [ ] **Step 5: Chạy gate đầy đủ**
+- [ ] **Step 6: Browser QA Story rỗng/2/6 item + 200% zoom; dừng chờ duyệt Đợt 5**
+- [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib components/templates tests docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: add five story-led wedding templates"
+```
+
+---
+
+### Task 11: Đợt 6 — Đương đại giàu cá tính (45 → 50)
+
+**Deliverable:** Năm mẫu expressive hoàn tất catalog; reduced motion và asset gate vẫn xanh.
+
+**Files:**
+
+- Create: `components/templates/covers/expressive.css`
+- Create: `components/templates/covers/{kinetic-type,color-block,chibi-story,paper-cut,constellation}.tsx`
+- Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
+
+**Catalog:**
+
+| id | name | family | archetype | profile | colors |
+|---|---|---|---|---|---|
+| `chu-chuyen-nhip` | Chữ Chuyển Nhịp | `kinetic-type` | editorial | expressive | `muc,do,lam` |
+| `khoi-hy` | Khối Hỷ | `color-block` | editorial | expressive | `do,cam,hong` |
+| `chung-minh` | Chúng Mình | `chibi-story` | korean | expressive | `hong,xanh,do` |
+| `cat-giay` | Cắt Giấy | `paper-cut` | botanical | expressive | `xanh,hong,lam` |
+| `duyen-tinh-tu` | Duyên Tinh Tú | `constellation` | classic | expressive | `muc,lam,tim` |
+
+- [ ] **Step 1: Mở rộng invariant cuối: đúng 50 template, 30 family mới, 30 renderer**
+- [ ] **Step 2: Chạy test đỏ**
+- [ ] **Step 3: Dựng cover + CSS** — kinetic chạy một lần; color block không gradient; chibi dùng illustration original/licensed; paper-cut bằng layer SVG original; constellation tính từ ngày thật, không bịa sao khi ngày trống.
+- [ ] **Step 4: Thêm catalog/sample/SEO/asset audit**
+- [ ] **Step 5: Thêm test reduced-motion/static scan cho animation expressive**
+- [ ] **Step 6: Chạy gate đầy đủ và so bundle với baseline Task 8**
+- [ ] **Step 7: Browser QA + reduced motion + 200% zoom; dừng chờ duyệt Đợt 6**
+- [ ] **Step 8: Cập nhật PROGRESS và handoff commit**
+
+```bash
+git add lib components/templates tests docs/design/template-asset-audit.md PROGRESS.md
+git commit -m "feat: complete catalog with five expressive templates"
+```
+
+---
+
+### Task 12: Final integration, documentation và release gate
+
+**Deliverable:** Toàn phase sẵn sàng release; tài liệu/số lượng/SEO đúng 50, không asset mơ hồ, mọi route chính được QA.
+
+**Files:**
+
+- Modify: `DESIGN.md`
+- Modify: `PROGRESS.md`
+- Modify: `CLAUDE.md`
+- Modify: `Guide-convert-html-design-to-code.md`
+- Modify: `lib/seo.ts`
+- Modify: `tests/seo.test.ts`
+- Modify: `tests/design-system.test.ts`
+- Modify: `tests/templates.test.ts`
+- Modify: `docs/design/template-asset-audit.md`
+
+**Interfaces:** Không thêm runtime interface; task này khóa contract và bằng chứng release.
+
+- [ ] **Step 1: Quét literal count và copy lỗi thời**
+
+Run: `rg -n '16 templates|20 mẫu|Hơn 20|20 templates|A–O' --glob '!docs/superpowers/plans/2026-10-04-thirty-new-templates-plan.md' --glob '!refs/**' .`
+
+Phân loại từng match: lịch sử giữ nguyên; copy/runtime/tài liệu hiện hành đổi thành 50/45 family đúng ngữ cảnh.
+
+- [ ] **Step 2: Cập nhật DESIGN.md và hướng dẫn**
+
+Ghi sáu collection, section profile, asset ownership, token mapping và quy trình thêm family/profile mới. Không ghi refs là nguồn được phép sao chép.
+
+- [ ] **Step 3: Khóa SEO và sitemap**
+
+Assert 50 detail routes trong static params/sitemap, title/description duy nhất, copy marketing “50 mẫu” đúng sự thật.
+
+- [ ] **Step 4: Audit asset cuối**
+
+Mọi file dưới `public/templates/` phải có đúng một manifest entry ở trạng thái `owned|licensed|original`; xóa asset orphan hoặc đổi về implementation CSS/SVG original.
+
+- [ ] **Step 5: Chạy static premium audit**
+
+Read `frontend-design-premium/references/verification-checklist.md`, sau đó chạy:
+
+```bash
+python /Users/nguyenanhnhut/.codex/plugins/cache/openai-curated-remote/frontend-design-premium/1.4.0/skills/frontend-design-premium/scripts/audit_project.py . --mode strict
+```
+
+Fix mọi blocking finding thuộc phạm vi phase.
+
+- [ ] **Step 6: Chạy full automated gate**
+
+Run: `npm run typecheck && npm test && npm run build:next`
+
+Expected: PASS; tests báo 50 templates/30 new families; build không warning mới.
+
+- [ ] **Step 7: Chạy E2E**
+
+Run tuần tự:
+
+```bash
+npm run e2e -- --project=chrome
+npm run e2e -- --project=mobile-chrome
+npm run e2e -- --project=mobile-safari
+```
+
+Expected: PASS.
+
+- [ ] **Step 8: Browser release sweep**
+
+Kiểm `/templates`, đại diện mỗi collection, Studio tạo/chỉnh đủ bốn section, public invitation, VI/EN, video lỗi, ảnh thiếu, section tắt, reduced motion, keyboard, 390px/1280px và Lighthouse mobile. Pass bar: 0 console error/warning, 0 ảnh hỏng, 0 overflow.
+
+- [ ] **Step 9: Chốt PROGRESS và handoff commit**
+
+```bash
+git add DESIGN.md PROGRESS.md CLAUDE.md Guide-convert-html-design-to-code.md lib/seo.ts tests docs/design/template-asset-audit.md
+git commit -m "docs: finalize fifty-template invitation catalog"
+```
+
+---
+
+## Execution Notes
+
+- Task 1–5 là nền tảng tuần tự; không chạy song song vì interface phụ thuộc trực tiếp.
+- Task 6–11 cũng tuần tự do mỗi batch có cổng duyệt của chủ dự án và cùng sửa registry/CSS index.
+- Trong một batch, năm cover component có thể chia cho năm worker sau khi metadata/profile và test đỏ đã được owner của task khóa.
+- Nếu chủ dự án không duyệt một mẫu, chỉ sửa mẫu đó và chạy lại gate/browser QA của batch; không bắt đầu batch kế.
+- Nếu asset được xác nhận quyền sử dụng giữa phase, cập nhật audit + manifest trong batch đang dùng; không chép hàng loạt asset chưa có consumer.
