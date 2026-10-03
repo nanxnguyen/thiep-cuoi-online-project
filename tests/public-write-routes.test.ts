@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { forwardPublicWrite, parsePublicPayload, requestFingerprint, turnstileToken } from "../lib/server/public-write.ts";
+import { forwardPublicWrite, parsePublicPayload, requestFingerprint } from "../lib/server/public-write.ts";
 import { HttpError } from "../lib/server/http.ts";
 import { readFileSync } from "node:fs";
 
@@ -19,12 +19,6 @@ test("public payload validation preserves the API contract", () => {
   assert.equal(parsePublicPayload("rsvp", rsvp).name, "Lan");
   assert.equal(parsePublicPayload("wish", { name: "Lan", message: "Chúc mừng", website: "" }).message, "Chúc mừng");
   assert.throws(() => parsePublicPayload("rsvp", { ...rsvp, guests: 101 }), (error: unknown) => error instanceof HttpError && error.status === 400);
-});
-
-test("public writes require a bounded Turnstile token", () => {
-  assert.equal(turnstileToken({ turnstileToken: "verified-token" }), "verified-token");
-  assert.throws(() => turnstileToken({}), (error: unknown) => error instanceof HttpError && error.status === 403);
-  assert.throws(() => turnstileToken({ turnstileToken: "x".repeat(2049) }), (error: unknown) => error instanceof HttpError && error.status === 403);
 });
 
 test("production fingerprint trusts Cloudflare, normalizes it, and ignores forwarded headers", () => {
@@ -61,7 +55,6 @@ test("public RSVP and wish routes parse through the 64 KiB bounded JSON reader",
   for (const action of ["rsvp", "wishes"]) {
     const source = readFileSync(new URL(`../app/api/public/invitations/[slug]/${action}/route.ts`, import.meta.url), "utf8");
     assert.match(source, /parseJson\(request, z\.unknown\(\), JSON_MAX_BYTES\)/);
-    assert.match(source, /verifyTurnstile\(turnstileToken\(input\), "(?:rsvp|wish)"\)/);
     assert.doesNotMatch(source, /request\.json\(/);
   }
 });

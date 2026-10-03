@@ -2,6 +2,7 @@ export type NavigationLink = { href: string; label: string };
 
 export const NAV_LINKS: readonly NavigationLink[] = [
   { href: "/templates", label: "Mẫu thiệp" },
+  { href: "/thiet-ke-thiep-rieng", label: "Thiết kế riêng" },
   { href: "/cong-cu-dam-cuoi", label: "Công cụ" },
   { href: "/ung-ho", label: "Ủng hộ" },
 ] as const;
@@ -18,6 +19,7 @@ export const FOOTER_COLUMNS: readonly { title: string; links: readonly Navigatio
     links: [
       { href: "/templates", label: "Mẫu thiệp" },
       { href: "/bang-gia", label: "Bảng giá" },
+      { href: "/thiet-ke-thiep-rieng", label: "Thiết kế riêng" },
       { href: "/studio", label: "Tạo thiệp" },
       { href: "/account", label: "Thiệp của tôi" },
     ],
@@ -37,6 +39,7 @@ export const FOOTER_COLUMNS: readonly { title: string; links: readonly Navigatio
   {
     title: "Khám phá",
     links: [
+      { href: "/blog", label: "Blog cưới" },
       { href: "/thiep-cuoi-online-mien-phi", label: "Thiệp cưới online miễn phí" },
       { href: "/tao-thiep-cuoi", label: "Tạo thiệp cưới" },
       { href: "/qr-tien-mung", label: "QR tiền mừng cưới" },

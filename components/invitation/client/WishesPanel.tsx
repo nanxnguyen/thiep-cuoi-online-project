@@ -5,7 +5,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { api, type PublicWish } from "@/lib/api";
 import { t, type Locale } from "@/lib/i18n";
 import { subscribeToWishes } from "@/lib/supabase-browser";
-import { TurnstileWidget } from "./TurnstileWidget";
 
 type Props = { slug?: string; invitationId?: string; preview: boolean; guestName: string; initial: PublicWish[]; placeholder: string; locale?: Locale };
 
@@ -18,8 +17,6 @@ export function WishesPanel({ slug, invitationId, preview, guestName, initial, p
   const [website, setWebsite] = useState(""); // honeypot
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const [turnstileReset, setTurnstileReset] = useState(0);
 
   useEffect(() => {
     if (preview || !slug || !invitationId) return;
@@ -38,12 +35,10 @@ export function WishesPanel({ slug, invitationId, preview, guestName, initial, p
     }
     setStatus("sending");
     try {
-      await api.submitWish(slug, { name: name.trim(), message: message.trim(), website, turnstileToken });
+      await api.submitWish(slug, { name: name.trim(), message: message.trim(), website });
       setMessage("");
       setStatus("sent");
-      setTurnstileReset((value) => value + 1);
     } catch (err) {
-      setTurnstileReset((value) => value + 1);
       setError(err instanceof Error ? err.message : dict.errGeneric);
       setStatus("error");
     }
@@ -72,7 +67,6 @@ export function WishesPanel({ slug, invitationId, preview, guestName, initial, p
               <input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
             </label>
           </div>
-          {!preview && <TurnstileWidget action="wish" locale={locale} onToken={setTurnstileToken} resetSignal={turnstileReset} />}
           {status === "error" && (
             <p className="inv-error" role="alert">
               {error}
@@ -84,7 +78,7 @@ export function WishesPanel({ slug, invitationId, preview, guestName, initial, p
             </p>
           )}
           {!preview && (
-            <button type="submit" className="inv-wishform__send" disabled={!turnstileToken}>
+            <button type="submit" className="inv-wishform__send">
               {status === "sending" ? dict.sending : dict.submitWish}
             </button>
           )}

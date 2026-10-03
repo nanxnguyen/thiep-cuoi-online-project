@@ -16,16 +16,6 @@ export function parsePublicPayload(action: PublicAction, input: unknown): RsvpIn
   }
 }
 
-export function turnstileToken(input: unknown): string {
-  const token = input && typeof input === "object" && !Array.isArray(input)
-    ? (input as Record<string, unknown>).turnstileToken
-    : undefined;
-  if (typeof token !== "string" || !token || token.length > 2048) {
-    throw new HttpError(403, "Vui lòng xác minh bạn không phải robot.");
-  }
-  return token;
-}
-
 export function requestFingerprint(headers: Headers, production = process.env.NODE_ENV === "production"): string {
   // Prod trusts only platform-set client-IP headers (spoof-resistant): Cloudflare or Netlify.
   // x-forwarded-for is client-spoofable, so it is dev-only.

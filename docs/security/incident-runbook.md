@@ -23,4 +23,4 @@ Rotating `RATE_LIMIT_HMAC_SECRET` resets effective client/actor buckets. Rotatin
 
 Run unit tests, typecheck, production build, and `supabase test db` where the CLI is available. Perform only the bounded staging checks in the edge runbook. Restore disabled routes, watch the triggering signal for 30 minutes, and document root cause and follow-up.
 
-Turnstile remains deferred until Cloudflare keys are created and Supabase Auth CAPTCHA can be enabled in monitor/test mode. Do not enforce a challenge without keyboard testing, mobile completion measurement, and a retry path that preserves form input.
+Turnstile was removed from RSVP/wish on 2026-09-30. If spam returns, re-add a challenge only after keyboard testing, mobile completion measurement, and a retry path that preserves form input.

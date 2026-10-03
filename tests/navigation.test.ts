@@ -6,7 +6,7 @@ import { PUBLIC_ROUTES } from "../lib/route-inventory.ts";
 test("primary navigation exposes the complete product discovery routes", () => {
   assert.deepEqual(
     NAV_LINKS.map((link) => link.href),
-    ["/templates", "/cong-cu-dam-cuoi", "/ung-ho"],
+    ["/templates", "/thiet-ke-thiep-rieng", "/cong-cu-dam-cuoi", "/ung-ho"],
   );
 });
 
@@ -26,6 +26,7 @@ test("navigation marks a section active for its index and nested routes", () => 
 test("footer links every SEO landing page and every free tool, not just the featured ones", () => {
   const hrefs = FOOTER_LINKS.map((link) => link.href);
   for (const href of [
+    "/blog",
     "/thiep-cuoi-online-mien-phi",
     "/tao-thiep-cuoi",
     "/qr-tien-mung",

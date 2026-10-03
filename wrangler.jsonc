@@ -14,7 +14,6 @@
 	"vars": {
 		"NEXT_PUBLIC_SUPABASE_URL": "https://iehmucsshklgjmxqyggp.supabase.co",
 		"NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_KYPapJychusVSHK2OPPD0w_aPICz6Nq",
-		"NEXT_PUBLIC_TURNSTILE_SITE_KEY": "0x4AAAAAAFHPVcQO332JTP27",
-		"NEXT_PUBLIC_SITE_URL": "https://thiep-cuoi-online.nguyenvtt18.workers.dev"
+		"NEXT_PUBLIC_SITE_URL": "https://taothiepcuoi.raystudio.com.vn"
 	}
 }

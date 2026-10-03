@@ -83,4 +83,5 @@ Header/footer là shared component. `GalleryCatalog` và Studio đọc chung reg
 - Dùng đúng tên 16 mẫu và palette trong design v2; ID cũ chỉ là alias dữ liệu.
 - Giữ nội dung thiệp thật, RSVP, link riêng khách và autosave khi đổi UI.
 - Không thêm thông điệp trial/thanh toán vì sản phẩm hiện miễn phí.
+- Blog (`/blog`) không có mockup trong `design/` (đã gỡ ở đợt 26–27/09), nên là ngoại lệ có chủ đích: chỉ dùng token, primitive `mk-*` và Playfair/Be Vietnam Pro; mục lục, khối mẹo, thẻ liên kết và ảnh bìa là phần bổ sung riêng của blog (`components/blog/blog.css`).
 - Không thay khả năng đọc, focus hay lỗi form để đổi lấy ảnh giống design.
