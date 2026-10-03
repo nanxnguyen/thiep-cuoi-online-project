@@ -25,3 +25,13 @@ qa-evidence
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# scraped reference pages (other sites, copyright) — never commit
+refs/
+
+# scraped couple photos (other authors, copyright) — never commit
+image-scrapt/
+
+# Playwright e2e output
+test-results/
+playwright-report/

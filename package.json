@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "design": "node scripts/design-workflow.mjs",
+    "scrape:ref": "node scripts/scrape-invitation.mjs",
+    "scrape:couples": "node scripts/scrape-couple-photos.mjs",
     "dev": "next dev",
     "build": "npm run build:next && opennextjs-cloudflare build --skipNextBuild --skipWranglerConfigCheck && node scripts/prepare-sites-worker.mjs",
     "build:next": "next build",
@@ -15,6 +17,7 @@
     "mcp:playwright": "playwright-mcp --browser chromium --allowed-hosts localhost:3000 localhost:8090",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"tests/**/*.test.ts\"",
+    "e2e": "playwright test",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview"
   },
