@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { JsonLd } from "@/components/marketing/JsonLd";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { GalleryCatalog, GalleryFaq } from "@/components/templates/GalleryCatalog";
-import { colors } from "@/lib/templates";
+import { colors, templates } from "@/lib/templates";
 import "@/components/templates/gallery.css";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = {
-  title: "Mẫu thiệp cưới",
-  description: "Mẫu thiệp cưới online thiết kế riêng cho MỘC: chữ lớn, tối giản, cổ điển, vườn xanh, đỏ son, ngọc bích, thủy mặc và phong cách Hàn.",
-  alternates: { canonical: "/templates" },
-};
+export const metadata: Metadata = pageMetadata("/templates");
 
 // design/Mau Thiep v2.dc.html, value for value.
 const COLLECTIONS = [
@@ -29,6 +27,7 @@ export default function TemplatesPage() {
   return (
     <div className="gal">
       <SiteHeader />
+      <PageJsonLd path="/templates" name="Mẫu thiệp" list={templates.map((t) => ({ name: t.name, path: `/templates/${t.id}` }))} />
       <section className="gal-hero">
         <div>
           <div className="gal-hero__kicker">

@@ -2,10 +2,14 @@ import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
 // Shared shell for the SEO landings, value for value with design/Tao Thiep Cuoi, Thiep Cuoi Online Mien Phi,
 // QR Tien Mung and Tin Nhan Moi Cuoi: a centred hero (or the split QR hero passed as `hero`) and the page's own block.
 type SeoLandingPageProps = {
+  /** Route and breadcrumb label, for the page's structured data. */
+  path: string;
+  name: string;
   eyebrow?: string;
   title?: ReactNode;
   description?: string;
@@ -18,10 +22,11 @@ type SeoLandingPageProps = {
   children?: ReactNode;
 };
 
-export function SeoLandingPage({ eyebrow, title, description, cta, heroStyle, small, hero, children }: SeoLandingPageProps) {
+export function SeoLandingPage({ path, name, eyebrow, title, description, cta, heroStyle, small, hero, children }: SeoLandingPageProps) {
   return (
     <>
       <SiteHeader />
+      <PageJsonLd path={path} name={name} />
       <main>
         {hero ?? (
           <section className="lp-hero" style={heroStyle}>

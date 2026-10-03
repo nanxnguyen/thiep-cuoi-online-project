@@ -4,6 +4,24 @@ const WEEKDAYS = ["Chủ nhật", "Thứ hai", "Thứ ba", "Thứ tư", "Thứ n
 const WEEKDAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS_EN = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
+// The API accepts yyyy-mm-dd only. Keep a localized fallback for values supplied by mobile date pickers.
+export function normalizeDateInput(value: string): string | null {
+  const input = value.trim();
+  const isoMatch = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(input);
+  const viMatch = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(input);
+  if (!isoMatch && !viMatch) return null;
+
+  const year = Number(isoMatch?.[1] ?? viMatch?.[3]);
+  const month = Number(isoMatch?.[2] ?? viMatch?.[2]);
+  const day = Number(isoMatch?.[3] ?? viMatch?.[1]);
+  const calendarDate = new Date(0);
+  calendarDate.setUTCHours(0, 0, 0, 0);
+  calendarDate.setUTCFullYear(year, month - 1, day);
+
+  if (calendarDate.getUTCFullYear() !== year || calendarDate.getUTCMonth() !== month - 1 || calendarDate.getUTCDate() !== day) return null;
+  return `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+}
+
 export function eventStart(ev: { date: string; time: string }): Date | null {
   if (!ev.date) return null;
   const d = new Date(`${ev.date}T${ev.time || "00:00"}:00${TZ_OFFSET}`);

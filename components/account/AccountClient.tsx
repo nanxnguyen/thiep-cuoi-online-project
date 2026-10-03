@@ -65,9 +65,9 @@ export function AccountClient() {
           </div>
           <div className="acc-dash__identity">
             <div className="acc-avatar" aria-hidden={!profile?.avatarUrl}>
-              {profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" /> : profile?.email.slice(0, 1).toUpperCase()}
+              {profile?.avatarUrl ? <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" /> : (profile?.name ?? profile?.email)?.slice(0, 1).toUpperCase()}
             </div>
-            <span>{profile?.email}</span>
+            <span>{profile?.name ?? profile?.email}</span>
           </div>
           <div>
             <button type="button" className="acc-outline" onClick={() => { void api.logout().finally(() => { accountToken.clear(); setToken(""); setProfile(null); setItems([]); broadcastAuth(null); }); }}>

@@ -5,6 +5,7 @@ import { Glyph, IconButton, PanelSection, TextField, isHttpUrl, useListFocus, ty
 import { UploadList } from "@/components/studio/panels/UploadList";
 import { useApplyLater, useUploader, type MediaProps } from "@/components/studio/panels/useUploader";
 import { MAX_ALBUM } from "@/lib/content";
+import { MUSIC_LIBRARY } from "@/lib/music";
 import { move, removeAt, updateAt } from "@/lib/list";
 
 // The invitation is served over https, and browsers block plain-http audio on an https page.
@@ -81,6 +82,10 @@ export function MediaPanel({ content, onChange, media, only }: PanelProps & { me
     setUrlDraft("");
     setUrlTouched(false);
     onChange({ ...content, music: { url, title: "" } });
+  }
+  function pickLibrarySong(track: (typeof MUSIC_LIBRARY)[number]) {
+    setPlayFailed(false);
+    onChange({ ...content, music: { url: track.url, title: track.title } });
   }
   const urlError = urlTouched && urlDraft.trim() !== "" && !isHttpsUrl(urlDraft.trim()) ? "Dán link bắt đầu bằng https:// và không có khoảng trắng." : undefined;
   const songBusy = songs.pending > 0;
@@ -169,6 +174,23 @@ export function MediaPanel({ content, onChange, media, only }: PanelProps & { me
           </div>
         ) : (
           <>
+            <ul className="pn-library" aria-label="Nhạc có sẵn">
+              {MUSIC_LIBRARY.map((track) => (
+                <li key={track.id} className="pn-library__item">
+                  <div className="pn-library__text">
+                    <strong>{track.title}</strong>
+                    {track.artist ? <span>{track.artist}</span> : null}
+                  </div>
+                  <audio controls preload="none" aria-label={`Nghe thử ${track.title}`} src={track.url} />
+                  <button type="button" className="button-ghost pn-compact" onClick={() => pickLibrarySong(track)}>
+                    Dùng bài này
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <p className="pn-or" aria-hidden="true">
+              hoặc dùng nhạc của riêng bạn
+            </p>
             <div className="pn-drop">
               <Glyph name="music" size={28} />
               <p>Tải lên file mp3, tối đa 8 MB</p>

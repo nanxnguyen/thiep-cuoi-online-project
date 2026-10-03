@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Cormorant_Garamond, Great_Vibes, Playfair_Display } from "next/font/google";
 import { SITE_URL } from "@/lib/site";
+import { HOME_TITLE, SEO_PAGES } from "@/lib/seo";
 import { Motion } from "@/components/site/Motion";
 import "./styles/tokens.css";
 import "./globals.css";
@@ -21,11 +22,11 @@ const hand = Great_Vibes({ subsets: ["latin", "vietnamese"], weight: "400", vari
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   verification: { google: "mUo3xhFDWiHwTijrNF4JE20_9zs4HSBKaSdcKTfk6b0" },
-  title: { default: "MỘC — Thiệp cưới online sang trọng, đậm dấu ấn của hai bạn", template: "%s | MỘC Wedding" },
-  description: "Tạo thiệp cưới online hiện đại, sang trọng: chọn mẫu, thêm ảnh và câu chuyện, gửi qua Zalo. Khách xác nhận tham dự, gửi lời chúc và mừng cưới trên thiệp.",
+  title: { default: HOME_TITLE, template: "%s | MỘC Wedding" },
+  description: SEO_PAGES["/"].description,
   alternates: { canonical: "/" },
   icons: { icon: "/icon.svg", apple: "/apple-touch-icon.png" },
-  openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", title: "MỘC — Thiệp cưới online sang trọng", description: "Tạo chiếc thiệp cưới online mang dấu ấn của hai bạn.", images: [{ url: "/og.png", width: 1200, height: 630, alt: "MỘC Wedding — thiệp cưới online" }] },
+  openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", url: "/", title: HOME_TITLE, description: SEO_PAGES["/"].description, images: [{ url: "/og.png", width: 1200, height: 630, alt: "MỘC Wedding — thiệp cưới online" }] },
   twitter: { card: "summary_large_image", images: [{ url: "/og.png", alt: "MỘC Wedding — thiệp cưới online" }] },
   robots: { index: true, follow: true },
 };

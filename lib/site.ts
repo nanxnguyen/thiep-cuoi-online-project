@@ -12,6 +12,9 @@ export const SITE_URL = siteUrl(process.env);
 // showing a placeholder.
 export const CONTACT_EMAIL = (process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "").trim();
 
+// Zalo number (digits only) for the custom-design page. Empty until the owner provides one: the button is then hidden.
+export const CONTACT_ZALO = (process.env.NEXT_PUBLIC_CONTACT_ZALO ?? "").replace(/\D/g, "");
+
 if (process.env.NODE_ENV === "production" && SITE_URL.startsWith("http://localhost")) {
   console.warn("NEXT_PUBLIC_SITE_URL is not set: sitemap, canonical and Open Graph URLs will point to localhost.");
 }

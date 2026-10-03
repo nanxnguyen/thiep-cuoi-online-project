@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LpSteps, LpWhy, SeoLandingPage } from "@/components/seo/SeoLandingPage";
 import { templates } from "@/lib/templates";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = { title: "Tạo thiệp cưới online", description: "Hướng dẫn tạo thiệp cưới online nhanh chóng với ảnh, nhạc và preview realtime.", alternates: { canonical: "/tao-thiep-cuoi" } };
+export const metadata: Metadata = pageMetadata("/tao-thiep-cuoi");
 
 // design/Tao Thiep Cuoi.dc.html; the template count is the real registry size.
 export default function Page() {
   return (
     <SeoLandingPage
+      path="/tao-thiep-cuoi"
+      name="Tạo thiệp cưới"
       eyebrow="TẠO THIỆP CƯỚI ONLINE"
       title={<>Tạo thiệp cưới trong 15 phút, <em>miễn phí hoàn toàn</em></>}
       description="Chọn mẫu, điền tên và ngày cưới, gửi link cho khách. Không cần thiết kế, không cần đăng nhập để bắt đầu."

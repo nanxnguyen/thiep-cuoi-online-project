@@ -68,7 +68,7 @@ export function SiteHeader() {
             <div className="site-user">
               <button type="button" className="site-user__trigger" aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>
                 <Avatar profile={profile} />
-                <span className="site-user__name">{profile.email}</span>
+                <span className="site-user__name">{profile.name ?? profile.email}</span>
                 <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" className="site-user__caret" style={{ transform: menuOpen ? "rotate(180deg)" : undefined }}>
                   <path d="M2 3.5l3 3 3-3" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -79,7 +79,7 @@ export function SiteHeader() {
                   <div className="site-user__menu" role="menu">
                     <div className="site-user__head">
                       <Avatar profile={profile} large />
-                      <span>{profile.email}</span>
+                      <span>{profile.name ?? profile.email}</span>
                     </div>
                     <Link href="/account" role="menuitem" onClick={() => setMenuOpen(false)}>
                       Thiệp của tôi
@@ -127,7 +127,7 @@ export function SiteHeader() {
 }
 
 function Avatar({ profile, large }: { profile: AccountUser; large?: boolean }) {
-  const initial = profile.email.slice(0, 1).toUpperCase();
+  const initial = (profile.name ?? profile.email).slice(0, 1).toUpperCase();
   return (
     <span className={large ? "site-avatar site-avatar--large" : "site-avatar"} aria-hidden={!profile.avatarUrl}>
       {profile.avatarUrl ? <img src={profile.avatarUrl} alt="" referrerPolicy="no-referrer" /> : initial}

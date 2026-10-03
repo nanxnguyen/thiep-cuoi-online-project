@@ -339,6 +339,9 @@ export const apiOpenApiDoc = {
     "/api/public/invitations/{slug}/view": {
       post: { tags: ["Public"], summary: "Ghi nhận lượt xem thiệp", parameters: [{ $ref: "#/components/parameters/Slug" }], responses: { "200": { description: "Đã ghi nhận" }, "404": { $ref: "#/components/responses/Problem" } } },
     },
+    "/api/public/design-requests": {
+      post: { tags: ["Public"], summary: "Gửi yêu cầu thiết kế thiệp riêng", responses: { "201": { description: "Đã nhận yêu cầu" }, "400": { $ref: "#/components/responses/Problem" }, "403": { $ref: "#/components/responses/Problem" }, "429": { $ref: "#/components/responses/Problem" } } },
+    },
     "/api/webhooks/{provider}": {
       post: { tags: ["Public"], summary: "Nhận webhook Donate Casso/SePay", parameters: [{ name: "provider", in: "path", required: true, schema: { type: "string", enum: ["casso", "sepay"] } }, { name: "x-signature", in: "header", required: true, schema: { type: "string" } }], responses: { "200": { description: "Đã nhận" }, "401": { $ref: "#/components/responses/Problem" } } },
     },

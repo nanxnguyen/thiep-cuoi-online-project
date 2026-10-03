@@ -32,6 +32,7 @@ test("api docs bao phủ mọi route handler trong app/api", () => {
     "/api/public/invitations/{slug}/rsvp",
     "/api/public/invitations/{slug}/wishes",
     "/api/public/invitations/{slug}/guests/{token}",
+    "/api/public/design-requests",
     "/api/docs",
   ];
   for (const path of expected) assert.ok(doc.paths[path], `thiếu ${path}`);

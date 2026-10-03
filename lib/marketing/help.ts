@@ -92,7 +92,7 @@ export const helpGroups: readonly HelpGroup[] = [
       },
       {
         q: "Nhạc nền dùng định dạng nào?",
-        a: "File MP3, tối đa 8 MB. MỘC không cung cấp kho nhạc và không nhận link YouTube. Hãy dùng bản nhạc hai bạn có quyền sử dụng.",
+        a: "Trong Studio có vài bài nhạc chọn sẵn để nghe thử và dùng ngay. Nếu muốn nhạc riêng, hãy tải lên file MP3 tối đa 8 MB; MỘC không nhận link YouTube. Với nhạc tự tải lên, hãy dùng bản hai bạn có quyền sử dụng.",
       },
       {
         q: "Vì sao nhạc chưa phát khi khách vừa mở link?",

@@ -7,277 +7,140 @@
 >
 > **Dòng nào lỗi thời thì xoá hoặc sửa, không viết chồng.** Nhật ký chỉ giữ ~15 dòng mới nhất; chi tiết cũ nằm ở git history và plan/spec trong `docs/superpowers/`. Không ghi "xong" nếu chưa kiểm chứng.
 
-Repo FE: thư mục này (`main`). Repo BE: `../Thiep-cuoi-online-backend`. Cổng: FE dev 3000, FE `next start` 3001, BE 8090, actuator 8081, Postgres 5433. Cách chạy: `README.md` → "Chạy local".
+**Stack hiện tại:** một repo Next.js 16 + Supabase (Postgres/Auth/Storage/Realtime/Edge Function), không còn backend Java. Repo `../Thiep-cuoi-online-backend` là bản Spring Boot cũ, **không dùng và không phát triển thêm**.
+**Production:** Cloudflare Workers, `https://taothiepcuoi.raystudio.com.vn` (bản gần nhất 2026-10-04, version `e0f3ebe1`; cách deploy ở `DEPLOY.md` mục 4c). Vercel và Netlify chỉ là đích dự phòng trong `DEPLOY.md`.
+**Cổng:** `npm run dev` 3000; `next start` tay 3001; Playwright e2e tự dựng server ở 3100. Chạy local: `README.md`.
+**Gate:** `npm test` (227 test) + `npm run typecheck` + `npm run build:next`; e2e `npm run e2e -- --project=<tên>` (xem mục 5).
 
 ## ▶ BẮT ĐẦU PHIÊN MỚI Ở ĐÂY
 
-**Song song, SEO (2026-10-01):** bước 1–2 xong (metadata + JSON-LD, xem Nhật ký). Tiếp theo: copy/FAQ mở rộng (chờ chủ dự án duyệt), OG image mỗi mẫu, Lighthouse mobile sau khi deploy. Plan: `docs/superpowers/plans/2026-10-01-seo-pages-plan.md`.
+**Git khác production.** Bản deploy 2026-10-04 build từ cây thư mục hiện tại, còn ~61 file chưa commit (SEO metadata các trang, `lib/seo.ts`/`lib/jsonld.ts`, trang thiết kế riêng, nhạc có sẵn, hiện tên Google, script cào tham khảo, `wrangler.jsonc` thêm `NEXT_PUBLIC_CONTACT_ZALO`). Commit gần nhất: `4737863` (e2e), `c61368c` (blog). Việc của chủ dự án: rà `git status` và commit trước khi ai build từ git, vì `MarketingLayout` đã sửa mà `PageJsonLd.tsx`/`manifest.ts` còn untracked thì CI kéo từ git sẽ không build được.
 
-**E2E flow tạo thiệp (2026-10-04) XONG:** `playwright.config.ts` + `e2e/create-invitation.spec.ts` (14 test: chọn mẫu → tạo → editor → autosave → xuất bản, ngày rỗng, lỗi server, bấm đúp, mở lại bằng link, không tràn ngang) + `e2e/support/mock-api.ts` (mock toàn bộ `/api/**`, request nào chưa mock làm test fail, KHÔNG chạm Supabase thật). Chạy: `npm run build:next && npm run e2e -- --project=<tên>`; project: chrome, edge, safari (WebKit), firefox, coccoc (app thật nếu có, không thì `coccoc-emulated` chỉ giả UA), mobile-safari (iPhone 14), mobile-chrome (Pixel 7), tablet-safari (iPad Pro 11). Firefox chưa cài (`npx playwright install firefox`). Safari desktop: WebKit của Playwright trên macOS này tự abort (NSTextInputContext) khi gõ trong editor nên test dùng `setText` qua DOM cho riêng nhánh đó.
+**Việc đang chờ chủ dự án (theo mức rủi ro):**
+1. **Bản quyền nhạc và ảnh.** 3 bài nhạc thương mại trong `music/` đã chép sang `public/music/` (chưa deploy, chưa commit). Ảnh `public/photos` nhiều tấm có logo studio/CapCut/Douyin; 6 bài blog (đã lên production) dùng nhóm ảnh không logo nhưng giấy phép chưa rõ. Quyết định: xin phép/mua license hoặc thay bằng nhạc/ảnh miễn phí bản quyền (nhạc: sửa `lib/music.ts` + file trong `public/music/`).
+2. **Migration Supabase chưa chắc đã đẩy lên remote:** `202610030001_design-requests.sql` (chắc chắn chưa, nên form `/thiet-ke-thiep-rieng` đang lỗi khi gửi), `202609270001_account-analytics-donate.sql` (bảng `invitation_view_events`; ngày 2026-09-27 chưa đẩy, route `.../view` trả 500) và `202609280001_security-abuse-controls.sql` (chưa xác minh). Lệnh: `DEPLOY.md` mục 3 (`npx supabase db push --db-url ...`).
+3. **Duyệt nội dung 6 bài blog** (`lib/blog/posts/*.ts`), đặc biệt phần phong tục và cách dùng tính năng.
+4. **Google Search Console:** gửi lại sitemap, yêu cầu lập chỉ mục `/blog` và vài bài; các việc khác ở `docs/superpowers/plans/2026-10-01-seo-growth-plan.md`.
+5. **Email liên hệ** (`NEXT_PUBLIC_CONTACT_EMAIL`, đang trống) và **rà soát pháp lý**: `/quyen-rieng-tu` còn dòng "Vì MỘC chưa có tài khoản…" trong khi đã có đăng nhập Google. Agent không tự sửa văn bản pháp lý.
 
-**Nhạc có sẵn (2026-10-04) CODE XONG, CHƯA DEPLOY:** 3 bài trong `music/` đã chép sang `public/music/` (tên slug), danh sách ở `lib/music.ts` (`MUSIC_LIBRARY`), `contentSchema` chỉ nhận đường dẫn `/music/<bài có sẵn>.mp3` ngoài link https, Studio có mục "Nhạc có sẵn" (nghe thử + "Dùng bài này") trong `MediaPanel`. **Rủi ro bản quyền, chủ dự án quyết:** đây là bài hát thương mại (Đức Phúc…); host công khai rồi cho người dùng chèn vào thiệp là phát tán bản ghi có bản quyền, có thể bị gỡ/khiếu nại. Chưa deploy và chưa commit mp3 vào git để chủ dự án cân nhắc (xin phép/mua license, hoặc thay bằng nhạc miễn phí bản quyền, chỉ cần sửa `lib/music.ts` + file trong `public/music/`).
+**Việc kỹ thuật tiếp theo:**
+- P7 mục g: quét 390px + gate cuối cho cả đợt design parity (chưa có ghi nhận kiểm chứng), rà nhanh `/templates/[id]`.
+- Lighthouse mobile cho `/blog` và vài trang chính (Phase 2 còn 71–86 performance).
+- SEO còn lại: copy/FAQ mở rộng ở 4 landing (cần chủ dự án duyệt), OG image mỗi mẫu, Rich Results Test trên domain thật.
+- Dọn: gỡ dependency thừa `motion` và `embla-carousel-react` (không còn import); route auth mồ côi `register/login/forgot-password/resend-verification/reset-password` (không UI nào gọi); `docs/DEPLOY.md` còn nói Netlify; `design-parity-checklist.md` còn ghi các mục "blocked: Supabase" đã làm xong.
+- **`CLAUDE.md` đã lỗi thời** (dòng "Migration is not started", "Legacy, still running today", gate có `./mvnw test`). Chủ dự án quyết định có sửa không; agent không tự sửa file hợp đồng này.
 
-**Blog cưới (2026-10-04) XONG VÀ ĐÃ DEPLOY Cloudflare (version e0f3ebe1):** `/blog` + 6 bài `/blog/<slug>` (chủ dự án yêu cầu, thay quyết định "không blog" ngày 2026-10-01; `design/` không có mockup blog nên dựng từ token + primitive). Nội dung là dữ liệu TS ở `lib/blog/posts/*.ts` (không MDX), render bằng `components/blog/*`; link "Blog cưới" ở cột "Khám phá" của footer. Việc tiếp: chủ dự án duyệt nội dung 6 bài; **xác nhận bản quyền ảnh `public/photos`** trước khi để Google lập chỉ mục (nhiều ảnh mẫu có logo studio/CapCut/Douyin, bài blog chỉ dùng nhóm ảnh không logo nhưng giấy phép chưa rõ); thêm bài mới = thêm 1 file trong `lib/blog/posts/` + import ở `lib/blog/index.ts`.
+## Trạng thái các mảng gần đây
 
-**Trang thiết kế riêng (2026-10-03) CODE XONG, CHƯA LÊN PROD:** `/thiet-ke-thiep-rieng` + form → `POST /api/public/design-requests` → bảng `design_requests`. Việc tiếp: chủ dự án chạy migration `202610030001_design-requests.sql` lên Supabase (`npx supabase db push`), set `NEXT_PUBLIC_CONTACT_ZALO`, rồi deploy; xem đơn ở Supabase dashboard.
+| Mảng | Trạng thái |
+|---|---|
+| Blog `/blog` + 6 bài | **XONG, đã deploy.** Nội dung là dữ liệu TS (`lib/blog/posts/*.ts`, không MDX), render bằng `components/blog/*`, link "Blog cưới" ở cột "Khám phá" của footer. Thêm bài = 1 file trong `lib/blog/posts/` + import ở `lib/blog/index.ts`. `design/` không có mockup blog nên dựng từ token + primitive `mk-*` (ghi ở `DESIGN.md`). Chưa Lighthouse. |
+| Nhạc có sẵn | **Code xong, chưa deploy** (rủi ro bản quyền ở trên). `lib/music.ts` (`MUSIC_LIBRARY`), `contentSchema` nhận link https hoặc đúng đường dẫn `/music/<bài>.mp3`, Studio có mục "Nhạc có sẵn" trong `MediaPanel`. |
+| Trang thiết kế riêng `/thiet-ke-thiep-rieng` | **Code đã deploy, backend chưa chạy được** (thiếu migration). Form → `POST /api/public/design-requests` → bảng `design_requests` (xem đơn ở Supabase dashboard). |
+| Hiện tên Google thay email | **XONG, đã nằm trong bản deploy 2026-10-04** (chưa kiểm tra trên production vì cần đăng nhập Google thật): `lib/server/auth.ts` lấy `full_name`/`name`, header và `/account` hiện `name ?? email`; tài khoản không có tên vẫn hiện email. |
+| E2E flow tạo thiệp | **XONG.** 14 test, API mock hoàn toàn (không chạm Supabase thật). Pass trên chrome, edge, mobile-chrome, coccoc-emulated, safari, mobile-safari, tablet-safari. Chưa chạy firefox và Cốc Cốc thật. |
+| Script cào tham khảo | `scripts/scrape-invitation.mjs` (`npm run scrape:ref`, chụp/trích font-màu-section của trang thiệp mẫu vào `refs/`, tôn trọng robots.txt) và `scripts/scrape-couple-photos.mjs` (`npm run scrape:couples`, do chủ dự án thêm, chưa rà). `refs/` và ảnh cào nằm ngoài git; **chỉ để tham khảo, không copy ảnh/hoạ tiết** (bản quyền). |
+| Bugfix ngày cưới trên iPhone | **XONG** (2026-10-03): tạo thiệp chuẩn hoá ngày sang ISO và chặn ngày rỗng/không tồn tại. |
+| SEO | Bước 1–2 xong: `lib/seo.ts`, JSON-LD (`lib/jsonld.ts`), sitemap, manifest, `tests/seo.test.ts`. Phạm vi "không blog" ngày 2026-10-01 đã được chủ dự án thay bằng blog (2026-10-04). Plan: `docs/superpowers/plans/2026-10-01-seo-pages-plan.md`, `2026-10-01-seo-growth-plan.md`. |
+| Turnstile | **Đã gỡ** (2026-09-30, lý do và cách bật lại ở `docs/security/incident-runbook.md`); code xoá trong commit `c61368c`. `.env.local` của chủ dự án còn biến `NEXT_PUBLIC_TURNSTILE_SITE_KEY` thừa, nên xoá khi build Cloudflare (env shell bị snapshot vào bundle). |
 
-**Bugfix iPhone (2026-10-03) XONG:** flow tạo thiệp chuẩn hoá ngày cưới sang ISO ngay trước khi gọi API và đọc giá trị hiện tại trực tiếp từ ô ngày; ngày rỗng/không tồn tại được chặn với thông báo tiếng Việt. Việc tiếp theo của P7/SEO không đổi.
+## P7 Design parity (chủ dự án yêu cầu 2026-09-27): trang phải giống `design/*.dc.html` 100%
 
-**Đang làm (2026-09-27, chủ dự án yêu cầu): P7 Design parity 100%** — mọi trang phải giống `design/*.dc.html` 100% về màu, typo, spacing, animation; được phép bỏ UI cũ. Bỏ luôn các lệch AA (chủ dự án chốt design thắng).
-- Cách so: serve `design/` (`python3 -m http.server 4100` trong `design/`) + `next dev` 3000; Chrome DevTools MCP chạy extractor style (text → computed style + hình học + animation + @keyframes) trên cả 2 trang, lưu JSON vào `.playwright-mcp/parity/`, diff offline. Script extractor/diff nằm ở scratchpad của phiên, cách viết lại: xem Nhật ký 2026-09-27.
-- **Đợt design mới 26–27/09 (`design/README.md` §8):** đa số `.dc.html` chỉ thêm `<script src="motion.js">` (diff 1 dòng). Đổi thật: `motion.js` (mới), `Thiep Preview` (+5 kiểu K–O, `full` 15 phần), `Mau Thiep v2` (20 mẫu, popup "Xem thử" tự cuộn, "Đổi mẫu/Không giới hạn"), `Trang Chu`, `Bang Gia`, ảnh mặc định `design/assets/photos/` (đã chép sang `public/photos/`), `Thiep Cua Toi` (= `/account`, đã làm). `Tinh Nang*` đã xoá (route `/tinh-nang` đã xoá trong working tree). `Ung Ho` tạm ẩn: bỏ link header/home/bảng giá, footer design VẪN giữ link "Ủng hộ" → giữ route.
-- **Đã khớp (1280):** Site Header/Footer, font fallback (next/font `adjustFontFallback:false`), tokens AA→design, keyframes tham số hoá (`--fu-y`, `--heart-a`), `ScrollReveal`, `ThiepPreview` (port nguyên văn design, dùng ở home — **chưa có K–O**), `/`, `/bang-gia`, `/ung-ho`, `/tro-giup`, `/dieu-khoan`, `/quyen-rieng-tu`, 4 landing SEO, `/cong-cu-dam-cuoi`, 6 `/cong-cu/*`.
-- **2026-09-27 XONG lớp motion** (`components/site/Motion.tsx`, gắn ở `app/layout.tsx`, CSS cuối `app/styles/motion.css`): port `design/motion.js` — veil MỘC khi chuyển trang (capture click → `preventDefault` để `next/link` tự bỏ qua → `router.push`), thanh tiến độ 2px, reveal khi cuộn (quét computed style thay inline style), vệt cánh hoa theo chuột, nổ cánh hoa + nút đỏ hút theo chuột, lời chào lần ghé thứ 2. `/studio/[id]` = `data-lite`. `ScrollReveal` giữ song song (design cũng chạy cả hai). Home/bảng giá: bỏ nút Ủng hộ + "Xem tất cả tính năng", ảnh album `o-hoa`.
-- **2026-09-27, XONG riêng nhánh auth (chủ dự án yêu cầu làm trước, tách khỏi thứ tự dưới):** Header (`design/Site Header.dc.html`) — popup đăng nhập (native `<dialog>`) + avatar/dropdown, chỉ Google (bỏ email/mật khẩu, xem mục 0); `/account` (`Tai Khoan.dc.html` + `Thiep Cua Toi.dc.html`) dùng chung `AuthForm`; footer "Tài khoản"→"Thiệp của tôi". File mới: `components/account/AuthForm.tsx`, `components/site/LoginModal.tsx`. Kiểm chứng: test 173/173, typecheck 0, build sạch, Chrome DevTools (1280 + ~390, guest + mobile menu) 0 lỗi console thật (chỉ noise 401 kỳ vọng của lượt tự-check phiên khi chưa đăng nhập).
-- **Còn lại theo thứ tự (việc TIẾP THEO = mục 1):**
-  1. ~~Registry 20 mẫu + K–O~~ **XONG 2026-09-27** (xem Nhật ký).
-  2. ~~`/templates`~~ **XONG 2026-09-27**. **TIẾP THEO:** `/templates/[id]` (`Mau Thiep Chi Tiet`, chỉ thêm motion.js → rà nhanh), rồi mục 3.
-  3. ~~`/demo`~~ XONG (số kiểu bìa động). Thiệp mẫu đầy đủ = Editor v3 ở chế độ khách (không route riêng, quyết định §2).
-  - **Chủ dự án chốt 2026-09-27:** ảnh mẫu (`public/photos`) CHỈ dùng ở trang giới thiệu/xem thử; thiệp thật (trang khách + xem trước Editor) chưa có ảnh → khung trống.
-  - **Gap lớn phát hiện 2026-09-27 (so DevTools 1280 với thiệp tạm):** Editor v3 và trang khách lệch design nhiều. Thứ tự làm:
-    **a–d XONG 2026-09-27** (renderer + cổng + bìa, xem Nhật ký). **TIẾP THEO: e (Editor layout)**, rồi f, g.
-    a. Đối chiếu section Thiep Khach vs khung xem trước Editor v3 (extractor computed style). Nếu khác nhau → renderer theo Editor preview (đi theo mẫu/màu), Thiep Khach chỉ cho phần vỏ khách (phong bì, nổ, đồng hồ lật, tick, nav). Không hard-code màu đỏ, không tách section theo mẫu.
-    b. Cổng phong bì trang khách: phong bì nhỏ, dấu vàng "M", "CHẠM ĐỂ MỞ THIỆP"; khối tên chỉ khi có khách `?g=` (xem `sc-if` trong design); phong bì là `<button>`.
-    c. Section renderer theo spec ở (a).
-    d. Bìa: `Cover.tsx` dùng `ThiepPreview` cho CẢ 15 kiểu (đã làm K–O), xoá A–J + `design-cover.css`; SVG A/I/J đổi `fill/stroke` sang `style`; thêm prop cha mẹ (H) và thứ bậc (G/H) lấy từ content.
-    e. Editor layout: mỗi section một form (chia panel cũ), header "BƯỚC n / 14", footer "← Trước / Tiếp: …", ô gợi ý, chip thứ bậc; vòng hoàn thiện đếm 14 mục như design (sửa `completion()` + test). Giữ Draft/useAutosave/persistable.
-    f. Công tắc bật/tắt 10 mục như design: chỉ thêm field visibility còn thiếu (mặc định hợp lệ, fixture, test, renderer).
-    g. Quét 390px + gate + build.
-- Không theo README design ở chỗ mâu thuẫn quyết định sản phẩm: link khách vẫn `?g=<token>` (README ghi `?to=`); auth Supabase Google (không `localStorage.moc_user`); QR bằng `lib/tools/qr`; gợi ý lời cảm ơn xoay 3 mẫu (không gọi Claude). `design/` chỉ đọc (không sửa `design/README.md` dù `design/CLAUDE.md` yêu cầu).
-- Nội dung giữ khác design (sự thật sản phẩm): Q&A trợ giúp, văn bản pháp lý, copy "offline"/"không rời máy" ở hub công cụ. Bỏ phần SEO copy/related ở 4 landing (không có trong design).
-- Quyết định giữ khác design: header < 760px dùng menu (design chỉ wrap 3 hàng). Số mẫu: design giờ có 20 → theo design sau khi làm mục 1.
+- **Đã khớp (1280):** header/footer, token, font fallback, `ScrollReveal`, lớp motion (`components/site/Motion.tsx`), `/`, `/bang-gia`, `/ung-ho`, `/tro-giup`, `/dieu-khoan`, `/quyen-rieng-tu`, 4 landing SEO, `/cong-cu-dam-cuoi`, 6 `/cong-cu/*`, `/templates` (20 mẫu, kiểu bìa A–O, popup "Xem thử"), `/demo`, nhánh auth (popup đăng nhập Google, `/account`), renderer thiệp + cổng phong bì + bìa `ThiepPreview`, Editor v3 (outline 14 mục, "BƯỚC n / 14", công tắc bật/tắt từng phần, bottom sheet dưới 1024px).
+- **Chưa ghi nhận kiểm chứng:** mục g ở trên và `/templates/[id]`.
+- **Cách so:** serve `design/` (`python3 -m http.server 4100` trong `design/`) + `next dev` 3000; Chrome DevTools MCP chạy extractor computed style trên cả hai trang, lưu JSON vào `.playwright-mcp/parity/`, diff offline.
+- **Giữ khác design có chủ đích:** link khách là `?g=<token>` (README design ghi `?to=`); auth Supabase Google; QR bằng `lib/tools/qr`; gợi ý lời cảm ơn xoay 3 mẫu (không gọi AI); Q&A trợ giúp, văn bản pháp lý và copy "offline"/"không rời máy" ở hub công cụ theo sự thật sản phẩm; header dưới 760px dùng menu; bỏ SEO copy/liên quan ở 4 landing vì design không có; `design/` chỉ đọc. Ảnh mẫu `public/photos` chỉ dùng ở trang giới thiệu/xem thử/blog; thiệp thật (trang khách + xem trước Editor) để khung trống.
 
-**Đang làm:** migration backend từ Spring Boot sang Next.js + Supabase.
-- Spec đã duyệt: `docs/superpowers/specs/2026-09-26-supabase-migration-design.md`.
-- Plan thực thi: `docs/superpowers/plans/2026-09-26-supabase-migration.md`.
+## 0. Stack: Next.js + Supabase (chốt 2026-09-26, đã làm xong)
 
-**Trạng thái:** Task 1–9/10 XONG code; remote Supabase đủ (DB + Edge + Storage), E2E remote 16/16, gate xanh (test 153/153, typecheck 0). Swagger BE ở `/docs`. Thiệp demo `ho6my9vg` đã publish kèm ảnh/nhạc; link khách `?g=<token>` (tên resolve từ DB).
+Spec `docs/superpowers/specs/2026-09-26-supabase-migration-design.md`, plan `docs/superpowers/plans/2026-09-26-supabase-migration.md` (Task 1–9 xong, remote cutover và E2E remote 16/16 xong 2026-09-26; thiệp demo `ho6my9vg`). Hardening bảo mật: `docs/superpowers/plans/2026-09-28-nextjs-supabase-security-hardening.md`, runbook ở `docs/security/`.
 
-### Handoff cho agent tiếp theo (Codex hoặc khác): làm đúng thứ tự
+- **Quyết định đang áp dụng:** chỉ đăng nhập Google (bỏ email/mật khẩu 2026-09-27); giữ edit key `#k=` (không cần tài khoản để tạo/sửa thiệp); link khách `?g=<token>` (tên resolve từ DB, không gắn tên trên URL); public write đi qua Next Route Handler rồi Supabase Edge Function; RLS không cho browser ghi trực tiếp; service-role key chỉ ở server; `lib/api.ts` là seam duy nhất giữa UI và API.
+- **Supabase:** project ref `iehmucsshklgjmxqyggp`. Key mới: `NEXT_PUBLIC_SUPABASE_ANON_KEY` = publishable (`sb_publishable_...`), `SUPABASE_SERVICE_ROLE_KEY` = secret (chỉ server). Secret tự tạo `EDGE_SHARED_SECRET` và `RATE_LIMIT_HMAC_SECRET`; tên `SUPABASE_EDGE_SHARED_SECRET` bị CLI từ chối vì tiền tố `SUPABASE_`. Không ghi giá trị secret vào file.
+- **Migration có trong repo:** `202609260001_backend.sql` (5 bảng + RLS + Storage + Realtime + rate limit), `202609270001_account-analytics-donate.sql`, `202609280001_security-abuse-controls.sql`, `202610030001_design-requests.sql`. Supabase chưa có down-migration: sửa bằng migration mới.
+- **Edge Function** `public-write`: `npx supabase functions deploy public-write`; bucket `media` public; Auth tắt confirm email (`mailer_autoconfirm: true`).
+- **Donate:** `/ung-ho` có QR VietQR; webhook `app/api/webhooks/[provider]` (casso/sepay) đã có, cần `CASSO_WEBHOOK_SECRET`/`SEPAY_WEBHOOK_SECRET` nếu bật.
+- **Còn lại:** xác minh migration trên remote (mục ▶); sau đó bỏ phần BE Java khỏi README/CLAUDE.md nếu còn.
 
-**Bước A. P6 nghiệm thu design** (việc đang dở)
-
-1. **Checklist đã viết:** `docs/superpowers/specs/2026-09-26-design-parity-checklist.md`.
-   - Mỗi file `design/*.dc.html` là một dòng: trang design → route app → trạng thái `matched` / `deviated: <lý do>` / `blocked: Supabase`.
-   - Bỏ qua `Stock*`, `stock-tokens.*` và `Mau Thiep.dc.html` (v1).
-   - Lấy các deviation từ mục 2 và từ Nhật ký bên dưới. Những cái chính:
-     - Màu đổi cho đạt AA.
-     - Home: testimonial giả đổi thành dải "sự thật sản phẩm"; "10 mẫu" đổi thành số mẫu thật (16).
-     - Copy "offline" / "tải ảnh QR" đã sửa cho đúng sự thật.
-     - Giữ phần copy SEO + link liên quan trên 4 landing, giữ FAQ ở trang tính năng.
-     - Giữ `/blog` (không có design).
-     - Nhạc là nút nổi, không có thẻ section.
-     - Bảng giá: "Miễn phí mọi mẫu".
-   - `blocked: Supabase`: lời chào phong bì riêng, lịch trình trong ngày, thứ bậc gia đình, bật/tắt từng phần, bố cục album, giờ đón khách, ô tên khi đăng ký, số RSVP/lời chúc trên thẻ thiệp ở `/account`, duyệt lưu bút.
-2. **Gate FE đã chạy:** `npm test` 114/114, `npm run typecheck`, `npm run build`, `npm run build:next`, `git diff --check` đều exit 0. Warning còn lại: thiếu `NEXT_PUBLIC_SITE_URL` khi build local.
-3. **Browser sweep FE đã chạy một phần:** 24 route public × 390/1280 = 48 lượt, tất cả 200 và không overflow; 0 console error. Còn chạy lại `/studio/[id]#k=` và `/invite/[slug]?g=` sau khi BE seed record thật. Pass bar còn warning preload CSS của Next.
-   - Route: `/`, `/templates`, `/templates/song-hy`, `/studio`, `/tinh-nang`, `/tinh-nang/<slug>`, `/bang-gia`, `/ung-ho`, `/tro-giup`, `/blog`, `/dieu-khoan`, `/quyen-rieng-tu`, `/account`, 4 landing SEO, `/cong-cu-dam-cuoi`, 7 route `/cong-cu/*`, Editor `/studio/{id}#k=`, trang khách `/invite/{slug}?g=`.
-   - Cách chạy BE không cần Docker (H2 trong RAM), trong `../Thiep-cuoi-online-backend`:
-     ```
-     ./mvnw -q spring-boot:test-run -Dspring-boot.run.arguments="--server.port=8090 --management.server.port=8091 --app.cors.allowed-origins=http://localhost:3000"
-     ```
-   - FE: `npm run build:next && npx next start -p 3000`.
-   - **Bẫy đã gặp:** H2 mất dữ liệu mỗi khi BE khởi động lại. Thiệp cũ khi đó trả 404, làm Editor hiện 0 mục và trang khách thiếu nav (ngày 2026-09-26 đã nhầm tưởng đây là bug). **Seed lại trước khi test** bằng script `.ts` chạy `node`:
-     - `createApi("http://localhost:8090")` từ `lib/api.ts`.
-     - `api.createInvitation("song-hy", {...defaultContent(), couple:{...defaultContent().couple, groom:{name:"Minh Khôi"}, bride:{name:"Hạ Vy"}}})`: dùng `defaultContent`, không dùng `sampleContent` (bị 400 vì URL mẫu không hợp lệ).
-     - Lấy `id`, `editKey` và `slug` từ kết quả.
-     - `api.updateInvitation(id, key, {published:true})`.
-   - Với Editor, **mở URL `#k=` ngay lần đầu**, vì navigate lại sẽ làm mất fragment.
-   - Cần kiểm trên Editor:
-     - Vòng % hiện.
-     - Bấm một mục trong outline thì thiệp có `[data-editing]`.
-     - Mục "Lịch trình" hiện ghi chú blocked.
-     - "Xem như khách" hiện phong bì có tên khách.
-     - Dưới 1024px có `.ed-mobilebar` và sheet.
-   - Cần kiểm trên trang khách:
-     - Phong bì có tên khách từ link `?g=`.
-     - Sau khi mở phong bì có `.inv-nav` và các id `gia-dinh su-kien album tham-du loi-chuc mung-cuoi`.
-     - Gửi RSVP xong có `.inv-done__tick`.
-4. **Viết report cuối bằng tiếng Việt** cho chủ dự án. Nội dung:
-   - Trạng thái từng trang (link tới checklist).
-   - Danh sách deviation.
-   - Danh sách blocked chờ Supabase.
-   - Số liệu gate và kết quả quét.
-   - Dependency thừa: `motion`, `embla-carousel-react`. Đề xuất `npm uninstall`, chưa làm.
-   - Pháp lý lỗi thời: `/quyen-rieng-tu` vẫn ghi "Vì MỘC chưa có tài khoản". Chủ dự án tự rà, agent không sửa văn bản pháp lý.
-5. Cập nhật bảng P6 và Nhật ký. Đưa lệnh `git add` / `git commit` cho chủ dự án (agent không tự commit). **Tắt `next start` và BE** khi xong.
-
-**Bước B. Migration Next.js + Supabase** (**chủ dự án ưu tiên làm ngay từ 2026-09-26**). Chi tiết ở mục 0.
-
-**Kiểm tra:** gate mỗi task là `npm test` + `npm run typecheck`; build chạy cuối phase. Trình duyệt chỉ mở khi xong 1 trang/section/tính năng, và phải gọn token:
-- Claude Code dùng Chrome DevTools MCP.
-- Codex dùng Playwright MCP (`npm run mcp:playwright`). Không chạy Playwright song song nặng cạnh `next start`.
-
-Không tự `git commit`; đưa lệnh cho chủ dự án.
-
-## 0. Quyết định stack (2026-09-26): chuyển sang Next.js + Supabase, bỏ backend Java
-
-Chủ dự án chốt: **không viết thêm code BE Java**. Stack mới là Next.js + Supabase:
-- **DB:** Postgres + RLS.
-- **Auth:** dùng cho trang quản trị của cô dâu chú rể.
-- **Storage:** ảnh cưới, nhạc.
-- **Realtime:** lời chúc.
-
-Không còn service riêng phải host, nên blocker "host BE" của T28 mất đi. Chi tiết quy tắc xem CLAUDE.md mục "Stack direction".
-
-- **Trạng thái:** Task 1–9/10 XONG (thêm Editor v3 content contract: `rank`, `arrivalTime`, section visibility, album layout). Task 10 còn: deploy Netlify thật + commit ~140 files. Remote Supabase đã đủ (DB + Edge + Storage), E2E remote 16/16 PASS.
-- **Chặn bởi quyết định này:** P4 Editor v3 (đổi contract nội dung) làm trên Supabase, không sửa record Java nữa.
-- **Quyết định đã chốt:** ~~email/mật khẩu~~ → **2026-09-27: chỉ đăng nhập Google, bỏ email/mật khẩu** (khớp design). Route backend `register`/`login`/`forgot-password`/`resend-verification`/`reset-password` không còn UI nào gọi (mồ côi) — giữ nguyên, chưa xoá; giữ edit key `#k=`; dữ liệu làm mới hoàn toàn; dùng project `iehmucsshklgjmxqyggp`; link mời khách dùng `?g=<token>` (tên resolve từ DB, không gắn tên trên URL); public write đi qua Next Route Handler rồi Supabase Edge Function; RLS không cho browser ghi trực tiếp; deploy FE + BE Next.js trên Netlify.
-- **Cấu hình Supabase (đã áp dụng lên remote ngày 2026-09-26, không ghi giá trị secret vào file):**
-  - Project ref `iehmucsshklgjmxqyggp`, URL `https://iehmucsshklgjmxqyggp.supabase.co`. Key mới: `NEXT_PUBLIC_SUPABASE_ANON_KEY` = publishable (`sb_publishable_...`), `SUPABASE_SERVICE_ROLE_KEY` = secret (`sb_secret_...`, chỉ server).
-  - Secret tự tạo (`openssl rand -hex 32`): `EDGE_SHARED_SECRET` (đồng bộ `.env.local` + Netlify + `supabase secrets set`; tên cũ `SUPABASE_EDGE_SHARED_SECRET` bị CLI từ chối vì tiền tố `SUPABASE_`), `RATE_LIMIT_HMAC_SECRET`.
-  - DB: `supabase db push` migration `202609260001_backend.sql` → 5 bảng (`invitations`, `guests`, `rsvps`, `wishes`, `rate_limits`).
-  - Edge: `supabase functions deploy public-write`; bucket `media` public sẵn; Auth tắt confirm email (`mailer_autoconfirm: true`) để đăng ký có session ngay.
-  - Local: `NEXT_PUBLIC_SITE_URL=http://localhost:3000`; dev BE chạy cổng 3001; Swagger BE ở `/docs`, spec ở `/api/docs`.
-- **Các bước migration (agent tiếp theo làm theo thứ tự, không nhảy bước):**
-  1. **XONG:** brainstorm và chốt các quyết định kiến trúc.
-  2. **XONG:** viết và duyệt spec `docs/superpowers/specs/2026-09-26-supabase-migration-design.md`. Spec gồm:
-     - **Schema.** `invitations` với `content jsonb` giữ nguyên shape `contentSchema` trong `lib/content.ts`, cùng `slug`, `template_id`, `published`, `owner_id` (nullable) và hash của edit key. Thêm các bảng `guests` (token `?g=`), `rsvps`, `wishes` (cột ẩn/duyệt).
-     - **RLS cho từng bảng.** Khách chưa đăng nhập chỉ đọc thiệp đã publish; browser không insert trực tiếp. RSVP/lời chúc qua Route Handler + Edge Function. Người sở hữu hoặc edit key được sửa đúng thiệp.
-     - **Storage:** bucket `media` hiện có, upload chỉ qua server đã authorize.
-     - **Realtime** cho `wishes`.
-     - **Rate limit.**
-     - **Route Handlers / Server Actions** thay từng endpoint của BE Java. Lấy danh sách endpoint từ `lib/api.ts`.
-     - **Kế hoạch chuyển dữ liệu cũ**, nếu có.
-     - **Contract mới cho Editor v3:** lời chào phong bì, lịch trình, thứ bậc gia đình, bật/tắt từng phần, bố cục album, giờ đón khách. Mỗi trường mới phải có giá trị mặc định hợp lệ, vì autosave cần mọi field hợp lệ kể cả khi rỗng.
-  3. **XONG:** viết plan `docs/superpowers/plans/2026-09-26-supabase-migration.md`, 10 task theo TDD.
-  4. **TIẾP THEO — cài đặt:**
-     - Dùng `@supabase/ssr`. Service-role key chỉ dùng ở server; client chỉ dùng anon key.
-     - **Chỉ đổi phần ruột của `lib/api.ts`**, giữ nguyên chữ ký hàm, để các nơi đang gọi không phải sửa.
-     - Giữ nguyên URL `/invite/[slug]?g=`, `?lang=` (bỏ `?to=` thủ công: tên khách chỉ từ danh sách trong DB).
-     - Xong thì bỏ BE Java khỏi gate, sửa README "Chạy local" và CLAUDE.md.
-  5. **Sau migration:** làm các trường Editor v3 đang `blocked` (`lib/editor-sections.ts`, cờ `blocked`) và các mục blocked ở checklist P6.
-
-## 1. Trạng thái
+## 1. Trạng thái các phase gốc
 
 ### Chuyển design → app (plan 2026-09-26-design-system-core)
 
 | Phase | Nội dung | Trạng thái |
 |---|---|---|
 | P1 | Design system core: `app/styles/tokens.css`, `motion.css`, font script/hand, primitives, guard test | **XONG** (2026-09-26) |
-| P2 | Hex rời → token | **XONG** (2026-09-26): 0 hex ngoài `tokens.css`; đã gỡ ratchet `PENDING` |
-| P3 | Port từng trang (shell, Trang Chu, gallery/cover A–J, tính năng, giá/ủng hộ/trợ giúp/pháp lý/blog, 4 SEO, 7 công cụ, Studio landing, tài khoản) | **XONG port** (2026-09-26) toàn bộ trang có design; nghiệm thu ở P6 |
-| P4 | Studio Editor v3 | **Layout XONG** (2026-09-26). Các trường mới (phong bì, thứ bậc, lịch trình, bật/tắt phần, bố cục album) **chờ spec Supabase** |
-| P5 | Trang khách theo `Thiep Khach` | **XONG** (2026-09-26); lời chào phong bì riêng chờ Supabase |
-| P6 | Nghiệm thu cuối | Checklist + gate + public sweep xong; dynamic BE smoke còn chờ record thật |
+| P2 | Hex rời → token | **XONG**: 0 hex ngoài `tokens.css` (test `tests/design-system.test.ts` giữ) |
+| P3 | Port từng trang | **XONG port**; nghiệm thu theo P7 |
+| P4 | Studio Editor v3 | **XONG** layout và các trường (`rank`, `arrivalTime`, bật/tắt phần, bố cục album, lịch trình, phong bì) trong `contentSchema` |
+| P5 | Trang khách theo `Thiep Khach` | **XONG** |
+| P6 | Nghiệm thu cuối | Checklist `docs/superpowers/specs/2026-09-26-design-parity-checklist.md` (một số dòng "blocked" đã lỗi thời) + e2e tạo thiệp; còn quét thủ công trang khách và editor trên Supabase thật |
 
-### Sản phẩm (các phase gốc)
+### Sản phẩm
 
 | Phase | Nội dung | Xong | Còn lại |
 |---|---|---|---|
-| 1 | Lõi thiệp: mẫu, Studio, trang khách, RSVP, lời chúc, QR mừng cưới, bản đồ, đếm ngược, nhạc, album | ~93% | T28 deploy thật (chờ host BE + tên miền) |
-| 2 | Marketing: home, templates, tính năng, trợ giúp, blog, giá, pháp lý | ~92% | Lighthouse performance mobile (71–86); email liên hệ; rà soát pháp lý |
+| 1 | Lõi thiệp: mẫu, Studio, trang khách, RSVP, lời chúc, QR mừng cưới, bản đồ, đếm ngược, nhạc, album | ~93%, **đã deploy production** (T28 xong) | Xác minh migration remote; e2e trang khách với dữ liệu thật |
+| 2 | Marketing: home, templates, trợ giúp, blog, giá, pháp lý | ~92% | Lighthouse mobile (71–86); email liên hệ; rà soát pháp lý |
 | 3 | Guest manager: nhóm/bàn, link `?g=`, thống kê RSVP | ~95% | Quyết định chủ dự án (gửi hàng loạt SMS/Zalo, giới hạn số khách) |
-| 4 | 7 công cụ miễn phí `/cong-cu/*` | ~100% | Câu hỏi mở ở spec mục 9 |
+| 4 | 6 công cụ miễn phí `/cong-cu/*` (tạo QR, nén ảnh, nén video, tin nhắn mời, danh sách khách, save the date; sơ đồ chỗ ngồi đã gỡ) | ~100% | Câu hỏi mở ở spec mục 9 |
 | 5 | Song ngữ vi/en (`?lang=`) | 100% | QA trên URL production |
-| 6 | Tài khoản (JWT, claim thiệp) + Donate `/ung-ho` | Tài khoản 100%; Donate xong code | Chưa QA trình duyệt `/ung-ho` |
+| 6 | Tài khoản Google + claim thiệp + Donate | Xong | QA trình duyệt `/ung-ho` |
 
 ## 2. Quyết định mặc định đang áp dụng cho design (chủ dự án có thể đổi)
 
-Chi tiết trong plan, mục "Owner decisions":
-- Giữ `/blog` và chỉ dùng primitive DS.
-- Duyệt lưu bút tách thành phase riêng.
-- Nhạc vẫn nhập URL.
+- Giữ `/blog`, chỉ dùng token và primitive DS.
+- Duyệt lưu bút là phase riêng (đã có moderation approved/hidden ở tab Phản hồi).
+- Nhạc: chọn bài có sẵn, tải MP3 (≤ 8 MB) hoặc dán link https; không nhận link YouTube.
 - Gợi ý lời cảm ơn xoay vòng 3 mẫu có sẵn, không gọi AI.
 - Dùng Great Vibes cho `--hand`.
-- Không làm route riêng cho "Thiệp mẫu đầy đủ".
-- ~~Lệch màu để đạt AA~~: bỏ từ 2026-09-27, token dùng đúng hex design (`--faint #8a7d72`, `--on-dark-faint #7d7067`).
+- Không làm route riêng cho "Thiệp mẫu đầy đủ" (là Editor v3 ở chế độ "Xem như khách").
+- Token dùng đúng hex design (`--faint #8a7d72`, `--on-dark-faint #7d7067`); không lệch màu để đạt AA.
 
-## 3. Cần từ chủ dự án (đang chặn)
+## 3. Cần từ chủ dự án
 
-1. **Tên miền thật.** Chặn T28 deploy; cần set `NEXT_PUBLIC_SITE_URL` trên Netlify. Việc host BE Java không cần nữa nhờ quyết định Supabase (mục 0). `netlify.toml` đã có, `build:next` PASS.
-2. **Duyệt plan migration và chọn cách thực thi:** Native (nhanh hơn) hoặc Subagent-driven (review từng task).
-3. **BE Java chưa commit code Phase 6A** (JWT, Account, `V3__accounts.sql`, test). Nên commit để giữ làm tham chiếu khi port sang Supabase. Chạy: `git -C ../Thiep-cuoi-online-backend add -A && git commit -m "feat: accounts + JWT" && git push`.
-4. **Email liên hệ** (`NEXT_PUBLIC_CONTACT_EMAIL`) và **rà soát pháp lý** `/dieu-khoan`, `/quyen-rieng-tu`.
-5. **FE: commit phần design** (lệnh ở cuối phiên gần nhất; `git status` liệt kê đủ file).
+Danh sách việc ưu tiên nằm ở mục ▶. Còn lại:
+- **Quyết định sản phẩm:** gửi hàng loạt SMS/Zalo cho khách, giới hạn số khách, có bật dòng "Tạo bằng MỘC" trên thiệp khách hay không.
+- **Ai đăng bài ngoài** (Facebook, TikTok, diễn đàn) theo `2026-10-01-seo-growth-plan.md`; agent chỉ soạn nội dung.
+- **Repo Java cũ** `../Thiep-cuoi-online-backend` còn code Phase 6A chưa commit; chỉ cần nếu muốn giữ làm tham chiếu (`git -C ../Thiep-cuoi-online-backend add -A && git commit`).
 
 ## 4. Nhật ký (mới nhất ở trên, giữ ~15 dòng)
 
-- **2026-10-04 E2E tạo thiệp XONG:** 14 test pass trên chrome, edge, mobile-chrome, coccoc-emulated, safari, mobile-safari, tablet-safari (mỗi project 14/14); typecheck 0, `npm test` không đổi. Chưa chạy firefox và Cốc Cốc thật (máy không có).
-- **2026-10-04 Nhạc có sẵn XONG (code, chưa deploy):** `lib/music.ts`, `public/music/*.mp3`, `lib/content.ts` (music.url nhận link https hoặc đúng đường dẫn bài có sẵn), `MediaPanel` + `panels.css`, FAQ trợ giúp và bài blog đã sửa lời. Kiểm chứng: test 227/227 (file tồn tại, header MP3, ≤8 MB, schema từ chối `/music/../x` và đường dẫn lạ), typecheck 0. Chưa kiểm tra trên trình duyệt vì Studio cần tạo thiệp thật trên Supabase.
-- **2026-10-04 Blog XONG (code) + deploy Cloudflare:** `app/blog/` (index + `[slug]`, SSG), `lib/blog/` (6 bài, `readingMinutes`, `headings`, `internalLinks`), `components/blog/` (PostBody, Toc, PostRow, PostPhoto, `blog.css` prefix `bl-`), `blogPosting` JSON-LD, sitemap + route-inventory + footer + `SEO_PAGES["/blog"]`. Mỗi bài có ảnh bìa + 1 ảnh trong bài (`public/photos`). Kiểm chứng: `npm test` 224/224 (có test số từ ≥700, link nội bộ thuộc route công khai, ảnh tồn tại và đúng kích thước), typecheck 0, `next build` sạch (7 route blog tĩnh), `next start` + curl (1 h1, title ≤60, canonical, BlogPosting+BreadcrumbList+FAQPage, 7 URL sitemap, slug sai → 404), Chrome DevTools 1280 + 390: không tràn ngang, 0 ảnh hỏng, 0 lỗi/cảnh báo console, mục lục rail/gập đúng. Chưa Lighthouse mobile.
-- **2026-10-03 Trang thiết kế riêng XONG (code):** `app/thiet-ke-thiep-rieng/`, `DesignRequestForm`, `lib/design-request.ts`, route + migration `design_requests` (RLS server-only), SEO/route-inventory/footer/api-docs. Verify: typecheck sạch, 214 test pass, build OK, 390px không tràn ngang, 0 console error; chưa gửi form thật vì chưa có bảng trên Supabase.
-- **2026-10-03 Fix ngày không hợp lệ trên iPhone 14 XONG:** `StudioHome` lấy trực tiếp giá trị ô ngày khi bấm tạo, chuẩn hoá `DD/MM/YYYY`/`YYYY-MM-DD` thành ISO trước khi tạo payload và chặn ngày không tồn tại; thêm test hồi quy cho `09/11/2026`, `31/02/2026` và giá trị rỗng. Kiểm chứng: test 210/210, typecheck 0, `build:next` exit 0 (chỉ còn warning local thiếu `NEXT_PUBLIC_SITE_URL`).
-- **2026-10-01 SEO bước 2 XONG (JSON-LD):** `lib/jsonld.ts` (breadcrumbList/itemList/webApplication, có `tests/jsonld.test.ts`) + `components/marketing/PageJsonLd.tsx` gắn vào mọi trang công khai qua `SeoLandingPage`/`MarketingLayout`/`ToolPage` (đều nhận `path`+`name`). BreadcrumbList 15 trang, ItemList ở `/templates` và `/cong-cu-dam-cuoi`, WebApplication ở 6 tool; FAQPage giữ ở `/tro-giup`, `/templates`. Không thêm FAQPage cho 4 landing (chưa có FAQ hiển thị, Google cấm schema không có nội dung thật). Kiểm chứng: test 209/209, typecheck 0, build sạch, curl 15 trang thấy đúng @type; mỗi trang 1 `h1`, ảnh đều có alt. Chưa làm: OG image mỗi mẫu (font tiếng Việt trên Workers rủi ro), Rich Results Test (cần domain thật sau deploy).
-- **2026-10-01 SEO bước 1 XONG** (plan `docs/superpowers/plans/2026-10-01-seo-pages-plan.md`; phạm vi chủ dự án chốt: chỉ SEO trang hiện có, không blog/trang mới): `lib/seo.ts` (title/description/lastmod mọi trang, `pageMetadata`), 18 trang + `/templates/[id]` + layout dùng nó (canonical + OG url/title riêng), `sitemap.ts` lastModified cố định, `app/manifest.ts`, `tests/seo.test.ts` (độ dài title ≤60 gồm hậu tố, description 70–160, không trùng, sitemap = route công khai). Kiểm chứng: test 207/207, typecheck 0, `next build` sạch, `next start` curl: title/canonical/og:url/sitemap/manifest đúng domain. **Còn lại SEO:** JSON-LD helper + Breadcrumb/FAQ/ItemList/SoftwareApplication, copy+FAQ mở rộng (chờ chủ dự án duyệt), OG image mỗi mẫu, link "Xem thêm" giữa trang, Lighthouse mobile. Chưa deploy.
-- **2026-09-27** Fix: đăng nhập Google xong header không hiện avatar (vẫn "Đăng nhập"). Nguyên nhân: `SiteHeader` chỉ gọi `api.me` khi có hint `sessionStorage` `moc.account.token`, mà luồng Google không set hint trước redirect; `/account` set hint nhưng không broadcast. Sửa: link Google set hint khi bấm (`AuthForm`), header clear hint khi `me` lỗi, `AccountClient` gọi `broadcastAuth`; source-guard test trong `tests/auth-routes.test.ts` (đã xác nhận fail khi gỡ fix). Kiểm chứng: test 197/197, typecheck 0; chưa QA trên production.
-
-- **2026-09-27** Review + test flow deploy version mới: gate xanh (test 174/174, typecheck 0 sau `rm -rf .next` vì cache cũ trỏ layout đã xoá, `build:next` exit 0), `netlify-cli` sẵn. Sửa drift docs deploy: `DEPLOYtoNe.md` verify `?to=` → `?g=<token>`, `docs/DEPLOY.md` Auth confirm-email/email-password → tắt confirm + Google-only; gỡ blank-line EOF (diff-check sạch cho file nguồn). Chặn deploy: migration `202609270001` chưa push (route view 500), 184 file chưa commit, `NEXT_PUBLIC_SITE_URL` phải set domain thật trên Netlify.
-- **2026-09-27** P7 renderer thiệp viết lại theo khung xem trước `Studio Editor v3` (1 bố cục cho mọi mẫu, màu `--c-deep/paper/gold/tint`, font tên `--c-name`): phong bì chào khách → bìa `ThiepPreview` (cả 15 kiểu, `Cover.tsx` A–J cũ + `design-cover.css` + 6 `arch-*.css` đã xoá) → cô dâu chú rể → gia đình → lễ → tiệc → lịch trình → đếm ngược → album → RSVP → lưu bút → mừng cưới → cảm ơn → "TẠO BẰNG MỘC". Vỏ khách theo `Thiep Khach`: cổng phong bì 280×180 dấu vàng "M" + "CHẠM ĐỂ MỞ THIỆP", nổ 22 hạt, cánh hoa, nav dính, đồng hồ lật, tick RSVP. Bỏ: nút tự cuộn, nút chép số TK, bản đồ nhúng, lời nhắn hộp mừng cưới (design không có). Schema thêm (mặc định hợp lệ): `nameFont`, `sections.envelope`, `sections.calendar`, `couple.groom/bride.photo`. Kiểm chứng: test 173/173, typecheck 0, DevTools 1280: chiều cao từng section = design (phong bì 328, bìa 764, tiệc 348, đếm ngược 233; lệch còn lại do thiệp tạm thiếu dữ liệu). Phát hiện sẵn có: `POST /api/public/invitations/[slug]/view` 500 vì migration `202609270001` (bảng `invitation_view_events`) chưa `supabase db push` lên remote — chờ chủ dự án.
-- **2026-09-27** P7 `/templates`: copy hero/FAQ đúng design mới ("Đổi mẫu/Không giới hạn", "Có mất phí không?"); nút "Xem thử" mở popup `TemplateDemo` (tự cuộn 0.055px/ms, dừng khi rê/chạm, Esc/bấm nền đóng) chứa `ThiepPreview full` — port phần `full` 15 phần thành `ThiepPreviewFull` (nội dung mẫu, không vào contentSchema). Sửa lỗi lightningcss nuốt `backdrop-filter` khi `-webkit-` đứng sau (popup + `.login-dlg::backdrop`). Kiểm chứng: test 173/173, typecheck 0, DevTools 1280: chiều cao từng phần popup = design (15/15 khớp sau khi thêm div RSVP rỗng), blur 8px, 16 ảnh 0 lỗi.
-- **2026-09-27** P7: registry 16→20 mẫu theo `Mau Thiep v2` (bỏ Giấy Dó, alias `giay-do`→Nét Mực; thêm Tem Thư/Vé Hạnh Phúc/Đĩa Than/Cuộn Phim/Lịch Bloc = kiểu K–O). `ThiepPreview` port K–O nguyên văn + ảnh mặc định theo kiểu (`familyPhotos`, `public/photos/` = `design/assets/photos/`, bản nén của `design/uploads/`; `photo=""` → khung trống). Thiệp thật: `Cover.tsx` kiểu K–O dùng lại `ThiepPreview` với `var(--cover-*)`. Token mới: `--vinyl-*`, `--film*`, `--bloc-*`, `--stamp-paper`. Test cập nhật 20 mẫu/15 kiểu. Kiểm chứng: test 173/173, typecheck 0, DevTools 1280 so thẻ K–O `/templates` vs `Mau Thiep v2.dc.html`: khớp bố cục/ảnh/màu.
-- **2026-09-27** P7 đợt design mới: đối chiếu `git diff design/` (đa số chỉ thêm motion.js) → gap list ở mục ▶. Port `motion.js` thành `components/site/Motion.tsx` (root layout); home/bảng giá bỏ Ủng hộ + "Xem tất cả tính năng"; chép 21 ảnh vào `public/photos/`; `<html data-scroll-behavior="smooth">` (Next cảnh báo khi có client nav). Kiểm chứng: test 173/173, typecheck 0, Chrome DevTools `/`→`/bang-gia`: veil 0→0.88→0, progress bar chạy, 100 phần tử reveal, 0 lỗi console (trừ 401 tự-check phiên đã biết).
-- **2026-09-27** P7 parity — nhánh auth (Site Header + `/account`): popup đăng nhập native `<dialog>` + avatar/dropdown ở header (trước đây header chỉ có 2 link tĩnh Ủng hộ/Tài khoản); trích logic dùng chung vào `AuthForm.tsx`. Giữa chừng chủ dự án chốt **bỏ email/mật khẩu, chỉ Google** (khớp `Tai Khoan.dc.html`/`Site Header.dc.html` bản mới) — xoá luôn nhánh đổi mật khẩu `?reset=1` (không còn đường vào). Route backend register/login/forgot-password/resend-verification/reset-password thành mồ côi, chưa xoá. `/api/auth/google` nhận `?next=` để quay lại đúng trang mở popup (callback đã có sẵn `safeNext`). Kiểm chứng: test 173/173, typecheck 0, build sạch, Chrome DevTools 1280+~390 (guest, mobile menu, đóng/mở popup) 0 lỗi thật.
-- **2026-09-27** P7 parity: xong Trang chủ (ThiepPreview port, chiều cao 6123px = design), trợ giúp, pháp lý, 4 landing, hub + 6 công cụ; kiểm chứng diff DevTools 1280. Gặp: cache Turbopack hỏng (restart dev), khoá Chrome MCP treo (gỡ SingletonLock).
-- **2026-09-27** P7 parity: header/footer viết lại đúng design; bỏ lệch AA; font fallback giống design (♥/line-height); `/bang-gia`, `/ung-ho`, `/tinh-nang`, `/tinh-nang/[slug]` khớp computed style ở 1280 (diff DevTools còn 0 lệch thật, chỉ nhiễu span runtime của design). Chưa chạy gate.
-- **2026-09-27** Pentest P0 trên local (Supabase local + env tách biệt, remote không bẩn): 23/23 PASS — IDOR cross-key/guests 401/403/404, mass-assignment bị chặn, RLS anon (insert + đọc unpublished), honeypot/idempotency/payload limits, spam concurrent 6→5×204+1×429 atomic không dư row, upload giả/trống/quá cỡ/sai key, token đoán mò 404. 1 fail giả do script viết sai filter PostgREST, verify lại RLS đúng. Env đã khôi phục remote, dev 3001 chạy lại bình thường.
-- **2026-09-27** Bỏ `?to=Tên` thủ công: tên khách chỉ từ DB qua link riêng `?g=<token>` (Studio tab Khách đã có copy link). Sửa page khách + preview mẫu + Editor/PublishDialog/GuestListTool + copy marketing/trợ giúp/pháp lý + README/DEPLOY/CLAUDE. Sửa bug lộ khi verify: page dùng anon nên RLS chặn bảng guests → tra token bằng admin (giống route, key không ra browser). Kiểm chứng: browser `?g=` hiện đúng tên hộ, `?to=` cũ bị bỏ qua (Quý khách); test 153/153, typecheck 0, diff-check sạch.
-- **2026-09-26** Session remote cutover XONG: config `.env.local` đủ 6 biến, `supabase db push` (5 bảng + RLS verify), deploy Edge `public-write`, tắt confirm email; E2E remote 16/16 (register→tạo→publish→RSVP/wish→moderation). Gate: test 153/153, typecheck 0, `build:next` + diff-check PASS.
-- **2026-09-26** Task 9 XONG: thêm `rank`/`arrivalTime`/section visibility/album layout vào content; giữ field khi patch (CouplePanel, StudioHome, GalleryCatalog, blankEvent); cập nhật fixture test. Typecheck từ 12 lỗi về 0.
-- **2026-09-26** Swagger BE: `lib/api-docs.ts` (19 paths khớp 18 Route Handlers) + `/api/docs` JSON + `/docs` UI (`swagger-ui-react` local vì CDN unpkg bị chặn). Kiểm chứng: test 2/2, curl 200.
-- **2026-09-26** Demo flow thiệp `ho6my9vg` (Minh Khôi & Hạ Vy): tạo qua Studio UI → upload PNG + MP3 thật → publish → RSVP/wish qua Edge → responses đúng. Sửa 2 bug: invite page self-HTTP 500→200 (gọi domain trực tiếp thay vì fetch chính mình), nút MỞ THIỆP liệt do hydration mismatch (petals chỉ render sau mount). Link khách dùng `?g=<token>`, tên resolve từ DB.
-- **2026-09-26** Đổi tên secret `SUPABASE_EDGE_SHARED_SECRET` → `EDGE_SHARED_SECRET` (CLI từ chối tiền tố `SUPABASE_`); đồng bộ `.env.local`/`.env.example`/Edge/test/docs. Còn lại: xoay secret đã lộ trong chat, deploy Netlify, commit ~140 files, verify link `?g=` trên trình duyệt.
-- **2026-09-26** Supabase migration Task 8/10 XONG: upload media authorize trước, nhận dạng PNG/JPEG/WebP/MP3 bằng magic bytes, giới hạn 2/8MB, rate-limit RPC, path UUID theo invitation và browser roles không có quyền ghi Storage. Kiểm chứng: pgTAP 20/20, Node 149/149, typecheck/diff-check PASS.
-- **2026-09-26** Supabase migration Task 7/10 XONG: response summary bằng SQL RPC theo RSVP mới nhất, moderation approved/hidden ràng buộc đúng thiệp, Realtime scoped + cleanup; wish pending không tự hiện public trước duyệt. Kiểm chứng: pgTAP 20/20, Node 148/148, typecheck/diff-check PASS.
-- **2026-09-26** Supabase migration Task 6/10 XONG: RSVP/lời chúc qua Next adapter → Edge Function, shared secret constant-time, HMAC fingerprint, atomic rate limit, honeypot, idempotency và wish mặc định chờ duyệt. Kiểm chứng: pgTAP 18/18, Deno 5/5, Node 145/145, typecheck/build:next/diff-check PASS.
-- **2026-09-26** Supabase migration Task 5/10 XONG: guest CRUD/import, owner/edit-key access, latest RSVP status, link guest dùng HMAC có thể tái tạo và DB chỉ giữ hash, public token lookup không lộ dữ liệu riêng. Kiểm chứng: Node 141/141, typecheck + diff-check PASS.
-- **2026-09-26** Supabase migration Task 4/10 XONG: public invitation read dùng projection công khai, chỉ trả thiệp đã publish + lời chúc approved/visible, 404 đồng nhất và không cache. Kiểm chứng: Node 135/135, typecheck PASS.
-- **2026-09-26** Supabase migration Task 3/10 XONG: invitation CRUD/autosave cùng-origin, edit key 256-bit + SHA-256, owner access và claim atomic qua SQL RPC. Kiểm chứng: pgTAP 18/18, Node 133/133, typecheck PASS.
-- **2026-09-26** Supabase migration Task 2/10 XONG: auth email/password dùng cookie HttpOnly/SameSite, route register/login/me/logout, account list qua RLS; JWT không lưu phía client. Kiểm chứng: Node 126/126, typecheck PASS.
-- **2026-09-26** Supabase migration Task 1/10 XONG: thêm Supabase CLI/dependencies, env validation, anon/request/admin client tách quyền, migration cho 5 bảng + RLS + Storage + Realtime + atomic rate limit. Kiểm chứng: pgTAP 15/15, Node 118/118, typecheck PASS.
-- **2026-09-26** Migration Next.js + Supabase: chủ dự án duyệt spec và chốt kiến trúc mở rộng. Đã viết plan 10 task TDD, phân lớp route → domain → Supabase, cookie auth, RLS, Edge rate limit, Storage, Realtime và Editor v3. Kiểm chứng tài liệu: self-review + `git diff --check` PASS; code chưa bắt đầu.
-
-- **2026-09-26** P6: tạo `docs/superpowers/specs/2026-09-26-design-parity-checklist.md` cho 29 design source, ghi các deviation đã chốt và blocker Supabase. Kiểm chứng tiếp theo: full FE gate và browser sweep.
-
-- **2026-09-26** P6: gate FE đạt `114/114`, typecheck/build/build:next/diff-check exit 0. Playwright fallback sweep 24 route × 2 viewport = 48 lượt, 200 và không overflow; `/studio/demo` 404 và `/invite/demo` 500 do chưa có record/BE seed. Next có warning preload CSS; không có console error ở public routes.
-- **2026-09-26** FE: convert `Thiep Preview.dc.html` thành `/demo` tương tác: chọn 10 cover family A–J, palette, cover/full preview và CTA sang Studio/template detail. Kiểm chứng `npm test` 133/133, browser 390/1280 không overflow, 0 console error sau khi mở full preview.
-  - Lần test DevTools cho thấy Editor 0 mục và trang khách thiếu nav. Root cause: BE H2 đã khởi động lại nên mất thiệp seed, không phải bug code. Seed lại thì `/invite/z2ztssg1` trả 200.
-  - Chưa chạy lại test sau khi seed, vì DevTools MCP bị kẹt profile do nhiều instance MCP chạy song song.
-
-- **2026-09-26** Chủ dự án chốt stack Next.js + Supabase, bỏ BE Java. Đã ghi vào CLAUDE.md và mục 0. Chưa code migration.
-- **2026-09-26** P3: Editor v3 và Thiệp khách XONG.
-  - Editor v3:
-    - 3 cột (danh sách 14 phần + nhóm Quản lý → form → xem trước); dữ liệu từ `lib/editor-sections.ts` (TDD, 4 test).
-    - Có vòng % hoàn thiện, chọn phần thì form cuộn tới đúng mục và thiệp gắn nhãn "ĐANG SỬA", bấm thiệp để nhảy tới phần, công tắc bật/tắt RSVP/lưu bút/mừng cưới.
-    - Có khung điện thoại/máy tính, chế độ "Xem như khách" với phong bì mang tên khách, bottom sheet dưới 1024px, checklist "còn thiếu" trong hộp Xuất bản.
-    - Đã xoá `PreviewFrame` và CSS cũ.
-  - Thiệp khách: thanh điều hướng section dính, cánh hoa và hiệu ứng nổ khi mở phong bì, đồng hồ lật, tick tự vẽ khi gửi RSVP.
-  - Kiểm chứng:
-    - test 114/114, typecheck OK.
-    - DevTools trên BE thật (Spring `test-run` + H2, cổng 8090) và FE `next start` cổng 3002: Editor ở 1280 và cửa sổ hẹp đều đạt, 0 console. Trang khách mở phong bì → gửi RSVP thật → tick hiện, 0 console.
-    - Cổng 3000 đang có `yarn start` của chủ dự án nên không đụng vào.
-- **2026-09-26** P3: đã port trang Ủng hộ, Bảng giá, Gallery, Chi tiết mẫu và Tài khoản. Kiểm chứng: test 110/110, typecheck OK.
-  - Ủng hộ: nền đỏ có tim bay, thẻ chuyển khoản có QR VietQR thật và nút sao chép.
-  - Bảng giá: dùng đúng câu chữ của design.
-  - Gallery: có badge HOT/MỚI, tên cặp đôi riêng cho từng mẫu, lớp hover "Xem thử / Dùng mẫu", trạng thái rỗng kèm "Xoá bộ lọc".
-  - Chi tiết mẫu: mô tả bố cục cho 10 family (`familyLayout` trong `lib/templates.ts`, có test).
-  - Tài khoản: footer ẩn CTA (`SiteFooter cta={false}`).
-  - Guard hex bắt thêm dạng 4/8 chữ số; 13 màu có alpha đổi sang `color-mix`.
-  - Blocked vì chờ Supabase: ô tên khi đăng ký, số xác nhận/lời chúc trên thẻ thiệp.
-- **2026-09-26** P3/P2/P1 port design, Donate `/ung-ho`, fix Netlify 404: XONG code (chi tiết xem git history; checklist nghiệm thu ở Bước A).
-
-- **2026-09-21→25** Phase 1–6A BE Java cũ (H2/JWT/Account): tham khảo git history, không phát triển thêm (đã chuyển Supabase).
+- **2026-10-04 Rà soát PROGRESS.md:** bỏ handoff "Bước A/B" (BE Java + H2, `/tinh-nang`, số test cũ), các blocker Netlify/tên miền (đã chạy Cloudflare + domain thật), mục migration "TIẾP THEO" (đã làm); thêm production, git≠production, migration chưa xác minh, Turnstile đã gỡ, scraper, hiện tên Google, `CLAUDE.md` lỗi thời. Kiểm chứng: đối chiếu với `git log/status`, `app/`, `supabase/migrations`, `package.json`, `wrangler.jsonc`, docs.
+- **2026-10-04 Deploy Cloudflare Workers** (`e0f3ebe1`): gate xanh (test 224/224, tsc, diff-check), build với `NEXT_PUBLIC_SITE_URL` chính thức, smoke test trên workers.dev và domain chính (`/`, `/blog`, bài, sitemap 7 URL blog, 404 slug sai, ảnh `/_next/image`). Bản chứa trang thiết kế riêng nhưng form lỗi do thiếu migration.
+- **2026-10-04 E2E tạo thiệp:** `playwright.config.ts`, `e2e/create-invitation.spec.ts` (14 test), `e2e/support/mock-api.ts`. 14/14 trên 7 project; WebKit desktop trên macOS tự abort khi gõ trong editor (NSTextInputContext), test dùng `setText` qua DOM cho nhánh đó.
+- **2026-10-04 Nhạc có sẵn (code, chưa deploy):** `lib/music.ts`, `public/music/*`, schema + `MediaPanel`; test 227/227 (file tồn tại, header MP3, ≤ 8 MB, schema từ chối `/music/../x`). Chưa kiểm tra trên trình duyệt vì Studio cần tạo thiệp thật.
+- **2026-10-04 Hiện tên Google:** `AccountUser.name`, `userDto`, header và `/account`; test `auth-routes` cập nhật (đã vào bản deploy cùng ngày, chưa thử trên production).
+- **2026-10-04 Blog (code + deploy):** 6 bài, `blogPosting` JSON-LD, sitemap, route-inventory, footer. Kiểm chứng: test 224/224, `next build` sạch, curl (1 h1, title ≤ 60, canonical, JSON-LD, sitemap, 404), DevTools 1280 + 390 không tràn ngang, 0 ảnh hỏng, 0 lỗi console.
+- **2026-10-04 Script cào tham khảo:** `scripts/scrape-invitation.mjs` (`--crawl`, `--suffix`, `--limit`; tự bấm "Mở thiệp"; bỏ qua mẫu đã chụp); thử trên 3 trang, ra cover/mobile/desktop/page.html/tokens.json.
+- **2026-10-03 Trang thiết kế riêng (code):** `app/thiet-ke-thiep-rieng/`, `DesignRequestForm`, `lib/design-request.ts`, route + migration `design_requests`; 214 test, build OK, 390px không tràn ngang.
+- **2026-10-03 Fix ngày không hợp lệ trên iPhone 14:** `StudioHome` chuẩn hoá `DD/MM/YYYY`/`YYYY-MM-DD` thành ISO, chặn ngày không tồn tại; test hồi quy.
+- **2026-10-01 SEO bước 2 (JSON-LD):** `lib/jsonld.ts` + `PageJsonLd` (BreadcrumbList 15 trang, ItemList, WebApplication cho tool, FAQPage ở `/tro-giup` và `/templates`). Không thêm FAQPage cho 4 landing vì chưa có FAQ hiển thị.
+- **2026-10-01 SEO bước 1:** `lib/seo.ts` (title/description/lastmod), canonical + OG, sitemap `lastModified` cố định, `manifest.ts`, `tests/seo.test.ts`.
+- **2026-09-30 Gỡ Turnstile** khỏi RSVP/lời chúc (làm hỏng khách thật); bảo vệ còn lại: honeypot, rate limit theo fingerprint, kiểm tra same-origin, duyệt lưu bút.
+- **2026-09-27 P7 parity:** registry 20 mẫu + kiểu K–O, renderer thiệp và cổng phong bì viết lại theo `Studio Editor v3`/`Thiep Khach`, `/templates` + popup "Xem thử", header/footer, lớp motion, nhánh auth Google-only; bỏ `?to=` thủ công; pentest P0 local 23/23.
+- **2026-09-26→27 Migration Supabase:** Task 1–9 xong (auth cookie, invitation CRUD + edit key, public read, guests, RSVP/wish qua Edge, moderation, Storage, Editor v3 contract), remote cutover và E2E remote 16/16, Swagger `/docs`. Chi tiết: git history và plan.
+- **2026-09-21→25** Phase 1–6A trên BE Java cũ: tham khảo git history, không phát triển thêm.
 
 ## 5. Lưu ý kỹ thuật
 
 - `next/font`: mỗi loader là `const` cấp module, option phải literal, biến font đặt trên `<html>`.
-- `node --test` chỉ nhận TypeScript "erasable": không enum, không parameter properties.
-- Build Cloudflare dùng `npm run build`; build Netlify dùng `npm run build:next`.
+- `node --test` chỉ nhận TypeScript "erasable": không enum, không parameter properties; file trong `lib/` mà test import phải dùng import tương đối có đuôi `.ts` (không `@/`).
+- **Deploy Cloudflare:** `NEXT_PUBLIC_SITE_URL=https://taothiepcuoi.raystudio.com.vn npm run build` rồi `npx wrangler deploy`. Build snapshot toàn bộ env vào `.open-next/cloudflare/next-env.mjs` (có service-role key, chạy server-side; kiểm tra không lọt biến lạ như `VERCEL_*`). `rm -rf` bị hook chặn: bản build tự dọn `.open-next`, không cần xoá tay. Netlify dùng `npm run build:next`.
+- **E2E:** `npm run build:next && npm run e2e -- --project=chrome` (project: chrome, edge, safari, firefox, coccoc, mobile-safari, mobile-chrome, tablet-safari). WebKit cài bằng `npx playwright install webkit` (đã cài), Firefox chưa. Chạy từng project một, `workers: 1`. Test mock mọi `/api/**` và fail nếu có call chưa mock, vì build trỏ vào Supabase thật.
+- **Trang bị header `X-Frame-Options`:** không nhúng iframe cùng origin để quét nhiều route trong DevTools (`contentDocument` rỗng); điều hướng từng route. Chụp màn hình trong Chrome DevTools MCP cần `select_page` với `bringToFront` trước, nếu không sẽ timeout; `emulate` mới đổi được viewport (resize cửa sổ không đổi `innerWidth`).
+- Trang có `Motion.tsx`/`ScrollReveal` ẩn phần dưới màn hình tới khi cuộn: khi chụp so sánh phải cuộn chậm hết trang (cuộn quá nhanh bỏ sót reveal). Nội dung vẫn có trong view-source cho crawler.
+- `next start` báo không hợp với `output: standalone` nhưng vẫn chạy cho mục đích test cục bộ.
+- Kiểm tra mobile bằng `emulate` viewport `390x844x2,mobile,touch`.
 - `codegraph serve` rò rỉ có thể gây `ENFILE`. Kiểm `sysctl kern.num_files kern.maxfiles`, hỏi chủ dự án trước khi kill.
-- Trang design ẩn phần dưới màn hình tới khi cuộn (`motion.js`: kiểm vị trí khi cuộn + quét lại mỗi 600ms). Khi chụp so sánh phải cuộn hết trang trước.
-- Kiểm trong iframe có thêm scrollbar 15px: muốn viewport 390 thì đặt iframe rộng 405.
+- Agent không tự `git commit` (hook chặn): đưa lệnh cho chủ dự án.
 
 ## 6. Ý tưởng tương lai (chưa chốt)
 
-- Video thiệp.
-- Khoá sửa danh sách khách sau khi publish.
-- Giới hạn số khách (500–1000).
+- Video thiệp; giới hạn video ≤ 200MB.
+- Khoá sửa danh sách khách sau khi publish; giới hạn số khách (500–1000).
 - Gửi link hàng loạt qua SMS/Zalo/email.
-- Quên mật khẩu, xác minh email, OAuth.
-- Xoá thiệp khỏi tài khoản.
-- Thống kê "đã xem thiệp".
-- Webhook xác nhận chuyển khoản Donate (Casso/SePay).
-- Công cụ thứ 8 (widget đếm ngược hoặc lời cảm ơn sau cưới).
+- Nút xoá thiệp trong Studio (API `DELETE /api/invitations/:id` đã có).
+- Công cụ thứ 7 (widget đếm ngược hoặc lời cảm ơn sau cưới).
 - Trang public cho save-the-date.
-- Giới hạn video ≤200MB.
 - `/lien-he`, RSS blog.
+- Thêm bài blog; OG image mỗi bài/mẫu.

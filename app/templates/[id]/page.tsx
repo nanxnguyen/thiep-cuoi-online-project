@@ -3,13 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { ThiepPreview } from "@/components/templates/ThiepPreview";
-import { JsonLd } from "@/components/marketing/JsonLd";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { sampleContent } from "@/lib/content";
+import { metadataFor, templateSeo } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import { colors, familyLayout, getTemplate, templateSamples, templates } from "@/lib/templates";
 import "./detail.css";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
 export function generateStaticParams() {
   return templates.map((t) => ({ id: t.id }));
@@ -18,11 +19,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const template = getTemplate((await params).id);
   if (!template) return {};
-  return {
-    title: `Mẫu ${template.name}`,
-    description: template.seo,
-    alternates: { canonical: `/templates/${template.id}` },
-  };
+  const { title, description } = templateSeo(template);
+  return metadataFor(`/templates/${template.id}`, title, description);
 }
 
 // `?gate=1` shows the opening envelope addressed to a sample guest.
@@ -60,16 +58,7 @@ export default async function TemplatePreviewPage({
   return (
     <>
       <SiteHeader />
-      <JsonLd
-        data={{
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Mẫu thiệp", item: `${SITE_URL}/templates` },
-            { "@type": "ListItem", position: 2, name: template.name },
-          ],
-        }}
-      />
+      <PageJsonLd path={`/templates/${template.id}`} name={template.name} parents={[{ name: "Mẫu thiệp", path: "/templates" }]} />
       <main className="tdt">
         <div className="tdt__stage">
           <div className="tdt__card">

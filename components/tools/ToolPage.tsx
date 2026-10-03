@@ -2,11 +2,13 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 import "./tools.css";
 
 // Shared shell for the 7 browser tools, after design/CC *.dc.html: breadcrumb back to the hub, h1, one-line
 // description, then the tool itself. `width` is each design page's own max-width.
 export function ToolPage({
+  path,
   name,
   title,
   description,
@@ -16,6 +18,8 @@ export function ToolPage({
   guide,
   children,
 }: {
+  /** Route, e.g. "/cong-cu/tao-qr": keys the page's structured data. */
+  path: string;
   /** Breadcrumb label, e.g. "Tạo mã QR". */
   name: string;
   /** Omit when the tool renders its own title row (guest list: h1 beside the CSV buttons). */
@@ -32,6 +36,7 @@ export function ToolPage({
   return (
     <>
       <SiteHeader />
+      <PageJsonLd path={path} name={name} parents={[{ name: "Công cụ", path: "/cong-cu-dam-cuoi" }]} app />
       <main className="tool-page" style={{ maxWidth: width, gap }}>
         <nav className="tool-crumb" aria-label="Đường dẫn">
           <Link href="/cong-cu-dam-cuoi">Công cụ</Link>

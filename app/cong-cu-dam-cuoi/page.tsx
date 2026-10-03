@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import "@/components/tools/tools.css";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = {
-  title: "Công cụ đám cưới miễn phí",
-  description: "Các công cụ miễn phí cho đám cưới: tạo mã QR, nén ảnh, nén video, soạn tin nhắn mời, danh sách khách và ảnh save the date — chạy ngay trên trình duyệt, không cần đăng nhập.",
-  alternates: { canonical: "/cong-cu-dam-cuoi" },
-};
+export const metadata: Metadata = pageMetadata("/cong-cu-dam-cuoi");
 
 // design/Cong Cu.dc.html: [name, desc, href, glyph, card, ink, glyph chip] with the design's own colours.
 const TOOLS = [
@@ -26,6 +24,7 @@ export default function Page() {
   return (
     <>
       <SiteHeader />
+      <PageJsonLd path="/cong-cu-dam-cuoi" name="Công cụ đám cưới" list={TOOLS.map(([name, , href]) => ({ name, path: href }))} />
       <ScrollReveal all threshold={0.1} />
       <section className="tools-hero">
         <div className="tools-hero__head">

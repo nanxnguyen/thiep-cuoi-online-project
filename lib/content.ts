@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isLibraryMusicUrl } from "./music.ts";
 
 export const MAX_EVENTS = 6;
 export const MAX_ALBUM = 24;
@@ -12,6 +13,8 @@ export const EVENT_KINDS = ["engagement", "ceremony", "reception", "custom"] as 
 const text = (max: number) => z.string().max(max);
 const httpUrl = z.string().max(500).refine((v) => /^https?:\/\/\S+$/i.test(v), "URL không hợp lệ");
 const optionalUrl = z.union([z.literal(""), httpUrl]);
+// Music is either an https link/upload or one of the built-in tracks (site-relative path, exact match only).
+const musicUrl = z.string().max(500).refine((v) => /^https?:\/\/\S+$/i.test(v) || isLibraryMusicUrl(v), "URL không hợp lệ");
 const dateStr = z.string().regex(/^(\d{4}-\d{2}-\d{2})?$/);
 const timeStr = z.string().regex(/^(\d{2}:\d{2})?$/);
 const id = z.string().min(1).max(40);
@@ -54,7 +57,7 @@ export const contentSchema = z.object({
   albumLayout: z.enum(["grid", "masonry", "filmstrip"]).default("grid"),
   // Studio Editor v3 "Số ảnh hiển thị".
   albumCount: z.union([z.literal(3), z.literal(6), z.literal(9)]).default(6),
-  music: z.object({ url: httpUrl, title: text(80) }).nullable(),
+  music: z.object({ url: musicUrl, title: text(80) }).nullable(),
   rsvp: z.object({
     enabled: z.boolean(),
     deadline: dateStr,

@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LpChecklist, SeoLandingPage } from "@/components/seo/SeoLandingPage";
 import { templates } from "@/lib/templates";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = { title: "Thiệp cưới online miễn phí", description: "Tạo thiệp cưới online miễn phí với mẫu đẹp, RSVP, bản đồ, QR tiền mừng và nhạc nền trên MỘC Wedding.", alternates: { canonical: "/thiep-cuoi-online-mien-phi" } };
+export const metadata: Metadata = pageMetadata("/thiep-cuoi-online-mien-phi");
 
 // design/Thiep Cuoi Online Mien Phi.dc.html; the template count is the real registry size.
 export default function Page() {
   return (
     <SeoLandingPage
+      path="/thiep-cuoi-online-mien-phi"
+      name="Thiệp cưới online miễn phí"
       eyebrow="THIỆP CƯỚI ONLINE MIỄN PHÍ"
       title={<>Không mất một đồng nào, <span className="lp-shimmer">không giới hạn</span> tính năng</>}
       description="Trong khi nhiều nền tảng khác thu phí theo lượt xem hay tính năng, Mộc để mọi thứ miễn phí ngay từ đầu."

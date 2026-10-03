@@ -1,13 +1,17 @@
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LpQuotes, SeoLandingPage } from "@/components/seo/SeoLandingPage";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = { title: "Tin nhắn mời cưới hay và ý nghĩa", description: "Gợi ý tin nhắn mời cưới ngắn gọn, tự nhiên và dễ gửi qua Zalo, Messenger hoặc SMS.", alternates: { canonical: "/tin-nhan-moi-cuoi" } };
+export const metadata: Metadata = pageMetadata("/tin-nhan-moi-cuoi");
 
 // design/Tin Nhan Moi Cuoi.dc.html
 export default function Page() {
   return (
     <SeoLandingPage
+      path="/tin-nhan-moi-cuoi"
+      name="Tin nhắn mời cưới"
       eyebrow="TIN NHẮN MỜI CƯỚI"
       title={<>Kèm link thiệp vào một dòng <em>tin nhắn thật hay</em></>}
       description="Vài mẫu câu để gửi kèm link thiệp qua Zalo, Messenger hoặc SMS."

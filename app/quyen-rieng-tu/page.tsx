@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LegalBody, type LegalSection } from "@/components/marketing/LegalBody";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { CONTACT_EMAIL } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Quyền riêng tư",
-  description: "MỘC lưu những dữ liệu nào khi bạn làm thiệp cưới online, ai xem được, dùng dịch vụ bên ngoài nào và bạn có những quyền gì.",
-  alternates: { canonical: "/quyen-rieng-tu" },
-};
+export const metadata: Metadata = pageMetadata("/quyen-rieng-tu");
 
 const contact = CONTACT_EMAIL
   ? `Mọi yêu cầu về dữ liệu, gồm cả yêu cầu xoá thiệp, xin gửi tới ${CONTACT_EMAIL}. Hãy kèm đường dẫn thiệp; không cần gửi link chỉnh sửa. Với yêu cầu xoá hoặc sửa, chúng mình có thể cần bạn chứng minh quyền quản lý thiệp (ví dụ mở được thiệp bằng link chỉnh sửa).`
@@ -91,7 +88,7 @@ const sections: LegalSection[] = [
 
 export default function PrivacyPage() {
   return (
-    <MarketingLayout>
+    <MarketingLayout path="/quyen-rieng-tu" name="Quyền riêng tư">
       <LegalBody href="/quyen-rieng-tu" title="Quyền riêng tư" sections={sections} updated="22.09.2026" />
     </MarketingLayout>
   );

@@ -33,7 +33,7 @@ export const post: Post = {
         "Ngày giờ lễ và tiệc. Nếu giờ đón khách và giờ khai tiệc khác nhau, ghi cả hai.",
         "Địa chỉ đầy đủ của nơi tổ chức, kèm đường link bản đồ.",
         "Một ảnh bìa và vài ảnh cho album. Thiệp nhận một ảnh bìa và tối đa 24 ảnh album.",
-        "Một file nhạc MP3 nếu muốn có nhạc nền. Nên dùng bản nhạc hai bạn có quyền sử dụng.",
+        "Nhạc nền nếu muốn: chọn một bài có sẵn trong Studio, hoặc chuẩn bị file MP3 của riêng bạn và dùng bản hai bạn có quyền sử dụng.",
         "Tên ngân hàng, số tài khoản và tên chủ tài khoản nếu muốn có mã QR mừng cưới.",
       ],
     },
@@ -88,7 +88,7 @@ export const post: Post = {
     },
     {
       t: "p",
-      text: "Nhạc nền là file MP3 tối đa 8 MB. Có một điểm hay làm hai bạn thắc mắc: nhạc chưa phát ngay khi khách mở link. Đó là quy định của trình duyệt, chỉ cho phát âm thanh sau khi người xem chạm vào trang. Vì vậy nhạc bắt đầu khi khách chạm vào phong bì để mở thiệp.",
+      text: "Với nhạc nền, Studio có vài bài chọn sẵn để nghe thử và dùng ngay. Nếu muốn nhạc riêng, tải lên file MP3 tối đa 8 MB. Có một điểm hay làm hai bạn thắc mắc: nhạc chưa phát ngay khi khách mở link. Đó là quy định của trình duyệt, chỉ cho phát âm thanh sau khi người xem chạm vào trang. Vì vậy nhạc bắt đầu khi khách chạm vào phong bì để mở thiệp.",
     },
     { t: "h2", text: "Bước 5: Thêm QR mừng cưới và xác nhận tham dự" },
     {

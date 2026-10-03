@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/marketing/JsonLd";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { HelpClient } from "./HelpClient";
 import { allHelpItems, helpGroups } from "@/lib/marketing/help";
 
-export const metadata: Metadata = {
-  title: "Trợ giúp",
-  description: "Giải đáp về link chỉnh sửa, xuất bản, ảnh và nhạc, xác nhận tham dự, lời chúc và quyền riêng tư khi làm thiệp cưới online với MỘC.",
-  alternates: { canonical: "/tro-giup" },
-};
+export const metadata: Metadata = pageMetadata("/tro-giup");
 
 export default function HelpPage() {
   return (
-    <MarketingLayout>
+    <MarketingLayout path="/tro-giup" name="Trợ giúp">
       <HelpClient groups={helpGroups} />
       <JsonLd
         data={{

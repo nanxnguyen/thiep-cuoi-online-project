@@ -25,6 +25,9 @@ export function useAutosave<T>(
 
   const run = useCallback((keepalive = false): Promise<void> => {
     if (running.current) return running.current;
+    // Nothing to save: an async task that finishes synchronously would run its `finally` before
+    // `running.current = task` below, leaving a settled promise stuck there and every later save a no-op.
+    if (!isDirty()) return Promise.resolve();
     const task = (async () => {
       try {
         while (isDirty()) {

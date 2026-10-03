@@ -756,7 +756,8 @@ h3 em {
   gap: 14px;
 }
 
-@media (max-width: 760px) {
+/* The header has four links plus actions, which no longer fit one row below ~900px: collapse into the menu there. */
+@media (max-width: 900px) {
   /* design wraps the header into three rows on phones; the app collapses the links into a menu instead */
   .site-header__inner {
     gap: 12px;
@@ -774,6 +775,8 @@ h3 em {
   .nav-menu {
     display: block;
   }
+}
+@media (max-width: 760px) {
   .section {
     padding: 48px 20px 72px;
   }

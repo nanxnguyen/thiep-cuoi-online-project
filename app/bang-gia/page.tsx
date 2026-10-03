@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { templates } from "@/lib/templates";
 import "./pricing.css";
 
-export const metadata: Metadata = {
-  title: "Bảng giá",
-  description: "MỘC hiện miễn phí trong giai đoạn ra mắt: không cần tài khoản, không cần thẻ. Xem những gì có sẵn và những gì đang được lên kế hoạch.",
-  alternates: { canonical: "/bang-gia" },
-};
+export const metadata: Metadata = pageMetadata("/bang-gia");
 
 // design/Bang Gia.dc.html wording; every item is live today (template count comes from the registry).
 const included = [
@@ -28,7 +25,7 @@ const planned = ["Video trong thiệp"];
 
 export default function PricingPage() {
   return (
-    <MarketingLayout>
+    <MarketingLayout path="/bang-gia" name="Bảng giá">
       <ScrollReveal />
       <section className="pricing-hero">
         <div className="pricing-kicker">BẢNG GIÁ</div>

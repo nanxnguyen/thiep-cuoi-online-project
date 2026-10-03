@@ -3,14 +3,16 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { JsonLd } from "./JsonLd";
+import { PageJsonLd } from "./PageJsonLd";
 import { SITE_URL } from "@/lib/site";
 import "./marketing.css";
 
 // Header + main + footer for every marketing page, so a page only supplies its sections.
-export function MarketingLayout({ children }: { children: ReactNode }) {
+export function MarketingLayout({ children, path, name }: { children: ReactNode; path: string; name: string }) {
   return (
     <>
       <SiteHeader />
+      <PageJsonLd path={path} name={name} />
       <main className="mk">{children}</main>
       <SiteFooter />
     </>

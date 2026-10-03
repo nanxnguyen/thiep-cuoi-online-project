@@ -1,4 +1,5 @@
 import type { Content } from "./content.ts";
+import type { DesignRequestInput } from "./design-request.ts";
 
 // Typed client for the Spring backend (spec 6.4). The backend is the source of truth for this
 // contract; keep the DTO shapes below in sync with its records (see the plan's self-review table).
@@ -97,7 +98,7 @@ export type GuestInput = {
   note?: string;
 };
 export type GuestImportResult = { created: number; errors: { index: number; message: string }[] };
-export type AccountUser = { id: string; email: string; avatarUrl?: string };
+export type AccountUser = { id: string; email: string; name?: string; avatarUrl?: string };
 export type AuthResponse = { accessToken?: string; user: AccountUser; emailConfirmationRequired?: boolean };
 export type AccountInvitation = { id: string; slug: string; templateId: string; published: boolean; updatedAt: string; groomName: string; brideName: string; weddingDate: string; paletteKey: string };
 
@@ -167,6 +168,7 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
     },
     submitRsvp: (slug: string, input: RsvpInput) =>
       call<void>(`/api/public/invitations/${slug}/rsvp`, { ...json("POST", input), headers: { "Idempotency-Key": crypto.randomUUID() } }),
+    submitDesignRequest: (input: DesignRequestInput) => call<{ received: boolean }>("/api/public/design-requests", json("POST", input)),
     submitWish: (slug: string, input: WishInput) =>
       call<PublicWish>(`/api/public/invitations/${slug}/wishes`, { ...json("POST", input), headers: { "Idempotency-Key": crypto.randomUUID() } }),
     listGuests: (id: string, key: string) => call<{ guests: GuestDto[] }>(`/api/invitations/${id}/guests`, {}, key),

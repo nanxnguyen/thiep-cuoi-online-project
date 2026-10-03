@@ -115,9 +115,9 @@ test("login maps invalid credentials to 401", async () => {
 
 test("requireUser trusts getUser after refresh and cleanly rejects an expired session", async () => {
   const refreshed = clientWith({
-    getUser: async () => ({ data: { user: { id: "user-1", email: "a@example.com", user_metadata: { avatar_url: "https://lh3.googleusercontent.com/avatar" } } }, error: null }),
+    getUser: async () => ({ data: { user: { id: "user-1", email: "a@example.com", user_metadata: { full_name: "  Nhut Nguyen ", avatar_url: "https://lh3.googleusercontent.com/avatar" } } }, error: null }),
   });
-  assert.deepEqual(await requireUser(refreshed), { id: "user-1", email: "a@example.com", avatarUrl: "https://lh3.googleusercontent.com/avatar" });
+  assert.deepEqual(await requireUser(refreshed), { id: "user-1", email: "a@example.com", name: "Nhut Nguyen", avatarUrl: "https://lh3.googleusercontent.com/avatar" });
 
   const expired = clientWith({
     getUser: async () => ({ data: { user: null }, error: { message: "expired", status: 401 } }),

@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ThiepPreview } from "@/components/templates/ThiepPreview";
 import { api } from "@/lib/api";
 import { defaultContent } from "@/lib/content";
+import { normalizeDateInput } from "@/lib/datetime";
 import { createLocalStore, editLink, invitationTitle, parseEditLink, type LocalInvitation } from "@/lib/local-invitations";
 import { colors, getTemplate, templateSamples, templates, type ColorKey } from "@/lib/templates";
 
@@ -31,6 +32,7 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
   const [bride, setBride] = useState("Hạ Vy");
   const [groom, setGroom] = useState("Minh Khôi");
   const [date, setDate] = useState("2026-11-09");
+  const dateInputRef = useRef<HTMLInputElement>(null);
   const selected = getTemplate(selectedId)!;
   const selectedColor = selectedId === getTemplate(initialTemplate || "")?.id && selected.colors.includes(initialColor as typeof selected.colors[number]) ? initialColor! : "";
   const cur = colors[(selectedColor || selected.colors[0]) as ColorKey];
@@ -40,6 +42,11 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
 
   async function create() {
     if (creating) return;
+    const weddingDate = normalizeDateInput(dateInputRef.current?.value || date);
+    if (!weddingDate) {
+      setError("Ngày cưới chưa hợp lệ. Hãy chọn lại ngày theo định dạng ngày/tháng/năm.");
+      return;
+    }
     setCreating(selectedId);
     setError("");
     try {
@@ -47,7 +54,7 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
       content.paletteKey = selectedColor;
       content.couple.groom.name = groom.trim();
       content.couple.bride.name = bride.trim();
-      content.events = content.events.map((event) => ({ ...event, date }));
+      content.events = content.events.map((event) => ({ ...event, date: weddingDate }));
       const made = await api.createInvitation(selectedId, content);
       store().upsert({ id: made.id, slug: made.slug, key: made.key, title: "Thiệp chưa đặt tên", updatedAt: new Date().toISOString() });
       router.push(`/studio/${made.id}#k=${made.key}`);
@@ -144,7 +151,7 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
             </label>
             <label className="sh__full">
               Ngày cưới
-              <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              <input ref={dateInputRef} name="weddingDate" type="date" value={date} required onChange={(e) => setDate(e.currentTarget.value)} />
             </label>
           </div>
           <button className="sh__go" type="button" disabled={creating !== null} onClick={create}>

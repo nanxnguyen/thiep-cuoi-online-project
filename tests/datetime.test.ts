@@ -1,6 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { eventStart, nextEvent, remaining, formatDateVi, formatDateEn } from "../lib/datetime.ts";
+import { eventStart, nextEvent, remaining, formatDateVi, formatDateEn, normalizeDateInput } from "../lib/datetime.ts";
+
+test("normalizeDateInput converts iPhone display dates to the API ISO format", () => {
+  assert.equal(normalizeDateInput("2026-11-09"), "2026-11-09");
+  assert.equal(normalizeDateInput("09/11/2026"), "2026-11-09");
+  assert.equal(normalizeDateInput("9/11/2026"), "2026-11-09");
+  assert.equal(normalizeDateInput("31/02/2026"), null);
+  assert.equal(normalizeDateInput("2026-02-31"), null);
+  assert.equal(normalizeDateInput(""), null);
+});
 
 test("eventStart reads wall-clock time as +07:00", () => {
   assert.equal(eventStart({ date: "2026-11-08", time: "10:00" })?.toISOString(), "2026-11-08T03:00:00.000Z");

@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { LegalBody, type LegalSection } from "@/components/marketing/LegalBody";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { CONTACT_EMAIL } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Điều khoản sử dụng",
-  description: "Điều khoản khi dùng MỘC để tạo thiệp cưới online: nội dung của bạn, link chỉnh sửa, mừng cưới bằng QR, nội dung bị cấm và giới hạn trách nhiệm.",
-  alternates: { canonical: "/dieu-khoan" },
-};
+export const metadata: Metadata = pageMetadata("/dieu-khoan");
 
 const contact = CONTACT_EMAIL
   ? `Thắc mắc về điều khoản này, xin gửi tới ${CONTACT_EMAIL}.`
@@ -82,7 +79,7 @@ const sections: LegalSection[] = [
 
 export default function TermsPage() {
   return (
-    <MarketingLayout>
+    <MarketingLayout path="/dieu-khoan" name="Điều khoản">
       <LegalBody href="/dieu-khoan" title="Điều khoản sử dụng" sections={sections} updated="21.09.2026" />
     </MarketingLayout>
   );

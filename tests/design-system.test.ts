@@ -53,8 +53,9 @@ test("site text pairs pass WCAG AA (4.5:1)", () => {
   }
 });
 
-// Raw colours belong in tokens.css. Template palettes, canvas drawing and the invitation renderer own theirs.
-const ALLOWED = [/^app\/styles\/tokens\.css$/, /^components\/invitation\//];
+// Raw colours belong in tokens.css. Template palettes, canvas drawing and the invitation renderer own theirs;
+// the web app manifest cannot use var(), so it mirrors --paper and --accent literally.
+const ALLOWED = [/^app\/styles\/tokens\.css$/, /^app\/manifest\.ts$/, /^components\/invitation\//];
 
 const walk = (dir: string): string[] =>
   readdirSync(dir).flatMap((n) => { const p = join(dir, n); return statSync(p).isDirectory() ? walk(p) : [p]; });

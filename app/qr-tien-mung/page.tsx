@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import { LpRuledSteps, SeoLandingPage } from "@/components/seo/SeoLandingPage";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = { title: "QR tiền mừng cưới và bản đồ", description: "Thêm QR tiền mừng, địa điểm và bản đồ vào thiệp cưới online.", alternates: { canonical: "/qr-tien-mung" } };
+export const metadata: Metadata = pageMetadata("/qr-tien-mung");
 
 // design/QR Tien Mung.dc.html. Step 02 says what the product really does (it builds the VietQR from the account number).
 export default function Page() {
   return (
     <SeoLandingPage
+      path="/qr-tien-mung"
+      name="QR tiền mừng cưới"
       hero={
         <section className="lp-qr-hero">
           <div className="lp-qr-hero__copy">

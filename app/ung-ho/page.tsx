@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { bankName } from "@/lib/banks";
@@ -8,12 +9,9 @@ import { DONATE_ACCOUNT, DONATE_MESSAGE } from "@/lib/donate";
 import { vietQrUrl } from "@/lib/vietqr";
 import { CopyRows } from "./CopyRows";
 import "./donate.css";
+import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
-export const metadata: Metadata = {
-  title: "Ủng hộ dự án",
-  description: "MỘC hiện miễn phí và không có quảng cáo. Nếu thiệp giúp ích cho ngày cưới của hai bạn, có thể ủng hộ dự án qua chuyển khoản trực tiếp.",
-  alternates: { canonical: "/ung-ho" },
-};
+export const metadata: Metadata = pageMetadata("/ung-ho");
 
 const USES = ["Trả tiền máy chủ để thiệp luôn mở nhanh", "Thiết kế thêm mẫu thiệp mới", "Giữ Mộc miễn phí cho mọi người"];
 const rnd = (i: number, n: number) => {
@@ -32,6 +30,7 @@ export default function DonatePage() {
   return (
     <>
       <SiteHeader />
+      <PageJsonLd path="/ung-ho" name="Ủng hộ dự án" />
       <main>
         <section className="donate-hero">
           <div className="donate-hearts" aria-hidden="true">

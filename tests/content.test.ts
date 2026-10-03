@@ -110,3 +110,13 @@ test("persistable blanks half-typed map links the server would reject, without t
   assert.equal(c.events[0].mapUrl, "www.goo"); // the draft the owner is typing in is left alone
   assert.equal(persistable(defaultContent(NOW)).events.length, 2);
 });
+
+test("music accepts https links and built-in tracks only, never other relative paths", () => {
+  const withMusic = (url: string) => contentSchema.safeParse({ ...defaultContent(NOW), music: { url, title: "x" } }).success;
+  assert.equal(withMusic("https://cdn.example.com/a.mp3"), true);
+  assert.equal(withMusic("/music/ngay-dau-tien.mp3"), true);
+  assert.equal(withMusic("/music/khong-co-bai-nay.mp3"), false);
+  assert.equal(withMusic("/music/../secret.mp3"), false);
+  assert.equal(withMusic("/other/ngay-dau-tien.mp3"), false);
+  assert.equal(withMusic("javascript:alert(1)"), false);
+});

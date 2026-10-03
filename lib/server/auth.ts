@@ -8,9 +8,15 @@ function userDto(user: User): AccountUser {
   const avatarUrl = typeof metadata?.avatar_url === "string"
     ? metadata.avatar_url
     : typeof metadata?.picture === "string" ? metadata.picture : undefined;
-  return avatarUrl && /^https:\/\//i.test(avatarUrl)
-    ? { id: user.id, email: user.email, avatarUrl }
-    : { id: user.id, email: user.email };
+  // Google sign-in puts the display name in full_name/name; password accounts have none (UI falls back to email).
+  const rawName = typeof metadata?.full_name === "string" ? metadata.full_name : typeof metadata?.name === "string" ? metadata.name : "";
+  const name = rawName.trim().slice(0, 80);
+  return {
+    id: user.id,
+    email: user.email,
+    ...(name ? { name } : {}),
+    ...(avatarUrl && /^https:\/\//i.test(avatarUrl) ? { avatarUrl } : {}),
+  };
 }
 
 export async function registerUser(client: SupabaseClient, email: string, password: string): Promise<AuthResponse> {
