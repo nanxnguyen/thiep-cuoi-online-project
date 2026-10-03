@@ -1,0 +1,11 @@
+/* /thiet-ke-thiep-rieng: layout comes from marketing.css (mk-*) and the form primitives in globals.css. */
+.custom-form fieldset { display: grid; gap: 16px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.custom-form__row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 16px; }
+.custom-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.custom-form__error { margin: 0; color: var(--danger-fg); font-size: 14px; }
+.custom-form__note { margin: 0; color: var(--muted); font-size: 13px; }
+.custom-form .button-primary { justify-self: start; }
+.custom-done { padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.custom-done h3 { margin: 0 0 8px; }
+.custom-done p { margin: 0; color: var(--muted); line-height: 1.65; }
+.custom-zalo { margin-top: 20px; color: var(--muted); }

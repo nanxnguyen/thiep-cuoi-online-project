@@ -1,0 +1,23 @@
+{
+  // Build output churns thousands of files per `next build`; watching/indexing it
+  // made the VS Code extension host hold ~80k fds and get SIGKILLed (EMFILE).
+  "files.watcherExclude": {
+    "**/.next/**": true,
+    "**/.open-next/**": true,
+    "**/.wrangler/**": true,
+    "**/dist/**": true,
+    "**/node_modules/**": true,
+    "**/.playwright-mcp/**": true,
+    "**/.codegraph/**": true
+  },
+  "search.exclude": {
+    "**/.next": true,
+    "**/.open-next": true,
+    "**/.wrangler": true,
+    "**/dist": true,
+    "**/.playwright-mcp": true
+  },
+  "typescript.tsserver.watchOptions": {
+    "excludeDirectories": ["**/.next", "**/.open-next", "**/dist", "**/node_modules"]
+  }
+}
