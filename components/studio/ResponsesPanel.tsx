@@ -4,15 +4,16 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useCallback, useEffect, useState } from "react";
 import { api, type ResponsesDto } from "@/lib/api";
 import { subscribeToWishes } from "@/lib/supabase-browser";
+import { PrintQrPanel } from "./PrintQrPanel";
 
-type Props = { id: string; editKey: string; questions: { id: string; label: string }[]; published: boolean };
+type Props = { id: string; editKey: string; questions: { id: string; label: string }[]; published: boolean; slug: string; names: string; dateLine: string };
 
 const time = (iso: string) =>
   new Date(iso).toLocaleString("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
 // What guests sent back: who is coming (the latest answer of each name counts), and the guestbook, where the
 // owner decides which wishes stay visible on the invitation.
-export function ResponsesPanel({ id, editKey, questions, published }: Props) {
+export function ResponsesPanel({ id, editKey, questions, published, slug, names, dateLine }: Props) {
   const [rsvpList] = useAutoAnimate<HTMLUListElement>();
   const [wishList] = useAutoAnimate<HTMLUListElement>();
   const [data, setData] = useState<ResponsesDto | null>(null);
@@ -149,6 +150,8 @@ export function ResponsesPanel({ id, editKey, questions, published }: Props) {
           )}
         </>
       )}
+
+      {published && <PrintQrPanel url={`${typeof window === "undefined" ? "" : window.location.origin}/invite/${slug}`} names={names} dateLine={dateLine} />}
     </div>
   );
 }

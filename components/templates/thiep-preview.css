@@ -242,6 +242,55 @@
 .tpO__names { margin-top: 3cqw; font-family: var(--hand); font-size: 9cqw; line-height: 1; }
 .tpO__place { margin-top: 1cqw; font-size: 2.4cqw; letter-spacing: .25em; opacity: .75; }
 
+/* P: dark double-rule announcement + large double-happiness mark */
+.tpP__bg { position: absolute; inset: 0; background: var(--tp-deep); }
+.tpP__line { position: absolute; top: 8cqw; bottom: 8cqw; width: 1px; background: var(--tp-gold); opacity: .5; }
+.tpP__line--l { left: 6cqw; }
+.tpP__line--r { right: 6cqw; }
+.tpP__content { position: absolute; inset: 0; padding: 9cqw 13cqw; display: flex; flex-direction: column; align-items: center; gap: 3cqw; color: var(--tp-gold); text-align: center; }
+.tpP__kicker { font-size: 2.3cqw; letter-spacing: .4em; }
+.tpP__xi { margin-top: 1cqw; font-family: serif; font-size: 17cqw; line-height: .9; }
+.tpP__photo { position: relative; width: 50cqw; height: 62cqw; margin-top: 2cqw; overflow: hidden; border: 1px solid var(--tp-gold); border-radius: 1.5cqw; background: var(--tp-tint); }
+.tpP__names { margin-top: 2.5cqw; color: var(--tp-paper); font-family: var(--script); font-size: 7.5cqw; font-style: italic; }
+.tpP__date { margin-top: auto; font-family: var(--script); font-size: 4.4cqw; letter-spacing: .1em; }
+.tpP__place { font-size: 2.2cqw; letter-spacing: .3em; opacity: .8; }
+
+/* Q: garden trellis + angled plant label */
+.tpQ__bg { position: absolute; inset: 0; background: var(--tp-paper); }
+.tpQ__content { position: absolute; inset: 0; padding: 8cqw; display: flex; flex-direction: column; align-items: center; gap: 3.5cqw; color: var(--tp-deep); }
+.tpQ__kicker { font-size: 2.2cqw; letter-spacing: .35em; }
+.tpQ__trellis { position: relative; width: 82cqw; height: 76cqw; padding: 2.2cqw; background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--tp-gold) 33%, transparent) 0 1.2cqw, transparent 1.2cqw 6.4cqw), repeating-linear-gradient(-45deg, color-mix(in srgb, var(--tp-gold) 33%, transparent) 0 1.2cqw, transparent 1.2cqw 6.4cqw); }
+.tpQ__photo { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--tp-tint); }
+.tpQ__tag { margin-top: 1cqw; padding: 2cqw 5cqw; background: var(--tp-deep); box-shadow: 0 1cqw 2cqw rgb(0 0 0 / .2); transform: rotate(-2deg); }
+.tpQ__tag span { color: var(--tp-paper); font-family: var(--script); font-size: 5.6cqw; font-style: italic; white-space: nowrap; }
+.tpQ__date { margin-top: auto; font-family: var(--script); font-size: 4cqw; }
+.tpQ__place { font-size: 2.1cqw; letter-spacing: .3em; opacity: .75; }
+
+/* R: medal-like arched portrait + ribbon */
+.tpR__bg { position: absolute; inset: 0; background: var(--tp-deep); }
+.tpR__panel { position: absolute; left: 7cqw; right: 7cqw; top: 18cqw; bottom: 10cqw; border-radius: 3cqw; background: var(--tp-tint); box-shadow: inset 0 0 0 1px var(--tp-gold); }
+.tpR__ribbon { position: absolute; left: 50%; top: 6cqw; padding: 1.6cqw 7cqw; color: var(--tp-deep); background: var(--tp-gold); clip-path: polygon(4% 0, 96% 0, 100% 50%, 96% 100%, 4% 100%, 0 50%); transform: translateX(-50%); font-size: 2.2cqw; letter-spacing: .25em; white-space: nowrap; }
+.tpR__photo { position: absolute; left: 12cqw; right: 12cqw; top: 24cqw; bottom: 26cqw; overflow: hidden; border: 1px solid var(--tp-gold); border-radius: 50% 50% 4cqw 4cqw / 30% 30% 4cqw 4cqw; }
+.tpR__names { position: absolute; left: 0; right: 0; bottom: 16cqw; color: var(--tp-gold); font-family: var(--script); font-size: 7.5cqw; font-style: italic; text-align: center; }
+.tpR__foot { position: absolute; left: 0; right: 0; bottom: 7cqw; color: var(--tp-paper); font-size: 2.3cqw; letter-spacing: .25em; text-align: center; }
+
+/* S: letter photograph + overlapping wax seal */
+.tpS__bg { position: absolute; inset: 0; background: var(--tp-paper); }
+.tpS__card { position: absolute; left: 8cqw; right: 8cqw; top: 14cqw; bottom: 20cqw; background: var(--surface); box-shadow: 0 1cqw 3cqw rgb(0 0 0 / .12); }
+.tpS__photo { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--tp-tint); }
+.tpS__seal { position: absolute; left: 50%; top: 5cqw; z-index: 2; width: 17cqw; height: 17cqw; display: grid; place-items: center; border-radius: 50%; background: var(--tp-deep); box-shadow: 0 1cqw 2.4cqw rgb(0 0 0 / .35); transform: translateX(-50%); }
+.tpS__seal span { color: var(--tp-paper); font-family: var(--script); font-size: 6cqw; font-style: italic; }
+.tpS__foot { position: absolute; left: 0; right: 0; bottom: 4cqw; display: flex; flex-direction: column; gap: 1.4cqw; color: var(--tp-deep); text-align: center; }
+.tpS__names { font-family: var(--script); font-size: 6.5cqw; font-style: italic; }
+.tpS__date { font-size: 2.2cqw; letter-spacing: .25em; }
+
+/* T: full-bleed portrait + lower-left paper label */
+.tpT__photo { position: absolute; inset: 0; overflow: hidden; background: var(--tp-tint); }
+.tpT__inset { position: absolute; inset: 5cqw; border: 1px solid var(--tp-paper); opacity: .9; pointer-events: none; }
+.tpT__label { position: absolute; left: 8cqw; bottom: 8cqw; display: flex; flex-direction: column; gap: .6cqw; padding: 3cqw 4cqw; background: var(--tp-paper); }
+.tpT__names { color: var(--tp-deep); font-family: var(--display); font-size: 5.6cqw; line-height: 1; }
+.tpT__date { color: var(--tp-deep); font-size: 2cqw; letter-spacing: .2em; opacity: .75; }
+
 /* full: sample invitation below the cover, 240px design scale */
 .tpf { width: 100%; max-width: 240px; margin: 0 auto; background: var(--tp-paper); color: var(--tp-deep); display: flex; flex-direction: column; font-family: var(--sans); line-height: normal; }
 .tpf span { display: block; }

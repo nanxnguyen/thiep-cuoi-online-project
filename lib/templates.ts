@@ -5,7 +5,7 @@ export type ColorKey = "do" | "dodam" | "nau" | "lam" | "tim" | "xanh" | "hong" 
 import type { NewCoverFamily } from "./covers.ts";
 import { NEW_FAMILIES, familyMeta, isNewFamily } from "./covers.ts";
 
-export type LegacyFamily = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O";
+export type LegacyFamily = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T";
 export type CoverFamily = LegacyFamily | NewCoverFamily;
 import type { SectionProfileKey } from "./section-profiles.ts";
 
@@ -41,11 +41,11 @@ const catalog: Entry[] = [
   ["hoang-gia", "Hoàng Gia", "D", "classic", "Khung vàng · trang nhã", ["vang", "dodam", "lam"], "maison-blanc", "Mẫu thiệp cưới Hoàng Gia sang trọng: khung vàng, chữ viết tay cổ điển. Tạo thiệp cưới online miễn phí cho lễ cưới trang trọng."],
   ["phong-thu", "Phong Thư", "E", "editorial", "Phong bì · lãng mạn", ["do", "oliu"], "afterglow", "Mẫu thiệp cưới Phong Thư lãng mạn như lá thư tay: ảnh nghiêng trong phong bì. Tạo thiệp online miễn phí, gửi qua Zalo."],
   ["bia-bao", "Bìa Báo", "F", "editorial", "Tạp chí · hiện đại", ["muc", "hong"], "gallery-noir", "Mẫu thiệp cưới Bìa Báo hiện đại phong cách tạp chí, chữ lớn nổi bật. Tạo thiệp cưới online miễn phí, cá tính."],
-  ["hy-su", "Hỷ Sự", "A", "traditional", "Chữ Hỷ · lễ thành hôn", ["dodam", "lam"], undefined, "Mẫu thiệp cưới Hỷ Sự với chữ Hỷ cho lễ thành hôn truyền thống. Tạo thiệp online miễn phí, có xác nhận tham dự."],
-  ["vuon-uom", "Vườn Ươm", "C", "botanical", "Sân vườn · nên thơ", ["oliu", "cam"], undefined, "Mẫu thiệp cưới Vườn Ươm nên thơ cho tiệc sân vườn: vòm cổng hoa, tông ô liu cam. Tạo thiệp online miễn phí."],
-  ["nhung-lam", "Nhung Lam", "D", "classic", "Nhung lam · cổ điển", ["lam", "do"], undefined, "Mẫu thiệp cưới Nhung Lam cổ điển tông lam, khung cong viền vàng. Tạo thiệp cưới online miễn phí, trang nhã."],
-  ["thu-tinh", "Thư Tình", "E", "editorial", "Sáp niêm · lãng mạn", ["hong", "dodam"], undefined, "Mẫu thiệp cưới Thư Tình với con dấu sáp niêm lãng mạn như thư tay xưa. Tạo thiệp online miễn phí gửi người thương."],
-  ["chan-dung", "Chân Dung", "F", "editorial", "Ảnh lớn · đương đại", ["muc", "xanh"], undefined, "Mẫu thiệp cưới Chân Dung hiện đại với ảnh lớn đương đại. Tạo thiệp cưới online miễn phí, khoe ảnh cưới đẹp."],
+  ["hy-su", "Hỷ Sự", "P", "traditional", "Chữ Hỷ · lễ thành hôn", ["dodam", "lam"], undefined, "Mẫu thiệp cưới Hỷ Sự với chữ Hỷ cho lễ thành hôn truyền thống. Tạo thiệp online miễn phí, có xác nhận tham dự."],
+  ["vuon-uom", "Vườn Ươm", "Q", "botanical", "Sân vườn · nên thơ", ["oliu", "cam"], undefined, "Mẫu thiệp cưới Vườn Ươm nên thơ cho tiệc sân vườn: vòm cổng hoa, tông ô liu cam. Tạo thiệp online miễn phí."],
+  ["nhung-lam", "Nhung Lam", "R", "classic", "Nhung lam · cổ điển", ["lam", "do"], undefined, "Mẫu thiệp cưới Nhung Lam cổ điển tông lam, khung cong viền vàng. Tạo thiệp cưới online miễn phí, trang nhã."],
+  ["thu-tinh", "Thư Tình", "S", "editorial", "Sáp niêm · lãng mạn", ["hong", "dodam"], undefined, "Mẫu thiệp cưới Thư Tình với con dấu sáp niêm lãng mạn như thư tay xưa. Tạo thiệp online miễn phí gửi người thương."],
+  ["chan-dung", "Chân Dung", "T", "editorial", "Ảnh lớn · đương đại", ["muc", "xanh"], undefined, "Mẫu thiệp cưới Chân Dung hiện đại với ảnh lớn đương đại. Tạo thiệp cưới online miễn phí, khoe ảnh cưới đẹp."],
   ["song-phung", "Song Phụng", "I", "traditional", "Chữ Hỷ lớn · trang trọng", ["do", "dodam", "lam"], "thuy-mac", "Mẫu thiệp cưới Song Phụng trang trọng với chữ Hỷ lớn. Tạo thiệp online miễn phí cho đại lễ gia đình."],
   ["bao-hy", "Báo Hỷ", "H", "traditional", "Thông tin lễ · truyền thống", ["do", "lam"], "so-xuan", "Mẫu thiệp cưới Báo Hỷ đầy đủ thông tin lễ hai họ. Tạo thiệp online miễn phí, rõ ràng cho khách lớn tuổi."],
   ["doi-khung", "Đôi Khung", "G", "korean", "Ảnh đôi · lãng mạn", ["xanh", "hong", "nau"], "olive-story", "Mẫu thiệp cưới Đôi Khung phong cách Hàn với hai khung ảnh polaroid. Tạo thiệp online miễn phí, trẻ trung."],
@@ -105,6 +105,11 @@ const legacyLayouts: Record<LegacyFamily, string> = {
   M: "Đĩa vinyl và bìa Side A, nhãn đĩa là ảnh cưới, tracklist là lịch trình.",
   N: "Dải phim ba khung có lỗ răng, dấu ngày màu cam kiểu máy film.",
   O: "Tờ lịch xé: số ngày lớn, thứ, dòng Ngày lành tháng tốt.",
+  P: "Nền đỏ đậm, hai viền vàng dọc, chữ Hỷ lớn và ảnh cưới chữ nhật.",
+  Q: "Khung ảnh caro vàng kiểu giàn hoa, nhãn tên đặt lệch như thẻ cây.",
+  R: "Khung ảnh bo đỉnh vòm kiểu huy chương, nhãn Lễ Thành Hôn dạng ruy băng.",
+  S: "Ảnh trong khung thư trắng, con dấu sáp chữ lồng đè lên mép trên.",
+  T: "Ảnh tràn viền, khung mảnh và thẻ tên ngày cưới ở góc dưới trái.",
 };
 
 export const familyLayout: Record<CoverFamily, string> = {
@@ -116,10 +121,11 @@ export const familyLayout: Record<CoverFamily, string> = {
 // New families reuse audited sample shots; their ornaments are original CSS/SVG.
 const ph = (...names: string[]) => names.map((n) => `/photos/${n}.jpg`);
 const legacyPhotos: Record<LegacyFamily, string[]> = {
-  A: ph("hy-phuc-do"), B: ph("han-quoc-toi-gian"), C: ph("om-hem-nui"), D: ph("lau-dai-trang"), E: ph("retro-pho-cho"),
+  A: ph("hy-phuc-do"), B: ph("han-quoc-nude"), C: ph("om-hem-nui"), D: ph("phong-phap-kem"), E: ph("retro-pho-cho"),
   F: ph("vuon-xanh"), G: ph("o-hoa", "vest-xanh-navy"), H: ph("retro-do-hoa-hong", "ao-dai-do"), I: ph("studio-hoa-trang"),
-  J: ph("ao-dai-do"), K: ph("nang-chieu"), L: ph("cua-so-vom"), M: ph("khoi-hong"), N: ph("voan-hoa-kho", "vuon-bong-bong", "nang-chieu"),
+  J: ph("ao-dai-do"), K: ph("paris-vong-xoay"), L: ph("cua-so-vom"), M: ph("khoi-hong"), N: ph("voan-hoa-kho", "vuon-bong-bong", "nang-chieu"),
   O: ph("han-phuc-co-trang"),
+  P: ph("ao-dai-do"), Q: ph("vuon-bong-bong"), R: ph("sofa-han-quoc"), S: ph("may-hong-trai-tim"), T: ph("quan-phuc-studio"),
 };
 
 export const familyPhotos: Record<CoverFamily, string[]> = {
@@ -134,7 +140,7 @@ const legacy = new Map([...catalog.filter((entry) => entry[6]).map((entry) => [e
 export function getPalette(template: Pick<Template, "family" | "colors">, key = ""): Palette {
   const selected = colors[template.colors.includes(key as ColorKey) ? key as ColorKey : template.colors[0]];
   // Legacy dark families render light-on-dark; new dark covers declare it in their metadata.
-  const dark = ["A", "D", "F", "J", "L"].includes(template.family) || (isNewFamily(template.family) && familyMeta[template.family].dark);
+  const dark = ["A", "D", "F", "J", "L", "P", "R", "T"].includes(template.family) || (isNewFamily(template.family) && familyMeta[template.family].dark);
   return dark
     ? { bg: selected.deep, surface: selected.deep, ink: selected.paper, muted: selected.paper, accent: selected.paper, accentInk: selected.deep }
     : { bg: selected.paper, surface: selected.paper, ink: selected.deep, muted: selected.deep, accent: selected.deep, accentInk: selected.paper };
@@ -142,7 +148,7 @@ export function getPalette(template: Pick<Template, "family" | "colors">, key = 
 
 export const templates: readonly Template[] = catalog.map(([id, name, family, archetype, blurb, paletteKeys, , seo]) => {
   const t = { id, name, family, archetype, blurb, colors: paletteKeys };
-  // Frozen baseline: legacy A–O templates keep profile "default"; new families
+  // The twenty original A–T templates keep profile "default"; new families
   // take theirs from the cover metadata (lib/covers.ts, single source).
   const profile = isNewFamily(family) ? familyMeta[family].profile : ("default" as const);
   return { ...t, profile, seo: seo ?? blurb, palette: getPalette(t) };

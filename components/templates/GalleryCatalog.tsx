@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { colors, templateSamples, templates, type ColorKey, type Template } from "@/lib/templates";
 import { TemplateDemo } from "./TemplateDemo";
 import { ThiepPreview } from "./ThiepPreview";
@@ -19,10 +19,33 @@ const COLOR_GROUPS: { key: string; label: string; color: string; pals: ColorKey[
   { key: "ink", label: "Mực", color: colors.muc.deep, pals: ["muc"] },
 ];
 const sampleOf = (t: Template) => templateSamples[t.id];
-const preview = (t: Template, key: ColorKey, radius?: string) => {
+// Perf: 50 covers is ~2,800 DOM nodes plus their fonts. Only the first few render on the server; the rest are empty paper-coloured
+// frames of the same size (same classes as the cover, so no layout shift) that become the real cover once they near the viewport.
+function Defer({ eager, bg, radius, children }: { eager: boolean; bg: string; radius?: string; children: ReactNode }) {
+  const [show, setShow] = useState(eager);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (show || !el) return;
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        setShow(true);
+        io.disconnect();
+      }
+    }, { rootMargin: "800px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [show]);
+  return show ? <>{children}</> : <div ref={ref} className="tp-root tp-root--std" aria-hidden="true" style={{ background: bg, maxWidth: "240px", borderRadius: radius ?? "10px" }} />;
+}
+const preview = (t: Template, key: ColorKey, radius?: string, eager = true) => {
   const s = sampleOf(t);
   const c = colors[key];
-  return <ThiepPreview family={t.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} radius={radius} />;
+  return (
+    <Defer eager={eager} bg={c.paper} radius={radius}>
+      <ThiepPreview family={t.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} radius={radius} />
+    </Defer>
+  );
 };
 
 export function GalleryCatalog() {
@@ -66,15 +89,18 @@ export function GalleryCatalog() {
         </div>
         <div className="gal-rank__rail" ref={rail}>
           {ranking.map((t, i) => (
-            <Link href={`/templates/${t.id}`} key={t.id}>
+            <Link href={`/templates/${t.id}`} key={t.id} style={{ "--i": i, "--rank-gold": colors[t.colors[0]].gold } as CSSProperties}>
               <div className="gal-rank__card">
-                {preview(t, t.colors[0], "12px")}
+                {preview(t, t.colors[0], "12px", i < 5)}
                 <span className="gal-rank__n">{i + 1}</span>
               </div>
               <div className="gal-rank__meta">
                 <span>{t.name}</span>
                 <span>
                   {sampleOf(t).style} · {t.colors.length} màu
+                </span>
+                <span className="gal-rank__bar" aria-hidden="true">
+                  <i style={{ width: `${sampleOf(t).pop}%` }} />
                 </span>
               </div>
             </Link>
@@ -137,7 +163,7 @@ export function GalleryCatalog() {
           </div>
         )}
         <div className="gal-grid">
-          {list.map((t) => {
+          {list.map((t, i) => {
             const s = sampleOf(t);
             let key = chosen[t.id] ?? (grp ? t.colors.find((k) => grp.pals.includes(k)) : t.colors[0]) ?? t.colors[0];
             if (!t.colors.includes(key)) key = t.colors[0];
@@ -146,7 +172,7 @@ export function GalleryCatalog() {
               <article key={t.id} onMouseEnter={() => setHover(t.id)} onMouseLeave={() => setHover(null)}>
                 <div className="gal-card" data-hover={on || undefined}>
                   <Link href={`/templates/${t.id}?color=${key}`} aria-label={`Xem mẫu ${t.name}`}>
-                    {preview(t, key)}
+                    {preview(t, key, undefined, i < 8)}
                   </Link>
                   {s.badge && <span className={`gal-badge${s.badge === "HOT" ? " gal-badge--hot" : ""}`}>{s.badge}</span>}
                   {on && (

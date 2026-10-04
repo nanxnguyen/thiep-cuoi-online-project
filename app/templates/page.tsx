@@ -66,7 +66,7 @@ export default function TemplatesPage() {
           <span className="gal-kicker">GỢI Ý MẪU</span>
           <h3>Chưa thấy mẫu ưng ý?</h3>
           <p>Kể cho Mộc nghe bạn đang tìm gì: màu chủ đạo, không khí buổi tiệc, một hình ảnh bạn thích. Mẫu mới được thiết kế mỗi tháng theo gợi ý của các cặp đôi.</p>
-          <form action="/tro-giup">
+          <form action="/tro-giup" noValidate>
             <input name="q" aria-label="Gợi ý mẫu" placeholder="Ví dụ: tông xanh rêu, tiệc sân vườn ở Đà Lạt" />
             <button type="submit">Gửi gợi ý</button>
           </form>

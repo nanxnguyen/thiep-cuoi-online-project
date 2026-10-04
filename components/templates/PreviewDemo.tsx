@@ -24,6 +24,11 @@ const familyLabels: Record<CoverFamily, string> = {
   M: "Đĩa than",
   N: "Cuộn phim",
   O: "Lịch bloc",
+  P: "Hỷ sự",
+  Q: "Vườn ươm",
+  R: "Nhung lam",
+  S: "Thư tình",
+  T: "Chân dung",
   ...(Object.fromEntries(NEW_FAMILIES.map((family) => [family, familyMeta[family].label])) as Record<NewCoverFamily, string>),
 };
 

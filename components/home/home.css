@@ -51,7 +51,8 @@
 .hm-hero__proof > span > span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
 /* hero envelope stage */
-.hm-stage { position: relative; height: min(640px, 86vw); perspective: 1400px; max-width: 520px; width: 100%; justify-self: center; transition: transform .4s ease-out; --env: min(380px, 86vw); }
+/* the rising card is 9:16 at min(260px, 58vw) wide: on phones it is taller than 86vw, so the stage grows to hold it instead of covering the copy above */
+.hm-stage { position: relative; height: max(min(640px, 86vw), calc(min(260px, 58vw) * 16 / 9 + 80px)); perspective: 1400px; max-width: 520px; width: 100%; justify-self: center; transition: transform .4s ease-out; --env: min(380px, 86vw); }
 .hm-env__back, .hm-env__front, .hm-env__shade { position: absolute; left: 50%; bottom: 6%; width: var(--env); height: calc(var(--env) * .658); margin-left: calc(var(--env) / -2); }
 .hm-env__back { background: var(--env-back); border-radius: 6px; z-index: 2; box-shadow: 0 40px 60px -30px rgba(80, 10, 14, .6); }
 .hm-env__card { position: absolute; left: 50%; bottom: 11%; width: min(260px, 58vw); margin-left: calc(min(260px, 58vw) / -2); z-index: 3; animation: cardRise 1.3s 1.05s cubic-bezier(.2, .8, .2, 1) both; }
@@ -78,13 +79,28 @@
 .hm-chip--wish > div > span:last-child { font-size: 12px; color: var(--faint); }
 
 /* template marquee */
-.hm-marquee { padding: 24px 0 96px; overflow: hidden; display: flex; flex-direction: column; gap: 24px; }
-.hm-marquee__track { display: flex; width: max-content; gap: 24px; animation: marqueeL 70s linear infinite; }
+.hm-marquee { padding: 40px 0 120px; overflow: hidden; display: flex; flex-direction: column; gap: 40px; position: relative; }
+.hm-marquee__head { max-width: 1280px; margin: 0 auto; padding: 0 32px; width: 100%; display: flex; align-items: end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.hm-marquee__head > div { display: flex; flex-direction: column; gap: 10px; }
+.hm-marquee__head h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.05; }
+.hm-marquee__head h2 em { color: var(--gold-deep); }
+.hm-marquee__head > a { font-size: 14px; font-weight: 500; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; white-space: nowrap; }
+.hm-marquee__mask { position: relative; -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent); mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent); }
+.hm-marquee__track { display: flex; width: max-content; gap: 30px; padding: 10px 0 26px; animation: marqueeL 64s linear infinite; }
 .hm-marquee__track:hover { animation-play-state: paused; }
-.hm-marquee__track > a { width: 200px; display: flex; flex-direction: column; gap: 12px; color: var(--ink); transition: transform .35s; }
-.hm-marquee__track > a:hover { transform: translateY(-8px) rotate(-1deg); color: var(--ink); }
-.hm-marquee__card { border-radius: 8px; box-shadow: 0 16px 30px -18px rgba(26, 20, 18, .45); }
-.hm-marquee__track > a > span { font-family: var(--display); font-size: 17px; }
+.hm-marquee__track > a { width: 224px; display: flex; flex-direction: column; gap: 14px; color: var(--ink); translate: 0 var(--off, 0px); transition: translate .4s cubic-bezier(.2, .7, .2, 1), rotate .4s, scale .4s; }
+.hm-marquee__track > a:hover { translate: 0 calc(var(--off, 0px) - 12px); rotate: var(--rot, -1deg); scale: 1.035; color: var(--ink); }
+.hm-marquee__card { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 22px 40px -20px rgba(26, 20, 18, .5); transition: box-shadow .4s; }
+.hm-marquee__track > a:hover .hm-marquee__card { box-shadow: 0 30px 54px -18px var(--glow, rgba(26, 20, 18, .5)); }
+.hm-marquee__badge { position: absolute; top: 12px; left: 12px; padding: 5px 11px; border-radius: 999px; background: rgba(26, 20, 18, .55); color: var(--on-dark); font-size: 11px; letter-spacing: .1em; backdrop-filter: blur(3px); }
+.hm-marquee__meta { display: flex; flex-direction: column; gap: 2px; }
+.hm-marquee__meta > span:first-child { font-family: var(--display); font-size: 18px; }
+.hm-marquee__meta > span:last-child { font-size: 12px; color: var(--faint); }
+.hm-marquee__track--small { gap: 22px; padding: 6px 0; animation: marqueeR 80s linear infinite; opacity: .8; }
+.hm-marquee__track--small > a { width: 146px; gap: 10px; translate: none; transition: translate .35s, opacity .35s; }
+.hm-marquee__track--small > a:hover { translate: 0 -8px; rotate: 0deg; scale: 1; }
+.hm-marquee__track--small .hm-marquee__card { border-radius: 10px; box-shadow: 0 14px 26px -16px rgba(26, 20, 18, .4); }
+.hm-marquee__track--small > a > span { font-family: var(--display); font-size: 14px; }
 
 /* quote strip */
 .hm-quotes { padding: 8px 0 88px; overflow: hidden; background: var(--night); }
@@ -117,7 +133,7 @@
 .hm-feats__top { display: flex; align-items: end; gap: 24px; flex-wrap: wrap; margin-bottom: 56px; }
 .hm-feats__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 20px; }
 .hm-feat { background: var(--paper); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 12px; color: var(--ink); transition: transform .35s, box-shadow .35s; }
-.hm-feat:hover { transform: translateY(-6px); box-shadow: 0 24px 44px -24px rgba(26, 20, 18, .35); color: var(--ink); }
+.hm-feat:hover { transform: translateY(-8px) rotate(-1deg) scale(1.02); box-shadow: 0 30px 54px -24px rgba(26, 20, 18, .42); color: var(--ink); }
 .hm-feat--dark { background: var(--night); color: var(--on-dark); }
 .hm-feat--dark:hover { box-shadow: 0 24px 44px -24px rgba(26, 20, 18, .5); color: var(--on-dark); }
 .hm-feat__art { height: 160px; border-radius: 12px; background: var(--surface); }
@@ -228,3 +244,10 @@
 .hm-price__body > div { display: flex; gap: 12px; flex-wrap: wrap; }
 .hm-price__cta { background: var(--surface); color: var(--accent); padding: 15px 26px; border-radius: 999px; font-size: 15px; font-weight: 500; transition: transform .25s; }
 .hm-price__cta:hover { transform: translateY(-2px); color: var(--accent-hover); }
+
+/* design/Trang Chu (2026-10-04): closing band rings turn, sparkles twinkle */
+@keyframes hmRingSpin { to { transform: rotate(360deg); } }
+@keyframes hmTwinkle { 0%, 100% { opacity: .15; transform: scale(.6); } 50% { opacity: 1; transform: scale(1.2); } }
+.hm-price__ring1 { animation: hmRingSpin 40s linear infinite; }
+.hm-price__ring2 { animation: hmRingSpin 28s linear infinite reverse; }
+.hm-price__spark { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--surface); pointer-events: none; animation: hmTwinkle var(--d) ease-in-out infinite; animation-delay: var(--w); }

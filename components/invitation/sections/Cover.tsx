@@ -5,7 +5,7 @@ import type { Locale } from "@/lib/i18n";
 import type { Template } from "@/lib/templates";
 import { brideName, groomName } from "./shared";
 
-// The template's own cover (design/Thiep Preview.dc.html, all fifteen families), recoloured by the invitation
+// The template's own cover (design/Thiep Preview.dc.html, all twenty original families), recoloured by the invitation
 // palette. An empty hero photo shows the empty frame, never a sample couple.
 export function Cover({ content, template, locale = "vi", showcase = false }: { content: Content; template: Template; locale?: Locale; showcase?: boolean }) {
   const event = earliestEvent(content.events);

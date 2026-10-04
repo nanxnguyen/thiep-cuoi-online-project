@@ -16,8 +16,8 @@ test("thirty heritage, garden, editorial, luxury, story and expressive families 
   }
 });
 
-test("legacy A–O families are not new families", () => {
-  for (const f of ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"]) {
+test("design-native A–T families are not part of the thirty new families", () => {
+  for (const f of ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"]) {
     assert.equal(isNewFamily(f), false, f);
   }
   for (const f of NEW_FAMILIES) assert.equal(isNewFamily(f), true);

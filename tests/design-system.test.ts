@@ -72,3 +72,17 @@ test("no raw hex colours outside tokens.css", () => {
   }
   assert.deepEqual(offenders, []);
 });
+
+test("application scrollbars have a standards-based global baseline", () => {
+  const globals = readFileSync("app/globals.css", "utf8");
+  const help = readFileSync("app/tro-giup/help.css", "utf8");
+
+  assert.match(globals, /scrollbar-color:\s*var\(--line-strong\)\s+var\(--paper-alt\)/);
+  assert.match(globals, /scrollbar-width:\s*thin/);
+  assert.doesNotMatch(help, /scrollbar-width:\s*none|::-webkit-scrollbar/);
+});
+
+test("template suggestion form owns validation instead of browser bubbles", () => {
+  const page = readFileSync("app/templates/page.tsx", "utf8");
+  assert.match(page, /<form action="\/tro-giup" noValidate>/);
+});

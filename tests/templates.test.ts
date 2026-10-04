@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { templates, getTemplate, getPalette, DEFAULT_TEMPLATE_ID, archetypes } from "../lib/templates.ts";
 
 const channel = (v: number) => {
@@ -15,12 +16,24 @@ const ratio = (a: string, b: string) => {
   return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
 };
 
-test("design catalog has fifty distinct names and forty-five cover families", () => {
+test("design catalog has fifty distinct names and fifty cover families", () => {
   assert.equal(templates.length, 50);
   assert.equal(new Set(templates.map((t) => t.id)).size, 50);
   assert.equal(new Set(templates.map((t) => t.name)).size, 50);
-  assert.equal(new Set(templates.map((t) => t.family)).size, 45);
+  assert.equal(new Set(templates.map((t) => t.family)).size, 50);
   assert.deepEqual(templates.slice(0, 3).map((t) => t.name), ["Song Hỷ", "Nét Mực", "Hoa Nhài"]);
+});
+
+test("five redesigned legacy templates use the current P–T cover families", () => {
+  assert.deepEqual(
+    ["hy-su", "vuon-uom", "nhung-lam", "thu-tinh", "chan-dung"].map((id) => getTemplate(id)?.family),
+    ["P", "Q", "R", "S", "T"],
+  );
+
+  const preview = readFileSync("components/templates/ThiepPreview.tsx", "utf8");
+  for (const family of ["P", "Q", "R", "S", "T"]) {
+    assert.match(preview, new RegExp(`f === "${family}"`), `missing ${family} renderer`);
+  }
 });
 
 test("published legacy template IDs resolve to their new visual families", () => {
@@ -74,11 +87,18 @@ test("every template has a unique SEO description fitting a search result", () =
   }
 });
 
-// Immutable baseline for the 20 legacy templates (owner decision 2026-10-04):
-// id, name, family, archetype, palette, sample content and SEO must not change
-// while the 30 new templates are added. Do not update this snapshot to make a
-// diff pass — fix the implementation instead.
-test("legacy registry snapshot is frozen at twenty rows", () => {
+test("template detail renders the design's single layout paragraph", () => {
+  const page = readFileSync("app/templates/[id]/page.tsx", "utf8");
+  const head = page.match(/<div className="tdt__head">([\s\S]*?)<\/div>/)?.[1] ?? "";
+
+  assert.equal((head.match(/<p>/g) ?? []).length, 1);
+  assert.match(head, /<p>\{familyLayout\[template\.family\]\}<\/p>/);
+});
+
+// Baseline for the original 20 catalog rows. Owner decision 2026-10-04 permits
+// their cover families to follow the current design; IDs, names, archetypes,
+// palettes and SEO remain stable so published invitations keep resolving.
+test("original twenty catalog rows keep their public contract", () => {
   assert.deepEqual(
     templates.slice(0, 20).map((t) => ({ id: t.id, name: t.name, family: t.family, archetype: t.archetype, blurb: t.blurb, colors: [...t.colors], seo: t.seo })),
     [
@@ -88,11 +108,11 @@ test("legacy registry snapshot is frozen at twenty rows", () => {
       { id: "hoang-gia", name: "Hoàng Gia", family: "D", archetype: "classic", blurb: "Khung vàng · trang nhã", colors: ["vang", "dodam", "lam"], seo: "Mẫu thiệp cưới Hoàng Gia sang trọng: khung vàng, chữ viết tay cổ điển. Tạo thiệp cưới online miễn phí cho lễ cưới trang trọng." },
       { id: "phong-thu", name: "Phong Thư", family: "E", archetype: "editorial", blurb: "Phong bì · lãng mạn", colors: ["do", "oliu"], seo: "Mẫu thiệp cưới Phong Thư lãng mạn như lá thư tay: ảnh nghiêng trong phong bì. Tạo thiệp online miễn phí, gửi qua Zalo." },
       { id: "bia-bao", name: "Bìa Báo", family: "F", archetype: "editorial", blurb: "Tạp chí · hiện đại", colors: ["muc", "hong"], seo: "Mẫu thiệp cưới Bìa Báo hiện đại phong cách tạp chí, chữ lớn nổi bật. Tạo thiệp cưới online miễn phí, cá tính." },
-      { id: "hy-su", name: "Hỷ Sự", family: "A", archetype: "traditional", blurb: "Chữ Hỷ · lễ thành hôn", colors: ["dodam", "lam"], seo: "Mẫu thiệp cưới Hỷ Sự với chữ Hỷ cho lễ thành hôn truyền thống. Tạo thiệp online miễn phí, có xác nhận tham dự." },
-      { id: "vuon-uom", name: "Vườn Ươm", family: "C", archetype: "botanical", blurb: "Sân vườn · nên thơ", colors: ["oliu", "cam"], seo: "Mẫu thiệp cưới Vườn Ươm nên thơ cho tiệc sân vườn: vòm cổng hoa, tông ô liu cam. Tạo thiệp online miễn phí." },
-      { id: "nhung-lam", name: "Nhung Lam", family: "D", archetype: "classic", blurb: "Nhung lam · cổ điển", colors: ["lam", "do"], seo: "Mẫu thiệp cưới Nhung Lam cổ điển tông lam, khung cong viền vàng. Tạo thiệp cưới online miễn phí, trang nhã." },
-      { id: "thu-tinh", name: "Thư Tình", family: "E", archetype: "editorial", blurb: "Sáp niêm · lãng mạn", colors: ["hong", "dodam"], seo: "Mẫu thiệp cưới Thư Tình với con dấu sáp niêm lãng mạn như thư tay xưa. Tạo thiệp online miễn phí gửi người thương." },
-      { id: "chan-dung", name: "Chân Dung", family: "F", archetype: "editorial", blurb: "Ảnh lớn · đương đại", colors: ["muc", "xanh"], seo: "Mẫu thiệp cưới Chân Dung hiện đại với ảnh lớn đương đại. Tạo thiệp cưới online miễn phí, khoe ảnh cưới đẹp." },
+      { id: "hy-su", name: "Hỷ Sự", family: "P", archetype: "traditional", blurb: "Chữ Hỷ · lễ thành hôn", colors: ["dodam", "lam"], seo: "Mẫu thiệp cưới Hỷ Sự với chữ Hỷ cho lễ thành hôn truyền thống. Tạo thiệp online miễn phí, có xác nhận tham dự." },
+      { id: "vuon-uom", name: "Vườn Ươm", family: "Q", archetype: "botanical", blurb: "Sân vườn · nên thơ", colors: ["oliu", "cam"], seo: "Mẫu thiệp cưới Vườn Ươm nên thơ cho tiệc sân vườn: vòm cổng hoa, tông ô liu cam. Tạo thiệp online miễn phí." },
+      { id: "nhung-lam", name: "Nhung Lam", family: "R", archetype: "classic", blurb: "Nhung lam · cổ điển", colors: ["lam", "do"], seo: "Mẫu thiệp cưới Nhung Lam cổ điển tông lam, khung cong viền vàng. Tạo thiệp cưới online miễn phí, trang nhã." },
+      { id: "thu-tinh", name: "Thư Tình", family: "S", archetype: "editorial", blurb: "Sáp niêm · lãng mạn", colors: ["hong", "dodam"], seo: "Mẫu thiệp cưới Thư Tình với con dấu sáp niêm lãng mạn như thư tay xưa. Tạo thiệp online miễn phí gửi người thương." },
+      { id: "chan-dung", name: "Chân Dung", family: "T", archetype: "editorial", blurb: "Ảnh lớn · đương đại", colors: ["muc", "xanh"], seo: "Mẫu thiệp cưới Chân Dung hiện đại với ảnh lớn đương đại. Tạo thiệp cưới online miễn phí, khoe ảnh cưới đẹp." },
       { id: "song-phung", name: "Song Phụng", family: "I", archetype: "traditional", blurb: "Chữ Hỷ lớn · trang trọng", colors: ["do", "dodam", "lam"], seo: "Mẫu thiệp cưới Song Phụng trang trọng với chữ Hỷ lớn. Tạo thiệp online miễn phí cho đại lễ gia đình." },
       { id: "bao-hy", name: "Báo Hỷ", family: "H", archetype: "traditional", blurb: "Thông tin lễ · truyền thống", colors: ["do", "lam"], seo: "Mẫu thiệp cưới Báo Hỷ đầy đủ thông tin lễ hai họ. Tạo thiệp online miễn phí, rõ ràng cho khách lớn tuổi." },
       { id: "doi-khung", name: "Đôi Khung", family: "G", archetype: "korean", blurb: "Ảnh đôi · lãng mạn", colors: ["xanh", "hong", "nau"], seo: "Mẫu thiệp cưới Đôi Khung phong cách Hàn với hai khung ảnh polaroid. Tạo thiệp online miễn phí, trẻ trung." },

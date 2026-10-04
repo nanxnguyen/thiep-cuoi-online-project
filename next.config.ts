@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   output: "standalone",
+  // Lets a production build for perf measurement land beside a running `next dev` (NEXT_DIST_DIR=.next-perf next build).
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   experimental: { inlineCss: true },
   // A stray yarn.lock in the home directory otherwise makes Next infer the wrong workspace root.
   turbopack: { root: process.cwd() },

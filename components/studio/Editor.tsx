@@ -368,7 +368,7 @@ export function Editor({ id }: { id: string }) {
               />
             )}
             {sec.panel === "guests" && <GuestsPanel id={id} editKey={editKey} published={meta.published} />}
-            {sec.panel === "responses" && <ResponsesPanel id={id} editKey={editKey} questions={draft.content.rsvp.questions} published={meta.published} />}
+            {sec.panel === "responses" && <ResponsesPanel id={id} editKey={editKey} questions={draft.content.rsvp.questions} published={meta.published} slug={meta.slug} names={invitationTitle(draft.content.couple)} dateLine={(draft.content.events[0]?.date ?? "").split("-").reverse().join(" · ")} />}
           </div>
           {step >= 0 && (
             <div className="ed-form__foot">

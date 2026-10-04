@@ -23,6 +23,31 @@
 }
 html {
   scroll-behavior: smooth;
+  scrollbar-color: var(--line-strong) var(--paper-alt);
+  scrollbar-width: thin;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--paper-alt);
+}
+*::-webkit-scrollbar-thumb {
+  border: 2px solid var(--paper-alt);
+  border-radius: var(--radius-full);
+  background: var(--line-strong);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-400);
+}
+*::-webkit-scrollbar-thumb:active {
+  background: var(--ink-500);
+}
+@media (forced-colors: active) {
+  html {
+    scrollbar-color: auto;
+  }
 }
 body {
   margin: 0;
@@ -249,6 +274,7 @@ h3 em {
   }
 }
 .site-login {
+  order: -1; /* design Site Header: Đăng nhập sits before the red Tạo thiệp button */
   display: flex;
   align-items: center;
   gap: 10px;

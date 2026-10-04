@@ -35,3 +35,4 @@ image-scrapt/
 # Playwright e2e output
 test-results/
 playwright-report/
+.next-perf

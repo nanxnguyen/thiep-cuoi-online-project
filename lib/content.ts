@@ -247,7 +247,7 @@ export function sampleContent(now: Date = new Date()): Content {
       ["19:30", "Cắt bánh, nâng ly"],
       ["21:00", "Tiễn khách"],
     ].map(([time, title], i) => ({ id: `s${i}`, time, title })),
-    album: ["lau-dai-trang", "studio-hoa-trang", "hoa-hong-phan", "o-hoa", "sofa-han-quoc", "om-hem-nui"].map((n, i) => ({ url: photo(n), alt: `Ảnh cưới ${i + 1}` })),
+    album: ["phong-phap-kem", "han-quoc-nude", "paris-vong-xoay", "may-hong-trai-tim", "hoa-hong-phan", "lau-dai-trang"].map((n, i) => ({ url: photo(n), alt: `Ảnh cưới ${i + 1}` })),
     rsvp: { enabled: true, deadline: "", plusOnes: true, questions: [{ id: "bus", label: "Cần xe đưa đón", labelEn: "Need a shuttle", type: "yesno" }] },
     gift: {
       enabled: true,

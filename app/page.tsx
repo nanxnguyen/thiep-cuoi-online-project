@@ -31,10 +31,13 @@ const TPL: [string, string, CoverFamily, ColorKey, string, string, string, strin
   ["thuy-mac", "Thủy Mặc", "I", "lam", "Ngọc Ánh", "Thế Bảo", "08 · 12 · 2026", "BẮC NINH"],
   ["so-xuan", "Sơ Xuân", "H", "dodam", "Thanh Tú", "Hoàng Nam", "22 · 11 · 2026", ""],
 ];
+const STYLE_BY_PALETTE: Partial<Record<ColorKey, string>> = { do: "Truyền thống", dodam: "Truyền thống", xanh: "Hoa", oliu: "Hoa", vang: "Cổ điển", lam: "Cổ điển", hong: "Lãng mạn", tim: "Tối giản", muc: "Hiện đại" };
 const MARQUEE = TPL.map(([legacy, name, family, pal, a, b, date, place]) => {
   const t = getTemplate(legacy);
-  return { id: t?.id ?? legacy, name: t?.name ?? name, family, ...colors[pal], a, b, date, place };
+  return { id: t?.id ?? legacy, name: t?.name ?? name, family, ...colors[pal], a, b, date, place, style: STYLE_BY_PALETTE[pal] ?? "Hiện đại" };
 });
+const MARQUEE2 = [...MARQUEE].reverse();
+const SPARKLES = [["10%", "20%"], ["85%", "15%"], ["92%", "70%"], ["6%", "75%"], ["45%", "10%"], ["55%", "85%"]];
 const STEPS = [
   ["01", "Chọn mẫu", `${templates.length} mẫu thiết kế riêng với sáu phong cách. Đổi mẫu lúc nào cũng được, nội dung vẫn còn nguyên.`, 0],
   ["02", "Điền nội dung", "Tên, ngày, địa điểm, ảnh và nhạc. Mộc tự lưu khi bạn gõ và cho xem trước ngay bên cạnh.", 120],
@@ -180,15 +183,50 @@ export default function HomePage() {
         </section>
 
         <section className="hm-marquee" aria-label="Mẫu thiệp">
-          <div className="hm-marquee__track">
-            {[...MARQUEE, ...MARQUEE].map((t, i) => (
-              <Link href={`/templates/${t.id}`} key={`${t.id}-${i}`} tabIndex={i >= MARQUEE.length ? -1 : undefined} aria-hidden={i >= MARQUEE.length || undefined}>
-                <div className="hm-marquee__card">
-                  <ThiepPreview family={t.family} deep={t.deep} paper={t.paper} gold={t.gold} a={t.a} b={t.b} date={t.date} place={t.place} radius="8px" />
-                </div>
-                <span>{t.name}</span>
-              </Link>
-            ))}
+          <div className="hm-marquee__head" data-reveal="1">
+            <div>
+              <span className="hm-kicker">ĐƯỢC CHỌN NHIỀU NHẤT</span>
+              <h2>
+                {templates.length} mẫu, <em>sáu phong cách</em>
+              </h2>
+            </div>
+            <Link href="/templates">Xem toàn bộ bộ sưu tập →</Link>
+          </div>
+          <div className="hm-marquee__mask">
+            <div className="hm-marquee__track">
+              {[...MARQUEE, ...MARQUEE].map((t, i) => (
+                <Link
+                  href={`/templates/${t.id}`}
+                  key={`${t.id}-${i}`}
+                  tabIndex={i >= MARQUEE.length ? -1 : undefined}
+                  aria-hidden={i >= MARQUEE.length || undefined}
+                  style={{ "--off": `${i % 2 ? 18 : 0}px`, "--rot": `${i % 2 ? 1 : -1}deg`, "--glow": `${t.deep}aa` } as CSSProperties}
+                >
+                  <div className="hm-marquee__card">
+                    <ThiepPreview family={t.family} deep={t.deep} paper={t.paper} gold={t.gold} a={t.a} b={t.b} date={t.date} place={t.place} radius="14px" />
+                    <span className="hm-marquee__badge">{t.style}</span>
+                  </div>
+                  <div className="hm-marquee__meta">
+                    <span>{t.name}</span>
+                    <span>
+                      {t.a} &amp; {t.b}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="hm-marquee__mask">
+            <div className="hm-marquee__track hm-marquee__track--small">
+              {[...MARQUEE2, ...MARQUEE2].map((t, i) => (
+                <Link href={`/templates/${t.id}`} key={`${t.id}-${i}`} tabIndex={-1} aria-hidden="true">
+                  <div className="hm-marquee__card">
+                    <ThiepPreview family={t.family} deep={t.deep} paper={t.paper} gold={t.gold} a={t.a} b={t.b} date={t.date} place={t.place} radius="10px" />
+                  </div>
+                  <span>{t.name}</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -397,6 +435,9 @@ export default function HomePage() {
           <div className="hm-price" data-reveal="1">
             <div className="hm-price__ring1" aria-hidden="true" />
             <div className="hm-price__ring2" aria-hidden="true" />
+            {SPARKLES.map(([x, y], i) => (
+              <span key={i} className="hm-price__spark" aria-hidden="true" style={{ left: x, top: y, "--d": `${2.2 + (i % 3) * 0.4}s`, "--w": `${i * 0.25}s` } as CSSProperties} />
+            ))}
             <div className="hm-price__head">
               <span className="hm-kicker hm-kicker--rose">BẢNG GIÁ</span>
               <h2>

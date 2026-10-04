@@ -69,6 +69,6 @@ test("resolver on the default profile with the four new sections off reproduces 
   ]);
 });
 
-test("legacy A–O templates stay on the default profile", () => {
+test("original A–T templates stay on the default profile", () => {
   for (const template of templates.filter((t) => !isNewFamily(t.family))) assert.equal(template.profile, "default");
 });

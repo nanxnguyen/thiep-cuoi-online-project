@@ -78,6 +78,8 @@ Button CTA dạng pill (`--radius-full`); chip/input bo `--radius-s` 8px, card `
 
 Header/footer là shared component. `GalleryCatalog` và Studio đọc chung registry mẫu/màu; preview và thiệp khách dùng chung `InvitationRenderer`. Chọn mẫu/màu phải có trạng thái pressed/selected và điều khiển bàn phím; lưu, xuất bản, lỗi mạng và form phản hồi giữ thông báo bằng chữ. Chuyển động ngắn cho phong bì và hover; `prefers-reduced-motion` vô hiệu hóa chuyển động trang trí.
 
+Mọi vùng cuộn của ứng dụng kế thừa scrollbar toàn cục từ `app/globals.css`: track giấy ngà, thumb dùng token đường kẻ, có hover/active và trả quyền hiển thị về hệ thống trong forced-colors. Không ẩn scrollbar ở vùng cuộn do ứng dụng sở hữu; component chỉ được thay đổi hình học khi có lý do bố cục rõ ràng.
+
 ## 30 mẫu thiệp mới (2026-10-04, catalog 50)
 
 Sáu collection mới, mỗi mẫu một cover family riêng dưới `components/templates/covers/` (một file một family, CSS theo collection), dispatch exhaustive qua `coverRenderers`:
@@ -89,7 +91,7 @@ Sáu collection mới, mỗi mẫu một cover family riêng dưới `components
 - **Kỷ vật và câu chuyện** (`story.css`): Nhật Ký Đôi Mình, Chung Một Hành Trình, Quán Quen, Ngày Mình Chọn, Gia Bảo — profile `story-led`.
 - **Đương đại** (`expressive.css`): Chữ Chuyển Nhịp, Khối Hỷ, Chúng Mình, Cắt Giấy, Duyên Tinh Tú — profile `expressive`.
 
-Section profile (`lib/section-profiles.ts`) chỉ sắp xếp các section trong `<main>`; phong bì, nhạc và nút thêm-lịch giữ nguyên shell. 20 mẫu A–O dùng profile `default` và là baseline bất biến: không đổi id, tên, SEO, family, palette, sample, cover, thứ tự section hay giao diện mặc định (snapshot trong `tests/templates.test.ts`).
+Section profile (`lib/section-profiles.ts`) chỉ sắp xếp các section trong `<main>`; phong bì, nhạc và nút thêm-lịch giữ nguyên shell. 20 mẫu gốc A–T dùng profile `default`; ID, tên, SEO, palette, sample và thứ tự section giữ ổn định. Theo xác nhận của chủ dự án ngày 2026-10-04, 5 mẫu Hỷ Sự, Vườn Ươm, Nhung Lam, Thư Tình và Chân Dung dùng cover P–T của design hiện hành (snapshot trong `tests/templates.test.ts`).
 
 Bốn section mới (Story, Video, DressCode, Venue) dùng shared component và biến thể theo profile; content v2 đọc được dữ liệu v1 qua `upgradeV1` (`lib/content.ts`).
 

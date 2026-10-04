@@ -77,7 +77,6 @@ export default async function TemplatePreviewPage({
             </span>
             <h1>{template.name}</h1>
             <p>{familyLayout[template.family]}</p>
-            <p>{template.seo}</p>
           </div>
           <div className="tdt__colors">
             <span>Chọn màu để xem trước</span>

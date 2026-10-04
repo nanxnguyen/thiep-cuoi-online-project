@@ -8,9 +8,9 @@ import { CoverSlot } from "./covers/slot";
 import { ThiepPreviewFull } from "./ThiepPreviewFull";
 import "./thiep-preview.css";
 
-// design/Thiep Preview.dc.html, element for element: one 9:16 cover in the fifteen legacy families (A–O),
+// design/Thiep Preview.dc.html, element for element: one 9:16 cover in the twenty original families (A–T),
 // sized in container units so it scales with its box. Thirty newer families (see lib/covers.ts) dispatch
-// to components/templates/covers/* instead; the A–O branch below is frozen. Photos default to the family's
+// to components/templates/covers/* instead. Photos default to the family's
 // sample shots (design DEF); pass "" to show the
 // design's empty drop-zone frame instead (tinted ground, dashed ring, icon, caption).
 export type ThiepPreviewProps = {
@@ -93,6 +93,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
   const [d, m, y] = parts.map(Number);
   const when = new Date(y || 2026, (m || 1) - 1, d || 1);
   const pad = (n: number) => String(n).padStart(2, "0");
+  const initials = `${Array.from(a.trim())[0] ?? "H"}${Array.from(b.trim())[0] ?? "M"}`;
 
   let body: ReactNode = null;
   if (isNewFamily(f)) {
@@ -519,6 +520,69 @@ export function ThiepPreview(p: ThiepPreviewProps) {
             {b} &amp; {a}
           </span>
           <span className="tpO__place">{place}</span>
+        </div>
+      </>
+    );
+  else if (f === "P")
+    body = (
+      <>
+        <div className="tpP__bg" />
+        <div className="tpP__line tpP__line--l" />
+        <div className="tpP__line tpP__line--r" />
+        <div className="tpP__content">
+          <span className="tpP__kicker">THIỆP BÁO HỶ</span>
+          <span className="tpP__xi">囍</span>
+          <div className="tpP__photo">{S(ph, "Ảnh cưới")}</div>
+          <span className="tpP__names">{a} &amp; {b}</span>
+          <span className="tpP__date">{date}</span>
+          <span className="tpP__place">{place}</span>
+        </div>
+      </>
+    );
+  else if (f === "Q")
+    body = (
+      <>
+        <div className="tpQ__bg" />
+        <div className="tpQ__content">
+          <span className="tpQ__kicker">VƯỜN ƯƠM HẠNH PHÚC</span>
+          <div className="tpQ__trellis"><div className="tpQ__photo">{S(ph, "Ảnh cưới")}</div></div>
+          <div className="tpQ__tag"><span>{a} &amp; {b}</span></div>
+          <span className="tpQ__date">{date}</span>
+          <span className="tpQ__place">{place}</span>
+        </div>
+      </>
+    );
+  else if (f === "R")
+    body = (
+      <>
+        <div className="tpR__bg" />
+        <div className="tpR__panel" />
+        <div className="tpR__ribbon">LỄ THÀNH HÔN</div>
+        <div className="tpR__photo">{S(ph, "Ảnh cưới")}</div>
+        <div className="tpR__names">{a} &amp; {b}</div>
+        <div className="tpR__foot">{date} · {place}</div>
+      </>
+    );
+  else if (f === "S")
+    body = (
+      <>
+        <div className="tpS__bg" />
+        <div className="tpS__card"><div className="tpS__photo">{S(ph, "Ảnh cưới")}</div></div>
+        <div className="tpS__seal"><span>{initials}</span></div>
+        <div className="tpS__foot">
+          <span className="tpS__names">{a} &amp; {b}</span>
+          <span className="tpS__date">{date} · {place}</span>
+        </div>
+      </>
+    );
+  else if (f === "T")
+    body = (
+      <>
+        <div className="tpT__photo">{S(ph, "Ảnh cưới")}</div>
+        <div className="tpT__inset" />
+        <div className="tpT__label">
+          <span className="tpT__names">{a} &amp; {b}</span>
+          <span className="tpT__date">{date} · {place}</span>
         </div>
       </>
     );

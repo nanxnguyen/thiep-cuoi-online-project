@@ -31,8 +31,7 @@
 /* design has no phone layout: below 760px the topic list becomes a scrolling row above the answers */
 @media (max-width: 760px) {
   .help-layout { grid-template-columns: minmax(0, 1fr); gap: 36px; }
-  .help-sidebar { position: static; flex-direction: row; overflow-x: auto; scrollbar-width: none; scroll-padding-inline: 32px; }
-  .help-sidebar::-webkit-scrollbar { display: none; }
+  .help-sidebar { position: static; flex-direction: row; overflow-x: auto; scroll-padding-inline: 32px; }
   .help-sidebar > button { flex: none; gap: 12px; white-space: nowrap; }
   .help-legal { display: none; }
 }
