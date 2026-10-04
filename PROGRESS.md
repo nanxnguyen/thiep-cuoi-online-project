@@ -14,6 +14,9 @@
 
 ## ▶ BẮT ĐẦU PHIÊN MỚI Ở ĐÂY
 
+### ✅ Deploy production 2026-10-04 14:55 (Claude Code)
+Cloudflare Workers `thiep-cuoi-online`, version `a904e420`, từ working tree (chưa commit; chủ dự án chọn "deploy nguyên trạng" gồm 3 bài nhạc thương mại + 4 ảnh mới chưa rõ giấy phép, rủi ro bản quyền do chủ dự án chịu). Build: `NEXT_PUBLIC_SITE_URL=https://taothiepcuoi.raystudio.com.vn npm run build` rồi `npx wrangler deploy`; env snapshot không có `VERCEL_*`. Smoke test `taothiepcuoi.raystudio.com.vn` và `*.workers.dev`: `/`, `/templates`, `/studio`, `/thiet-ke-thiep-rieng`, `/demo`, `/blog`, `/sitemap.xml`, nhạc, ảnh mới đều 200; trang Thiết kế riêng có hero mới + nút Zalo. **Không đẩy migration**: form `/thiet-ke-thiep-rieng` vẫn lỗi khi gửi cho tới khi push `202610030001_design-requests.sql` (các migration chờ ở mục việc chờ). Rollback: `DEPLOY.md` mục 6. Việc còn lại: commit để git khớp production (`git add app components lib public tests ...`).
+
 ### ✅ QA UI mới trước khi public (2026-10-04, Claude Code)
 Chrome DevTools MCP: 11 route desktop 1280 + mobile 390 (emulate), 0 tràn ngang, 0 ảnh hỏng, 0 lỗi console; tương tác Studio (đổi mẫu, lọc, gõ tên), gallery (lọc, mount thẻ khi cuộn), form Thiết kế riêng. Playwright Firefox 156 + WebKit trên bản production (`.next-perf`): 14 route × 2 viewport × 2 engine = 56 lượt, 0 vấn đề; hero Trang chủ không đè chữ ở 360/390/430/500/768px trên cả 3 engine. Đã sửa: (1) hero Trang chủ mobile: thiệp 9:16 trồi lên đè chữ do khung `.hm-stage` thấp hơn thiệp (lỗi có từ trước), (2) form Thiết kế riêng thiếu `name` ở input, (3) ảnh đầu Studio thiếu `eager` (cảnh báo LCP). Chưa chạy: e2e, Lighthouse sau sửa, thiết bị thật (iOS Safari/Android), Edge. Còn nhắc: `.next-perf` xóa tay được.
 

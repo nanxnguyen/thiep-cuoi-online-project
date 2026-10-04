@@ -36,3 +36,5 @@ image-scrapt/
 test-results/
 playwright-report/
 .next-perf
+.next-*
+.open-next-*

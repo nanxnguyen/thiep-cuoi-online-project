@@ -2,41 +2,42 @@ import Link from "next/link";
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import { CountdownText, CountdownTiles, GuestInvite, ScrollProgress, StatsRow, Tilt, WishRotator } from "@/components/home/HomeLive";
+import { HomeMarquee, type MarqueeItem } from "@/components/home/HomeMarquee";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { JsonLd } from "@/components/marketing/JsonLd";
 import { ThiepPreview } from "@/components/templates/ThiepPreview";
 import { SITE_URL } from "@/lib/site";
-import { colors, getTemplate, templates, type ColorKey, type CoverFamily } from "@/lib/templates";
+import { colors, templates, templateSamples } from "@/lib/templates";
 import "@/components/home/home.css";
 
-// design/Trang Chu.dc.html, section by section. The template count is the real registry size (design says 10);
-// marquee labels and links are the real templates behind the design's legacy ids.
+// design/Trang Chu.dc.html, section by section.
 const QUOTES = [
   "“Gửi thiệp trong 10 phút, khách xác nhận ngay trên điện thoại.”",
   "“Cuối cùng cũng có thiệp cưới không phải trả phí theo lượt xem.”",
   "“Đổi mẫu ba lần mà không mất một chữ nào đã gõ.”",
   "“Bố mẹ hai bên đều mở được, kể cả không rành công nghệ.”",
 ];
-const TPL: [string, string, CoverFamily, ColorKey, string, string, string, string][] = [
-  ["gallery-noir", "Gallery Noir", "F", "muc", "Hạ Vy", "Minh Khôi", "HÀ NỘI · 11.2026", "Chủ nhật, 5 giờ chiều"],
-  ["afterglow", "Afterglow", "E", "hong", "Hoàng Long", "Bảo Ngọc", "28 · 09 · 2027", "ĐÀ NẴNG"],
-  ["soft-type", "Soft Type", "B", "tim", "An", "Bảo", "09 · 11 · 2026", "HÀ NỘI"],
-  ["maison-blanc", "Maison Blanc", "D", "vang", "Phương Thảo", "Trung Kiên", "06 · 12 · 2026", "HÀ NỘI"],
-  ["wild-garden", "Wild Garden", "C", "xanh", "Thu Hà", "Văn Long", "14 · 12 · 2026", "ĐÀ LẠT"],
-  ["olive-story", "Olive Story", "G", "oliu", "Thu Hà", "Minh Quân", "19 · 10 · 2026", ""],
-  ["lua-son", "Lụa Son", "A", "do", "Ngọc Hân", "Đức Huy", "20 · 11 · 2026", "NAM ĐỊNH"],
-  ["thanh-ngoc", "Thanh Ngọc", "J", "xanh", "Thanh Hà", "Tuấn Kiệt", "05 · 01 · 2027", "HÀ NỘI"],
-  ["thuy-mac", "Thủy Mặc", "I", "lam", "Ngọc Ánh", "Thế Bảo", "08 · 12 · 2026", "BẮC NINH"],
-  ["so-xuan", "Sơ Xuân", "H", "dodam", "Thanh Tú", "Hoàng Nam", "22 · 11 · 2026", ""],
-];
-const STYLE_BY_PALETTE: Partial<Record<ColorKey, string>> = { do: "Truyền thống", dodam: "Truyền thống", xanh: "Hoa", oliu: "Hoa", vang: "Cổ điển", lam: "Cổ điển", hong: "Lãng mạn", tim: "Tối giản", muc: "Hiện đại" };
-const MARQUEE = TPL.map(([legacy, name, family, pal, a, b, date, place]) => {
-  const t = getTemplate(legacy);
-  return { id: t?.id ?? legacy, name: t?.name ?? name, family, ...colors[pal], a, b, date, place, style: STYLE_BY_PALETTE[pal] ?? "Hiện đại" };
-});
-const MARQUEE2 = [...MARQUEE].reverse();
+// Marquee data từ full registry (50 mẫu): server chỉ tính data thuần (rẻ CPU),
+// DOM nặng do <HomeMarquee> client render dần (SSR 6 → mount 20 → scroll 50).
+const MARQUEE_ITEMS: MarqueeItem[] = [...templates]
+  .sort((x, y) => (templateSamples[y.id]?.pop ?? 0) - (templateSamples[x.id]?.pop ?? 0))
+  .map((t) => {
+    const s = templateSamples[t.id];
+    const c = colors[t.colors[0]];
+    return {
+      id: t.id,
+      name: t.name,
+      family: t.family,
+      ...c,
+      a: s?.a ?? "Cô dâu",
+      b: s?.b ?? "Chú rể",
+      date: s?.date ?? "",
+      place: s?.place ?? "",
+      style: s?.style ?? "Hiện đại",
+    };
+  });
 const SPARKLES = [["10%", "20%"], ["85%", "15%"], ["92%", "70%"], ["6%", "75%"], ["45%", "10%"], ["55%", "85%"]];
 const STEPS = [
   ["01", "Chọn mẫu", `${templates.length} mẫu thiết kế riêng với sáu phong cách. Đổi mẫu lúc nào cũng được, nội dung vẫn còn nguyên.`, 0],
@@ -192,42 +193,7 @@ export default function HomePage() {
             </div>
             <Link href="/templates">Xem toàn bộ bộ sưu tập →</Link>
           </div>
-          <div className="hm-marquee__mask">
-            <div className="hm-marquee__track">
-              {[...MARQUEE, ...MARQUEE].map((t, i) => (
-                <Link
-                  href={`/templates/${t.id}`}
-                  key={`${t.id}-${i}`}
-                  tabIndex={i >= MARQUEE.length ? -1 : undefined}
-                  aria-hidden={i >= MARQUEE.length || undefined}
-                  style={{ "--off": `${i % 2 ? 18 : 0}px`, "--rot": `${i % 2 ? 1 : -1}deg`, "--glow": `${t.deep}aa` } as CSSProperties}
-                >
-                  <div className="hm-marquee__card">
-                    <ThiepPreview family={t.family} deep={t.deep} paper={t.paper} gold={t.gold} a={t.a} b={t.b} date={t.date} place={t.place} radius="14px" />
-                    <span className="hm-marquee__badge">{t.style}</span>
-                  </div>
-                  <div className="hm-marquee__meta">
-                    <span>{t.name}</span>
-                    <span>
-                      {t.a} &amp; {t.b}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="hm-marquee__mask">
-            <div className="hm-marquee__track hm-marquee__track--small">
-              {[...MARQUEE2, ...MARQUEE2].map((t, i) => (
-                <Link href={`/templates/${t.id}`} key={`${t.id}-${i}`} tabIndex={-1} aria-hidden="true">
-                  <div className="hm-marquee__card">
-                    <ThiepPreview family={t.family} deep={t.deep} paper={t.paper} gold={t.gold} a={t.a} b={t.b} date={t.date} place={t.place} radius="10px" />
-                  </div>
-                  <span>{t.name}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
+          <HomeMarquee items={MARQUEE_ITEMS} />
         </section>
 
         <section className="hm-quotes" aria-label="Cảm nhận">

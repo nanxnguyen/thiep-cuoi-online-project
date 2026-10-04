@@ -1,7 +1,10 @@
 "use client";
 
-import SwaggerUI from "swagger-ui-react";
+import dynamic from "next/dynamic";
 import { apiOpenApiDoc } from "@/lib/api-docs";
+import "swagger-ui-react/swagger-ui.css";
+
+const SwaggerUI = dynamic(() => import("swagger-ui-react"), { ssr: false, loading: () => <p>Đang tải tài liệu API…</p> });
 
 export default function ApiDocsPage() {
   return (
