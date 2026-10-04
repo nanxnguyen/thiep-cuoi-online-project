@@ -14,7 +14,7 @@
 	"vars": {
 		"NEXT_PUBLIC_SUPABASE_URL": "https://iehmucsshklgjmxqyggp.supabase.co",
 		"NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_KYPapJychusVSHK2OPPD0w_aPICz6Nq",
-		"NEXT_PUBLIC_SITE_URL": "https://taothiepcuoi.raystudio.com.vn",
+		"NEXT_PUBLIC_SITE_URL": "https://taothiepcuoimienphi.raystudio.com.vn",
 		"NEXT_PUBLIC_CONTACT_ZALO": "0375197640"
 	}
 }

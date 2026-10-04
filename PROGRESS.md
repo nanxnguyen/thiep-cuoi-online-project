@@ -8,7 +8,7 @@
 > **Dòng nào lỗi thời thì xoá hoặc sửa, không viết chồng.** Nhật ký chỉ giữ ~15 dòng mới nhất; chi tiết cũ nằm ở git history và plan/spec trong `docs/superpowers/`. Không ghi "xong" nếu chưa kiểm chứng.
 
 **Stack hiện tại:** một repo Next.js 16 + Supabase (Postgres/Auth/Storage/Realtime/Edge Function), không còn backend Java. Repo `../Thiep-cuoi-online-backend` là bản Spring Boot cũ, **không dùng và không phát triển thêm**.
-**Production:** Cloudflare Workers, `https://taothiepcuoi.raystudio.com.vn` (bản gần nhất 2026-10-04, version `e0f3ebe1`; cách deploy ở `DEPLOY.md` mục 4c). Vercel và Netlify chỉ là đích dự phòng trong `DEPLOY.md`.
+**Production:** Cloudflare Workers, `https://taothiepcuoimienphi.raystudio.com.vn` (cách deploy ở `DEPLOY.md` mục 4c; domain cũ `taothiepcuoi.raystudio.com.vn` giữ redirect 301 về mới). Vercel và Netlify chỉ là đích dự phòng trong `DEPLOY.md`.
 **Cổng:** `npm run dev` 3000; `next start` tay 3001; Playwright e2e tự dựng server ở 3100. Chạy local: `README.md`.
 **Gate:** `npm test` (257 test) + `npm run typecheck` + `npm run build:next`; e2e `npm run e2e -- --project=<tên>` (xem mục 5).
 

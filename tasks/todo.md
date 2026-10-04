@@ -12,7 +12,7 @@
 
 **Verification:**
 - [ ] Lệnh chạy được: `ls -l .open-next/server-functions/default/handler.mjs && ./node_modules/.bin/opennextjs-cloudflare build --dry-run 2>&1 | head` (hoặc `npx wrangler deploy --dry-run --outdir bundled/`)
-- [ ] Lệnh TTFB: `curl -s -o /dev/null -w "%{http_code} %{time_starttransfer}\n" "$B/"` với `B=https://taothiepcuoi.raystudio.com.vn`
+- [ ] Lệnh TTFB: `curl -s -o /dev/null -w "%{http_code} %{time_starttransfer}\n" "$B/"` với `B=https://taothiepcuoimienphi.raystudio.com.vn`
 - [ ] Log: `npx wrangler tail` ghi lại `outcome=exceededCpu|exceededMemory` khi lỗi
 
 **Dependencies:** None

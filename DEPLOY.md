@@ -73,13 +73,13 @@ npx wrangler secret put RATE_LIMIT_HMAC_SECRET
 ```
 Lưu ý:
 - Build Cloudflare snapshot toàn bộ env shell vào `.open-next/cloudflare/next-env.mjs` — build xong kiểm tra không lọt token lạ (`grep -o "VERCEL_[A-Z_]*" ...` phải trống). `.env` thừa và dòng lạ trong `.env.local` phải xóa trước build.
-- `NEXT_PUBLIC_*` nướng vào build: luôn build với `NEXT_PUBLIC_SITE_URL=https://taothiepcuoi.raystudio.com.vn npm run build` rồi `npx wrangler deploy` (domain chính thức, đặt trong `wrangler.jsonc`).
+- `NEXT_PUBLIC_*` nướng vào build: luôn build với `NEXT_PUBLIC_SITE_URL=https://taothiepcuoimienphi.raystudio.com.vn npm run build` rồi `npx wrangler deploy` (domain chính thức, đặt trong `wrangler.jsonc`).
 - Có thể connect GitHub trong dashboard để auto-deploy (Build command `npm run build`, Deploy command `npx wrangler deploy`); env vẫn phải set tay ở Settings → Variables.
 
 ## 5. Verify sau deploy
 
 ```bash
-B="https://taothiepcuoi.raystudio.com.vn"
+B="https://taothiepcuoimienphi.raystudio.com.vn"
 curl -s -o /dev/null -w "home %{http_code}\n" "$B/"
 curl -s -o /dev/null -w "invite %{http_code}\n" "$B/invite/ho6my9vg"
 curl -s -o /dev/null -w "api-docs %{http_code}\n" "$B/api/docs"
