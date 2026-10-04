@@ -27,8 +27,20 @@ async function expectClickLands(page: Page, from: string, locatorFor: () => Retu
   if (hash) await expect.poll(() => new URL(page.url()).hash).toBe(`#${hash}`);
 }
 
-test("header navigation links open their pages", async ({ page }) => {
-  test.skip(narrow(page), "header collapses into a menu on narrow screens");
+test("header navigation links open their pages on wide and narrow screens", async ({ page }) => {
+  if (narrow(page)) {
+    // Màn hẹp: header gom thành menu <details> — mở menu rồi bấm từng link.
+    for (const { href, label } of NAV_LINKS) {
+      await page.goto("/");
+      const summary = page.locator("header details.nav-menu > summary");
+      if (!(await page.getByRole("navigation", { name: "Menu trên điện thoại" }).isVisible().catch(() => false))) {
+        await summary.click();
+      }
+      await page.getByRole("navigation", { name: "Menu trên điện thoại" }).getByRole("link", { name: label, exact: true }).click();
+      await expect.poll(() => pathOf(page)).toBe(href);
+    }
+    return;
+  }
   for (const { href, label } of NAV_LINKS) {
     await expectClickLands(page, "/", () => page.locator("header").getByRole("link", { name: label, exact: true }), href);
   }

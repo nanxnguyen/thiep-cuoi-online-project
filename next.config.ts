@@ -7,7 +7,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Lets a production build for perf measurement land beside a running `next dev` (NEXT_DIST_DIR=.next-perf next build).
   distDir: process.env.NEXT_DIST_DIR || ".next",
-  experimental: { inlineCss: true },
+  // Workers Free (10ms CPU): tắt inlineCss — CSS phục vụ dưới dạng file static cache
+  // thay vì inline vào HTML mỗi request (đỡ CPU/memory SSR).
+  experimental: { inlineCss: false },
   // A stray yarn.lock in the home directory otherwise makes Next infer the wrong workspace root.
   turbopack: { root: process.cwd() },
   images: {

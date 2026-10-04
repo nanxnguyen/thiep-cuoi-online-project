@@ -57,7 +57,7 @@ async function openSection(page: Page, label: string) {
 test.describe("create an invitation", () => {
   test("picks a template, creates the draft and opens it in the editor with an autosaved edit", async ({ page, browserName, isMobile }) => {
     await page.goto("/studio");
-    await expect(page.getByRole("heading", { level: 1, name: "Tạo thiệp mới" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Chọn một mẫu thiệp" })).toBeVisible();
 
     const second = templates[1];
     const picker = page.getByRole("group", { name: "Chọn mẫu thiệp" });
@@ -212,7 +212,7 @@ test.describe("the editor", () => {
 test.describe("layout", () => {
   test("/studio does not scroll sideways", async ({ page }) => {
     await page.goto("/studio");
-    await expect(page.getByRole("heading", { level: 1, name: "Tạo thiệp mới" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Chọn một mẫu thiệp" })).toBeVisible();
     expect(await noHorizontalScroll(page)).toBe(true);
   });
 
