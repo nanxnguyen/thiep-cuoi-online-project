@@ -6,23 +6,20 @@ import { resolveGuestToken } from "@/lib/server/guests";
 import { getPublicInvitation } from "@/lib/server/invitations";
 import { createAdminClient, createAnonClient } from "@/lib/server/supabase";
 import { earliestEvent, formatDateVi } from "@/lib/datetime";
-import { resolveLocale } from "@/lib/i18n";
 import { isValidSlug } from "@/lib/slug";
-import { SITE_URL } from "@/lib/site";
 import { DEFAULT_TEMPLATE_ID, getTemplate } from "@/lib/templates";
 
 // Guests must always see the latest version of the invitation, so nothing here is cached.
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ g?: string; lang?: string }> };
+type Props = { params: Promise<{ slug: string }>; searchParams: Promise<{ g?: string }> };
 
 // generateMetadata and the page both need the invitation: one backend call per request.
 // Gọi domain trực tiếp (không HTTP về chính mình: server không fetch được URL tương đối).
 const load = cache(async (slug: string) => (isValidSlug(slug) ? getPublicInvitation(createAnonClient(), slug) : null));
 
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = (await params).slug;
-  const sp = await searchParams;
   const dto = await load(slug);
   if (!dto) return { title: "Không tìm thấy thiệp", robots: { index: false, follow: false } };
   const { couple, events } = dto.content;
@@ -32,20 +29,12 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const when = main ? ` vào ${formatDateVi(main.date)}` : "";
   const title = `Thiệp cưới ${groom} & ${bride}`;
   const description = `Trân trọng kính mời bạn đến dự lễ cưới của ${groom} và ${bride}${when}.`;
-  const path = `/invite/${encodeURIComponent(slug)}`;
-  const query = (lang: string) => {
-    const url = new URL(`${SITE_URL}${path}`);
-    if (sp.g) url.searchParams.set("g", sp.g);
-    url.searchParams.set("lang", lang);
-    return url.toString();
-  };
   return {
     title,
     description,
     // openGraph replaces the layout's whole object (no merging), so it repeats the description for Zalo/Facebook previews.
     openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", title, description, images: couple.heroPhoto ? [couple.heroPhoto] : undefined },
     robots: { index: false, follow: false },
-    alternates: { languages: { vi: query("vi"), en: query("en") } },
   };
 }
 
@@ -73,11 +62,6 @@ export default async function InvitePage({ params, searchParams }: Props) {
   if (!dto) notFound();
   const template = getTemplate(dto.templateId) ?? getTemplate(DEFAULT_TEMPLATE_ID)!;
   const guestName = guest.name;
-  const locale = resolveLocale(sp.lang);
-  const toggleParams = new URLSearchParams();
-  if (sp.g) toggleParams.set("g", sp.g);
-  toggleParams.set("lang", locale === "en" ? "vi" : "en");
-  const toggleHref = `?${toggleParams.toString()}`;
 
   return (
       <InvitationRenderer
@@ -89,8 +73,6 @@ export default async function InvitePage({ params, searchParams }: Props) {
         wishes={dto.wishes}
         guestName={guestName}
         guestToken={guest.token}
-        locale={locale}
-        toggleHref={toggleHref}
       />
   );
 }

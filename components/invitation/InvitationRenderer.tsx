@@ -29,10 +29,8 @@ export type InvitationRendererProps = {
   now?: Date;
   /** Envelope overlay before the page; defaults to on for live pages. */
   gate?: boolean;
-  /** Phase 5: chrome language for the public guest page. Defaults to "vi" — preview/Studio never pass this. */
+  /** Ngôn ngữ thiệp khách: luôn "vi" (chỉ hỗ trợ tiếng Việt). Giữ prop để khỏi sửa 15+ section bên dưới. */
   locale?: Locale;
-  /** Link to the other public-page language, including the current guest query. */
-  toggleHref?: string;
   /** Marketing previews: an empty hero photo shows the template's sample photo instead of the empty frame. */
   showcase?: boolean;
 };
@@ -66,7 +64,7 @@ function SectionNav({ content, labels }: { content: Content; labels: readonly st
 // One renderer for every template (design/Studio Editor v3.dc.html preview pane): the palette arrives as CSS
 // variables, the template's family picks the cover, and every other section is the same markup for all templates.
 // The public page, the template preview and the Studio's live preview all render exactly this component.
-export function InvitationRenderer({ content, template, mode, slug, invitationId, guestName = "", guestToken = "", wishes = [], now, gate, locale = "vi", toggleHref, showcase = false }: InvitationRendererProps) {
+export function InvitationRenderer({ content, template, mode, slug, invitationId, guestName = "", guestToken = "", wishes = [], now, gate, locale = "vi", showcase = false }: InvitationRendererProps) {
   const key = template.colors.includes(content.paletteKey as keyof typeof colors) ? (content.paletteKey as keyof typeof colors) : template.colors[0];
   const c = colors[key];
   const style = {
@@ -97,11 +95,6 @@ export function InvitationRenderer({ content, template, mode, slug, invitationId
       >
         {mode === "live" && slug && <ViewTracker slug={slug} />}
         {mode === "live" && <SectionNav content={content} labels={dict.nav} />}
-        {toggleHref && (
-          <a className="inv-language-toggle" href={toggleHref}>
-            {locale === "en" ? "VI" : "EN"}
-          </a>
-        )}
         <main className="inv-col">
           <Envelope content={content} guestName={guest} locale={locale} />
           {order.map((section) => (
