@@ -25,7 +25,7 @@
     </a>
     <nav style="display:flex;gap:26px;margin-left:auto;flex-wrap:wrap;font-size:14px">
       <sc-for list="{{ items }}" as="it" hint-placeholder-count="2">
-        <a href="{{ it.href }}" style="color:{{ it.color }};font-weight:{{ it.weight }};text-decoration:none;padding:4px 0;border-bottom:1px solid {{ it.line }};transition:color .2s" style-hover="color:#1a1412">{{ it.label }}</a>
+        <a href="{{ it.href }}" style="color:{{ it.color }};font-weight:{{ it.weight }};text-decoration:none;padding:4px 0;border-bottom:1px solid {{ it.line }};transition:color .2s" style-hover="color:#1a1412">{{ it.label }}<sc-if value="{{ it.heart }}" hint-placeholder-val="{{ false }}"> <span style="color:#a3161c">♥</span></sc-if></a>
       </sc-for>
     </nav>
     <div style="display:flex;gap:10px;align-items:center">
@@ -87,7 +87,7 @@
 </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:64},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;templates&quot;,&quot;tools&quot;,&quot;help&quot;,&quot;mine&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:64},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;&quot;,&quot;templates&quot;,&quot;custom&quot;,&quot;tools&quot;,&quot;support&quot;,&quot;help&quot;,&quot;mine&quot;],&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 const KEY = 'moc_user';
 const readUser = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
 class Component extends DCLogic {
@@ -110,8 +110,8 @@ class Component extends DCLogic {
   }
   renderVals() {
     const a = this.props.active ?? '', s = this.state, u = s.user;
-    const items = [['templates','Mẫu thiệp','Mau Thiep v2.dc.html'],['tools','Công cụ','Cong Cu.dc.html']]
-      .map(([k,label,href]) => ({ label, href, color: k===a?'#1a1412':'#5e534b', weight: k===a?500:400, line: k===a?'#1a1412':'transparent' }));
+    const items = [['templates','Mẫu thiệp','Mau Thiep v2.dc.html'],['custom','Thiết kế riêng','Thiet Ke Rieng.dc.html'],['tools','Công cụ','Cong Cu.dc.html'],['support','Ủng hộ','Ung Ho.dc.html']]
+      .map(([k,label,href]) => ({ label, href, heart: k==='support', color: k===a?'#1a1412':'#5e534b', weight: k===a?500:400, line: k===a?'#1a1412':'transparent' }));
     const parts = (u?.name || '').trim().split(/\s+/);
     return {
       items, guest: !u, authed: !!u,

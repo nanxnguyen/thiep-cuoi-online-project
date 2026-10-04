@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(18px)}100%{opacity:1;transform:none}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,16px)}100%{opacity:1;transform:translate(-50%,0)}}
+</style>
+<script src="motion.js"></script>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column">
+  <dc-import name="Site Header" active="mine" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+  <main style="width:100%;max-width:1200px;margin:0 auto;padding:36px 32px 96px;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:flex-end;animation:fadeUp .6s both">
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <a href="Thiep Cua Toi.dc.html" style="font-size:13px;color:#8a7d72" style-hover="color:#1a1412">← Thiệp của tôi</a>
+        <span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">TIỆC CƯỚI · ĐANG MỞ</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4vw,48px);line-height:1.08">Thu Hà <em style="color:#8a6425">&amp;</em> Quốc Bảo</h1>
+        <span style="font-size:14px;color:#5e534b">{{ metaLine }}</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="Thiep Khach.dc.html" style="padding:12px 22px;border-radius:999px;border:1px solid #1a1412;color:#1a1412;font-size:14px" style-hover="background:#1a1412;color:#f8f4ee">Xem thiệp</a>
+        <a href="Studio Editor v3.dc.html" style="padding:12px 22px;border-radius:999px;background:#a3161c;color:#fff;font-size:14px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Chỉnh sửa</a>
+      </div>
+    </div>
+
+    <nav style="display:flex;gap:4px;border-bottom:1px solid #e0d5c6;overflow-x:auto">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.pick }}" style="font-family:inherit;font-size:14px;padding:12px 16px;border:0;background:transparent;cursor:pointer;white-space:nowrap;color:{{ t.fg }};border-bottom:2px solid {{ t.bd }};margin-bottom:-1px;display:flex;gap:8px;align-items:center">{{ t.label }}<span style="font-size:11px;padding:2px 7px;border-radius:999px;background:{{ t.badgeBg }};color:{{ t.badgeFg }}">{{ t.n }}</span></button>
+      </sc-for>
+    </nav>
+
+    <sc-if value="{{ isGuests }}" hint-placeholder-val="{{ true }}">
+      <section style="display:flex;flex-direction:column;gap:20px;animation:fadeUp .4s both">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+          <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+            <div style="background:#fff;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:6px">
+              <span style="display:flex;gap:8px;align-items:center;font-size:13px;color:#5e534b"><span style="width:8px;height:8px;border-radius:50%;background:{{ s.dot }}"></span>{{ s.l }}</span>
+              <span style="font-family:'Playfair Display',serif;font-size:36px;line-height:1">{{ s.v }}</span>
+              <span style="font-size:12px;color:#8a7d72">{{ s.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;height:10px;border-radius:999px;overflow:hidden;background:#efe6d9">
+          <sc-for list="{{ bar }}" as="b" hint-placeholder-count="3"><div style="width:{{ b.w }};background:{{ b.c }};transition:width .5s"></div></sc-for>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.pick }}" style="font-family:inherit;font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};cursor:pointer">{{ f.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <input value="{{ q }}" onInput="{{ onQ }}" placeholder="Tìm tên khách…" style="font-family:inherit;font-size:13px;padding:9px 14px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;outline:none;width:180px">
+            <button onClick="{{ remind }}" style="font-family:inherit;font-size:13px;padding:9px 16px;border-radius:999px;border:0;background:#1a1412;color:#fff;cursor:pointer" style-hover="background:#3a2e28">Nhắc {{ pendingCount }} khách chưa trả lời</button>
+            <button onClick="{{ exportXls }}" style="font-family:inherit;font-size:13px;padding:9px 16px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer" style-hover="border-color:#1a1412">Xuất Excel</button>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:20px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1.2fr) 70px minmax(0,1fr);gap:12px;padding:14px 22px;font-size:12px;letter-spacing:.08em;color:#8a7d72;border-bottom:1px solid #efe6d9"><span>KHÁCH</span><span>NHÓM</span><span>TRẠNG THÁI</span><span>SỐ NGƯỜI</span><span>CẬP NHẬT</span></div>
+          <sc-for list="{{ guestRows }}" as="g" hint-placeholder-count="8">
+            <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1.2fr) 70px minmax(0,1fr);gap:12px;padding:14px 22px;font-size:14px;align-items:center;border-bottom:1px solid #f3ece2">
+              <span style="display:flex;gap:10px;align-items:center;min-width:0"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:#efe6d9;color:#8a6425;display:grid;place-items:center;font-size:13px;font-weight:500">{{ g.init }}</span><span style="display:flex;flex-direction:column;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.name }}</span><span style="font-size:12px;color:#8a7d72;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ g.note }}</span></span></span>
+              <span style="color:#5e534b;font-size:13px">{{ g.group }}</span>
+              <span><span style="font-size:12px;padding:4px 10px;border-radius:999px;background:{{ g.stBg }};color:{{ g.stFg }}">{{ g.st }}</span></span>
+              <span style="font-family:'Playfair Display',serif;font-size:17px">{{ g.n }}</span>
+              <span style="font-size:12px;color:#8a7d72">{{ g.at }}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noGuests }}" hint-placeholder-val="{{ false }}"><div style="padding:40px;text-align:center;font-size:14px;color:#8a7d72">Không có khách nào khớp.</div></sc-if>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isWishes }}" hint-placeholder-val="{{ false }}">
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:20px;align-items:start;animation:fadeUp .4s both">
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Playfair Display',serif;font-size:24px">Sổ lưu bút</span><span style="font-size:13px;color:#8a7d72">{{ wishCount }} lời chúc · {{ hiddenCount }} đang ẩn</span></div>
+          <sc-for list="{{ wishRows }}" as="w" hint-placeholder-count="5">
+            <div style="display:flex;flex-direction:column;gap:8px;padding:16px 0;border-top:1px solid #f3ece2;opacity:{{ w.op }};transition:opacity .25s">
+              <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;line-height:1.45;text-wrap:pretty">“{{ w.text }}”</span>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+                <span style="font-size:13px;color:#5e534b">{{ w.pinMark }}{{ w.by }} <span style="color:#8a7d72">· {{ w.at }}</span></span>
+                <div style="display:flex;gap:6px">
+                  <button onClick="{{ w.pin }}" style="font-family:inherit;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer" style-hover="border-color:#1a1412">{{ w.pinLabel }}</button>
+                  <button onClick="{{ w.hide }}" style="font-family:inherit;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer" style-hover="border-color:#a3161c">{{ w.hideLabel }}</button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><span style="font-family:'Playfair Display',serif;font-size:24px">QR mừng cưới</span>
+            <button onClick="{{ toggleShowQr }}" aria-label="Hiện QR trên thiệp" style="display:flex;gap:10px;align-items:center;font-family:inherit;font-size:13px;color:#5e534b;border:0;background:transparent;cursor:pointer">Hiện trên thiệp<span style="width:40px;height:24px;border-radius:999px;background:{{ showQrTrack }};position:relative;transition:background .2s"><span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transform:{{ showQrKnob }};transition:transform .2s"></span></span></button>
+          </div>
+          <div style="display:grid;grid-template-columns:150px minmax(0,1fr);gap:20px;align-items:center">
+            <div style="padding:12px;border-radius:14px;background:#f7efe3;border:1px solid #e6d3b3">
+              <div style="display:grid;grid-template-columns:repeat(25,1fr);aspect-ratio:1">
+                <sc-for list="{{ qr }}" as="c" hint-placeholder-count="0"><span style="background:{{ c.bg }}"></span></sc-for>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;font-size:14px"><span style="font-size:12px;color:#8a7d72">{{ bank }}</span><span style="font-family:'Playfair Display',serif;font-size:22px;letter-spacing:.04em">{{ acc }}</span><span style="color:#5e534b">{{ owner }}</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Ngân hàng<select value="{{ bank }}" onChange="{{ onBank }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2"><sc-for list="{{ banks }}" as="b" hint-placeholder-count="5"><option value="{{ b }}">{{ b }}</option></sc-for></select></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Số tài khoản<input value="{{ acc }}" onInput="{{ onAcc }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+            <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Chủ tài khoản<input value="{{ owner }}" onInput="{{ onOwner }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none;text-transform:uppercase"></label>
+          </div>
+          <span style="font-size:12px;line-height:1.6;color:#8a7d72">Khách quét mã và chuyển thẳng vào tài khoản của bạn. Mộc không giữ tiền.</span>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isQr }}" hint-placeholder-val="{{ false }}">
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:20px;align-items:start;animation:fadeUp .4s both">
+        <div style="background:#efe6d9;border-radius:20px;padding:40px 24px;display:grid;place-items:center;min-height:460px">
+          <div style="width:{{ cardW }};background:{{ qrPaper }};color:{{ qrInk }};border-radius:{{ cardR }};padding:28px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;box-shadow:0 30px 50px -30px rgba(26,20,18,.55);transition:all .35s cubic-bezier(.2,.7,.2,1)">
+            <span style="font-size:10px;letter-spacing:.3em;opacity:.8">{{ qrKicker }}</span>
+            <span style="font-family:'Playfair Display',serif;font-size:24px;line-height:1.1">Thu Hà &amp; Quốc Bảo</span>
+            <div style="width:150px;padding:10px;background:#fff;border-radius:10px">
+              <div style="display:grid;grid-template-columns:repeat(25,1fr);aspect-ratio:1">
+                <sc-for list="{{ qrInked }}" as="c" hint-placeholder-count="0"><span style="background:{{ c.bg }}"></span></sc-for>
+              </div>
+            </div>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1.3;max-width:220px">{{ qrText }}</span>
+            <span style="font-size:10px;letter-spacing:.2em;opacity:.7">12 · 12 · 2026 · HÀ NỘI</span>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:22px">
+          <span style="font-family:'Playfair Display',serif;font-size:24px">Mã QR để in</span>
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:13px;color:#5e534b">Dùng cho</span>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <sc-for list="{{ qrStyles }}" as="o" hint-placeholder-count="3"><button onClick="{{ o.pick }}" style="font-family:inherit;font-size:13px;padding:12px 8px;border-radius:12px;border:1px solid {{ o.bd }};background:{{ o.bg }};color:{{ o.fg }};cursor:pointer;display:flex;flex-direction:column;gap:2px"><span style="font-weight:500">{{ o.label }}</span><span style="font-size:11px;opacity:.7">{{ o.size }}</span></button></sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:13px;color:#5e534b">Màu theo mẫu Song Hỷ</span>
+            <div style="display:flex;gap:10px">
+              <sc-for list="{{ qrColors }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.pick }}" aria-label="{{ o.name }}" title="{{ o.name }}" style="width:38px;height:38px;border-radius:50%;border:0;background:{{ o.c }};cursor:pointer;box-shadow:0 0 0 {{ o.ring }} #fff,0 0 0 {{ o.ring2 }} #1a1412"></button></sc-for>
+            </div>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Dòng chữ dưới mã<input value="{{ qrText }}" onInput="{{ onQrText }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+          <div style="display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;background:#f8f4ee;font-size:13px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#5e534b">moc.vn/thuha-quocbao/1</span><button onClick="{{ copyLink }}" style="font-family:inherit;font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer">Sao chép</button></div>
+          <span style="font-size:12px;line-height:1.6;color:#8a7d72">Mã luôn trỏ tới thiệp mới nhất. Bạn đổi giờ hay địa điểm thì không cần in lại.</span>
+          <div style="display:flex;gap:10px">
+            <button onClick="{{ dlPng }}" style="flex:1;font-family:inherit;font-size:14px;font-weight:500;padding:14px;border-radius:999px;border:0;background:#a3161c;color:#fff;cursor:pointer" style-hover="background:#7d0f14">Tải PNG</button>
+            <button onClick="{{ dlPdf }}" style="flex:1;font-family:inherit;font-size:14px;padding:14px;border-radius:999px;border:1px solid #1a1412;background:#fff;cursor:pointer" style-hover="background:#1a1412;color:#fff">Tải PDF để in</button>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isUpdate }}" hint-placeholder-val="{{ false }}">
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:20px;align-items:start;animation:fadeUp .4s both">
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:18px">
+          <span style="font-family:'Playfair Display',serif;font-size:24px">Thông tin tiệc</span>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Ngày<input type="date" value="{{ fDate }}" onInput="{{ onFDate }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid {{ bdDate }};background:#faf7f2;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Giờ đón khách<input type="time" value="{{ fTime }}" onInput="{{ onFTime }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid {{ bdTime }};background:#faf7f2;outline:none"></label>
+            <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Địa điểm<input value="{{ fPlace }}" onInput="{{ onFPlace }}" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid {{ bdPlace }};background:#faf7f2;outline:none"></label>
+            <label style="grid-column:1 / -1;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Ghi chú cho khách<textarea value="{{ fNote }}" onInput="{{ onFNote }}" rows="2" placeholder="Ví dụ: có chỗ gửi xe ở tầng hầm B2" style="font-family:inherit;font-size:14px;padding:12px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none;resize:vertical"></textarea></label>
+          </div>
+          <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:14px;background:#f8f4ee;animation:fadeUp .3s both">
+              <span style="font-size:14px"><strong style="font-weight:500">Bạn vừa đổi:</strong> {{ changeList }}</span>
+              <span style="font-size:13px;color:#5e534b">Báo cho khách bằng</span>
+              <sc-for list="{{ notifyOpts }}" as="n" hint-placeholder-count="3">
+                <button onClick="{{ n.toggle }}" style="display:flex;gap:12px;align-items:center;font-family:inherit;font-size:14px;border:0;background:transparent;cursor:pointer;text-align:left;padding:0;color:#1a1412"><span style="width:20px;height:20px;flex:none;border-radius:6px;border:1.5px solid {{ n.bd }};background:{{ n.bg }};color:#fff;display:grid;place-items:center;font-size:12px">{{ n.tick }}</span><span style="display:flex;flex-direction:column"><span>{{ n.label }}</span><span style="font-size:12px;color:#8a7d72">{{ n.sub }}</span></span></button>
+              </sc-for>
+            </div>
+          </sc-if>
+          <button onClick="{{ saveUpdate }}" style="font-family:inherit;font-size:15px;font-weight:500;padding:15px;border-radius:999px;border:0;background:{{ saveBg }};color:#fff;cursor:{{ saveCursor }}">{{ saveLabel }}</button>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:12px">Lịch sử thay đổi</span>
+          <sc-for list="{{ history }}" as="h" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:14px minmax(0,1fr);gap:14px">
+              <div style="display:flex;flex-direction:column;align-items:center"><span style="width:10px;height:10px;border-radius:50%;background:#a3161c;margin-top:5px"></span><span style="flex:1;width:1px;background:#e0d5c6"></span></div>
+              <div style="display:flex;flex-direction:column;gap:4px;padding-bottom:20px"><span style="font-size:14px">{{ h.what }}</span><span style="font-size:12px;color:#8a7d72">{{ h.at }} · {{ h.how }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+  </main>
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1a1412;color:#fff;padding:13px 22px;border-radius:999px;font-size:14px;z-index:60;animation:toast .3s both;box-shadow:0 16px 30px -12px rgba(0,0,0,.4)">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const G = [['Nguyễn Minh Thư','Bạn cô dâu','yes',2,'2 giờ trước','Đi cùng chồng'],['Trần Đức Anh','Nhà trai','yes',4,'5 giờ trước','Cả gia đình'],['Lê Hoàng Yến','Đồng nghiệp','no',0,'Hôm qua','Đi công tác Đà Nẵng'],['Phạm Quốc Việt','Nhà trai','yes',1,'Hôm qua',''],['Bác Hai Tâm','Nhà gái','pending',0,'Đã mở thiệp',''],['Đỗ Thanh Hương','Bạn chú rể','yes',2,'2 ngày trước','Ăn chay'],['Vũ Ngọc Lan','Nhà gái','pending',0,'Chưa mở',''],['Hoàng Gia Bảo','Đồng nghiệp','yes',1,'3 ngày trước',''],['Cô Út Hạnh','Nhà gái','yes',3,'3 ngày trước','Cần chỗ gần sân khấu'],['Ngô Tuấn Kiệt','Bạn chú rể','no',0,'4 ngày trước',''],['Bùi Khánh Linh','Bạn cô dâu','pending',0,'Đã mở thiệp',''],['Đặng Minh Quân','Nhà trai','yes',2,'5 ngày trước','']];
+const W = [['Chúc hai bạn trăm năm hạnh phúc, sớm có tin vui nhé!','Minh Thư','2 giờ trước'],['Mãi yêu nhau như ngày đầu. Hẹn gặp ở tiệc!','Đức Anh','5 giờ trước'],['Tiếc không về được, gửi hai bạn nhiều thương yêu từ Đà Nẵng.','Hoàng Yến','Hôm qua'],['Bảo ơi, chăm Hà thật tốt nhé. Cả nhà chúc mừng hai con.','Cô Út Hạnh','3 ngày trước'],['Cuối cùng cũng đến ngày này rồi!','Tuấn Kiệt','4 ngày trước']];
+const SIZE = 25;
+const QR = (() => { let seed = 7; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280; const g = [];
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) {
+    const f = [[0,0],[SIZE-7,0],[0,SIZE-7]].find(([fx,fy]) => x >= fx && x < fx+7 && y >= fy && y < fy+7);
+    let on; if (f) { const dx = x-f[0], dy = y-f[1]; on = dx===0||dy===0||dx===6||dy===6||(dx>=2&&dx<=4&&dy>=2&&dy<=4); }
+    else if ([[0,0],[SIZE-7,0],[0,SIZE-7]].some(([fx,fy]) => x >= fx-1 && x <= fx+7 && y >= fy-1 && y <= fy+7)) on = false;
+    else on = rnd() > .52;
+    g.push(on); }
+  return g; })();
+const COLORS = [['Đỏ son','#8e1b1f','#f7efe3'],['Đỏ đậm','#5a1119','#f5ece2'],['Vàng kim','#7a5a22','#f7f0e0'],['Mực','#1a1412','#f4f1ec']];
+const STYLES = [['table','Thẻ bàn tiệc','10 × 15 cm','MỜI BẠN QUÉT MÃ','260px','14px'],['back','Mặt sau thiệp','5 × 5 cm','XEM THIỆP ONLINE','220px','8px'],['sticker','Nhãn dán','Tròn 6 cm','THIỆP & ĐƯỜNG ĐI','240px','140px']];
+const ORIG = { date: '2026-12-12', time: '17:00', place: 'Trung tâm hội nghị White Palace, Hà Nội' };
+const fmtD = d => { const [y,m,dd] = d.split('-'); return `${dd} · ${m} · ${y}`; };
+class Component extends DCLogic {
+  state = { tab: 'guests', filter: 'all', q: '', hiddenW: {}, pinned: { 1: true },
+    showQr: true, bank: 'Vietcombank', acc: '0451 0003 88 219', owner: 'NGUYEN THU HA',
+    qrStyle: 0, qrColor: 0, qrText: 'Quét để xem thiệp, đường đi và xác nhận tham dự',
+    f: { ...ORIG, note: '' }, saved: { ...ORIG }, notify: { banner: true, zalo: true, sms: false },
+    history: [{ what: 'Xuất bản thiệp', at: '02/10/2026', how: 'Gửi link cho 180 khách' }, { what: 'Thêm album 12 ảnh', at: '28/09/2026', how: 'Không báo khách' }], toast: '' };
+  flash(msg) { clearTimeout(this._tt); this.setState({ toast: msg }); this._tt = setTimeout(() => this.setState({ toast: '' }), 2400); }
+  componentWillUnmount() { clearTimeout(this._tt); }
+  toggle(a, b) { return { track: a ? '#24493a' : '#d8ccbc', knob: a ? 'translateX(16px)' : 'none' }; }
+  renderVals() {
+    const s = this.state;
+    const yes = G.filter(g => g[2] === 'yes'), no = G.filter(g => g[2] === 'no'), pen = G.filter(g => g[2] === 'pending');
+    const INV = 180, Y = 96, N = 12, PN = INV - Y - N, PEOPLE = 142;
+    const ST = { yes: ['Sẽ tham dự','#e7eee6','#24493a'], no: ['Xin phép vắng','#f5e3e1','#8e1b1f'], pending: ['Chưa trả lời','#efe6d9','#8a6425'] };
+    const q = s.q.trim().toLowerCase();
+    const guestRows = G.filter(g => (s.filter === 'all' || g[2] === s.filter) && (!q || g[0].toLowerCase().includes(q))).map(([name, group, st, n, at, note]) => ({ name, group, n: st === 'yes' ? n : '—', at, note: note || ' ', init: name.split(' ').pop()[0], st: ST[st][0], stBg: ST[st][1], stFg: ST[st][2] }));
+    const tab = (k, label, n) => ({ label, n, fg: s.tab === k ? '#1a1412' : '#8a7d72', bd: s.tab === k ? '#a3161c' : 'transparent', badgeBg: s.tab === k ? '#a3161c' : '#efe6d9', badgeFg: s.tab === k ? '#fff' : '#8a7d72', pick: () => this.setState({ tab: k }) });
+    const wishes = W.map((w, i) => ({ i, w })).sort((a, b) => (s.pinned[b.i] ? 1 : 0) - (s.pinned[a.i] ? 1 : 0));
+    const [cName, cInk, cPaper] = COLORS[s.qrColor]; const st = STYLES[s.qrStyle];
+    const f = s.f, sv = s.saved;
+    const ch = [f.date !== sv.date && `ngày thành ${fmtD(f.date)}`, f.time !== sv.time && `giờ đón khách thành ${f.time}`, f.place !== sv.place && `địa điểm thành ${f.place}`].filter(Boolean);
+    const dirty = ch.length > 0 || !!f.note.trim();
+    const t1 = this.toggle(s.showQr);
+    const setF = k => e => this.setState({ f: { ...s.f, [k]: e.target.value } });
+    return {
+      metaLine: `${fmtD(sv.date)} · ${sv.time} · ${sv.place}`,
+      tabs: [tab('guests','Khách mời',INV), tab('wishes','Lời chúc & mừng cưới',W.length), tab('qr','QR để in','3'), tab('update','Cập nhật thông tin',s.history.length)],
+      isGuests: s.tab === 'guests', isWishes: s.tab === 'wishes', isQr: s.tab === 'qr', isUpdate: s.tab === 'update',
+      stats: [{ l: 'Đã mời', v: INV, sub: '12 nhóm khách', dot: '#1a1412' }, { l: 'Sẽ tham dự', v: Y, sub: `${PEOPLE} người tính cả người đi cùng`, dot: '#24493a' }, { l: 'Xin phép vắng', v: N, sub: '7 người đã gửi lời chúc', dot: '#a3161c' }, { l: 'Chưa trả lời', v: PN, sub: '31 người đã mở thiệp', dot: '#c9a86a' }],
+      bar: [{ w: Y/INV*100 + '%', c: '#24493a' }, { w: N/INV*100 + '%', c: '#a3161c' }, { w: PN/INV*100 + '%', c: '#e0cfa8' }],
+      filters: [['all','Tất cả'],['yes','Sẽ tham dự'],['no','Vắng'],['pending','Chưa trả lời']].map(([k, label]) => ({ label, bg: s.filter === k ? '#1a1412' : '#fff', fg: s.filter === k ? '#fff' : '#5e534b', bd: s.filter === k ? '#1a1412' : '#e0d5c6', pick: () => this.setState({ filter: k }) })),
+      q: s.q, onQ: e => this.setState({ q: e.target.value }), guestRows, noGuests: guestRows.length === 0, pendingCount: PN,
+      remind: () => this.flash(`Đã gửi lời nhắc qua Zalo cho ${PN} khách`), exportXls: () => this.flash('Đang tải danh-sach-khach.xlsx'),
+      wishCount: W.length, hiddenCount: Object.values(s.hiddenW).filter(Boolean).length,
+      wishRows: wishes.map(({ i, w }) => ({ text: w[0], by: w[1], at: w[2], op: s.hiddenW[i] ? .4 : 1, pinMark: s.pinned[i] ? 'Đã ghim · ' : '', pinLabel: s.pinned[i] ? 'Bỏ ghim' : 'Ghim', hideLabel: s.hiddenW[i] ? 'Hiện' : 'Ẩn',
+        pin: () => this.setState({ pinned: { ...s.pinned, [i]: !s.pinned[i] } }), hide: () => this.setState({ hiddenW: { ...s.hiddenW, [i]: !s.hiddenW[i] } }) })),
+      qr: QR.map(on => ({ bg: on ? '#8e1b1f' : 'transparent' })), qrInked: QR.map(on => ({ bg: on ? cInk : 'transparent' })),
+      showQrTrack: t1.track, showQrKnob: t1.knob, toggleShowQr: () => this.setState({ showQr: !s.showQr }),
+      bank: s.bank, acc: s.acc, owner: s.owner, banks: ['Vietcombank','Techcombank','MB Bank','BIDV','VPBank','ACB','TPBank'],
+      onBank: e => this.setState({ bank: e.target.value }), onAcc: e => this.setState({ acc: e.target.value }), onOwner: e => this.setState({ owner: e.target.value.toUpperCase() }),
+      qrPaper: cPaper, qrInk: cInk, qrKicker: st[3], cardW: st[4], cardR: st[5], qrText: s.qrText, onQrText: e => this.setState({ qrText: e.target.value }),
+      qrStyles: STYLES.map((o, i) => ({ label: o[1], size: o[2], bd: i === s.qrStyle ? '#1a1412' : '#e0d5c6', bg: i === s.qrStyle ? '#1a1412' : '#fff', fg: i === s.qrStyle ? '#fff' : '#1a1412', pick: () => this.setState({ qrStyle: i }) })),
+      qrColors: COLORS.map((o, i) => ({ name: o[0], c: o[1], ring: i === s.qrColor ? '3px' : '0px', ring2: i === s.qrColor ? '5px' : '0px', pick: () => this.setState({ qrColor: i }) })),
+      copyLink: () => { try { navigator.clipboard.writeText('https://moc.vn/thuha-quocbao/1'); } catch (e) {} this.flash('Đã sao chép link thiệp'); },
+      dlPng: () => this.flash(`Đang tải QR ${st[1].toLowerCase()} (${cName}).png`), dlPdf: () => this.flash(`Đang tạo PDF ${st[2]} để in`),
+      fDate: f.date, fTime: f.time, fPlace: f.place, fNote: f.note, onFDate: setF('date'), onFTime: setF('time'), onFPlace: setF('place'), onFNote: setF('note'),
+      bdDate: f.date !== sv.date ? '#a3161c' : '#ddd2c4', bdTime: f.time !== sv.time ? '#a3161c' : '#ddd2c4', bdPlace: f.place !== sv.place ? '#a3161c' : '#ddd2c4',
+      dirty, changeList: ch.length ? ch.join(', ') : 'thêm ghi chú cho khách',
+      notifyOpts: [['banner','Hiện thông báo trên thiệp','Khách mở link sẽ thấy dòng cập nhật ở đầu thiệp'],['zalo',`Gửi Zalo cho ${Y} khách sẽ tham dự`,'Tin nhắn ngắn kèm link thiệp'],['sms','Gửi SMS cho khách chưa có Zalo','Khoảng 14 khách']].map(([k, label, sub]) => ({ label, sub, bd: s.notify[k] ? '#a3161c' : '#c9bcab', bg: s.notify[k] ? '#a3161c' : '#fff', tick: s.notify[k] ? '✓' : '', toggle: () => this.setState({ notify: { ...s.notify, [k]: !s.notify[k] } }) })),
+      saveBg: dirty ? '#a3161c' : '#c9bcab', saveCursor: dirty ? 'pointer' : 'default', saveLabel: dirty ? 'Lưu và báo cho khách' : 'Chưa có thay đổi',
+      saveUpdate: () => { if (!dirty) return;
+        const msg = ch.length ? 'Đổi ' + ch.join(', ') : 'Ghi chú: ' + f.note.trim();
+        const how = [s.notify.banner && 'banner trên thiệp', s.notify.zalo && 'Zalo', s.notify.sms && 'SMS'].filter(Boolean).join(', ') || 'Không báo khách';
+        if (s.notify.banner) { try { localStorage.setItem('moc_update', JSON.stringify({ msg: msg.charAt(0).toUpperCase() + msg.slice(1), note: f.note.trim(), at: Date.now() })); } catch (e) {} }
+        const d = new Date();
+        this.setState({ saved: { date: f.date, time: f.time, place: f.place }, f: { ...f, note: '' }, history: [{ what: msg.charAt(0).toUpperCase() + msg.slice(1), at: `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`, how }, ...s.history] });
+        this.flash('Đã lưu. Thiệp và mã QR tự cập nhật'); },
+      history: s.history, hasToast: !!s.toast, toast: s.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

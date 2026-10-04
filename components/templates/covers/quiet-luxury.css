@@ -1,0 +1,375 @@
+/* Batch 4 — Quiet luxury. One material cue per cover: line-art bloom, gold
+   octagon, champagne, pearl, rose. Same --cv-* contract. */
+
+/* Hoa Chữ — two initials around one line-art bloom. */
+.cv-floral-monogram {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-floral-monogram::before {
+  content: "";
+  position: absolute;
+  inset: 5cqw;
+  border: 0.3cqw solid color-mix(in srgb, var(--cv-gold) 80%, transparent);
+  pointer-events: none;
+}
+.cv-floral-monogram__kicker {
+  position: absolute;
+  top: 11cqw;
+  left: 0;
+  right: 0;
+}
+.cv-floral-monogram__letter {
+  position: absolute;
+  top: 24cqw;
+  font-family: var(--display);
+  font-size: 50cqw;
+  line-height: 0.9;
+  color: var(--cv-deep);
+}
+.cv-floral-monogram__letter--l {
+  left: 8cqw;
+}
+.cv-floral-monogram__letter--r {
+  right: 8cqw;
+}
+.cv-floral-monogram__stem {
+  position: absolute;
+  left: 32cqw;
+  top: 20cqw;
+  width: 36cqw;
+  animation: cvGrow 1.2s ease-out both;
+  transform-origin: 50% 100%;
+}
+.cv-floral-monogram__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 104cqw;
+  font-family: var(--hand);
+  font-size: 10.4cqw;
+  line-height: 1.1;
+}
+.cv-floral-monogram__amp {
+  color: var(--cv-gold);
+}
+.cv-floral-monogram__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 142cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-floral-monogram__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 152cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+.cv-floral-monogram__rule {
+  position: absolute;
+  left: 38cqw;
+  right: 38cqw;
+  bottom: 12cqw;
+  height: 0.3cqw;
+  background: var(--cv-gold);
+}
+
+/* Bát Giác — octagon photo, three gold outlines, faint rays. */
+.cv-octagon-frame {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-paper);
+  background: radial-gradient(circle at 50% 37%, color-mix(in srgb, var(--cv-gold) 22%, var(--cv-deep)), var(--cv-deep) 66%);
+}
+.cv-octagon-frame__rays {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cv-octagon-frame__kicker {
+  position: absolute;
+  top: 9cqw;
+  left: 0;
+  right: 0;
+}
+.cv-octagon-frame__photo {
+  position: absolute;
+  left: 17cqw;
+  top: 33cqw;
+  width: 66cqw;
+  height: 66cqw;
+  clip-path: polygon(29.3% 0, 70.7% 0, 100% 29.3%, 100% 70.7%, 70.7% 100%, 29.3% 100%, 0 70.7%, 0 29.3%);
+  background: color-mix(in srgb, var(--cv-paper) 14%, transparent);
+  animation: cvOctIn 1s ease-out both;
+}
+.cv-octagon-frame__frame {
+  position: absolute;
+  left: 9cqw;
+  top: 25cqw;
+  width: 82cqw;
+  height: 82cqw;
+  overflow: visible;
+  pointer-events: none;
+}
+.cv-octagon-frame__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 117cqw;
+  font-family: var(--display);
+  font-size: 8.6cqw;
+  line-height: 1.18;
+}
+.cv-octagon-frame__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-octagon-frame__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 144cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--cv-gold);
+}
+.cv-octagon-frame__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 154cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Sâm Panh — clinking flutes under a gold line, bubbles rising. */
+.cv-champagne-line {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: linear-gradient(color-mix(in srgb, var(--cv-gold) 26%, var(--cv-paper)), var(--cv-paper) 70%);
+}
+.cv-champagne-line__line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 0.35cqw;
+  height: 50cqw;
+  background: linear-gradient(var(--cv-gold), transparent);
+}
+.cv-champagne-line__bubble {
+  position: absolute;
+  border: 0.3cqw solid var(--cv-gold);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--cv-gold) 18%, transparent);
+  animation: cvBubble 5.5s ease-in infinite;
+}
+.cv-champagne-line__glasses {
+  position: absolute;
+  left: 0;
+  top: 16cqw;
+  width: 100cqw;
+  height: 100cqw;
+}
+.cv-champagne-line__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-champagne-line__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 116cqw;
+  font-family: var(--display);
+  font-size: 7.8cqw;
+  line-height: 1.18;
+}
+.cv-champagne-line__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-champagne-line__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 146cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-champagne-line__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 156cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Ngọc Trai — pearl festoons lower an oval photo ringed in pearls. */
+.cv-pearl-arch {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: linear-gradient(var(--cv-paper), color-mix(in srgb, var(--cv-deep) 9%, var(--cv-paper)));
+}
+.cv-pearl-arch__pearls {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0.5cqw 0.6cqw rgba(0, 0, 0, 0.18));
+}
+.cv-pearl-arch__photo {
+  position: absolute;
+  left: 33cqw;
+  top: 58cqw;
+  width: 34cqw;
+  height: 48cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--cv-deep) 14%, var(--cv-paper));
+}
+.cv-pearl-arch__kicker {
+  position: absolute;
+  top: 120cqw;
+  left: 0;
+  right: 0;
+}
+.cv-pearl-arch__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 128cqw;
+  font-family: var(--display);
+  font-size: 7.8cqw;
+  line-height: 1.18;
+}
+.cv-pearl-arch__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-pearl-arch__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 154cqw;
+  font-size: 3.8cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-pearl-arch__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 163cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Hồng Nhung — drawn roses spill in from the top onto a deep ground. */
+.cv-rose-cluster {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-paper);
+  background: radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--cv-paper) 12%, var(--cv-deep)), var(--cv-deep) 70%);
+}
+.cv-rose-cluster__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cv-rose-cluster__kicker {
+  position: absolute;
+  top: 66cqw;
+  left: 0;
+  right: 0;
+}
+.cv-rose-cluster__names {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 73cqw;
+  font-family: var(--hand);
+  font-size: 15cqw;
+  line-height: 1.02;
+}
+.cv-rose-cluster__amp {
+  display: block;
+  margin: 1cqw 0;
+  font-family: var(--script);
+  font-style: italic;
+  font-size: 6.4cqw;
+  color: var(--cv-gold);
+}
+.cv-rose-cluster__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 138cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-rose-cluster__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 148cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+@keyframes cvGrow {
+  from { opacity: 0; transform: scaleY(0.88); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvOctIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvBubble {
+  0% { opacity: 0; transform: translateY(0); }
+  15% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-22cqw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-floral-monogram__stem,
+  .cv-octagon-frame__photo,
+  .cv-champagne-line__bubble {
+    animation: none;
+  }
+  .cv-champagne-line__bubble {
+    opacity: 0.6;
+  }
+}

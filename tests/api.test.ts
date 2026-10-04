@@ -112,6 +112,13 @@ test("uploadMedia posts multipart with kind and file", async () => {
   assert.equal(new Headers(calls[0].init.headers).get("content-type"), null);
 });
 
+test("uploadMedia supports video kind", async () => {
+  const { api, calls } = fake(201, { url: "https://cdn/x.mp4" });
+  const out = await api.uploadMedia("i", "k", "video", new Blob(["x"], { type: "video/mp4" }), "a.mp4");
+  assert.equal(out.url, "https://cdn/x.mp4");
+  assert.equal((calls[0].init.body as FormData).get("kind"), "video");
+});
+
 test("createGuest POSTs the household and sends X-Edit-Key", async () => {
   const { api, calls } = fake(201, { id: "g1", household: "Gia đình chú Ba", token: "tok" });
   await api.createGuest("i", "k", { household: "Gia đình chú Ba" });

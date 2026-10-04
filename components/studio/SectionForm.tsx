@@ -5,6 +5,10 @@ import { ThiepPreview } from "@/components/templates/ThiepPreview";
 import { UploadList } from "@/components/studio/panels/UploadList";
 import { useApplyLater, useUploader, type MediaProps } from "@/components/studio/panels/useUploader";
 import { MediaPanel } from "@/components/studio/panels/MediaPanel";
+import { StoryPanel } from "@/components/studio/panels/StoryPanel";
+import { VideoPanel } from "@/components/studio/panels/VideoPanel";
+import { DressCodePanel } from "@/components/studio/panels/DressCodePanel";
+import { VenuePanel } from "@/components/studio/panels/VenuePanel";
 import { BANKS } from "@/lib/banks";
 import type { Content, EventItem } from "@/lib/content";
 import { move, newId, removeAt, updateAt } from "@/lib/list";
@@ -121,7 +125,7 @@ function PhotoButton({ label, url, busy, onPick, onClear }: { label: string; url
   );
 }
 
-const blank = (kind: EventItem["kind"], title: string): EventItem => ({ id: newId(), kind, title, date: "", time: "", arrivalTime: "", lunar: "", venue: "", address: "", mapUrl: "" });
+const blank = (kind: EventItem["kind"], title: string): EventItem => ({ id: newId(), kind, title, date: "", time: "", arrivalTime: "", lunar: "", venue: "", address: "", mapUrl: "", venuePhoto: "", directionsNote: "", parkingNote: "" });
 
 export function SectionForm({ sec, content: c, onChange, templateId, onTemplate, media, guests, guestIdx, onGuest, onResponses }: Props) {
   const uploader = useUploader(media);
@@ -347,6 +351,18 @@ export function SectionForm({ sec, content: c, onChange, templateId, onTemplate,
           <span className="edf-note">Nhạc tự phát khi khách mở phong bì. Khách có thể tắt bằng nút ở góc thiệp.</span>
         </>
       );
+
+    case "story":
+      return <StoryPanel content={c} onChange={onChange} media={media} />;
+
+    case "video":
+      return <VideoPanel content={c} onChange={onChange} media={media} />;
+
+    case "dressCode":
+      return <DressCodePanel content={c} onChange={onChange} />;
+
+    case "venue":
+      return <VenuePanel content={c} onChange={onChange} media={media} />;
 
     case "rsvp": {
       const has = (id: string) => c.rsvp.questions.some((q) => q.id === id);

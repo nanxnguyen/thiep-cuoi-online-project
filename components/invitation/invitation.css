@@ -1055,3 +1055,119 @@
   60% { transform: scale(1.15); }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* New shared sections (story, video, dress code, venue). Base rhythm follows
+   .inv-schedule; variants only adjust presentation via data-variant. */
+.inv-story,
+.inv-video,
+.inv-dresscode,
+.inv-venue {
+  padding: 44px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-wrap: anywhere;
+}
+.inv-sec__empty {
+  font-size: 14px;
+  opacity: 0.7;
+  text-align: center;
+  margin: 0;
+}
+.inv-story__list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inv-story[data-variant="timeline"] .inv-story__list {
+  border-left: 1px solid var(--c-gold);
+  margin-left: 8px;
+  padding-left: 20px;
+}
+.inv-story[data-variant="cards"] .inv-story__list > li {
+  border: 1px solid var(--c-gold);
+  border-radius: 12px;
+  padding: 16px;
+}
+.inv-story__date {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  margin: 0 0 4px;
+}
+.inv-story__title {
+  font-size: 18px;
+  margin: 0 0 4px;
+}
+.inv-story__body {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.85;
+}
+.inv-story__num {
+  font-family: var(--display);
+  font-size: 32px;
+  opacity: 0.35;
+}
+.inv-story[data-variant="editorial"] .inv-story__list > li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.inv-story__img,
+.inv-venue__img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+  margin-top: 8px;
+}
+.inv-video__player {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  background: var(--c-deep);
+  display: block;
+}
+.inv-video__title {
+  font-size: 16px;
+  margin: 0;
+  text-align: center;
+}
+.inv-dresscode__note,
+.inv-venue__note,
+.inv-venue__addr {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.85;
+}
+.inv-venue__name {
+  font-size: 20px;
+  margin: 0;
+}
+.inv-dresscode__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.inv-dresscode__list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  border: 1px solid var(--c-gold);
+  border-radius: 999px;
+  padding: 6px 14px 6px 8px;
+}
+.inv-dresscode__list i {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+}

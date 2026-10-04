@@ -91,3 +91,25 @@ Design language: ivory paper, lacquer red, foil gold, lattice, 囍 — self-draw
 **Before porting anything from `design/`, follow `Guide-convert-html-design-to-code.md`** (how to read a `.dc.html`, what not to port, how to verify parity).
 
 **Visual fidelity to `design/` is 100%, not "inspired by."** Every value the mockups pin — colour, font/typeface, spacing/sizing, and layout/structure — must match the matching `*.dc.html` under `design/` exactly, reading it before building the matching UI. Colours and fonts route through `app/styles/tokens.css` / `lib/fonts.ts` rather than being copied as raw values, but the rendered result (hex-equivalent colour, font-family, spacing scale, layout structure) must be pixel-equivalent to the source. The only allowed deviation is the existing WCAG AA legibility override above; anything else that diverges from `design/` is a bug, not a judgment call — fix it or, if truly unavoidable, log it in `DESIGN.md` with the reason.
+
+## Agent skills
+
+Ưu tiên matt-pocock skills (global `~/.config/opencode/skills/`). Task khớp trigger thì load skill thay vì tự làm. Không chắc skill nào → load `ask-matt` trước. Trong OpenCode gọi bằng `@<skill-id>` hoặc `skill` tool.
+
+- Grill ý tưởng mơ hồ → `grill-with-docs` (có repo, ghi GLOSSARY + ADR) / `grill-me` (không repo)
+- Build test-first → `tdd` (red-green từng slice, confirm seam trước), bug khó → `diagnosing-bugs` (cần tight feedback loop đỏ trước khi đoán), xong → `code-review` (Standards + Spec), PR body → `pr`
+- Plan → `to-spec` → `to-tickets` (tracer-bullet + blocking edges) → `implement` (từng ticket, clear context giữa tickets) hoặc `implement-spec` (cả spec, song song)
+- Việc lớn mù mờ multi-session → `wayfinder`; issues dồn → `triage`; rảnh → `improve-codebase-architecture`
+- Đọc `GLOSSARY.md` + `docs/adr/` trước khi explore; dùng đúng từ vựng glossary; mâu thuẫn ADR thì nêu rõ
+
+### Issue tracker
+
+GitHub Issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Defaults `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` + `docs/adr/` ở root. See `docs/agents/domain.md`.

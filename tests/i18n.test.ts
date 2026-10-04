@@ -32,3 +32,23 @@ test("t(): a couple of interpolated strings render as expected in both locales",
   assert.equal(t("vi").srCountdown(5), "Còn 5 ngày nữa đến lễ cưới.");
   assert.equal(t("en").srCountdown(5), "5 days left until the wedding.");
 });
+
+test("t(): story, video, dress code and venue labels exist in both locales", () => {
+  for (const locale of ["vi", "en"] as const) {
+    const d = t(locale);
+    assert.ok(d.storyTitle);
+    assert.ok(d.storyEmpty);
+    assert.ok(d.videoTitle);
+    assert.ok(d.videoFallback);
+    assert.ok(d.videoOpenLink);
+    assert.ok(d.videoEmpty);
+    assert.ok(d.dressCodeFallback);
+    assert.ok(d.dressCodeEmpty);
+    assert.ok(d.venueTitle);
+    assert.ok(d.venueDirections);
+    assert.ok(d.venueParking);
+    assert.ok(d.venueEmpty);
+  }
+  assert.notEqual(t("vi").storyTitle, t("en").storyTitle);
+  assert.notEqual(t("vi").venueTitle, t("en").venueTitle);
+});

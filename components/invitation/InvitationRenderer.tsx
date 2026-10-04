@@ -1,22 +1,14 @@
-import type { CSSProperties } from "react";
+import { Fragment, type CSSProperties } from "react";
 import type { PublicWish } from "@/lib/api";
 import type { Content } from "@/lib/content";
 import { t, type Locale } from "@/lib/i18n";
 import { colors, type Template } from "@/lib/templates";
 import { InvitationShell } from "./client/InvitationShell";
 import { ViewTracker } from "./client/ViewTracker";
-import { Album } from "./sections/Album";
-import { CountdownSection } from "./sections/CountdownSection";
-import { Couple } from "./sections/Couple";
-import { Cover } from "./sections/Cover";
+import { renderInvitationSection } from "./section-renderer";
 import { Envelope } from "./sections/Envelope";
-import { Events } from "./sections/Events";
-import { Family } from "./sections/Family";
-import { Gift } from "./sections/Gift";
-import { RsvpSection } from "./sections/RsvpSection";
-import { Schedule } from "./sections/Schedule";
-import { Thanks } from "./sections/Thanks";
-import { WishesSection } from "./sections/WishesSection";
+import { SECTION_PROFILES } from "@/lib/section-profiles";
+import { resolveSectionOrder } from "@/lib/section-profiles";
 import "./invitation.css";
 
 export type InvitationRendererProps = {
@@ -85,12 +77,16 @@ export function InvitationRenderer({ content, template, mode, slug, invitationId
     "--c-name": NAME_FONTS[content.nameFont],
   } as CSSProperties;
   const clock = now ?? new Date();
-  const preview = mode === "preview";
   const guest = guestName.trim();
   const dict = t(locale);
+  // Profiles only reorder the sections inside <main>; envelope, tracker, nav and
+  // shell stay exactly where they are, so legacy templates render the same DOM.
+  const profile = SECTION_PROFILES[template.profile];
+  const order = resolveSectionOrder(profile, () => true);
+  const ctx = { content, template, profile, mode, slug, invitationId, guestName: guest, guestToken, wishes, now: clock, locale, showcase };
 
   return (
-    <div className="inv-stage" data-mode={mode} data-template={template.id} data-family={template.family} data-color={key} style={style}>
+    <div className="inv-stage" data-mode={mode} data-template={template.id} data-family={template.family} data-color={key} data-profile={template.profile} data-density={profile.density} data-ornament={profile.ornament} style={style}>
       <InvitationShell
         gate={gate ?? mode === "live"}
         guestName={guest}
@@ -108,17 +104,9 @@ export function InvitationRenderer({ content, template, mode, slug, invitationId
         )}
         <main className="inv-col">
           <Envelope content={content} guestName={guest} locale={locale} />
-          <Cover content={content} template={template} locale={locale} showcase={showcase} />
-          <Couple content={content} locale={locale} />
-          <Family content={content} locale={locale} />
-          <Events content={content} locale={locale} />
-          <Schedule content={content} locale={locale} />
-          <CountdownSection content={content} now={clock} locale={locale} />
-          <Album content={content} locale={locale} />
-          <RsvpSection content={content} slug={slug} preview={preview} guestName={guest} guestToken={guestToken} locale={locale} />
-          <WishesSection content={content} slug={slug} invitationId={invitationId} preview={preview} guestName={guest} wishes={wishes} locale={locale} />
-          <Gift content={content} locale={locale} />
-          <Thanks content={content} locale={locale} />
+          {order.map((section) => (
+            <Fragment key={section}>{renderInvitationSection(section, ctx)}</Fragment>
+          ))}
         </main>
       </InvitationShell>
     </div>

@@ -78,6 +78,25 @@ Button CTA dạng pill (`--radius-full`); chip/input bo `--radius-s` 8px, card `
 
 Header/footer là shared component. `GalleryCatalog` và Studio đọc chung registry mẫu/màu; preview và thiệp khách dùng chung `InvitationRenderer`. Chọn mẫu/màu phải có trạng thái pressed/selected và điều khiển bàn phím; lưu, xuất bản, lỗi mạng và form phản hồi giữ thông báo bằng chữ. Chuyển động ngắn cho phong bì và hover; `prefers-reduced-motion` vô hiệu hóa chuyển động trang trí.
 
+## 30 mẫu thiệp mới (2026-10-04, catalog 50)
+
+Sáu collection mới, mỗi mẫu một cover family riêng dưới `components/templates/covers/` (một file một family, CSS theo collection), dispatch exhaustive qua `coverRenderers`:
+
+- **Di sản Việt** (`heritage.css`): Ấn Son, Phụng Vũ, Liên Hoa, Lam Sứ, Tơ Hồng — profile `heritage`, ornament `heritage`.
+- **Vườn hoa và địa điểm** (`garden.css`): Vườn Kính, Mai Lan, Vườn Ép Hoa, Nơi Mình Hẹn, Dạ Hoa — profile `garden`.
+- **Editorial ảnh cưới** (`editorial.css`): Khung Điện Ảnh, Phòng Tối, Song Ảnh, Ghi Chú Bên Ảnh, Tạp Chí Cưới — profile `editorial-photo`.
+- **Quiet luxury** (`quiet-luxury.css`): Dập Nổi Ngà, Nhung Đêm, Sâm Panh, Ngọc Trai, Thạch Vân — profile `quiet-luxury`.
+- **Kỷ vật và câu chuyện** (`story.css`): Nhật Ký Đôi Mình, Chung Một Hành Trình, Quán Quen, Ngày Mình Chọn, Gia Bảo — profile `story-led`.
+- **Đương đại** (`expressive.css`): Chữ Chuyển Nhịp, Khối Hỷ, Chúng Mình, Cắt Giấy, Duyên Tinh Tú — profile `expressive`.
+
+Section profile (`lib/section-profiles.ts`) chỉ sắp xếp các section trong `<main>`; phong bì, nhạc và nút thêm-lịch giữ nguyên shell. 20 mẫu A–O dùng profile `default` và là baseline bất biến: không đổi id, tên, SEO, family, palette, sample, cover, thứ tự section hay giao diện mặc định (snapshot trong `tests/templates.test.ts`).
+
+Bốn section mới (Story, Video, DressCode, Venue) dùng shared component và biến thể theo profile; content v2 đọc được dữ liệu v1 qua `upgradeV1` (`lib/content.ts`).
+
+Asset: mọi ornament của 30 mẫu mới là CSS/SVG vẽ riêng (`original`), ảnh mẫu tái dùng ảnh `public/photos/` có sẵn; `refs/` mặc định `reference-only`, không copy sang production. Manifest: `lib/template-assets.ts`, audit: `docs/design/template-asset-audit.md`.
+
+Màu cover mới chạy qua biến `--cv-deep/--cv-paper/--cv-gold` do `ThiepPreview` truyền từ palette registry (`lib/templates.ts`); không hex rời ngoài token và registry. Thêm family mới: thêm slug vào `NEW_FAMILIES` + meta trong `lib/covers.ts`, thêm renderer vào `coverRenderers` (typecheck bắt exhaustive), thêm catalog row + sample + SEO trong `lib/templates.ts`.
+
 ## Do's and Don'ts
 
 - Dùng đúng tên 16 mẫu và palette trong design v2; ID cũ chỉ là alias dữ liệu.

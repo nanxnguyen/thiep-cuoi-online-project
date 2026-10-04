@@ -39,7 +39,7 @@ export function HelpClient({ groups }: { groups: readonly HelpGroup[] }) {
             Mộc có thể <em>giúp gì?</em>
           </h1>
           <div className="help-search">
-            <input aria-label="Tìm câu hỏi" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tìm câu hỏi, ví dụ: đổi mẫu, QR, link khách…" />
+            <input aria-label="Tìm câu hỏi" name="q" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tìm câu hỏi, ví dụ: đổi mẫu, QR, link khách…" />
           </div>
         </div>
       </section>

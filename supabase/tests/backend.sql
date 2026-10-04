@@ -1,5 +1,5 @@
 begin;
-select plan(36);
+select plan(44);
 
 select tables_are(
   'public',
@@ -161,6 +161,34 @@ select is(
   '1,1,3',
   'response summary counts only the latest RSVP per normalized guest'
 );
+
+insert into public.invitations (id, slug, template_id, content, published, owner_id, edit_key_hash, tier, created_at)
+values
+  ('31000000-0000-0000-0000-000000000001', 'tier-free', 'song-hy', '{"v":2}', false, null, repeat('f', 64), 'free', '2026-10-01 00:00:00+00'),
+  ('31000000-0000-0000-0000-000000000002', 'tier-pro', 'song-hy', '{"v":2}', true, null, repeat('e', 64), 'pro', '2020-01-01 00:00:00+00');
+select is(
+  (select expires_at from public.invitations where id = '31000000-0000-0000-0000-000000000001'),
+  '2026-10-08 00:00:00+00'::timestamptz,
+  'free invitations expire 7 days after creation'
+);
+select is(
+  (select expires_at from public.invitations where id = '31000000-0000-0000-0000-000000000002'),
+  null::timestamptz,
+  'pro invitations never expire'
+);
+update public.invitations set tier = 'premium' where id = '31000000-0000-0000-0000-000000000001';
+select is(
+  (select expires_at from public.invitations where id = '31000000-0000-0000-0000-000000000001'),
+  '2027-10-01 00:00:00+00'::timestamptz,
+  'changing the tier recomputes the expiry'
+);
+update public.invitations set expires_at = now() - interval '1 day' where id = '31000000-0000-0000-0000-000000000001';
+insert into storage.objects (bucket_id, name) values ('media', '31000000-0000-0000-0000-000000000001/qc.png');
+select is(public.purge_expired_invitations(now()), 1, 'expiry purge removes exactly the overdue invitation');
+select is((select count(*)::integer from public.invitations where id = '31000000-0000-0000-0000-000000000001'), 0, 'expired invitations are hard-deleted');
+select is((select count(*)::integer from storage.objects where bucket_id = 'media' and name like '31000000-0000-0000-0000-000000000001/%'), 0, 'expired invitation files are unlinked from storage');
+select is((select count(*)::integer from public.invitations where id = '31000000-0000-0000-0000-000000000002'), 1, 'pro invitations survive the purge');
+select ok((select count(*) from cron.job where jobname = 'purge-expired-invitations') = 1, 'expired-invitation purge is scheduled daily');
 
 select * from finish();
 rollback;

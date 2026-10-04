@@ -17,7 +17,7 @@ import { useAutosave, type SaveStatus } from "./useAutosave";
 type Draft = { templateId: string; content: Content };
 type Gate = "loading" | "nokey" | "notfound" | "error" | "ready";
 
-// The design's 14 parts, in order (the "Quản lý" tools after them are not steps).
+// The outline parts, in order (the "Quản lý" tools after them are not steps).
 const STEPS = SECTION_GROUPS.slice(0, 4).flatMap((g) => g.items);
 const GUESTS = ["Bạn thân mến", "Cô Lan & gia đình", "Anh Tuấn", "Chú Hải"];
 
@@ -174,7 +174,7 @@ export function Editor({ id }: { id: string }) {
         </p>
         {gate === "nokey" && (
           <form className="import__form" onSubmit={submitLink}>
-            <input className="input" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://…/studio/…#k=…" aria-label="Link chỉnh sửa" />
+            <input className="input" name="editLink" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://…/studio/…#k=…" aria-label="Link chỉnh sửa" />
             <button type="submit" className="button-primary" disabled={!link.trim()}>
               Mở thiệp
             </button>

@@ -1,0 +1,533 @@
+/* Batch 6 — Vui và cá tính. Motion is one entrance each and stays calm;
+   every animation has a reduced-motion guard at the end. Same --cv-* contract. */
+
+/* Chữ Chuyển Nhịp — huge names slide in once, photo band, outlined day. */
+.cv-kinetic-type {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-kinetic-type__strip {
+  position: absolute;
+  left: -4cqw;
+  right: -4cqw;
+  top: 7cqw;
+  margin: 0;
+  padding: 1.6cqw 0;
+  white-space: nowrap;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  font-size: 2.6cqw;
+  letter-spacing: 0.34em;
+  transform: rotate(-2deg);
+}
+.cv-kinetic-type__names {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 20cqw;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+}
+.cv-kinetic-type__line {
+  display: block;
+  font-family: var(--display);
+  font-size: 17cqw;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+.cv-kinetic-type__line--a {
+  animation: cvSlideL 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-kinetic-type__line--b {
+  animation: cvSlideR 0.9s 0.15s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-kinetic-type__line i {
+  font-family: var(--script);
+  color: var(--cv-gold);
+}
+.cv-kinetic-type__photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 34cqw;
+  overflow: hidden;
+  animation: cvGrowX 1s 0.1s ease-out both;
+}
+.cv-kinetic-type__day {
+  position: absolute;
+  left: 6cqw;
+  top: 112cqw;
+  margin: 0;
+  font-family: var(--display);
+  font-size: 40cqw;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 0.4cqw var(--cv-deep);
+}
+.cv-kinetic-type__day sup {
+  font-size: 12cqw;
+  vertical-align: top;
+}
+.cv-kinetic-type__date {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 150cqw;
+  text-align: left;
+  font-size: 3.6cqw;
+  letter-spacing: 0.26em;
+}
+.cv-kinetic-type__place {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 158cqw;
+  text-align: left;
+  font-size: 2.5cqw;
+  letter-spacing: 0.2em;
+  opacity: 0.85;
+}
+
+/* Khối Hỷ — flat blocks, gold disc with the day, arched photo. */
+.cv-color-block {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-color-block__field {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 112cqw;
+  background: var(--cv-deep);
+}
+.cv-color-block__dots {
+  position: absolute;
+  left: 5cqw;
+  top: 98cqw;
+  width: 32cqw;
+  height: 22cqw;
+  background: radial-gradient(var(--cv-deep) 0.7cqw, transparent 0.8cqw) 0 0 / 3.6cqw 3.6cqw;
+}
+.cv-color-block__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+  color: var(--cv-paper);
+}
+.cv-color-block__photo {
+  position: absolute;
+  left: 12cqw;
+  top: 20cqw;
+  width: 50cqw;
+  height: 76cqw;
+  overflow: hidden;
+  border: 1.2cqw solid var(--cv-paper);
+  border-radius: 25cqw 25cqw 0 0;
+  background: var(--cv-paper);
+}
+.cv-color-block__disc {
+  position: absolute;
+  left: 52cqw;
+  top: 64cqw;
+  width: 44cqw;
+  height: 44cqw;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  border-radius: 50%;
+  background: var(--cv-gold);
+  color: var(--cv-deep);
+  animation: cvPop 0.8s ease-out both;
+}
+.cv-color-block__disc b {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 24cqw;
+  line-height: 1;
+}
+.cv-color-block__disc span {
+  font-size: 2.6cqw;
+  letter-spacing: 0.2em;
+}
+.cv-color-block__base {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 120cqw;
+}
+.cv-color-block__names {
+  font-family: var(--display);
+  font-size: 8.4cqw;
+  line-height: 1.16;
+}
+.cv-color-block__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-deep);
+  opacity: 0.7;
+}
+.cv-color-block__date {
+  margin-top: 3cqw;
+  font-size: 4cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-color-block__place {
+  margin-top: 1.4cqw;
+  font-size: 2.5cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Chúng Mình — chibi couple in front of the photo window. */
+.cv-chibi-story {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: color-mix(in srgb, var(--cv-gold) 20%, var(--cv-paper));
+}
+.cv-chibi-story__sun {
+  position: absolute;
+  left: -14cqw;
+  top: -14cqw;
+  width: 56cqw;
+  height: 56cqw;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--cv-gold) 45%, transparent);
+}
+.cv-chibi-story__bubble {
+  --cv-pop-x: -50%;
+  position: absolute;
+  left: 50%;
+  top: 8cqw;
+  max-width: 76cqw;
+  padding: 2.4cqw 4.4cqw;
+  transform: translateX(-50%);
+  text-align: center;
+  background: white;
+  border: 0.5cqw solid var(--cv-deep);
+  border-radius: 5cqw;
+  font-family: var(--hand);
+  font-size: 6.8cqw;
+  line-height: 1.1;
+  animation: cvPop 0.8s 0.2s ease-out both;
+}
+.cv-chibi-story__bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2.6cqw;
+  width: 4cqw;
+  height: 4cqw;
+  background: white;
+  border-right: 0.5cqw solid var(--cv-deep);
+  border-bottom: 0.5cqw solid var(--cv-deep);
+  transform: translateX(-50%) rotate(45deg);
+}
+.cv-chibi-story__photo {
+  position: absolute;
+  left: 17cqw;
+  top: 30cqw;
+  width: 66cqw;
+  height: 66cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.4cqw solid white;
+  box-shadow: 0 1.4cqw 3cqw rgba(0, 0, 0, 0.25);
+}
+.cv-chibi-story__couple {
+  position: absolute;
+  left: 12cqw;
+  top: 52cqw;
+  width: 76cqw;
+  height: 76cqw;
+  filter: drop-shadow(0 0.6cqw 0.6cqw rgba(0, 0, 0, 0.15));
+}
+.cv-chibi-story__heart {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: cvBeat 1.4s ease-in-out infinite;
+}
+.cv-chibi-story__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 132cqw;
+  font-family: var(--hand);
+  font-size: 9cqw;
+  line-height: 1.04;
+}
+.cv-chibi-story__amp {
+  color: var(--cv-gold);
+}
+.cv-chibi-story__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 157cqw;
+  font-size: 3.8cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-chibi-story__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 165cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Cắt Giấy — four stacked sheets, depth from shadow only. */
+.cv-paper-cut {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: var(--cv-deep);
+  --cv-l2: color-mix(in srgb, var(--cv-deep) 55%, var(--cv-paper));
+  --cv-l3: color-mix(in srgb, var(--cv-gold) 72%, var(--cv-paper));
+}
+.cv-paper-cut__sheet {
+  position: absolute;
+}
+.cv-paper-cut__sheet--2 {
+  left: 4cqw;
+  right: 4cqw;
+  top: 6cqw;
+  bottom: 6cqw;
+  border-radius: 50cqw 50cqw 6cqw 6cqw;
+  background: var(--cv-l2);
+  box-shadow: 0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.4);
+}
+.cv-paper-cut__sheet--3 {
+  left: 9cqw;
+  right: 9cqw;
+  top: 12cqw;
+  bottom: 11cqw;
+  border-radius: 45cqw 45cqw 6cqw 6cqw;
+  background: var(--cv-l3);
+  box-shadow: 0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.35);
+}
+.cv-paper-cut__sheet--4 {
+  left: 14cqw;
+  right: 14cqw;
+  top: 18cqw;
+  bottom: 16cqw;
+  border-radius: 36cqw 36cqw 5cqw 5cqw;
+  background: var(--cv-paper);
+  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.3);
+  animation: cvLift 0.9s ease-out both;
+  text-align: center;
+}
+.cv-paper-cut__sprig {
+  position: absolute;
+  width: 11cqw;
+  color: var(--cv-deep);
+  filter: drop-shadow(0 0.6cqw 0.6cqw rgba(0, 0, 0, 0.4));
+}
+.cv-paper-cut__sprig--l {
+  left: 2cqw;
+  bottom: 14cqw;
+  transform: rotate(-12deg);
+}
+.cv-paper-cut__sprig--r {
+  right: 2cqw;
+  bottom: 14cqw;
+  transform: rotate(12deg) scaleX(-1);
+}
+.cv-paper-cut__kicker {
+  position: absolute;
+  top: 9cqw;
+  left: 0;
+  right: 0;
+  font-size: 2.2cqw;
+}
+.cv-paper-cut__photo {
+  position: absolute;
+  left: 15cqw;
+  top: 17cqw;
+  width: 42cqw;
+  height: 56cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1cqw solid var(--cv-l3);
+}
+.cv-paper-cut__names {
+  position: absolute;
+  left: 3cqw;
+  right: 3cqw;
+  top: 80cqw;
+  font-family: var(--display);
+  font-size: 7.2cqw;
+  line-height: 1.16;
+}
+.cv-paper-cut__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-paper-cut__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 106cqw;
+  font-size: 3.6cqw;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+}
+.cv-paper-cut__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 115cqw;
+  font-size: 2.2cqw;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  opacity: 0.85;
+}
+
+/* Duyên Tinh Tú — date-seeded constellation, photo planet on a tilted orbit. */
+.cv-constellation {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-paper);
+  background: radial-gradient(circle at 50% 36%, color-mix(in srgb, var(--cv-gold) 22%, var(--cv-deep)), var(--cv-deep) 65%);
+}
+.cv-constellation__sky {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100cqw;
+  height: 110cqw;
+  animation: cvTwinkle 4s ease-in-out infinite alternate;
+}
+.cv-constellation__shoot {
+  position: absolute;
+  left: 66cqw;
+  top: 14cqw;
+  width: 22cqw;
+  height: 0.35cqw;
+  background: linear-gradient(90deg, transparent, var(--cv-paper));
+  transform: rotate(32deg);
+  opacity: 0;
+  animation: cvShoot 6s 1s ease-in infinite;
+}
+.cv-constellation__orbit {
+  position: absolute;
+  left: 0;
+  top: 40cqw;
+  width: 100cqw;
+  height: 40cqw;
+  transform: rotate(-14deg);
+}
+.cv-constellation__planet {
+  position: absolute;
+  left: 32cqw;
+  top: 42cqw;
+  width: 36cqw;
+  height: 36cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0.6cqw solid var(--cv-gold);
+  box-shadow: 0 0 6cqw 1cqw color-mix(in srgb, var(--cv-gold) 45%, transparent);
+}
+.cv-constellation__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-constellation__names {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 106cqw;
+  font-family: var(--hand);
+  font-size: 13cqw;
+  line-height: 1.02;
+}
+.cv-constellation__amp {
+  display: block;
+  font-family: var(--script);
+  font-style: italic;
+  font-size: 6cqw;
+  color: var(--cv-gold);
+}
+.cv-constellation__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 150cqw;
+  font-size: 4cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-constellation__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 159cqw;
+  font-size: 2.5cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+@keyframes cvSlideL {
+  from { opacity: 0; transform: translateX(-14cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvSlideR {
+  from { opacity: 0; transform: translateX(14cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvGrowX {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+@keyframes cvPop {
+  from { opacity: 0; transform: translateX(var(--cv-pop-x, 0)) scale(0.8); }
+  to { opacity: 1; transform: translateX(var(--cv-pop-x, 0)) scale(1); }
+}
+@keyframes cvBeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+@keyframes cvLift {
+  from { opacity: 0; transform: translateY(3cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvShoot {
+  0% { opacity: 0; transform: rotate(32deg) translateX(0); }
+  8% { opacity: 1; }
+  30%, 100% { opacity: 0; transform: rotate(32deg) translateX(30cqw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-kinetic-type__line,
+  .cv-kinetic-type__photo,
+  .cv-color-block__disc,
+  .cv-chibi-story__bubble,
+  .cv-chibi-story__heart,
+  .cv-paper-cut__sheet--4,
+  .cv-constellation__sky,
+  .cv-constellation__shoot {
+    animation: none;
+  }
+}

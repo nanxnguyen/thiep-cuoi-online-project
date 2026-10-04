@@ -1,0 +1,428 @@
+/* Batch 2 — Vườn hoa và địa điểm. Airy rhythm, same --cv-* contract as batch 1. */
+
+/* Vườn Kính — gabled greenhouse, glazing bars, vine, pots. */
+.cv-glasshouse {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(var(--cv-paper), color-mix(in srgb, var(--cv-gold) 22%, var(--cv-paper)));
+  color: var(--cv-deep);
+}
+.cv-glasshouse__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-glasshouse__house {
+  position: absolute;
+  left: 14cqw;
+  top: 18cqw;
+  width: 72cqw;
+  height: 106cqw;
+}
+.cv-glasshouse__photo,
+.cv-glasshouse__glare {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 26%, 50% 0, 100% 26%, 100% 100%, 0 100%);
+}
+.cv-glasshouse__photo {
+  background: color-mix(in srgb, var(--cv-deep) 14%, var(--cv-paper));
+}
+.cv-glasshouse__glare {
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0.16) 58%, rgba(255, 255, 255, 0) 74%);
+  pointer-events: none;
+}
+.cv-glasshouse__bars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 0.4cqw rgba(0, 0, 0, 0.35));
+}
+.cv-glasshouse__vine {
+  position: absolute;
+  left: -3cqw;
+  bottom: 0;
+  width: 26cqw;
+  color: var(--cv-deep);
+}
+.cv-glasshouse__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 130cqw;
+  font-family: var(--display);
+  font-size: 8cqw;
+  line-height: 1.18;
+}
+.cv-glasshouse__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-glasshouse__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 150cqw;
+  font-size: 3.8cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-glasshouse__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 157cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.8;
+}
+.cv-glasshouse__ground {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Mai Lan — one orchid branch across the page, quiet text bottom right. */
+.cv-white-orchid {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--cv-paper), color-mix(in srgb, var(--cv-deep) 8%, var(--cv-paper)));
+  color: var(--cv-deep);
+}
+.cv-white-orchid__branch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: cvOrchidIn 1.4s ease-out both;
+}
+.cv-white-orchid__kicker {
+  position: absolute;
+  top: 9cqw;
+  left: 9cqw;
+  text-align: left;
+  text-indent: 0;
+}
+.cv-white-orchid__text {
+  position: absolute;
+  right: 8cqw;
+  bottom: 12cqw;
+  width: 50cqw;
+  text-align: right;
+}
+.cv-white-orchid__names {
+  text-align: right;
+  font-family: var(--display);
+  font-size: 7.6cqw;
+  line-height: 1.18;
+}
+.cv-white-orchid__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-white-orchid__date {
+  margin-top: 3cqw;
+  text-align: right;
+  font-size: 3.8cqw;
+  letter-spacing: 0.3em;
+}
+.cv-white-orchid__place {
+  margin-top: 1.4cqw;
+  text-align: right;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  opacity: 0.8;
+}
+
+/* Vườn Ép Hoa — herbarium sheet, pressed sprigs, taped print, dashed label. */
+.cv-pressed-garden {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: color-mix(in srgb, var(--cv-deep) 14%, var(--cv-paper));
+}
+.cv-pressed-garden__sheet {
+  position: absolute;
+  inset: 5cqw;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.018) 0 0.4cqw, transparent 0.4cqw 1.2cqw), var(--cv-paper);
+  box-shadow: 0 1cqw 3cqw rgba(0, 0, 0, 0.18);
+}
+.cv-pressed-garden__sprig {
+  position: absolute;
+  top: 6cqw;
+  left: 6cqw;
+  width: 44cqw;
+}
+.cv-pressed-garden__sprig--flip {
+  top: auto;
+  left: auto;
+  right: 6cqw;
+  bottom: 6cqw;
+  transform: rotate(180deg);
+}
+.cv-pressed-garden__kicker {
+  position: absolute;
+  top: 12cqw;
+  right: 9cqw;
+  text-align: right;
+  text-indent: 0;
+}
+.cv-pressed-garden__print {
+  position: absolute;
+  left: 24cqw;
+  top: 46cqw;
+  width: 54cqw;
+  height: 68cqw;
+  transform: rotate(-2.5deg);
+  padding: 2cqw;
+  background: white;
+  box-shadow: 0 1.2cqw 3cqw rgba(0, 0, 0, 0.25);
+}
+.cv-pressed-garden__photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.cv-pressed-garden__tape {
+  position: absolute;
+  width: 14cqw;
+  height: 4.4cqw;
+  background: color-mix(in srgb, var(--cv-gold) 55%, rgba(255, 255, 255, 0.5));
+  opacity: 0.85;
+}
+.cv-pressed-garden__tape--a {
+  top: -2cqw;
+  left: -4cqw;
+  transform: rotate(-38deg);
+}
+.cv-pressed-garden__tape--b {
+  bottom: -2cqw;
+  right: -4cqw;
+  transform: rotate(-38deg);
+}
+.cv-pressed-garden__label {
+  position: absolute;
+  left: 15cqw;
+  right: 15cqw;
+  top: 124cqw;
+  padding: 3.6cqw 3cqw;
+  background: white;
+  border: 0.4cqw dashed color-mix(in srgb, var(--cv-deep) 60%, transparent);
+  box-shadow: 0 0.6cqw 1.6cqw rgba(0, 0, 0, 0.12);
+  transform: rotate(0.8deg);
+}
+.cv-pressed-garden__names {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 7cqw;
+  line-height: 1.2;
+}
+.cv-pressed-garden__date {
+  margin-top: 1.6cqw;
+  font-size: 3.2cqw;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
+}
+.cv-pressed-garden__place {
+  margin-top: 0.8cqw;
+  font-size: 2.2cqw;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  opacity: 0.8;
+}
+
+/* Nơi Mình Hẹn — the venue as a line drawing under a low sun. */
+.cv-venue-sketch {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: linear-gradient(color-mix(in srgb, var(--cv-gold) 30%, var(--cv-paper)), var(--cv-paper) 62%);
+}
+.cv-venue-sketch__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-venue-sketch__art {
+  position: absolute;
+  left: 0;
+  top: 14cqw;
+  width: 100cqw;
+  height: 100cqw;
+}
+.cv-venue-sketch__photo {
+  position: absolute;
+  left: 62cqw;
+  top: 92cqw;
+  width: 26cqw;
+  height: 26cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1cqw solid var(--cv-paper);
+  box-shadow: 0 1cqw 2.4cqw rgba(0, 0, 0, 0.25);
+}
+.cv-venue-sketch__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 124cqw;
+  font-family: var(--display);
+  font-size: 8cqw;
+  line-height: 1.18;
+}
+.cv-venue-sketch__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-venue-sketch__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 150cqw;
+  font-size: 4cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-venue-sketch__place {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 159cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  opacity: 0.85;
+}
+
+/* Dạ Hoa — night garden: the photo is the moon, a peony glows below. */
+.cv-midnight-bloom {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-paper);
+  background: radial-gradient(circle at 50% 28%, color-mix(in srgb, var(--cv-gold) 18%, var(--cv-deep)), var(--cv-deep) 62%);
+}
+.cv-midnight-bloom__stars {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100cqw;
+  height: 110cqw;
+  animation: cvTwinkle 4s ease-in-out infinite alternate;
+}
+.cv-midnight-bloom__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-midnight-bloom__moon {
+  position: absolute;
+  left: 27cqw;
+  top: 17cqw;
+  width: 46cqw;
+  height: 46cqw;
+  border-radius: 50%;
+  box-shadow: 0 0 6cqw 1.5cqw color-mix(in srgb, var(--cv-gold) 50%, transparent);
+}
+.cv-midnight-bloom__photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0.6cqw solid var(--cv-gold);
+}
+.cv-midnight-bloom__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 70cqw;
+  font-family: var(--display);
+  font-size: 8.6cqw;
+  line-height: 1.18;
+}
+.cv-midnight-bloom__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-midnight-bloom__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100cqw;
+  font-size: 4cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-midnight-bloom__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 108cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.8;
+}
+.cv-midnight-bloom__peony {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100cqw;
+  height: 70cqw;
+  transform-origin: 50% 100%;
+  animation: cvBreathe 7s ease-in-out infinite alternate;
+}
+.cv-midnight-bloom__fly {
+  position: absolute;
+  width: 1.4cqw;
+  height: 1.4cqw;
+  border-radius: 50%;
+  background: var(--cv-gold);
+  box-shadow: 0 0 2cqw 0.6cqw var(--cv-gold);
+  animation: cvFly 3.2s ease-in-out infinite alternate;
+}
+.cv-midnight-bloom__fly--a { left: 14cqw; top: 128cqw; }
+.cv-midnight-bloom__fly--b { left: 82cqw; top: 118cqw; animation-delay: 0.8s; }
+.cv-midnight-bloom__fly--c { left: 66cqw; top: 150cqw; animation-delay: 1.6s; }
+
+@keyframes cvOrchidIn {
+  from { opacity: 0; transform: translateY(2cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvTwinkle {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+@keyframes cvBreathe {
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
+}
+@keyframes cvFly {
+  from { opacity: 0.2; transform: translate(0, 0); }
+  to { opacity: 1; transform: translate(2cqw, -3cqw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-white-orchid__branch,
+  .cv-midnight-bloom__stars,
+  .cv-midnight-bloom__peony,
+  .cv-midnight-bloom__fly {
+    animation: none;
+  }
+}

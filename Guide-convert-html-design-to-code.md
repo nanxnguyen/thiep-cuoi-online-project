@@ -162,6 +162,7 @@ Lỗi typecheck trong `.next/types/*` sau khi xoá route là file sinh ra cũ, c
 | `Site Header` / `Site Footer` | `components/site/SiteHeader.tsx`, `SiteFooter.tsx`, `lib/navigation.ts` |
 | `Thiep Preview` (bìa A–O + `full`) | `components/templates/ThiepPreview.tsx` + `ThiepPreviewFull.tsx` + `thiep-preview.css` |
 | `Mau Thiep v2` (20 mẫu, popup Xem thử) | `app/templates/page.tsx`, `components/templates/GalleryCatalog.tsx`, `TemplateDemo.tsx`, registry `lib/templates.ts` |
+| 30 mẫu mới 2026-10-04 (không từ `design/`, thiết kế gốc) | `lib/covers.ts` (meta), `components/templates/covers/` (30 cover + CSS theo collection), `lib/section-profiles.ts`, 4 section mới trong `components/invitation/sections/` |
 | `Studio Editor v3`: khung xem trước | `components/invitation/InvitationRenderer.tsx` + `sections/*` + `invitation.css` (một bố cục cho mọi mẫu) |
 | `Studio Editor v3`: thanh trên, danh sách phần, form | `components/studio/Editor.tsx`, `SectionForm.tsx`, `lib/editor-sections.ts`, `studio.css` |
 | `Thiep Khach` (vỏ khách) | `components/invitation/client/InvitationShell.tsx` (cổng phong bì, nổ, cánh hoa), nav trong renderer |

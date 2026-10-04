@@ -1,0 +1,570 @@
+/* Batch 5 — Kỷ vật và câu chuyện. Story-led covers: handwriting, paper
+   objects, a map. Same --cv-* contract. */
+
+/* Nhật Ký Đôi Mình — ruled journal page, spiral, taped print, circled date. */
+.cv-story-journal {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: color-mix(in srgb, var(--cv-deep) 26%, var(--cv-paper));
+}
+.cv-story-journal__spiral {
+  position: absolute;
+  left: 3cqw;
+  top: 9cqw;
+  bottom: 9cqw;
+  width: 12cqw;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.cv-story-journal__spiral i {
+  display: block;
+  width: 12cqw;
+  height: 2.6cqw;
+  border-radius: 1.3cqw;
+  background: linear-gradient(var(--cv-deep), color-mix(in srgb, var(--cv-deep) 40%, white));
+  box-shadow: 0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.3);
+}
+.cv-story-journal__sheet {
+  position: absolute;
+  left: 10cqw;
+  right: 9cqw;
+  top: 5cqw;
+  bottom: 5cqw;
+  background: repeating-linear-gradient(transparent 0 7.6cqw, color-mix(in srgb, var(--cv-deep) 22%, transparent) 7.6cqw 7.9cqw), var(--cv-paper);
+  box-shadow: 0 1cqw 3cqw rgba(0, 0, 0, 0.22);
+}
+.cv-story-journal__margin {
+  position: absolute;
+  left: 9cqw;
+  top: 0;
+  bottom: 0;
+  width: 0.7cqw;
+  border-left: 0.3cqw solid color-mix(in srgb, var(--cv-deep) 55%, transparent);
+  border-right: 0.3cqw solid color-mix(in srgb, var(--cv-deep) 55%, transparent);
+}
+.cv-story-journal__title {
+  position: absolute;
+  left: 13cqw;
+  top: 2cqw;
+  font-family: var(--hand);
+  font-size: 11.4cqw;
+  line-height: 1;
+  transform: rotate(-2deg);
+}
+.cv-story-journal__print {
+  position: absolute;
+  left: 15cqw;
+  top: 28cqw;
+  width: 50cqw;
+  height: 60cqw;
+  margin: 0;
+  padding: 2.4cqw 2.4cqw 10cqw;
+  background: white;
+  box-shadow: 0 1.2cqw 3cqw rgba(0, 0, 0, 0.25);
+  transform: rotate(2.5deg);
+  animation: cvPrintIn 0.9s ease-out both;
+}
+.cv-story-journal__photo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.cv-story-journal__print figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2cqw;
+  text-align: center;
+  font-family: var(--hand);
+  font-size: 6.4cqw;
+}
+.cv-story-journal__tape {
+  position: absolute;
+  top: -2.4cqw;
+  left: 18cqw;
+  width: 14cqw;
+  height: 4.4cqw;
+  background: color-mix(in srgb, var(--cv-gold) 55%, rgba(255, 255, 255, 0.55));
+  opacity: 0.85;
+  transform: rotate(-4deg);
+}
+.cv-story-journal__lines {
+  position: absolute;
+  left: 13cqw;
+  right: 4cqw;
+  top: 98cqw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--hand);
+  font-size: 6.4cqw;
+  line-height: 7.9cqw;
+}
+.cv-story-journal__lines li::before {
+  content: "– ";
+  color: var(--cv-gold);
+}
+.cv-story-journal__lines b {
+  font-weight: 400;
+  box-shadow: inset 0 -1.6cqw 0 color-mix(in srgb, var(--cv-gold) 45%, transparent);
+}
+.cv-story-journal__date {
+  position: absolute;
+  left: 14cqw;
+  top: 125cqw;
+  padding: 2cqw 5cqw;
+  border: 0.5cqw solid var(--cv-deep);
+  border-radius: 50%;
+  font-family: var(--display);
+  font-size: 5cqw;
+  letter-spacing: 0.1em;
+  transform: rotate(-2deg);
+}
+.cv-story-journal__names {
+  position: absolute;
+  left: 13cqw;
+  right: 4cqw;
+  top: 139cqw;
+  text-align: left;
+  font-family: var(--hand);
+  font-size: 9.2cqw;
+  line-height: 1.05;
+}
+.cv-story-journal__amp {
+  color: var(--cv-gold);
+}
+.cv-story-journal__place {
+  position: absolute;
+  left: 13cqw;
+  right: 4cqw;
+  top: 152cqw;
+  text-align: left;
+  font-size: 2.4cqw;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+}
+.cv-story-journal__tab {
+  position: absolute;
+  right: 2.4cqw;
+  width: 7cqw;
+  padding: 2cqw 0;
+  border-radius: 0 1.4cqw 1.4cqw 0;
+  writing-mode: vertical-rl;
+  text-align: center;
+  font-size: 2.2cqw;
+  letter-spacing: 0.2em;
+  box-shadow: 0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.2);
+}
+.cv-story-journal__tab--a { top: 28cqw; background: var(--cv-gold); color: var(--cv-deep); }
+.cv-story-journal__tab--b { top: 50cqw; background: color-mix(in srgb, var(--cv-deep) 55%, var(--cv-paper)); color: var(--cv-paper); }
+.cv-story-journal__tab--c { top: 72cqw; background: var(--cv-deep); color: var(--cv-paper); }
+
+/* Chung Một Hành Trình — city map, dashed route, three pins. */
+.cv-route-map {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-route-map__map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cv-route-map__route {
+  animation: cvDash 10s linear infinite;
+}
+.cv-route-map__stop {
+  position: absolute;
+  left: 40cqw;
+  top: 26cqw;
+  width: 24cqw;
+}
+.cv-route-map__photo {
+  position: relative;
+  width: 24cqw;
+  height: 24cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1cqw solid var(--cv-deep);
+  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.3);
+}
+.cv-route-map__flag {
+  position: absolute;
+  left: 50%;
+  top: 25cqw;
+  transform: translateX(-50%);
+  padding: 0.9cqw 2.4cqw;
+  white-space: nowrap;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  font-size: 2.3cqw;
+  letter-spacing: 0.16em;
+}
+.cv-route-map__card {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 116cqw;
+  padding: 3.6cqw 4cqw;
+  background: var(--cv-paper);
+  border: 0.4cqw solid var(--cv-deep);
+  box-shadow: 0 1.4cqw 3cqw rgba(0, 0, 0, 0.25);
+}
+.cv-route-map__names {
+  font-family: var(--display);
+  font-size: 7.4cqw;
+  line-height: 1.18;
+}
+.cv-route-map__date {
+  margin-top: 2cqw;
+  font-size: 3.8cqw;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+}
+.cv-route-map__place {
+  margin-top: 1cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  opacity: 0.85;
+}
+
+/* Quán Quen — a menu card; the photo is the coaster under a drawn cup. */
+.cv-cafe-card {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--cv-gold) 20%, var(--cv-deep)), var(--cv-deep) 70%);
+}
+.cv-cafe-card__menu {
+  position: absolute;
+  left: 9cqw;
+  right: 9cqw;
+  top: 8cqw;
+  bottom: 8cqw;
+  background: var(--cv-paper);
+  border-radius: 2cqw;
+  box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, 0.45);
+  outline: 0.4cqw solid var(--cv-gold);
+  outline-offset: -2cqw;
+}
+.cv-cafe-card__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-cafe-card__coaster {
+  position: absolute;
+  left: 10cqw;
+  top: 18cqw;
+  width: 38cqw;
+  height: 38cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.2cqw solid white;
+  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.3);
+}
+.cv-cafe-card__cup {
+  position: absolute;
+  left: 40cqw;
+  top: 30cqw;
+  width: 34cqw;
+  color: var(--cv-deep);
+}
+.cv-cafe-card__steam {
+  animation: cvSteam 3s ease-in-out infinite alternate;
+}
+.cv-cafe-card__names {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 64cqw;
+  font-family: var(--display);
+  font-size: 7.4cqw;
+  line-height: 1.18;
+}
+.cv-cafe-card__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-cafe-card__items {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 92cqw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 3.6cqw;
+}
+.cv-cafe-card__items li {
+  display: flex;
+  align-items: baseline;
+  gap: 1.6cqw;
+}
+.cv-cafe-card__items span {
+  font-size: 2.9cqw;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.cv-cafe-card__items i {
+  flex: 1;
+  min-width: 3cqw;
+  border-bottom: 0.4cqw dotted color-mix(in srgb, var(--cv-deep) 60%, transparent);
+}
+.cv-cafe-card__items b {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 3.8cqw;
+  text-align: right;
+}
+.cv-cafe-card__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 124cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-cafe-card__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 135cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Giao Điểm — two circles intersect: photo ring and a solid ring with the day. */
+.cv-overlap-rings {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-overlap-rings__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-overlap-rings__photo {
+  position: absolute;
+  left: 8cqw;
+  top: 18cqw;
+  width: 66cqw;
+  height: 66cqw;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.cv-overlap-rings__solid {
+  position: absolute;
+  left: 30cqw;
+  top: 46cqw;
+  width: 62cqw;
+  height: 62cqw;
+  border-radius: 50%;
+  background: var(--cv-deep);
+  mix-blend-mode: multiply;
+  opacity: 0.94;
+  animation: cvRingIn 1s ease-out both;
+}
+.cv-overlap-rings__outline {
+  position: absolute;
+  left: 20cqw;
+  top: 34cqw;
+  width: 64cqw;
+  height: 64cqw;
+  border-radius: 50%;
+  border: 0.4cqw solid var(--cv-gold);
+}
+.cv-overlap-rings__day {
+  position: absolute;
+  left: 48cqw;
+  top: 64cqw;
+  width: 40cqw;
+  text-align: center;
+  color: var(--cv-paper);
+}
+.cv-overlap-rings__day b {
+  display: block;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 26cqw;
+  line-height: 1;
+}
+.cv-overlap-rings__day span {
+  display: block;
+  margin-top: 1cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+}
+.cv-overlap-rings__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 118cqw;
+  font-family: var(--display);
+  font-size: 8cqw;
+  line-height: 1.18;
+}
+.cv-overlap-rings__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-overlap-rings__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 144cqw;
+  font-size: 4cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-overlap-rings__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 154cqw;
+  font-size: 2.5cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.85;
+}
+
+/* Thẻ Nổi — a paper card floats over a lattice ground. */
+.cv-floating-card {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  color: var(--cv-deep);
+  background: var(--cv-deep);
+}
+.cv-floating-card__ground {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cv-floating-card__card {
+  position: absolute;
+  left: 12cqw;
+  top: 20cqw;
+  width: 76cqw;
+  height: 130cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2cqw;
+  padding: 8cqw 6cqw 5cqw;
+  background: var(--cv-paper);
+  border-radius: 3cqw;
+  box-shadow: 0 3cqw 6cqw rgba(0, 0, 0, 0.45);
+  animation: cvFloat 5s ease-in-out infinite alternate;
+}
+.cv-floating-card__badge {
+  position: absolute;
+  top: -5cqw;
+  left: 50%;
+  width: 10cqw;
+  height: 10cqw;
+  margin-left: -5cqw;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.35);
+}
+.cv-floating-card__badge svg {
+  width: 5cqw;
+  height: 5cqw;
+}
+.cv-floating-card__photo {
+  position: relative;
+  width: 100%;
+  height: 42cqw;
+  flex: none;
+  overflow: hidden;
+  border-radius: 1.6cqw;
+}
+.cv-floating-card__names {
+  font-family: var(--display);
+  font-size: 6.6cqw;
+  line-height: 1.1;
+}
+.cv-floating-card__amp {
+  display: block;
+  font-family: var(--script);
+  font-style: italic;
+  font-size: 5cqw;
+  color: var(--cv-gold);
+}
+.cv-floating-card__date {
+  font-size: 3.6cqw;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+}
+.cv-floating-card__place {
+  font-size: 2.3cqw;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  opacity: 0.85;
+}
+.cv-floating-card__pill {
+  margin-top: auto;
+  padding: 2cqw 7cqw;
+  border-radius: 99cqw;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  font-size: 3cqw;
+  letter-spacing: 0.1em;
+}
+
+@keyframes cvPrintIn {
+  from { opacity: 0; transform: rotate(8deg) translateY(4cqw); }
+  to { opacity: 1; transform: rotate(2.5deg); }
+}
+@keyframes cvDash {
+  to { stroke-dashoffset: -80; }
+}
+@keyframes cvSteam {
+  from { opacity: 0.5; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-1.2cqw); }
+}
+@keyframes cvRingIn {
+  from { opacity: 0; transform: translate(6cqw, 6cqw); }
+  to { opacity: 0.94; transform: none; }
+}
+@keyframes cvFloat {
+  from { transform: translateY(0); }
+  to { transform: translateY(-1.4cqw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-story-journal__print,
+  .cv-route-map__route,
+  .cv-cafe-card__steam,
+  .cv-overlap-rings__solid,
+  .cv-floating-card__card {
+    animation: none;
+  }
+}

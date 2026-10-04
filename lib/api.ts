@@ -141,7 +141,7 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
     // keepalive lets the last autosave finish while the tab is closing (browsers cap such bodies at 64KB).
     updateInvitation: (id: string, key: string, patch: Patch, opts?: { keepalive?: boolean }) =>
       call<InvitationDto>(`/api/invitations/${id}`, { ...json("PATCH", patch), ...(opts?.keepalive ? { keepalive: true } : {}) }, key),
-    uploadMedia(id: string, key: string, kind: "image" | "audio", file: Blob, filename: string) {
+    uploadMedia(id: string, key: string, kind: "image" | "audio" | "video", file: Blob, filename: string) {
       const form = new FormData();
       form.set("kind", kind);
       form.set("file", file, filename);

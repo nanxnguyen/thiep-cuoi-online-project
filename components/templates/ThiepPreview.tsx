@@ -1,11 +1,17 @@
 import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
+import { isNewFamily, splitCoverDate } from "@/lib/covers";
 import { familyPhotos, type CoverFamily } from "@/lib/templates";
+import { coverRenderers } from "./covers";
+import type { CoverSlotFn } from "./covers/types";
+import { CoverSlot } from "./covers/slot";
 import { ThiepPreviewFull } from "./ThiepPreviewFull";
 import "./thiep-preview.css";
 
-// design/Thiep Preview.dc.html, element for element: one 9:16 cover in fifteen families (A–O), sized in container
-// units so it scales with its box. Photos default to the family's sample shots (design DEF); pass "" to show the
+// design/Thiep Preview.dc.html, element for element: one 9:16 cover in the fifteen legacy families (A–O),
+// sized in container units so it scales with its box. Thirty newer families (see lib/covers.ts) dispatch
+// to components/templates/covers/* instead; the A–O branch below is frozen. Photos default to the family's
+// sample shots (design DEF); pass "" to show the
 // design's empty drop-zone frame instead (tinted ground, dashed ring, icon, caption).
 export type ThiepPreviewProps = {
   family: CoverFamily;
@@ -89,7 +95,18 @@ export function ThiepPreview(p: ThiepPreviewProps) {
   const pad = (n: number) => String(n).padStart(2, "0");
 
   let body: ReactNode = null;
-  if (f === "A")
+  if (isNewFamily(f)) {
+    const NewCover = coverRenderers[f];
+    const parts = splitCoverDate(date);
+    const photos = [ph, ph2, ph3];
+    const slot: CoverSlotFn = (index, caption, circle) => <CoverSlot photo={photos[index]} caption={caption} circle={circle} eager={p.eager} />;
+    const cvVars = { "--cv-deep": deep, "--cv-paper": paper, "--cv-gold": gold } as CSSProperties;
+    body = (
+      <div className={`cv-wrap cv-${f}`} style={cvVars}>
+        <NewCover a={a} b={b} date={date} place={place} eager={!!p.eager} slot={slot} {...parts} />
+      </div>
+    );
+  } else if (f === "A")
     body = (
       <div className="tpA">
         <div className="tpA__band">

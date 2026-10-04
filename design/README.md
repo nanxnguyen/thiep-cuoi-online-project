@@ -41,15 +41,15 @@ Website tạo và gửi thiệp cưới online miễn phí cho người Việt. 
 5. **Khách xem:** mở phong bì → thiệp → xác nhận tham dự → lưu bút → mừng cưới QR → lời cảm ơn.
 6. **Quản lý:** nút Đăng nhập (Google) ở header → avatar → Thiệp của tôi: danh sách thiệp, nhận lại thiệp bằng link `#k=`.
 
-## 4. Danh sách trang (22 trang đang dùng + 2 trang tạm ẩn + file dùng chung)
+## 4. Danh sách trang (25 trang đang dùng + 1 trang tạm ẩn + file dùng chung)
 
-Menu (Site Header): Mẫu thiệp, Công cụ · nút Đăng nhập (popup Google) · Tạo thiệp. Sau khi đăng nhập: avatar + tên, bấm mở menu Thiệp của tôi / Đăng xuất. Trạng thái lưu ở `localStorage.moc_user`, đồng bộ qua sự kiện `moc-auth`; trang khác mở popup bằng `dispatchEvent(new Event('moc-open-login'))`.
+Menu (Site Header): Mẫu thiệp, Thiết kế riêng, Công cụ, Ủng hộ ♥ · nút Đăng nhập (popup Google) · Tạo thiệp. Sau khi đăng nhập: avatar + tên, bấm mở menu Thiệp của tôi / Đăng xuất. Trạng thái lưu ở `localStorage.moc_user`, đồng bộ qua sự kiện `moc-auth`; trang khác mở popup bằng `dispatchEvent(new Event('moc-open-login'))`.
 Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, Hỗ trợ, Pháp lý).
 
 ### File dùng chung
 | File | Chức năng |
 |---|---|
-| `Site Header.dc.html` | Header mọi trang: logo, menu Mẫu thiệp / Công cụ, nút Đăng nhập → popup Google, nút Tạo thiệp; khi đã đăng nhập hiện avatar + tên, menu Thiệp của tôi / Đăng xuất |
+| `Site Header.dc.html` | Header mọi trang: logo, menu Mẫu thiệp / Thiết kế riêng / Công cụ / Ủng hộ ♥, nút Đăng nhập → popup Google, nút Tạo thiệp; khi đã đăng nhập hiện avatar + tên, menu Thiệp của tôi / Đăng xuất |
 | `Site Footer.dc.html` | Footer: CTA tạo thiệp, 4 cột link, dòng bản quyền |
 | `Thiep Preview.dc.html` | Render 1 mẫu thiệp (10 kiểu A–J). Mở riêng trên desktop: rộng 70% trang. Prop `fit` + `maxW` để co giãn theo khung (v3); prop `full` hiện đủ các phần nội dung |
 | `Thiep Mau Day Du.dc.html` | Thiệp mẫu điền đủ 14 phần (Thu Hà & Quốc Bảo, 12/12/2026), mở sẵn chế độ Xem như khách; bấm "Chỉnh sửa" để sửa |
@@ -71,6 +71,7 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 | `Thiep Cuoi Online Mien Phi.dc.html` | Studio | Landing SEO: miễn phí toàn bộ |
 | `QR Tien Mung.dc.html` | Studio | Landing SEO: mừng cưới QR |
 | `Tin Nhan Moi Cuoi.dc.html` | Cong Cu | Landing SEO: mẫu tin nhắn mời kèm link thiệp |
+| `Thiet Ke Rieng.dc.html` | — | Hero tối với cụm thiệp mẫu riêng bay nghiêng + đốm sáng, số liệu cam kết, nút Chat qua Zalo, dải tuỳ biến màu, timeline 3 bước, form gửi yêu cầu (demo, chưa nối backend thật) |
 
 ### 4.2 Sản phẩm
 | Trang | Trỏ đến | Chức năng chính |
@@ -90,6 +91,12 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 |---|---|
 | `Thiep Khach.dc.html` (?to=) | Phong bì mở (hiệu ứng nổ nhẹ), cover, gia đình, đếm ngược flip-clock, album, nhạc nền, xác nhận tham dự (tick vẽ dần), sổ lưu bút, mừng cưới QR, cảm ơn — các phần hiện dần so le khi cuộn |
 
+### 4.4b Blog
+| Trang | Chức năng chính |
+|---|---|
+| `Blog.dc.html` | Danh sách bài viết: ảnh, chuyên mục, tiêu đề, trích đoạn, ngày · thời gian đọc; khối "Công cụ hữu ích" trỏ tới Tin nhắn mời / Danh sách khách / Tạo QR |
+| `Blog Bai Viet.dc.html` (?slug=) | 1 bài viết: breadcrumb, chuyên mục, ảnh bìa, nội dung (tiêu đề phụ, đoạn văn, danh sách, trích dẫn, bảng), mục lục bám lề, câu hỏi thường gặp, bài liên quan. 4 bài: hạn xác nhận tham dự, lập danh sách khách, thiệp online vs thiệp giấy, cách viết lời mời cưới |
+
 ### 4.5 Công cụ miễn phí
 | Trang | Chức năng chính |
 |---|---|
@@ -105,7 +112,6 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 ### 4.6 Trang tạm ẩn (giữ file, không còn link nào trỏ tới)
 | Trang | Lý do / thay thế |
 |---|---|
-| `Ung Ho.dc.html` | Tạm chưa dùng. Đã bỏ link ở header, Trang chủ, Bảng giá |
 | `Tai Khoan.dc.html` | Thay bằng popup đăng nhập Google trong header + trang `Thiep Cua Toi.dc.html` |
 
 ### 4.7 Trang đã xoá
@@ -149,11 +155,11 @@ Album dùng lần lượt các ảnh còn lại. Thiep Khach (ảnh bìa `studio
 | 4 | Hoàng Gia | D | Cổ điển | Khung vàng | Vàng kim, Đỏ đậm, Lam | HOT |
 | 5 | Phong Thư | E | Lãng mạn | Phong bì | Đỏ, Ô liu | MỚI |
 | 6 | Bìa Báo | F | Hiện đại | Tạp chí | Mực, Hồng | — |
-| 7 | Hỷ Sự | A | Truyền thống | Chữ Hỷ | Đỏ đậm, Lam | — |
-| 9 | Vườn Ươm | C | Hoa | Sân vườn | Ô liu, Cam đất | MỚI |
-| 10 | Nhung Lam | D | Cổ điển | Nhung | Lam, Đỏ | — |
-| 11 | Thư Tình | E | Lãng mạn | Sáp niêm | Hồng, Đỏ đậm | — |
-| 12 | Chân Dung | F | Hiện đại | Ảnh lớn | Mực, Xanh rêu | HOT |
+| 7 | Hỷ Sự | P | Truyền thống | Chữ Hỷ | Đỏ đậm, Lam | — |
+| 9 | Vườn Ươm | Q | Hoa | Sân vườn | Ô liu, Cam đất | MỚI |
+| 10 | Nhung Lam | R | Cổ điển | Nhung | Lam, Đỏ | — |
+| 11 | Thư Tình | S | Lãng mạn | Sáp niêm | Hồng, Đỏ đậm | — |
+| 12 | Chân Dung | T | Hiện đại | Ảnh lớn | Mực, Xanh rêu | HOT |
 | 13 | Song Phụng | I | Truyền thống | Chữ Hỷ lớn | Đỏ, Đỏ đậm, Lam | HOT |
 | 14 | Báo Hỷ | H | Truyền thống | Thông tin lễ | Đỏ, Lam | MỚI |
 | 15 | Đôi Khung | G | Lãng mạn | Ảnh đôi | Xanh rêu, Hồng, Nâu | MỚI |
@@ -164,7 +170,7 @@ Album dùng lần lượt các ảnh còn lại. Thiep Khach (ảnh bìa `studio
 | 20 | Cuộn Phim | N | Hiện đại | Phim nhựa | Mực, Nâu, Hồng | MỚI |
 | 21 | Lịch Bloc | O | Truyền thống | Lịch xé | Đỏ, Xanh rêu, Lam | MỚI |
 
-**Mẫu dùng chung bố cục** (chỉ khác tên/màu, cần xoá bớt hoặc thiết kế lại): A: Song Hỷ / Hỷ Sự · C: Hoa Nhài / Vườn Ươm · D: Hoàng Gia / Nhung Lam · E: Phong Thư / Thư Tình · F: Bìa Báo / Chân Dung. Đã xoá: Giấy Dó (trùng Nét Mực).
+Không còn mẫu dùng chung bố cục — xem chi tiết đợt thiết kế lại 5 mẫu ở mục 8 (04/10/2026). Đã xoá: Giấy Dó (trùng Nét Mực).
 
 ## 5. Cấu trúc nội dung thiệp (Studio Editor v3)
 
@@ -264,10 +270,44 @@ Mở file `.dc.html` bằng browser (kéo thả) hoặc chạy local server tĩn
 
 ## 8. Nhật ký thay đổi
 
+### Cập nhật 04/10/2026 (6)
+Thiết kế lại trang `Thiet Ke Rieng.dc.html` ấn tượng hơn, tối ưu không gian trống ở hero:
+- Thêm nút **Chat qua Zalo** (brand blue `#0068ff`) ở hero và cạnh form gửi yêu cầu — số điện thoại hiện là placeholder (`zalo.me/0900000000`), cần thay số thật.
+- Hero: đổi cột phải từ 3 thẻ nhỏ cách xa nhau, nhiều khoảng trống → cụm 4 thẻ thiệp (gồm 2 mẫu mới P, Q, S, T) chồng lớp, kích thước lớn hơn, xoay lệch nhiều hơn, thêm nhãn "✦ VÍ DỤ ĐÃ PHÁC THẢO RIÊNG" và chip "Hoàn thiện trong 3 bước" lấp khoảng trống; thêm 8 đốm sáng vàng nhấp nháy (`rieTwinkle`) và 2 quầng sáng trôi nhẹ (`rieDrift`) phía sau cụm thẻ.
+- Giảm padding hero (88px→64px trên, 60px→56px dưới), đổi lưới 2 cột từ chia đều sang `minmax(380px,1fr) minmax(420px,520px)` để cột phải không còn dư nhiều khoảng trống.
+- Thêm dải số liệu (24 giờ phản hồi, không giới hạn góp ý, 0đ thử nghiệm), dải bảng màu tuỳ biến (8 tông), timeline 3 bước kiểu cột có đường kẻ phân cách.
+
+### Cập nhật 04/10/2026 (5)
+Header: trái tim cạnh "Ủng hộ" đổi màu đỏ (`#a3161c`) riêng, tách khỏi màu chữ của mục menu (chữ vẫn đổi đen/xám theo trạng thái active như các mục khác, trái tim luôn đỏ).
+
+### Cập nhật 04/10/2026 (4)
+Cập nhật menu header theo thiết kế mới: thêm mục **Thiết kế riêng** và đưa lại **Ủng hộ ♥** vào menu (trước đó đã tạm ẩn khỏi header). Thứ tự menu giờ là Mẫu thiệp, Thiết kế riêng, Công cụ, Ủng hộ ♥.
+Tạo trang mới `Thiet Ke Rieng.dc.html`: giới thiệu dịch vụ thiết kế thiệp theo yêu cầu, 3 bước làm việc, form gửi yêu cầu (họ tên, email/Zalo, ngày cưới, mô tả phong cách) → trạng thái "Đã gửi yêu cầu" (demo, chưa nối backend thật).
+`Ung Ho.dc.html` không còn là trang tạm ẩn (đã có link trỏ tới từ header).
+
+### Cập nhật 04/10/2026 (3)
+**Bỏ Replace/Edit trên thiệp xem trước, chọn mẫu.** Thêm prop `locked` cho `Thiep Preview.dc.html` (khi `true`, root có `pointer-events:none` nên các ô `<image-slot>` bên trong không còn hiện nút Replace/Edit khi hover; click vẫn xuyên qua tới phần tử cha để chọn mẫu). Gắn `locked="true"` ở mọi nơi Thiệp Preview chỉ dùng làm thumbnail chọn mẫu: `Studio.dc.html` (lưới mẫu + khung "ĐÃ CHỌN"), `Mau Thiep v2.dc.html` (dải Bảng xếp hạng, lưới mẫu chính, popup "Xem thử"). Các nơi thiệp thật sự cần sửa ảnh (Studio Editor v3, Thiệp khách…) không đổi.
+
+**Thiết kế lại 5 mẫu từng trùng bố cục với mẫu khác, để không mẫu nào giống mẫu khác:**
+- **Hỷ Sự** (trước trùng bố cục Song Hỷ, family A) → bố cục mới family **P**: nền đỏ đậm, hai viền vàng dọc hai bên, chữ 囍 lớn ở giữa, ảnh cưới khung chữ nhật bo nhẹ, tên và ngày phía dưới.
+- **Vườn Ươm** (trước trùng Hoa Nhài, family C) → family **Q**: khung ảnh viền caro vàng kiểu giàn hoa (trellis), nhãn tên đặt lệch như thẻ cây trong vườn.
+- **Nhung Lam** (trước trùng Hoàng Gia, family D) → family **R**: nền đậm, khung ảnh bo đỉnh vòm kiểu huy chương, nhãn "LỄ THÀNH HÔN" dạng ruy băng ở trên.
+- **Thư Tình** (trước trùng Phong Thư, family E) → family **S**: ảnh đặt trong khung thư trắng, con dấu sáp tròn mang chữ lồng (initials) đè lên mép trên ảnh.
+- **Chân Dung** (trước trùng Bìa Báo, family F) → family **T**: ảnh tràn viền tối giản, khung chỉ mỏng cách mép, tên/ngày trong thẻ chữ nhật góc dưới trái — bỏ tiêu đề tạp chí lớn.
+
+Cập nhật family tương ứng trong `TPL` (Studio.dc.html) và `T` (Mau Thiep v2.dc.html); thêm 5 giá trị P–Q–R–S–T vào enum `family` của `Thiep Preview.dc.html`; gán ảnh mặc định mới cho 5 family này. Mục 4.9: cập nhật cột "Kiểu" của 5 mẫu trên, xoá ghi chú "mẫu dùng chung bố cục".
+
+### Cập nhật 04/10/2026 (2)
+Thiết kế lại `Studio.dc.html` (trang "Tạo thiệp mới"): chuyển sang bố cục split-screen — cột trái cố định (sticky) hiện khung xem trước thiệp lớn + form tên hai bạn/ngày cưới, nền đổi màu theo mẫu đang chọn; cột phải là tiêu đề, bộ lọc phong cách và lưới mẫu thiệp. Giữ nguyên toàn bộ chức năng cũ (lọc theo phong cách, chọn mẫu, ô "Chụp thiệp giấy để AI điền sẵn", nút Bắt đầu chỉnh sửa).
+
+### Cập nhật 04/10/2026
+Thêm trang `Blog.dc.html` (danh sách bài viết) và `Blog Bai Viet.dc.html` (?slug=, bài chi tiết: mục lục, bảng, trích dẫn, câu hỏi thường gặp, bài liên quan), tham khảo cấu trúc blog chungdoi.com. 4 bài viết SEO gốc bằng tiếng Việt: hạn xác nhận tham dự, lập danh sách khách mời, thiệp online vs thiệp giấy, cách viết lời mời cưới. Link "Blog" thêm vào cột HỖ TRỢ của Site Footer (không thêm vào header theo yêu cầu).
+
 ### Tóm tắt đợt cập nhật 26–27/09/2026
 | Nhóm | Thay đổi |
 |---|---|
 | Trang mới | `Thiep Cua Toi.dc.html` (danh sách thiệp của tài khoản), `Thiep Mau Day Du.dc.html` (thiệp mẫu đủ 14 phần), `motion.js` (chuyển động dùng chung) |
+| Quản lý thiệp | Trang mới Quan Ly Thiep.dc.html: RSVP, lời chúc & QR mừng cưới, QR để in, cập nhật thông tin + báo khách |
 | Mẫu thiệp | Thêm 5 mẫu mới K–O (Tem Thư, Vé Hạnh Phúc, Đĩa Than, Cuộn Phim, Lịch Bloc); xoá Giấy Dó; "Xem thử" mở popup demo tự cuộn 15 phần, dừng khi rê chuột; thay "3 ngày dùng thử / Ưng mới trả" bằng "Đổi mẫu / Không giới hạn khách" |
 | Ảnh | 21 ảnh cưới mẫu trong `assets/photos/`, gán theo kiểu mẫu (mục 4.8) |
 | Trang đã xoá | `Studio Editor.dc.html` (v1), `Studio Editor v2.dc.html`, `Tinh Nang.dc.html`, `Tinh Nang Chi Tiet.dc.html`, `Mau Thiep.dc.html` (v1), `Stock Design System.dc.html` |
@@ -280,6 +320,12 @@ Mở file `.dc.html` bằng browser (kéo thả) hoặc chạy local server tĩn
 | Sửa lỗi | Ô chọn thứ bậc/ngân hàng/tên khách hiển thị sai (đổi sang chip); lỗi console khi đổi phần trong v3; thanh "Đang xem với tên" bị header che; ảnh thu nhỏ trên Thiệp của tôi bị lệch bóng; popup demo không tự cuộn; Lịch Bloc chữ thứ đè số ngày; Đĩa Than chữ bìa bị đĩa che |
 
 ### Chi tiết theo ngày
+- **27/09/2026 — v1.1.0** — Chốt bản **v1.0.0** (bản sao đầy đủ trong thư mục `v1.0.0/`, gồm ảnh). Thêm tính năng theo báo cáo nghiên cứu:
+  - **Trang mới `Quan Ly Thiep.dc.html`** (mở từ thẻ thiệp trong "Thiệp của tôi" → "Quản lý khách, lời chúc & QR"), 4 tab: *Khách mời* (thống kê RSVP, thanh tỉ lệ, lọc/tìm, nhắc khách chưa trả lời, xuất Excel) · *Lời chúc & mừng cưới* (ghim/ẩn lời chúc, cài QR ngân hàng, bật/tắt trên thiệp) · *QR để in* (thẻ bàn tiệc / mặt sau thiệp / nhãn dán, màu theo mẫu, tải PNG/PDF) · *Cập nhật thông tin* (đổi ngày/giờ/địa điểm, chọn báo khách qua banner/Zalo/SMS, lịch sử thay đổi).
+  - **Thiệp khách**: banner "Thông tin tiệc vừa cập nhật" (đọc từ `localStorage.moc_update` khi chủ thiệp lưu thay đổi).
+  - **Tạo thiệp (Studio)**: ô "Đã có thiệp giấy? Chụp để AI điền sẵn" — chọn ảnh, hiệu ứng quét, tự điền tên & ngày (bản thử dùng dữ liệu mô phỏng).
+- **27/09/2026** — Bỏ tính năng "Ảnh từ khách" (khách gửi ảnh) khỏi Quan Ly Thiep.dc.html và Thiep Khach.dc.html — tránh tốn dung lượng lưu trữ.
+- **27/09/2026** — Tạo thiệp (Studio): thay 10 mẫu cũ (Gallery Noir, Afterglow…) bằng đúng 20 mẫu của trang Mẫu thiệp v2 (cùng tên, kiểu, màu mặc định); thêm bộ lọc theo phong cách kèm số lượng; mặc định chọn Song Hỷ.
 - **27/09/2026** — Sửa Lịch Bloc (chữ thứ đè số ngày) và Đĩa Than (chữ bìa bị che). README: thêm mục 4.9 danh sách toàn bộ mẫu thiệp và các cặp trùng bố cục; cập nhật bảng tóm tắt.
 - **27/09/2026** — Mẫu thiệp v2: xoá mẫu "Giấy Dó" (id 8) vì trùng bố cục kiểu B với "Nét Mực". Còn 20 mẫu.
 - **27/09/2026** — Ghi chú README: di chuyển chuột sẽ có hiệu ứng hoa rơi (từ `motion.js`, chạy trên mọi trang trừ Studio Editor v3; tắt khi bật giảm chuyển động).

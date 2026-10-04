@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { InvitationRenderer } from "@/components/invitation/InvitationRenderer";
 import { sampleContent } from "@/lib/content";
+import { NEW_FAMILIES, familyMeta, type NewCoverFamily } from "@/lib/covers";
 import { colors, templateSamples, templates, type ColorKey, type CoverFamily } from "@/lib/templates";
 import { ThiepPreview } from "./ThiepPreview";
 
@@ -23,6 +24,7 @@ const familyLabels: Record<CoverFamily, string> = {
   M: "Đĩa than",
   N: "Cuộn phim",
   O: "Lịch bloc",
+  ...(Object.fromEntries(NEW_FAMILIES.map((family) => [family, familyMeta[family].label])) as Record<NewCoverFamily, string>),
 };
 
 const families = [...new Set(templates.map((template) => template.family))] as CoverFamily[];

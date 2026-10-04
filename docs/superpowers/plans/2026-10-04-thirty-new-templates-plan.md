@@ -473,7 +473,7 @@ git commit -m "feat: render invitation sections from template profiles"
 - Create: `components/templates/covers/types.ts`
 - Create: `components/templates/covers/index.ts`
 - Create: `components/templates/covers/heritage.css`
-- Create: `components/templates/covers/{lacquer-seal,phoenix-fold,lotus-scroll,porcelain-blue,silk-knot}.tsx`
+- Create: `components/templates/covers/{ink-wash,phoenix-fold,lotus-scroll,porcelain-blue,silk-knot}.tsx`
 - Create: `tests/covers.test.ts`
 - Modify: `lib/templates.ts`, `lib/section-profiles.ts`, `lib/template-assets.ts`
 - Modify: `components/templates/ThiepPreview.tsx`, `PreviewDemo.tsx`
@@ -500,7 +500,7 @@ Catalog chính xác:
 
 | id | name | family | archetype | profile | colors |
 |---|---|---|---|---|---|
-| `an-son` | Ấn Son | `lacquer-seal` | traditional | heritage | `do,dodam,muc` |
+| `muc-loang` | Mực Loang | `ink-wash` | traditional | heritage | `muc,dodam,xanh` |
 | `phung-vu` | Phụng Vũ | `phoenix-fold` | traditional | heritage | `do,dodam,lam` |
 | `lien-hoa` | Liên Hoa | `lotus-scroll` | traditional | heritage | `xanh,hong,nau` |
 | `lam-su` | Lam Sứ | `porcelain-blue` | classic | heritage | `lam,muc,xanh` |
@@ -524,7 +524,7 @@ Nhánh `isNewFamily(f)` trong `ThiepPreview` render registry; A–O giữ nguyê
 
 Một risk có chủ đích mỗi mẫu:
 
-- Ấn Son: triện tròn/dập chìm, không ảnh bắt buộc.
+- Mực Loang: vệt mực loang và vòng cọ quanh ảnh tròn, con dấu đỏ nhỏ; không dùng ảnh/hoạ tiết từ refs.
 - Phụng Vũ: hai cánh gấp mở vào một ảnh; phoenix là SVG original.
 - Liên Hoa: cuộn dọc + sen line-art, lịch âm là dữ liệu thật từ event.
 - Lam Sứ: viền men lam tự vẽ, không copy pattern ref.
@@ -595,25 +595,25 @@ git commit -m "feat: add five botanical and venue-led templates"
 **Files:**
 
 - Create: `components/templates/covers/editorial.css`
-- Create: `components/templates/covers/{cinema-bleed,mono-contact,split-portrait,gallery-notes,fashion-grid}.tsx`
+- Create: `components/templates/covers/{edge-invite,mono-contact,split-portrait,pennant,duotone-script}.tsx`
 - Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
 
 **Catalog:**
 
 | id | name | family | archetype | profile | colors |
 |---|---|---|---|---|---|
-| `khung-dien-anh` | Khung Điện Ảnh | `cinema-bleed` | editorial | editorial-photo | `muc,dodam,lam` |
+| `thu-doc` | Thư Dọc | `edge-invite` | editorial | editorial-photo | `muc,lam,xanh` |
 | `phong-toi` | Phòng Tối | `mono-contact` | editorial | editorial-photo | `muc,do,nau` |
 | `song-anh` | Song Ảnh | `split-portrait` | editorial | editorial-photo | `lam,muc,hong` |
-| `ghi-chu-ben-anh` | Ghi Chú Bên Ảnh | `gallery-notes` | korean | editorial-photo | `nau,hong,xanh` |
-| `tap-chi-cuoi` | Tạp Chí Cưới | `fashion-grid` | editorial | editorial-photo | `muc,cam,do` |
+| `co-hieu` | Cờ Hiệu | `pennant` | korean | editorial-photo | `hong,do,xanh` |
+| `sac-doi` | Sắc Đôi | `duotone-script` | editorial | editorial-photo | `dodam,lam,nau` |
 
 - [ ] **Step 1: Mở rộng test count lên 35; thêm fixture ảnh 1/2/3 bị thiếu**
 - [ ] **Step 2: Chạy test đỏ**
 - [ ] **Step 3: Dựng cover + CSS** — full bleed cinematic; contact sheet mono; split 40/60; collage caption; fashion grid.
 - [ ] **Step 4: Thêm catalog/sample/SEO và không đưa ảnh ref vào manifest production**
 - [ ] **Step 5: Chạy gate đầy đủ và ghi bundle size `/templates`, `/templates/[id]` làm baseline giữa phase**
-- [ ] **Step 6: Browser QA + 200% zoom cho Tạp Chí Cưới; dừng chờ duyệt Đợt 3**
+- [ ] **Step 6: Browser QA + 200% zoom cho Sắc Đôi; dừng chờ duyệt Đợt 3**
 - [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
 
 ```bash
@@ -630,25 +630,25 @@ git commit -m "feat: add five editorial photo wedding templates"
 **Files:**
 
 - Create: `components/templates/covers/quiet-luxury.css`
-- Create: `components/templates/covers/{ivory-letterpress,velvet-frame,champagne-line,pearl-arch,stone-window}.tsx`
+- Create: `components/templates/covers/{floral-monogram,octagon-frame,champagne-line,pearl-arch,rose-cluster}.tsx`
 - Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
 
 **Catalog:**
 
 | id | name | family | archetype | profile | colors |
 |---|---|---|---|---|---|
-| `dap-noi-nga` | Dập Nổi Ngà | `ivory-letterpress` | minimal | quiet-luxury | `nau,muc,vang` |
-| `nhung-dem` | Nhung Đêm | `velvet-frame` | classic | quiet-luxury | `muc,dodam,lam` |
+| `hoa-chu` | Hoa Chữ | `floral-monogram` | botanical | quiet-luxury | `nau,xanh,hong` |
+| `bat-giac` | Bát Giác | `octagon-frame` | classic | quiet-luxury | `muc,dodam,lam` |
 | `sam-panh` | Sâm Panh | `champagne-line` | classic | quiet-luxury | `vang,nau,hong` |
 | `ngoc-trai` | Ngọc Trai | `pearl-arch` | minimal | quiet-luxury | `muc,hong,lam` |
-| `thach-van` | Thạch Vân | `stone-window` | classic | quiet-luxury | `nau,lam,muc` |
+| `hong-nhung` | Hồng Nhung | `rose-cluster` | botanical | quiet-luxury | `dodam,tim,muc` |
 
 - [ ] **Step 1: Mở rộng test count lên 40 và contrast assertions cho năm palette**
 - [ ] **Step 2: Chạy test đỏ**
 - [ ] **Step 3: Dựng cover + CSS** — letterpress bằng shadow/border; velvet frame; line vàng; pearl dots; stone wash bằng CSS/SVG original.
 - [ ] **Step 4: Thêm catalog/sample/SEO/asset audit**
 - [ ] **Step 5: Chạy gate đầy đủ**
-- [ ] **Step 6: Browser QA + 200% zoom cho Dập Nổi Ngà; dừng chờ duyệt Đợt 4**
+- [ ] **Step 6: Browser QA + 200% zoom cho Hoa Chữ; dừng chờ duyệt Đợt 4**
 - [ ] **Step 7: Cập nhật PROGRESS và handoff commit**
 
 ```bash
@@ -665,7 +665,7 @@ git commit -m "feat: add five quiet luxury wedding templates"
 **Files:**
 
 - Create: `components/templates/covers/story.css`
-- Create: `components/templates/covers/{story-journal,route-map,cafe-card,calendar-mark,heirloom-album}.tsx`
+- Create: `components/templates/covers/{story-journal,route-map,cafe-card,overlap-rings,floating-card}.tsx`
 - Modify: registries, catalog, tests, asset audit và `PROGRESS.md`.
 
 **Catalog:**
@@ -675,8 +675,8 @@ git commit -m "feat: add five quiet luxury wedding templates"
 | `nhat-ky-doi-minh` | Nhật Ký Đôi Mình | `story-journal` | korean | story-led | `nau,hong,xanh` |
 | `chung-mot-hanh-trinh` | Chung Một Hành Trình | `route-map` | editorial | story-led | `lam,oliu,do` |
 | `quan-quen` | Quán Quen | `cafe-card` | classic | story-led | `nau,cam,muc` |
-| `ngay-minh-chon` | Ngày Mình Chọn | `calendar-mark` | minimal | story-led | `do,xanh,hong` |
-| `gia-bao` | Gia Bảo | `heirloom-album` | classic | story-led | `nau,dodam,lam` |
+| `giao-diem` | Giao Điểm | `overlap-rings` | minimal | story-led | `xanh,hong,lam` |
+| `the-noi` | Thẻ Nổi | `floating-card` | classic | story-led | `dodam,lam,xanh` |
 
 - [ ] **Step 1: Mở rộng test count lên 45 và profile order assertions**
 - [ ] **Step 2: Chạy test đỏ**

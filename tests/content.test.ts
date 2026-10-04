@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { contentSchema, defaultContent, normalizeContent, sampleContent, publishIssues, persistable, SAMPLE_NAMES, MAX_EVENTS, MAX_SCHEDULE_ITEMS } from "../lib/content.ts";
+import { contentSchema, defaultContent, normalizeContent, sampleContent, publishIssues, persistable, SAMPLE_NAMES, MAX_EVENTS, MAX_SCHEDULE_ITEMS, MAX_STORY_ITEMS, MAX_DRESS_COLORS, upgradeV1 } from "../lib/content.ts";
 
 const NOW = new Date("2026-09-20T00:00:00Z");
 
@@ -119,4 +119,124 @@ test("music accepts https links and built-in tracks only, never other relative p
   assert.equal(withMusic("/music/../secret.mp3"), false);
   assert.equal(withMusic("/other/ngay-dau-tien.mp3"), false);
   assert.equal(withMusic("javascript:alert(1)"), false);
+});
+
+test("v1 payloads upgrade to v2 without touching couple, events, album, rsvp, gift or old sections", () => {
+  const v1 = JSON.parse(JSON.stringify(defaultContent(NOW)));
+  v1.v = 1;
+  delete v1.story;
+  delete v1.video;
+  delete v1.dressCode;
+  for (const e of v1.events) { delete e.venuePhoto; delete e.directionsNote; delete e.parkingNote; }
+  delete v1.sections.story;
+  delete v1.sections.video;
+  delete v1.sections.dressCode;
+  delete v1.sections.venue;
+  const upgraded = upgradeV1(v1);
+  const fresh = defaultContent(NOW);
+  const stripVenue = (e: Record<string, unknown>) => {
+    const { venuePhoto: _vp, directionsNote: _dn, parkingNote: _pn, ...rest } = e;
+    return rest;
+  };
+  assert.equal(upgraded.v, 2);
+  assert.deepEqual(upgraded.couple, fresh.couple);
+  assert.deepEqual(upgraded.events.map(stripVenue), fresh.events.map(stripVenue));
+  assert.deepEqual(upgraded.album, fresh.album);
+  assert.deepEqual(upgraded.rsvp, fresh.rsvp);
+  assert.deepEqual(upgraded.gift, fresh.gift);
+  assert.equal(upgraded.story.enabled, false);
+  assert.equal(upgraded.video.enabled, false);
+  assert.equal(upgraded.dressCode.enabled, false);
+  const normalized = normalizeContent(v1);
+  assert.equal(normalized.v, 2);
+  assert.equal(contentSchema.safeParse(normalized).success, true);
+});
+
+test("normalize mirrors the new section toggles onto sections", () => {
+  const c = defaultContent(NOW);
+  c.story.enabled = true;
+  c.story.items = [{ id: "m1", date: "2020-01-01", title: "Lần đầu gặp", body: "", photo: "", alt: "" }];
+  const n = normalizeContent(c);
+  assert.equal(n.sections.story, true);
+  assert.equal(n.sections.video, false);
+  assert.equal(n.sections.dressCode, false);
+  assert.equal(n.sections.venue, false);
+});
+
+test("v2 schema enforces story, dress-code, video and venue limits", () => {
+  const item = { id: "m", date: "2020-01-01", title: "T", body: "", photo: "", alt: "" };
+  const seven = defaultContent(NOW);
+  seven.story = { enabled: true, items: Array.from({ length: MAX_STORY_ITEMS + 1 }, (_, i) => ({ ...item, id: `m${i}` })) };
+  assert.equal(contentSchema.safeParse(seven).success, false);
+
+  const colors = defaultContent(NOW);
+  colors.dressCode = { enabled: true, title: "Lịch sự", note: "", colors: Array.from({ length: MAX_DRESS_COLORS + 1 }, (_, i) => ({ value: "#ffffff", label: `Màu ${i}` })) };
+  assert.equal(contentSchema.safeParse(colors).success, false);
+
+  const badHex = defaultContent(NOW);
+  badHex.dressCode = { enabled: false, title: "", note: "", colors: [{ value: "red", label: "Đỏ" }] };
+  assert.equal(contentSchema.safeParse(badHex).success, false);
+
+  const badVideo = defaultContent(NOW);
+  badVideo.video = { enabled: true, url: "www.video", posterUrl: "", title: "" };
+  assert.equal(contentSchema.safeParse(badVideo).success, false);
+
+  const longTitle = defaultContent(NOW);
+  longTitle.story = { enabled: true, items: [{ ...item, title: "x".repeat(101) }] };
+  assert.equal(contentSchema.safeParse(longTitle).success, false);
+
+  const longBody = defaultContent(NOW);
+  longBody.story = { enabled: true, items: [{ ...item, body: "x".repeat(501) }] };
+  assert.equal(contentSchema.safeParse(longBody).success, false);
+
+  const longNote = defaultContent(NOW);
+  longNote.events[0].directionsNote = "x".repeat(301);
+  assert.equal(contentSchema.safeParse(longNote).success, false);
+});
+
+test("persistable blanks half-typed video and venue links without mutating the draft", () => {
+  const c = defaultContent(NOW);
+  c.video = { enabled: true, url: "www.vid", posterUrl: "cdn/x", title: "T" };
+  c.events[0].venuePhoto = "photos/place";
+  const p = persistable(c);
+  assert.equal(p.video.url, "");
+  assert.equal(p.video.posterUrl, "");
+  assert.equal(p.events[0].venuePhoto, "");
+  assert.equal(c.video.url, "www.vid");
+  assert.equal(c.events[0].venuePhoto, "photos/place");
+  assert.equal(contentSchema.safeParse(p).success, true);
+});
+
+test("publishIssues covers the four new sections", () => {
+  const base = defaultContent(NOW);
+  base.couple.groom.name = "Khoa";
+  base.couple.bride.name = "Lan";
+
+  const story = structuredClone(base);
+  story.story.enabled = true;
+  assert.ok(publishIssues(story).length > 0);
+  story.story.items = [{ id: "m1", date: "2020-01-01", title: "Lần đầu gặp", body: "", photo: "", alt: "" }];
+  assert.deepEqual(publishIssues(story), []);
+
+  const video = structuredClone(base);
+  video.video.enabled = true;
+  assert.ok(publishIssues(video).length > 0);
+  video.video.url = "https://cdn.example.com/v.mp4";
+  assert.ok(publishIssues(video).length > 0);
+  video.video.posterUrl = "https://cdn.example.com/p.jpg";
+  assert.deepEqual(publishIssues(video), []);
+
+  const dress = structuredClone(base);
+  dress.dressCode.enabled = true;
+  assert.ok(publishIssues(dress).length > 0);
+  dress.dressCode.title = "Lịch sự";
+  assert.ok(publishIssues(dress).length > 0);
+  dress.dressCode.colors = [{ value: "#1f3a5f", label: "Xanh lam" }];
+  assert.deepEqual(publishIssues(dress), []);
+
+  const venue = structuredClone(base);
+  venue.sections.venue = true;
+  assert.deepEqual(publishIssues(venue), []);
+  venue.events.find((e) => e.kind === "reception")!.address = "";
+  assert.ok(publishIssues(venue).length > 0);
 });

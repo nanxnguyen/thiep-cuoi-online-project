@@ -16,7 +16,7 @@ export const HOME_TITLE = "MỘC: Tạo thiệp cưới online đẹp, miễn ph
 
 export const SEO_PAGES: Record<string, SeoPage> = {
   "/": page(HOME_TITLE, "Tạo thiệp cưới online sang trọng: chọn mẫu, thêm ảnh và câu chuyện, gửi qua Zalo. Khách xác nhận tham dự, gửi lời chúc và mừng cưới ngay trên thiệp.", 1, "weekly"),
-  "/templates": page("Mẫu thiệp cưới online đẹp, nhiều phong cách", "Hơn 20 mẫu thiệp cưới online: tối giản, cổ điển, vườn xanh, đỏ son, thủy mặc, phong cách Hàn. Xem thử từng mẫu và chọn màu rồi tạo thiệp miễn phí.", 0.9, "weekly"),
+  "/templates": page("Mẫu thiệp cưới online đẹp, nhiều phong cách", "50 mẫu thiệp cưới online: tối giản, cổ điển, vườn xanh, đỏ son, editorial, phong cách Hàn. Xem thử từng mẫu và chọn màu rồi tạo thiệp miễn phí.", 0.9, "weekly"),
   "/demo": page("Xem thử thiệp cưới online MỘC", "Xem thử các kiểu bìa và trải nghiệm thiệp cưới online MỘC: phong bì mở thiệp, đếm ngược ngày cưới, lời chúc và mừng cưới bằng QR trên điện thoại.", 0.8, "weekly"),
   "/bang-gia": page("Giá thiệp cưới online: miễn phí ra mắt", "MỘC miễn phí trong giai đoạn ra mắt: không cần tài khoản, không cần thẻ. Xem những gì có sẵn và những tính năng đang được lên kế hoạch.", 0.8, "weekly"),
   "/thiet-ke-thiep-rieng": page("Thiết kế thiệp cưới riêng theo yêu cầu", "Muốn một tấm thiệp cưới online độc bản? MỘC nhận thiết kế riêng theo ý tưởng, màu sắc và ảnh của hai bạn. Gửi yêu cầu để được tư vấn và báo giá.", 0.6, "monthly", "2026-10-03"),

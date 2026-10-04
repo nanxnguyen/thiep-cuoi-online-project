@@ -1,0 +1,495 @@
+/* Batch 1 — Di sản Việt tái hiện (thủy mặc, phụng, sen, sứ, tơ hồng). Each cover fills the 9:16 .tp-root card;
+   sizing in cqw so it scales with its box. Palette arrives as --cv-deep,
+   --cv-paper, --cv-gold on the wrapper. Long Vietnamese names must wrap,
+   never overflow. */
+.cv-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: var(--sans);
+  line-height: normal;
+}
+.cv-slot {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2cqw;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+}
+.cv-slot--img {
+  object-fit: cover;
+}
+.cv-slot__cap {
+  font-size: 2.4cqw;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+}
+.cv-slot__ring {
+  position: absolute;
+  inset: 2cqw;
+  border: 0.4cqw dashed currentColor;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.cv-kicker {
+  font-size: 2.4cqw;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  opacity: 0.85;
+  text-align: center;
+}
+.cv-names {
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.cv-date,
+.cv-place {
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+/* Mực Loang — thủy mặc: mist, far mountains, brush ring round the photo. */
+.cv-ink-wash {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-ink-wash__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cv-ink-wash__kicker {
+  position: absolute;
+  top: 9cqw;
+  left: 0;
+  right: 0;
+}
+.cv-ink-wash__photo {
+  position: absolute;
+  left: 23cqw;
+  top: 43cqw;
+  width: 54cqw;
+  height: 54cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  animation: cvInkIn 1.2s ease-out both;
+}
+.cv-ink-wash__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 107cqw;
+  font-family: var(--display);
+  font-size: 9.4cqw;
+  line-height: 1.18;
+}
+.cv-ink-wash__amp {
+  font-family: var(--script);
+  font-style: italic;
+  font-size: 1.15em;
+  color: var(--cv-gold);
+}
+.cv-ink-wash__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 140cqw;
+  font-size: 4.6cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-ink-wash__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 150cqw;
+  font-size: 2.8cqw;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  opacity: 0.8;
+}
+.cv-ink-wash__seal {
+  position: absolute;
+  right: 9cqw;
+  bottom: 9cqw;
+  width: 10cqw;
+  height: 10cqw;
+  display: grid;
+  place-items: center;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  font-family: serif;
+  font-size: 6.6cqw;
+  transform: rotate(-7deg);
+  border-radius: 0.8cqw;
+}
+
+/* Phụng Vũ — gatefold doors open onto an arched photo under a feather crest. */
+.cv-phoenix-fold {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 46%, color-mix(in srgb, var(--cv-gold) 38%, transparent), transparent 58%), var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-phoenix-fold__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-phoenix-fold__crest {
+  position: absolute;
+  left: 18cqw;
+  top: 13cqw;
+  width: 64cqw;
+  color: color-mix(in srgb, var(--cv-deep) 72%, var(--cv-gold));
+}
+.cv-phoenix-fold__stage {
+  position: absolute;
+  left: 12cqw;
+  top: 40cqw;
+  width: 76cqw;
+  height: 90cqw;
+}
+.cv-phoenix-fold__photo {
+  position: absolute;
+  left: 15cqw;
+  right: 15cqw;
+  top: 0;
+  bottom: 0;
+  border-radius: 23cqw 23cqw 1cqw 1cqw;
+  overflow: hidden;
+  border: 1cqw solid var(--cv-gold);
+  background: var(--cv-paper);
+}
+.cv-phoenix-fold__door {
+  position: absolute;
+  top: 3cqw;
+  bottom: 0;
+  width: 25cqw;
+  background-color: var(--cv-deep);
+  background-image: radial-gradient(circle at 50% 100%, transparent 3.2cqw, var(--cv-gold) 3.3cqw 3.8cqw, transparent 3.9cqw), radial-gradient(circle at 50% 100%, transparent 3.2cqw, var(--cv-gold) 3.3cqw 3.8cqw, transparent 3.9cqw);
+  background-size: 7.6cqw 3.8cqw, 7.6cqw 3.8cqw;
+  background-position: 0 0, 3.8cqw 1.9cqw;
+  box-shadow: inset 0 0 0 0.5cqw var(--cv-gold);
+}
+.cv-phoenix-fold__door--l {
+  left: 0;
+  clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 94%);
+  animation: cvDoorL 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-phoenix-fold__door--r {
+  right: 0;
+  clip-path: polygon(0 0, 100% 6%, 100% 94%, 0 100%);
+  animation: cvDoorR 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-phoenix-fold__names {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 134cqw;
+  font-family: var(--display);
+  font-size: 7.6cqw;
+  line-height: 1.2;
+}
+.cv-phoenix-fold__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-phoenix-fold__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 154cqw;
+  font-size: 4cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-phoenix-fold__place {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 162cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  opacity: 0.8;
+}
+
+/* Liên Hoa — scroll between bamboo rods; a lotus cradles the photo. */
+.cv-lotus-scroll {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(var(--cv-paper), color-mix(in srgb, var(--cv-deep) 12%, var(--cv-paper)));
+  color: var(--cv-deep);
+}
+.cv-lotus-scroll__rod {
+  position: absolute;
+  left: 3cqw;
+  right: 3cqw;
+  top: 5cqw;
+  height: 5cqw;
+  z-index: 2;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 2.5cqw;
+  background: linear-gradient(var(--cv-gold), color-mix(in srgb, var(--cv-gold) 55%, var(--cv-deep)));
+  box-shadow: 0 0.8cqw 1.6cqw rgba(0, 0, 0, 0.25);
+}
+.cv-lotus-scroll__rod i {
+  width: 0.5cqw;
+  height: 100%;
+  background: color-mix(in srgb, var(--cv-deep) 45%, transparent);
+}
+.cv-lotus-scroll__rod--foot {
+  top: auto;
+  bottom: 5cqw;
+}
+.cv-lotus-scroll__sheet {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 9cqw;
+  bottom: 9cqw;
+  background: color-mix(in srgb, var(--cv-paper) 90%, white);
+  box-shadow: 0 0 0 0.3cqw color-mix(in srgb, var(--cv-deep) 30%, transparent), 0 2cqw 4cqw rgba(0, 0, 0, 0.12);
+  animation: cvScrollIn 1s ease-out both;
+}
+.cv-lotus-scroll__kicker {
+  position: absolute;
+  top: 10cqw;
+  left: 0;
+  right: 0;
+}
+.cv-lotus-scroll__bloom {
+  position: absolute;
+  left: 3cqw;
+  top: 20cqw;
+  width: 78cqw;
+  color: color-mix(in srgb, var(--cv-deep) 85%, var(--cv-gold));
+}
+.cv-lotus-scroll__bloom--back {
+  opacity: 0.95;
+}
+.cv-lotus-scroll__photo {
+  position: absolute;
+  left: 26cqw;
+  top: 36cqw;
+  width: 32cqw;
+  height: 32cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0.6cqw solid var(--cv-paper);
+}
+.cv-lotus-scroll__names {
+  position: absolute;
+  left: 4cqw;
+  right: 4cqw;
+  top: 82cqw;
+  font-family: var(--display);
+  font-size: 8.4cqw;
+  line-height: 1.2;
+}
+.cv-lotus-scroll__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-lotus-scroll__date {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 104cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-lotus-scroll__weekday {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 112cqw;
+  text-align: center;
+  font-size: 2.6cqw;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  opacity: 0.75;
+}
+.cv-lotus-scroll__pond {
+  position: absolute;
+  left: 0;
+  bottom: 6cqw;
+  width: 84cqw;
+  color: var(--cv-deep);
+  opacity: 0.65;
+}
+
+/* Lam Sứ — tiled porcelain ground, scalloped plate, cartouche. */
+.cv-porcelain-blue {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-porcelain-blue__tiles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.22;
+}
+.cv-porcelain-blue__kicker {
+  position: absolute;
+  top: 9cqw;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  padding: 1.6cqw 4cqw;
+  background: var(--cv-paper);
+}
+.cv-porcelain-blue__plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--cv-deep);
+}
+.cv-porcelain-blue__photo {
+  position: absolute;
+  left: 24cqw;
+  top: 50cqw;
+  width: 52cqw;
+  height: 52cqw;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.cv-porcelain-blue__label {
+  position: absolute;
+  left: 13cqw;
+  right: 13cqw;
+  top: 120cqw;
+  padding: 5cqw 3cqw;
+  background: var(--cv-paper);
+  border: 0.5cqw solid var(--cv-deep);
+  outline: 0.4cqw solid var(--cv-deep);
+  outline-offset: -1.7cqw;
+}
+.cv-porcelain-blue__names {
+  font-family: var(--display);
+  font-size: 7.4cqw;
+  line-height: 1.2;
+}
+.cv-porcelain-blue__date {
+  margin-top: 2cqw;
+  font-size: 3.6cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-porcelain-blue__place {
+  margin-top: 1cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.8;
+}
+
+/* Tơ Hồng — a red silk thread loops round the photo and ties a bow. */
+.cv-silk-knot {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--cv-gold) 30%, transparent), transparent 60%), var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-silk-knot__kicker {
+  position: absolute;
+  top: 8cqw;
+  left: 0;
+  right: 0;
+}
+.cv-silk-knot__photo {
+  position: absolute;
+  left: 28cqw;
+  top: 50cqw;
+  width: 44cqw;
+  height: 44cqw;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.cv-silk-knot__thread {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.cv-silk-knot__text {
+  position: absolute;
+  left: 10cqw;
+  right: 10cqw;
+  top: 112cqw;
+  text-align: center;
+  text-shadow: 0 0 1.5cqw var(--cv-paper), 0 0 3cqw var(--cv-paper), 0 0 5cqw var(--cv-paper);
+}
+.cv-silk-knot__names {
+  font-family: var(--display);
+  font-size: 8.6cqw;
+  line-height: 1.2;
+}
+.cv-silk-knot__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-silk-knot__date {
+  margin-top: 3cqw;
+  font-size: 4.2cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+.cv-silk-knot__place {
+  margin-top: 1.4cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  opacity: 0.8;
+}
+
+@keyframes cvInkIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvDoorL {
+  from { transform: translateX(16cqw); }
+  to { transform: none; }
+}
+@keyframes cvDoorR {
+  from { transform: translateX(-16cqw); }
+  to { transform: none; }
+}
+@keyframes cvScrollIn {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-ink-wash__photo,
+  .cv-phoenix-fold__door,
+  .cv-lotus-scroll__sheet {
+    animation: none;
+  }
+}

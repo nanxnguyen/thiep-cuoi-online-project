@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:none}}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:11px 16px;font-size:14px;border-bottom:1px solid #e0d5c6}
+th{background:#efe6d9;font-weight:600;color:#1a1412;white-space:nowrap}
+td{color:#3d342e}
+</style>
+<script src="motion.js"></script>
+</helmet>
+<div style="min-height:100vh">
+  <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+
+  <main style="max-width:1180px;margin:0 auto;padding:56px 32px 0">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:28px">
+      <a href="Blog.dc.html" style="font-size:13px;color:#8a7d72">Blog</a><span style="color:#c9a86a">/</span><span style="font-size:13px;color:#8a7d72">{{ art.category }}</span>
+    </div>
+  </main>
+
+  <article style="max-width:1180px;margin:0 auto;padding:0 32px 100px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,240px);gap:56px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:32px;min-width:0">
+      <div style="display:flex;flex-direction:column;gap:16px;animation:fadeUp .7s both">
+        <span style="font-size:12px;letter-spacing:.14em;color:#8a6425;font-weight:600;text-transform:uppercase">{{ art.category }}</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(32px,4.4vw,52px);line-height:1.12">{{ art.title }}</h1>
+        <p style="margin:0;font-size:17px;line-height:1.7;color:#5e534b;max-width:680px">{{ art.excerpt }}</p>
+        <span style="font-size:13px;color:#8a7d72">{{ art.date }} · {{ art.read }}</span>
+      </div>
+      <div style="border-radius:18px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 24px 48px -24px rgba(26,20,18,.35)">
+        <image-slot id="{{ art.imgId }}" src="{{ art.cover }}" shape="rect" placeholder="Ảnh bài viết"></image-slot>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:22px;font-size:16px;line-height:1.8;color:#3d342e;max-width:720px">
+        <sc-for list="{{ art.blocks }}" as="bl" hint-placeholder-count="8">
+          <sc-if value="{{ bl.isH2 }}" hint-placeholder-val="{{ false }}"><h2 id="{{ bl.id }}" style="margin:14px 0 0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(24px,2.8vw,32px);color:#1a1412;scroll-margin-top:96px">{{ bl.text }}</h2></sc-if>
+          <sc-if value="{{ bl.isP }}" hint-placeholder-val="{{ false }}"><p style="margin:0;text-wrap:pretty">{{ bl.text }}</p></sc-if>
+          <sc-if value="{{ bl.isQuote }}" hint-placeholder-val="{{ false }}">
+            <blockquote style="margin:4px 0;background:#efe6d9;border-radius:16px;padding:28px 32px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;line-height:1.6;color:#3d342e">{{ bl.text }}</blockquote>
+          </sc-if>
+          <sc-if value="{{ bl.isList }}" hint-placeholder-val="{{ false }}">
+            <ul style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ bl.items }}" as="li" hint-placeholder-count="4"><li style="text-wrap:pretty">{{ li }}</li></sc-for>
+            </ul>
+          </sc-if>
+          <sc-if value="{{ bl.isTable }}" hint-placeholder-val="{{ false }}">
+            <div style="overflow-x:auto;border-radius:12px;border:1px solid #e0d5c6">
+              <table>
+                <thead><tr><sc-for list="{{ bl.headers }}" as="h" hint-placeholder-count="3"><th>{{ h }}</th></sc-for></tr></thead>
+                <tbody>
+                  <sc-for list="{{ bl.rows }}" as="row" hint-placeholder-count="4">
+                    <tr><sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="3"><td>{{ cell }}</td></sc-for></tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:20px;padding-top:36px;border-top:1px solid #1a1412">
+        <h2 style="margin:0 0 16px;font-family:'Playfair Display',serif;font-weight:400;font-size:28px">Câu hỏi thường gặp</h2>
+        <sc-for list="{{ art.faq }}" as="f" hint-placeholder-count="3">
+          <div style="padding:20px 0;border-bottom:1px solid #e0d5c6;display:flex;flex-direction:column;gap:8px">
+            <span style="font-family:'Playfair Display',serif;font-size:17px;font-weight:500;color:#1a1412">{{ f.q }}</span>
+            <span style="font-size:15px;line-height:1.7;color:#5e534b">{{ f.a }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;margin-top:12px">
+        <sc-for list="{{ art.related }}" as="r" hint-placeholder-count="2">
+          <a href="{{ r.href }}" style="flex:1 1 260px;min-width:220px;background:#efe6d9;border-radius:16px;padding:22px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit">
+            <span style="font-size:12px;letter-spacing:.1em;color:#8a7d72;text-transform:uppercase">Xem thêm</span>
+            <span style="font-family:'Playfair Display',serif;font-size:18px;color:#1a1412">{{ r.title }}</span>
+          </a>
+        </sc-for>
+      </div>
+    </div>
+
+    <aside style="position:sticky;top:96px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;letter-spacing:.14em;color:#8a7d72;font-weight:600;text-transform:uppercase">Mục lục</span>
+      <sc-for list="{{ art.toc }}" as="t" hint-placeholder-count="5">
+        <a href="{{ t.href }}" style="font-size:13.5px;line-height:1.5;color:#5e534b">{{ t.text }}</a>
+      </sc-for>
+      <a href="Studio.dc.html" style="margin-top:16px;background:#a3161c;color:#fff;padding:14px 18px;border-radius:999px;font-size:14px;font-weight:500;text-align:center" style-hover="background:#7d0f14;color:#fff">Tạo thiệp miễn phí</a>
+    </aside>
+  </article>
+
+  <dc-import name="Site Footer" hint-size="100%,520px"></dc-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const D = {
+  'han-xac-nhan-tham-du-khi-nao': {
+    title: 'Hạn xác nhận tham dự nên để vào lúc nào?', category: 'Hướng dẫn cưới',
+    excerpt: 'Tính ngày hạn lùi từ lúc nhà hàng cần số khách, rồi nhắc khách chưa trả lời theo một hệ thống cố định — không phải đoán xem lúc nào là đủ lịch sự.',
+    date: '05/09/2026', read: '6 phút đọc', cover: 'assets/photos/retro-pho-cho.jpg',
+    blocks: [
+      { h2: 'Tính hạn lùi từ ngày nhà hàng cần số khách' },
+      { p: 'Hầu hết các cặp đôi chọn hạn xác nhận theo cảm tính: "trước cưới một tháng cho chắc". Cách làm chắc hơn là nhìn vào hợp đồng với nhà hàng hoặc đơn vị tổ chức — họ thường cần số khách cuối cùng trước 7 đến 14 ngày. Lấy ngày đó làm điểm mốc, rồi lùi lại một tuần để có thời gian nhắc khách chưa trả lời, và vài ngày nữa làm khoảng đệm.' },
+      { table: { headers: ['Mốc', 'Thời điểm', 'Vì sao'], rows: [
+        ['Lễ cưới', 'Thứ Bảy, tuần X', '—'],
+        ['Chốt số khách cho nhà hàng', 'Trước 10 ngày', 'Theo hợp đồng'],
+        ['Bắt đầu nhắc khách chưa trả lời', 'Trước 17 ngày', 'Có một tuần để nhắc'],
+        ['Hạn xác nhận', 'Trước 21 ngày', 'Chừa vài ngày đệm'],
+        ['Nhắc lần đầu', 'Trước 28 ngày', 'Một tuần trước hạn'],
+      ] } },
+      { h2: 'Vì sao khách hay trả lời muộn' },
+      { p: 'Xác nhận tham dự là việc dễ bị gác lại. Khách mở thiệp, định bụng trả lời sau, rồi quên vì thiệp bị trôi mất trong tin nhắn. Vấn đề không phải là khách thiếu lịch sự, mà là chưa có gì nhắc họ quay lại đúng lúc. Lời nhắc hiệu quả nhất không phải "hỏi xem đã nhận thiệp chưa", mà là gửi lại đúng thiệp kèm nút xác nhận, để họ bấm luôn không cần tìm lại.' },
+      { h2: 'Một hệ thống nhắc, không phải tuỳ hứng' },
+      { list: [
+        'Một tuần trước hạn: nhắc nhẹ, kèm lại link thiệp.',
+        'Sau hạn 1–2 ngày: nhắc trực tiếp, nói rõ vì sao cần số khách gấp.',
+        '3–4 ngày sau nữa: thông báo đã ghi là không tham dự, kèm lời mời sửa lại nếu nhầm.',
+        'Người lớn tuổi: gọi điện thay vì nhắn, qua con cháu hoặc chính cô dâu chú rể.',
+      ] },
+      { h2: 'Mẫu lời nhắc không bị gượng' },
+      { quote: 'Chào anh/chị, tụi em đang chốt số khách cho buổi tiệc nên muốn hỏi lại anh/chị có đến được không. Thiệp mời đây ạ, anh/chị bấm xác nhận giúp tụi em trước [ngày] nha: [link]' },
+      { p: 'Câu chốt sổ cũng cần nhẹ nhàng: "Tụi em chưa thấy anh/chị phản hồi nên tạm ghi là không tham dự. Nếu có nhầm hay đổi ý, báo lại tụi em trước [ngày] nha."' },
+      { h2: 'Theo dõi ai đã xác nhận mà không cần mở từng tin nhắn' },
+      { p: 'Khi gửi thiệp bằng link riêng cho từng khách, bạn xem được ai đã mở thiệp, ai đã xác nhận ngay trong một danh sách, thay vì lục lại từng cuộc trò chuyện. Mộc gộp việc này vào mục Quản lý thiệp, còn công cụ Tin nhắn mời giúp soạn sẵn lời nhắc theo giọng trang trọng hoặc thân mật.' },
+    ],
+    faq: [
+      { q: 'Hạn xác nhận nên để trước cưới bao lâu?', a: 'Thường ba đến bốn tuần, nhưng tính từ ngày nhà hàng cần số khách cuối cùng (hay 7–14 ngày trước cưới), trừ thêm một tuần để nhắc và vài ngày đệm.' },
+      { q: 'Nên nhắc khách chưa trả lời bao nhiêu lần?', a: 'Hai lần là đủ: một lần nhắc nhẹ trước hạn, một lần nhắc trực tiếp sau hạn. Sau đó có thể chốt sổ và báo lại cho khách biết.' },
+      { q: 'Ghi khách là "không tham dự" khi họ chưa trả lời có bất lịch sự không?', a: 'Không, nếu đã nhắc đủ hai lần và báo lại rõ ràng. Thiệp bị trôi mất là chuyện thường gặp, nên luôn để một cách để khách sửa lại nếu nhầm.' },
+    ],
+    related: ['thiep-cuoi-online-hay-thiep-giay', 'cach-viet-loi-moi-cuoi-hay'],
+  },
+  'cach-lap-danh-sach-khach-moi-cuoi': {
+    title: 'Cách lập danh sách khách mời cưới không rối, không sót', category: 'Hướng dẫn cưới',
+    excerpt: 'Chia danh sách theo ba nhóm trước khi gộp, ước số khách từ ngân sách tiệc, và biết cắt ai trước nếu danh sách vượt dự tính.',
+    date: '12/09/2026', read: '6 phút đọc', cover: 'assets/photos/vuon-xanh.jpg',
+    blocks: [
+      { h2: 'Chia ba danh sách trước, gộp sau' },
+      { p: 'Thay vì viết chung một danh sách ngay từ đầu, mỗi bên — nhà cô dâu, nhà chú rể, và danh sách chung của hai người — nên làm riêng trước. Cách này tránh tình trạng một bên viết tràn hết chỗ trước khi bên còn lại kịp liệt kê. Gộp lại khi cả ba danh sách đã có số lượng tạm ổn, rồi cùng rà soát trùng tên.' },
+      { h2: 'Ước số khách từ ngân sách, không phải ngược lại' },
+      { p: 'Nhiều cặp đôi viết danh sách mong muốn trước, rồi mới giật mình khi thấy chi phí vượt xa dự tính. Thứ tự nên đảo lại: lấy ngân sách dự kiến cho tiệc, chia cho chi phí mỗi bàn, để ra số khách tối đa hợp lý.' },
+      { table: { headers: ['Ngân sách tiệc', 'Giá mỗi bàn (10 khách)', 'Số bàn tối đa', 'Số khách tối đa'], rows: [
+        ['80 triệu', '4 triệu', '20', '200'],
+        ['50 triệu', '4 triệu', '12', '120'],
+        ['35 triệu', '3.5 triệu', '10', '100'],
+      ] } },
+      { h2: 'Vượt ngân sách thì cắt ai trước' },
+      { list: [
+        'Khách mà cả hai cùng không chắc có mời không — cắt trước, dễ nhất.',
+        'Đồng nghiệp xa, bạn không gặp trong một năm qua — xem lại mức độ thân thiết.',
+        'Trẻ em đi theo — hỏi trước xem gia đình có cần ghế riêng hay ngồi chung.',
+        'Khách mời vì xã giao (sợ mất lòng) — cân nhắc gửi lời chúc riêng thay vì mời dự tiệc.',
+      ] },
+      { h2: 'Theo dõi xác nhận không cần mở file Excel mỗi ngày' },
+      { p: 'Danh sách khách chỉ thật sự hữu ích khi gắn được trạng thái — đã mời, đã xác nhận, chưa trả lời — và cập nhật được nhanh. Công cụ Danh sách khách của Mộc cho thêm, xoá, đổi trạng thái từng khách và xuất file khi cần gửi cho nhà hàng, không phải dò tay trên bảng tính riêng.' },
+    ],
+    faq: [
+      { q: 'Nên lập danh sách khách mời từ khi nào?', a: 'Ngay sau khi chốt ngày cưới và địa điểm, vì số khách ảnh hưởng trực tiếp đến việc chọn nhà hàng và ngân sách tiệc.' },
+      { q: 'Hai gia đình không thống nhất được số khách thì làm sao?', a: 'Chốt ngân sách chung trước, chia theo tỷ lệ hai bên đã thống nhất (ví dụ 60/40), rồi mỗi bên tự quyết định danh sách trong phần của mình.' },
+      { q: 'Có nên mời cả gia đình khách hay chỉ mời cá nhân?', a: 'Ghi rõ trên thiệp ngay từ đầu — "kính mời anh/chị" hay "kính mời anh/chị và gia đình" — để tránh hiểu nhầm số người tham dự khi xác nhận.' },
+    ],
+    related: ['han-xac-nhan-tham-du-khi-nao', 'thiep-cuoi-online-hay-thiep-giay'],
+  },
+  'thiep-cuoi-online-hay-thiep-giay': {
+    title: 'Thiệp cưới online hay thiệp giấy: nên chọn loại nào?', category: 'So sánh',
+    excerpt: 'Thiệp giấy vẫn cần cho người lớn tuổi, thiệp online nhanh và theo dõi được ai xác nhận. Nhiều cặp đôi đang dùng cả hai, mỗi loại cho một nhóm khách.',
+    date: '20/09/2026', read: '7 phút đọc', cover: 'assets/photos/lau-dai-trang.jpg',
+    blocks: [
+      { h2: 'Thiệp giấy vẫn cần, nhưng không cần cho tất cả' },
+      { p: 'Với ông bà, người lớn tuổi hoặc khách ở xa không quen dùng điện thoại, một tấm thiệp giấy mang tới cảm giác trang trọng mà link thiệp không thay được. Nhưng việc in và gửi thiệp giấy cho toàn bộ danh sách khách — có khi lên đến vài trăm người — tốn thời gian in ấn, viết tay và gửi còn lâu hơn cần thiết.' },
+      { h2: 'So sánh theo từng tiêu chí' },
+      { table: { headers: ['Tiêu chí', 'Thiệp giấy', 'Thiệp online'], rows: [
+        ['Thời gian làm', 'Vài ngày đến vài tuần (in, viết tay)', 'Dưới một giờ với mẫu có sẵn'],
+        ['Chi phí', 'Tính theo số lượng in', 'Miễn phí hoặc rất thấp'],
+        ['Sửa sau khi gửi', 'Không sửa được', 'Sửa trực tiếp, khách thấy ngay'],
+        ['Theo dõi xác nhận', 'Gọi điện hỏi từng người', 'Xem trong một danh sách'],
+        ['Mừng cưới', 'Khách đưa tiền mặt hoặc bỏ phong bì', 'Quét QR chuyển khoản ngay trên thiệp'],
+        ['Cảm giác trang trọng', 'Cao, đặc biệt với người lớn tuổi', 'Tuỳ mẫu, có thể làm trang trọng tương đương'],
+      ] } },
+      { h2: 'Cách nhiều cặp đôi đang dùng: cả hai, cho hai nhóm khách khác nhau' },
+      { p: 'Một cách phổ biến là in thiệp giấy cho bố mẹ, ông bà và một số khách lớn tuổi hai bên, còn lại gửi thiệp online qua Zalo hoặc Messenger. Vừa giữ được nét trang trọng cho người cần, vừa tiết kiệm thời gian cho phần đông khách còn lại. Có thể in mã QR dẫn tới thiệp online ngay trên thiệp giấy, để người nhận thiệp giấy vẫn xem được bản đầy đủ có album ảnh, nhạc và nút xác nhận.' },
+      { h2: 'Khi nào nên chọn hẳn thiệp giấy' },
+      { p: 'Nếu lễ cưới tổ chức theo nghi thức truyền thống đầy đủ, nhà có truyền thống đi mời tận nhà từng khách lớn tuổi, hoặc số khách ít và muốn giữ sự riêng tư tuyệt đối, thiệp giấy vẫn là lựa chọn hợp lý hơn.' },
+    ],
+    faq: [
+      { q: 'Thiệp cưới online có đủ trang trọng để gửi người lớn tuổi không?', a: 'Tuỳ mẫu. Các mẫu theo phong cách truyền thống (chữ Hỷ, khung vàng, lịch bloc) giữ được cảm giác trang trọng gần với thiệp giấy, nhưng vẫn nên kèm một cuộc gọi hoặc thiệp giấy cho người thân lớn tuổi nhất.' },
+      { q: 'Có thể in thiệp online ra giấy không?', a: 'Có thể in mã QR dẫn tới thiệp online lên một tấm thiệp giấy đơn giản, hoặc in cả nội dung thiệp nếu mẫu cho phép.' },
+      { q: 'Dùng thiệp online có mất phí không?', a: 'Trên Mộc thì không — toàn bộ mẫu thiệp và tính năng đều miễn phí.' },
+    ],
+    related: ['cach-lap-danh-sach-khach-moi-cuoi', 'han-xac-nhan-tham-du-khi-nao'],
+  },
+  'cach-viet-loi-moi-cuoi-hay': {
+    title: 'Cách viết lời mời cưới hay, không sáo rỗng', category: 'Hướng dẫn cưới',
+    excerpt: 'Lời mời cần đủ thông tin trước khi cần hay. Chọn giọng trang trọng hoặc thân mật theo người nhận, và tránh vài câu khiến lời mời nghe như công thức.',
+    date: '28/09/2026', read: '5 phút đọc', cover: 'assets/photos/o-hoa.jpg',
+    blocks: [
+      { h2: 'Đủ thông tin trước, hay sau' },
+      { p: 'Một lời mời hay vẫn vô dụng nếu thiếu thông tin cốt lõi: tên hai người, ngày giờ, địa điểm cụ thể. Viết nháp đủ bốn phần này trước, rồi mới chỉnh giọng văn.' },
+      { list: ['Tên cô dâu và chú rể', 'Ngày, giờ (thêm giờ đón khách nếu khác giờ khai tiệc)', 'Địa điểm, kèm link bản đồ nếu gửi online', 'Một câu mở đầu ngắn, không cần hoa mỹ'] },
+      { h2: 'Chọn giọng theo người nhận, không phải theo cảm xúc lúc viết' },
+      { p: 'Giọng trang trọng phù hợp khi mời cô chú, đồng nghiệp lớn tuổi hoặc khách xã giao. Giọng thân mật hợp với bạn bè ngang tuổi. Một lời mời không cần giữ đúng một giọng cho tất cả khách — bạn có thể viết hai bản, gửi theo từng nhóm.' },
+      { quote: 'Kính mời anh/chị đến chung vui trong ngày trọng đại của chúng em. Mọi thông tin chi tiết có trong thiệp mời gửi kèm.' },
+      { quote: 'Ê, tụi mình cưới rồi nè! Ghé thiệp xem ngày giờ rồi xác nhận giúp mình nha 🥂' },
+      { h2: 'Những câu nên tránh' },
+      { list: [
+        'Trích dẫn dài dòng về tình yêu — đã quá quen đến mức khách lướt qua không đọc.',
+        'Viết quá nhiều chi tiết nghi thức trong câu mời, nên để phần đó vào thiệp, không phải câu nhắn đầu tiên.',
+        'Mời bằng câu hỏi mơ hồ ("có rảnh không") thay vì nói rõ đây là lời mời cưới.',
+        'Quên ghi tên người gửi khi nhắn cho khách không lưu số, đặc biệt là khách của bố mẹ.',
+      ] },
+      { h2: 'Nếu không biết bắt đầu từ đâu' },
+      { p: 'Công cụ Tin nhắn mời của Mộc sinh sẵn vài câu theo giọng trang trọng hoặc thân mật, kèm tên và link thiệp, để bạn chỉnh lại theo cách nói của mình thay vì viết từ số 0.' },
+    ],
+    faq: [
+      { q: 'Lời mời cưới nên dài bao nhiêu?', a: 'Với tin nhắn gửi kèm link thiệp, hai đến ba câu là đủ — nêu lý do nhắn, kèm link, không cần kể hết thông tin lễ cưới trong tin nhắn.' },
+      { q: 'Có nên viết lời mời khác nhau cho mỗi khách?', a: 'Không cần viết riêng từng người, nhưng nên có hai bản theo giọng trang trọng và thân mật, dùng tuỳ người nhận.' },
+      { q: 'Gửi lời mời qua Zalo hay gọi điện tốt hơn?', a: 'Với bạn bè, nhắn kèm link thiệp là đủ. Với người lớn tuổi hoặc khách quan trọng, nên gọi điện hoặc mời trực tiếp, thiệp chỉ là phần kèm theo.' },
+    ],
+    related: ['han-xac-nhan-tham-du-khi-nao', 'thiep-cuoi-online-hay-thiep-giay'],
+  },
+};
+const TITLES = Object.fromEntries(Object.entries(D).map(([k, v]) => [k, v.title]));
+function slugify(s) { return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); }
+class Component extends DCLogic {
+  componentDidMount() { this.applyMeta(); }
+  componentDidUpdate() { this.applyMeta(); }
+  applyMeta() {
+    const d = this.current();
+    document.title = `${d.title} | Mộc`;
+    let m = document.querySelector('meta[name="description"]');
+    if (!m) { m = document.createElement('meta'); m.setAttribute('name', 'description'); document.head.appendChild(m); }
+    m.setAttribute('content', d.excerpt);
+  }
+  current() {
+    const slug = new URLSearchParams(location.search).get('slug') || 'han-xac-nhan-tham-du-khi-nao';
+    return D[slug] ? { ...D[slug], slug } : { ...D['han-xac-nhan-tham-du-khi-nao'], slug: 'han-xac-nhan-tham-du-khi-nao' };
+  }
+  renderVals() {
+    const d = this.current();
+    const blocks = [];
+    const toc = [];
+    d.blocks.forEach((b, i) => {
+      if (b.h2) { const id = slugify(b.h2); toc.push({ text: b.h2, href: `#${id}` }); blocks.push({ isH2: true, text: b.h2, id }); }
+      else if (b.p) blocks.push({ isP: true, text: b.p });
+      else if (b.quote) blocks.push({ isQuote: true, text: b.quote });
+      else if (b.list) blocks.push({ isList: true, items: b.list });
+      else if (b.table) blocks.push({ isTable: true, headers: b.table.headers, rows: b.table.rows.map(r => ({ cells: r })) });
+    });
+    return {
+      art: {
+        ...d, imgId: `blog-art-${d.slug}`, blocks, toc,
+        faq: d.faq,
+        related: d.related.map(slug => ({ href: `Blog Bai Viet.dc.html?slug=${slug}`, title: TITLES[slug] })),
+      },
+    };
+  }
+}
+
+</script>
+</body>
+</html>

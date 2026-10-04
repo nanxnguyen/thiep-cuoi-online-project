@@ -63,6 +63,22 @@ interface ChromeText {
   albumTitle: string;
   photoAlt(n: number): string;
   viewPhotoLabel(n: number, total: number): string;
+
+  storyTitle: string;
+  storyEmpty: string;
+
+  videoTitle: string;
+  videoFallback: string;
+  videoOpenLink: string;
+  videoEmpty: string;
+
+  dressCodeFallback: string;
+  dressCodeEmpty: string;
+
+  venueTitle: string;
+  venueDirections: string;
+  venueParking: string;
+  venueEmpty: string;
   lightbox: { Close: string; Previous: string; Next: string; "Zoom in": string; "Zoom out": string; Lightbox: string };
 
   rsvpTitle: string;
@@ -185,6 +201,22 @@ const VI: ChromeText = {
   photoAlt: (n) => `Ảnh cưới ${n}`,
   viewPhotoLabel: (n, total) => `Xem ảnh ${n} trên ${total}`,
   lightbox: { Close: "Đóng", Previous: "Ảnh trước", Next: "Ảnh sau", "Zoom in": "Phóng to", "Zoom out": "Thu nhỏ", Lightbox: "Xem ảnh" },
+
+  storyTitle: "Chuyện tình yêu",
+  storyEmpty: "Câu chuyện của chúng mình sắp được kể ở đây.",
+
+  videoTitle: "Video cưới",
+  videoFallback: "Trình duyệt không phát được video này.",
+  videoOpenLink: "Mở video",
+  videoEmpty: "Video cưới sắp được thêm vào đây.",
+
+  dressCodeFallback: "Trang phục gợi ý",
+  dressCodeEmpty: "Gợi ý trang phục sắp được thêm vào đây.",
+
+  venueTitle: "Địa điểm",
+  venueDirections: "Đường đi",
+  venueParking: "Chỗ đỗ xe",
+  venueEmpty: "Thông tin địa điểm sắp được cập nhật.",
 
   rsvpTitle: "XÁC NHẬN THAM DỰ",
   rsvpLead: "Sự hiện diện của bạn là niềm vui của chúng mình.",
@@ -309,6 +341,22 @@ const EN: ChromeText = {
   photoAlt: (n) => `Wedding photo ${n}`,
   viewPhotoLabel: (n, total) => `View photo ${n} of ${total}`,
   lightbox: { Close: "Close", Previous: "Previous", Next: "Next", "Zoom in": "Zoom in", "Zoom out": "Zoom out", Lightbox: "Lightbox" },
+
+  storyTitle: "Our story",
+  storyEmpty: "Our story will be told here soon.",
+
+  videoTitle: "Wedding video",
+  videoFallback: "Your browser can't play this video.",
+  videoOpenLink: "Open video",
+  videoEmpty: "The wedding video is coming soon.",
+
+  dressCodeFallback: "Dress code",
+  dressCodeEmpty: "Dress code suggestions are coming soon.",
+
+  venueTitle: "Venue",
+  venueDirections: "Getting here",
+  venueParking: "Parking",
+  venueEmpty: "Venue details are coming soon.",
 
   rsvpTitle: "RSVP",
   rsvpLead: "Your presence means the world to us.",

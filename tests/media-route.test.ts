@@ -32,6 +32,21 @@ test("media detection trusts bytes, not browser MIME or filename", () => {
   assert.throws(() => detectMedia("image", new Uint8Array(IMAGE_MAX_BYTES + 1)), (error: unknown) => error instanceof HttpError && error.status === 413);
 });
 
+test("video detection accepts MP4 and WebM bytes and rejects fake MIME", async () => {
+  const { VIDEO_MAX_BYTES } = await import("../lib/server/media.ts");
+  const mp4 = new Uint8Array([0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x69, 0x73, 0x6f, 0x6d]);
+  assert.deepEqual(detectMedia("video", mp4), { contentType: "video/mp4", extension: "mp4" });
+  const webm = new Uint8Array([0x1a, 0x45, 0xdf, 0xa3, 0x93, 0x42, 0x82, 0x88]);
+  assert.deepEqual(detectMedia("video", webm), { contentType: "video/webm", extension: "webm" });
+  assert.throws(() => detectMedia("video", new Uint8Array()), (error: unknown) => error instanceof HttpError && error.status === 400);
+  assert.throws(() => detectMedia("video", new TextEncoder().encode("ID3music")), (error: unknown) => error instanceof HttpError && error.status === 415);
+  const maxVideo = new Uint8Array(VIDEO_MAX_BYTES);
+  maxVideo.set([0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70]);
+  assert.deepEqual(detectMedia("video", maxVideo), { contentType: "video/mp4", extension: "mp4" });
+  assert.throws(() => detectMedia("video", new Uint8Array(VIDEO_MAX_BYTES + 1)), (error: unknown) => error instanceof HttpError && error.status === 413);
+  assert.throws(() => assertUploadRequestSize(new Request("http://localhost", { headers: { "content-length": String(VIDEO_MAX_BYTES + 256 * 1024 + 1) } })), (error: unknown) => error instanceof HttpError && error.status === 413);
+});
+
 test("upload request size is bounded before multipart parsing", () => {
   assert.doesNotThrow(() => assertUploadRequestSize(new Request("http://localhost", { headers: { "content-length": String(UPLOAD_REQUEST_MAX_BYTES) } })));
   assert.throws(() => assertUploadRequestSize(new Request("http://localhost", { headers: { "content-length": String(UPLOAD_REQUEST_MAX_BYTES + 1) } })), (error: unknown) => error instanceof HttpError && error.status === 413);

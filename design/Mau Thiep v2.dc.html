@@ -15,7 +15,16 @@ body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans
 a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
 *{box-sizing:border-box}
 </style>
-<style>@keyframes demoFade{from{opacity:0}to{opacity:1}}@keyframes demoPop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}</style>
+<style>@keyframes demoFade{from{opacity:0}to{opacity:1}}@keyframes demoPop{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes rankPopIn{0%{opacity:0;transform:translateY(32px) scale(.94)}100%{opacity:1;transform:none}}
+@keyframes rankFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-9px) rotate(-4deg)}}
+@keyframes rankShimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes rankBlobA{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-40px) scale(1.15)}}
+@keyframes rankBlobB{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-50px,30px) scale(1.1)}}
+@keyframes rankBarGrow{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes rankCrownPulse{0%,100%{box-shadow:0 6px 16px rgba(0,0,0,.4),0 0 0 0 rgba(230,196,122,.6)}50%{box-shadow:0 6px 16px rgba(0,0,0,.4),0 0 0 10px rgba(230,196,122,0)}}
+@keyframes rankUnderline{0%{width:0}100%{width:28px}}
+@keyframes cardWave{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}</style>
 <script src="motion.js"></script>
 </helmet>
 <div style="min-height:100vh;background:#f8f4ee">
@@ -36,27 +45,30 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
     </div>
   </section>
 
-  <section style="background:#1c1012;color:#f1e7d6;padding:88px 0 96px;overflow:hidden">
-    <div style="max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:44px">
+  <section style="background:#1c1012;color:#f1e7d6;padding:88px 0 96px;overflow:hidden;position:relative">
+    <div aria-hidden="true" style="position:absolute;top:-120px;left:-80px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,106,.28),transparent 70%);filter:blur(10px);animation:rankBlobA 16s ease-in-out infinite;pointer-events:none"></div>
+    <div aria-hidden="true" style="position:absolute;bottom:-140px;right:-60px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(163,22,28,.22),transparent 70%);filter:blur(10px);animation:rankBlobB 18s ease-in-out infinite;pointer-events:none"></div>
+    <div style="max-width:1280px;margin:0 auto;padding:0 32px;display:flex;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:44px;position:relative;z-index:1">
       <div style="display:flex;flex-direction:column;gap:14px">
-        <span style="font-size:12px;letter-spacing:.24em;color:#c9a86a;font-weight:600">BẢNG XẾP HẠNG · THÁNG 9</span>
-        <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(36px,4.4vw,56px);line-height:1.02">Được các cặp đôi<br><em style="color:#c9a86a">chọn nhiều nhất</em></h2>
+        <span style="font-size:12px;letter-spacing:.24em;color:#c9a86a;font-weight:600;display:flex;flex-direction:column;gap:8px">BẢNG XẾP HẠNG · THÁNG 9<span style="height:2px;background:#c9a86a;animation:rankUnderline 1s .3s cubic-bezier(.2,.7,.2,1) both"></span></span>
+        <h2 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(36px,4.4vw,56px);line-height:1.02">Được các cặp đôi<br><em style="background:linear-gradient(100deg,#c9a86a,#f3dba0 40%,#c9a86a 80%);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rankShimmer 4s linear infinite;font-style:italic">chọn nhiều nhất</em></h2>
       </div>
       <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
-        <button onClick="{{ scrollPrev }}" style="width:52px;height:52px;border-radius:50%;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;font-size:18px;cursor:pointer;transition:all .2s" style-hover="background:#f1e7d6;color:#1c1012;border-color:#f1e7d6">←</button>
-        <button onClick="{{ scrollNext }}" style="width:52px;height:52px;border-radius:50%;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;font-size:18px;cursor:pointer;transition:all .2s" style-hover="background:#f1e7d6;color:#1c1012;border-color:#f1e7d6">→</button>
+        <button onClick="{{ scrollPrev }}" style="width:52px;height:52px;border-radius:50%;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;font-size:18px;cursor:pointer;transition:all .25s" style-hover="background:#f1e7d6;color:#1c1012;border-color:#f1e7d6;transform:scale(1.08)">←</button>
+        <button onClick="{{ scrollNext }}" style="width:52px;height:52px;border-radius:50%;border:1px solid #4a3a36;background:transparent;color:#f1e7d6;font-size:18px;cursor:pointer;transition:all .25s" style-hover="background:#f1e7d6;color:#1c1012;border-color:#f1e7d6;transform:scale(1.08)">→</button>
       </div>
     </div>
-    <div ref="{{ railRef }}" style="display:flex;gap:28px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 max(32px,calc((100vw - 1216px) / 2));padding:24px max(40px,calc((100vw - 1216px) / 2 + 8px)) 8px;scrollbar-width:none">
+    <div ref="{{ railRef }}" onMouseEnter="{{ rankPauseOn }}" onMouseLeave="{{ rankPauseOff }}" style="display:flex;gap:28px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 max(32px,calc((100vw - 1216px) / 2));padding:24px max(40px,calc((100vw - 1216px) / 2 + 8px)) 8px;scrollbar-width:none;position:relative;z-index:1">
       <sc-for list="{{ ranking }}" as="r" hint-placeholder-count="6">
-        <a href="Studio.dc.html" style="flex:0 0 264px;scroll-snap-align:start;display:flex;flex-direction:column;gap:18px;color:#f1e7d6">
-          <div style="position:relative;border-radius:12px;box-shadow:0 30px 50px -24px rgba(0,0,0,.8);transition:transform .4s" style-hover="transform:translateY(-8px)">
-            <dc-import name="Thiep Preview" family="{{ r.family }}" deep="{{ r.deep }}" paper="{{ r.paper }}" gold="{{ r.gold }}" tint="{{ r.tint }}" a="{{ r.a }}" b="{{ r.b }}" date="{{ r.date }}" place="{{ r.place }}" slot="{{ r.slot }}" radius="12px" hint-size="100%,469px"></dc-import>
-            <span style="position:absolute;top:-20px;left:-20px;width:44px;height:44px;border-radius:50%;background:#e6c47a;color:#1c1012;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:22px;box-shadow:0 6px 16px rgba(0,0,0,.4)">{{ r.rank }}</span>
+        <a href="Studio.dc.html" style="flex:0 0 264px;scroll-snap-align:start;display:flex;flex-direction:column;gap:18px;color:#f1e7d6;animation:rankPopIn .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ r.delay }};perspective:800px">
+          <div style="position:relative;border-radius:12px;box-shadow:0 30px 50px -24px rgba(0,0,0,.8);animation:cardWave 3.4s ease-in-out infinite;animation-delay:{{ r.waveDelay }}" style-hover="transform:translateY(-10px) rotate(-1deg) scale(1.04);box-shadow:0 44px 70px -26px rgba(0,0,0,.9),0 0 0 2px {{ r.gold }};animation-play-state:paused">
+            <dc-import name="Thiep Preview" family="{{ r.family }}" deep="{{ r.deep }}" paper="{{ r.paper }}" gold="{{ r.gold }}" tint="{{ r.tint }}" a="{{ r.a }}" b="{{ r.b }}" date="{{ r.date }}" place="{{ r.place }}" slot="{{ r.slot }}" radius="12px" locked="true" hint-size="100%,469px"></dc-import>
+            <span style="position:absolute;top:-20px;left:-20px;width:44px;height:44px;border-radius:50%;background:#e6c47a;color:#1c1012;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:22px;animation:{{ r.badgeAnim }};animation-delay:{{ r.delay }}">{{ r.rank }}</span>
           </div>
-          <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;flex-direction:column;gap:8px">
             <span style="font-family:'Playfair Display',serif;font-size:22px">{{ r.title }}</span>
             <span style="font-size:13px;color:#a8998c">{{ r.meta }}</span>
+            <span style="height:3px;border-radius:999px;background:#352a26;overflow:hidden;margin-top:2px"><span style="display:block;height:100%;width:{{ r.pct }}%;background:linear-gradient(90deg,{{ r.gold }},#f3dba0);transform-origin:left;animation:rankBarGrow 1.1s cubic-bezier(.2,.7,.2,1) both;animation-delay:{{ r.barDelay }}"></span></span>
           </div>
         </a>
       </sc-for>
@@ -103,7 +115,7 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
       <sc-for list="{{ cards }}" as="t" hint-placeholder-count="8">
         <article onMouseEnter="{{ t.enter }}" onMouseLeave="{{ leave }}" style="display:flex;flex-direction:column;gap:18px">
           <div style="position:relative;border-radius:10px;box-shadow:{{ t.shadow }};transform:{{ t.lift }};transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s">
-            <dc-import name="Thiep Preview" family="{{ t.family }}" deep="{{ t.deep }}" paper="{{ t.paper }}" gold="{{ t.gold }}" tint="{{ t.tint }}" a="{{ t.a }}" b="{{ t.b }}" date="{{ t.date }}" place="{{ t.place }}" slot="{{ t.slot }}" hint-size="100%,520px"></dc-import>
+            <dc-import name="Thiep Preview" family="{{ t.family }}" deep="{{ t.deep }}" paper="{{ t.paper }}" gold="{{ t.gold }}" tint="{{ t.tint }}" a="{{ t.a }}" b="{{ t.b }}" date="{{ t.date }}" place="{{ t.place }}" slot="{{ t.slot }}" locked="true" hint-size="100%,520px"></dc-import>
             <sc-if value="{{ t.hasBadge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:12px;right:12px;font-size:10px;font-weight:600;letter-spacing:.12em;padding:5px 10px;border-radius:999px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};pointer-events:none">{{ t.badge }}</span></sc-if>
             <sc-if value="{{ t.hover }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;left:0;right:0;bottom:0;padding:48px 14px 14px;border-radius:0 0 10px 10px;display:flex;gap:8px;background:linear-gradient(to top,rgba(20,14,12,.82),rgba(20,14,12,0))">
@@ -194,7 +206,7 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}
       <div onClick="{{ stop }}" onMouseEnter="{{ demoPause }}" onMouseLeave="{{ demoResume }}" onTouchStart="{{ demoPause }}" onTouchEnd="{{ demoResumeLater }}" style="flex:none;padding:14px;border-radius:44px;background:rgba(248,244,238,.9);box-shadow:0 40px 80px -40px rgba(0,0,0,.8);animation:demoPop .45s cubic-bezier(.2,.7,.2,1) both">
         <div data-demo-scroller="1" style="width:336px;max-width:calc(100vw - 76px);height:min(74vh,700px);border-radius:32px;overflow-y:auto;overflow-x:hidden;background:{{ demo.paper }};scrollbar-width:none;overscroll-behavior:contain">
           <div style="width:240px;zoom:1.4">
-            <dc-import name="Thiep Preview" family="{{ demo.family }}" deep="{{ demo.deep }}" paper="{{ demo.paper }}" gold="{{ demo.gold }}" tint="{{ demo.tint }}" a="{{ demo.a }}" b="{{ demo.b }}" date="{{ demo.date }}" place="{{ demo.place }}" slot="{{ demo.slot }}" full="{{ true }}" fit="{{ true }}" max-w="100%" radius="0" hint-size="240px,427px"></dc-import>
+            <dc-import name="Thiep Preview" family="{{ demo.family }}" deep="{{ demo.deep }}" paper="{{ demo.paper }}" gold="{{ demo.gold }}" tint="{{ demo.tint }}" a="{{ demo.a }}" b="{{ demo.b }}" date="{{ demo.date }}" place="{{ demo.place }}" slot="{{ demo.slot }}" full="{{ true }}" fit="{{ true }}" max-w="100%" radius="0" locked="true" hint-size="240px,427px"></dc-import>
           </div>
         </div>
       </div>
@@ -244,11 +256,11 @@ const T = [
   { id:4,  name:'Hoàng Gia', family:'D', style:'Cổ điển',      motif:'Khung vàng', v:['vang','dodam','lam'],   badge:'HOT', pop:95, isNew:0, a:'Phương Thảo', b:'Trung Kiên', date:'06 · 12 · 2026', place:'KHÁCH SẠN METROPOLE' },
   { id:5,  name:'Phong Thư', family:'E', style:'Lãng mạn',     motif:'Phong bì',   v:['do','oliu'],            badge:'MỚI', pop:88, isNew:1, a:'Hoàng Long', b:'Bảo Ngọc', date:'28 · 09 · 2027', place:'ĐÀ NẴNG' },
   { id:6,  name:'Bìa Báo',   family:'F', style:'Hiện đại',     motif:'Tạp chí',    v:['muc','hong'],           badge:'',    pop:72, isNew:0, a:'Linh', b:'Tuấn', date:'SÀI GÒN · 11.2026', place:'Một ngày cuối thu' },
-  { id:7,  name:'Hỷ Sự',     family:'A', style:'Truyền thống', motif:'Chữ Hỷ',     v:['dodam','lam'],          badge:'',    pop:90, isNew:0, a:'Quỳnh Anh', b:'Gia Khánh', date:'15 · 01 · 2027', place:'TƯ GIA · HUẾ' },
-  { id:9,  name:'Vườn Ươm',  family:'C', style:'Hoa',          motif:'Sân vườn',   v:['oliu','cam'],           badge:'MỚI', pop:76, isNew:1, a:'Mai', b:'Phong', date:'21 · 03 · 2027', place:'TAM ĐẢO' },
-  { id:10, name:'Nhung Lam', family:'D', style:'Cổ điển',      motif:'Nhung',      v:['lam','do'],             badge:'',    pop:74, isNew:0, a:'Thanh Trúc', b:'Quốc Anh', date:'12 · 12 · 2026', place:'NHÀ HÁT LỚN' },
-  { id:11, name:'Thư Tình',  family:'E', style:'Lãng mạn',     motif:'Sáp niêm',   v:['hong','dodam'],         badge:'',    pop:82, isNew:0, a:'Minh Ánh', b:'Thế Bảo', date:'14 · 02 · 2027', place:'CẦN THƠ' },
-  { id:12, name:'Chân Dung', family:'F', style:'Hiện đại',     motif:'Ảnh lớn',    v:['muc','xanh'],           badge:'HOT', pop:92, isNew:0, a:'Hạ Vy', b:'Minh Khôi', date:'HÀ NỘI · 11.2026', place:'Chủ nhật, 5 giờ chiều' },
+  { id:7,  name:'Hỷ Sự',     family:'P', style:'Truyền thống', motif:'Chữ Hỷ',     v:['dodam','lam'],          badge:'',    pop:90, isNew:0, a:'Quỳnh Anh', b:'Gia Khánh', date:'15 · 01 · 2027', place:'TƯ GIA · HUẾ' },
+  { id:9,  name:'Vườn Ươm',  family:'Q', style:'Hoa',          motif:'Sân vườn',   v:['oliu','cam'],           badge:'MỚI', pop:76, isNew:1, a:'Mai', b:'Phong', date:'21 · 03 · 2027', place:'TAM ĐẢO' },
+  { id:10, name:'Nhung Lam', family:'R', style:'Cổ điển',      motif:'Nhung',      v:['lam','do'],             badge:'',    pop:74, isNew:0, a:'Thanh Trúc', b:'Quốc Anh', date:'12 · 12 · 2026', place:'NHÀ HÁT LỚN' },
+  { id:11, name:'Thư Tình',  family:'S', style:'Lãng mạn',     motif:'Sáp niêm',   v:['hong','dodam'],         badge:'',    pop:82, isNew:0, a:'Minh Ánh', b:'Thế Bảo', date:'14 · 02 · 2027', place:'CẦN THƠ' },
+  { id:12, name:'Chân Dung', family:'T', style:'Hiện đại',     motif:'Ảnh lớn',    v:['muc','xanh'],           badge:'HOT', pop:92, isNew:0, a:'Hạ Vy', b:'Minh Khôi', date:'HÀ NỘI · 11.2026', place:'Chủ nhật, 5 giờ chiều' },
   { id:13, name:'Song Phụng', family:'I', style:'Truyền thống', motif:'Chữ Hỷ lớn', v:['do','dodam','lam'], badge:'HOT', pop:97, isNew:0, a:'Ngọc Ánh', b:'Thế Bảo', date:'08 · 12 · 2026', place:'TƯ GIA · BẮC NINH' },
   { id:14, name:'Báo Hỷ',     family:'H', style:'Truyền thống', motif:'Thông tin lễ', v:['do','lam'],       badge:'MỚI', pop:89, isNew:1, a:'Thanh Tú', b:'Hoàng Nam', date:'NGÀY 22 · 11 · 2026', place:'' },
   { id:15, name:'Đôi Khung',  family:'G', style:'Lãng mạn',     motif:'Ảnh đôi',     v:['xanh','hong','nau'],  badge:'MỚI', pop:85, isNew:1, a:'Thu Hà', b:'Minh Quân', date:'19 · 10 · 2026', place:'' },
@@ -319,7 +331,9 @@ class Component extends DCLogic {
           onClick: () => this.setState(s => ({ v: { ...s.v, [t.id]: k } })) })) };
     });
     const ranking = [...T].sort((x, y) => y.pop - x.pop).slice(0, 7).map((t, i) => ({ ...t, ...this.vals(t, t.v[0]),
-      slot: `rank-${t.id}`, rank: i + 1, title: t.name, meta: `${t.style} · ${t.v.length} màu` }));
+      slot: `rank-${t.id}`, rank: i + 1, title: t.name, meta: `${t.style} · ${t.v.length} màu`, pct: t.pop,
+      delay: `${i * .1}s`, barDelay: `${i * .1 + .3}s`, badgeAnim: i === 0 ? 'rankFloat 4.5s ease-in-out infinite, rankCrownPulse 2.4s ease-in-out infinite' : 'rankFloat 4.5s ease-in-out infinite',
+      waveDelay: `${i * .22}s` }));
     const chips = STYLES.map(c => { const on = c === cat; return { label:c,
       count: c === 'Tất cả' ? T.length : T.filter(t => t.style === c).length,
       bg: on ? '#1a1412' : 'transparent', fg: on ? '#f8f4ee' : '#3d342e', border: on ? '#1a1412' : '#ddd2c4',

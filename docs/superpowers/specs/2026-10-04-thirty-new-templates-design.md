@@ -175,7 +175,7 @@ Mỗi mẫu có một signature khác biệt, nhưng section body dùng shared v
 
 | Family | Tên mẫu | Signature | Cụm refs chính |
 |---|---|---|---|
-| `lacquer-seal` | Ấn Son | Mặt sơn mài, triện tròn và chữ tên dập chìm | Song Hỷ đỏ, Long Phụng V3 |
+| `ink-wash` | Mực Loang | Vệt mực loang, núi xa mờ và ảnh trong vòng cọ thủy mặc | Chungdoi Vườn Xuân (mực), Tơ Duyên |
 | `phoenix-fold` | Phụng Vũ | Hai cánh phụng tạo thành nếp gấp mở vào ảnh | Song Phụng, Long Phụng V2 |
 | `lotus-scroll` | Liên Hoa | Cuộn giấy dọc với sen nét mảnh và lịch âm | Liên Hoa V2, Tơ Duyên |
 | `porcelain-blue` | Lam Sứ | Khung men lam, họa tiết sứ tự vẽ và nền giấy sáng | Lâu Đài Lam, nhóm Regal Promise |
@@ -195,21 +195,21 @@ Mỗi mẫu có một signature khác biệt, nhưng section body dùng shared v
 
 | Family | Tên mẫu | Signature | Cụm refs chính |
 |---|---|---|---|
-| `cinema-bleed` | Khung Điện Ảnh | Ảnh full-bleed, credit line và crop điện ảnh | Modern Vow, One Journey |
+| `edge-invite` | Thư Dọc | Chữ khổng lồ dựng dọc hai mép, ảnh giữa như bìa tạp chí | M-Invite #6 (chữ dọc INVITATION) |
 | `mono-contact` | Phòng Tối | Contact sheet đen trắng và dấu ngày màu son | Café Beginning, Fated Chapter |
 | `split-portrait` | Song Ảnh | Hai chân dung chia tỷ lệ 40/60, tên chạy dọc | Hearts Aligned, Memorable Vow |
-| `gallery-notes` | Ghi Chú Bên Ảnh | Collage ảnh kèm caption viết tay ngắn | Tender Memories, Love Journey |
-| `fashion-grid` | Tạp Chí Cưới | Lưới fashion editorial, headline serif tương phản | Modern Heirloom, Timeless Love |
+| `pennant` | Cờ Hiệu | Dải cờ nhỏ và lá cờ đuôi nheo lớn mang ảnh tròn | M-Invite #11 (cờ hiệu Save the date) |
+| `duotone-script` | Sắc Đôi | Ảnh hai tông màu, chữ viết tay cỡ lớn, ngày dựng dọc | M-Invite #12 (Our Wedding Day trên ảnh nhuộm màu) |
 
 ### Đợt 4 — Quiet luxury
 
 | Family | Tên mẫu | Signature | Cụm refs chính |
 |---|---|---|---|
-| `ivory-letterpress` | Dập Nổi Ngà | Chữ nổi mô phỏng letterpress, một dấu monogram | Pure Elegance, Graceful Date |
-| `velvet-frame` | Nhung Đêm | Khung nhung tối, chỉ vàng mảnh và ảnh nhỏ | Golden Soirée, Amber Noir |
+| `floral-monogram` | Hoa Chữ | Hai chữ cái đầu ôm cành hoa line-art | M-Invite #17 (monogram hoa), Pure Elegance |
+| `octagon-frame` | Bát Giác | Ảnh trong khung bát giác viền vàng kép, tia hình học | M-Invite #26 (khung đa giác), Golden Soirée |
 | `champagne-line` | Sâm Panh | Đường line vàng chạy xuyên toàn bộ composition | Radiant Love, Regal Promise |
 | `pearl-arch` | Ngọc Trai | Chuỗi chấm ngọc tạo vòm, nền sáng gần đơn sắc | Beautiful Ending, Lovely Date |
-| `stone-window` | Thạch Vân | Mảng đá loang tiết chế và ô ảnh hình học | Modern Heirloom, Found You |
+| `rose-cluster` | Hồng Nhung | Chùm hoa hồng vẽ tay tràn từ đỉnh trang trên nền đỏ mận | M-Invite #22 (hoa hồng đỏ mận), Amber Noir |
 
 ### Đợt 5 — Kỷ vật và câu chuyện
 
@@ -218,8 +218,8 @@ Mỗi mẫu có một signature khác biệt, nhưng section body dùng shared v
 | `story-journal` | Nhật Ký Đôi Mình | Trang nhật ký đánh dấu các cột mốc | Story Continues, Café Beginning |
 | `route-map` | Chung Một Hành Trình | Đường tuyến nối nơi gặp, cầu hôn và ngày cưới | One Journey, Cherished Journey |
 | `cafe-card` | Quán Quen | Menu/café card thanh lịch, không giả biên lai | Café Beginning |
-| `calendar-mark` | Ngày Mình Chọn | Lịch tháng là hero, ngày cưới được khoanh tay | Special Days, Radiant Love |
-| `heirloom-album` | Gia Bảo | Album gia đình với khung ảnh và chú thích | Modern Heirloom, Kindred Hearts |
+| `overlap-rings` | Giao Điểm | Hai vòng tròn giao nhau: vòng ảnh và vòng màu mang ngày cưới | M-Invite #9 (vòng tròn chồng), Found You |
+| `floating-card` | Thẻ Nổi | Tấm thiệp nổi trên nền hoạ tiết, huy hiệu tim, nút mời | Chungdoi: thẻ nổi trên nền hoạ tiết |
 
 ### Đợt 6 — Đương đại giàu cá tính
 

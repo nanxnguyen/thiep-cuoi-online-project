@@ -53,6 +53,15 @@ body{margin:0;background:#f7efe3;color:#1a1412;font-family:'Be Vietnam Pro',sans
         <sc-for list="{{ nav }}" as="n" hint-placeholder-count="6"><a href="#{{ n.id }}" style="white-space:nowrap;color:#6b5237;text-decoration:none">{{ n.label }}</a></sc-for>
       </div>
     </nav>
+    <sc-if value="{{ hasUpdate }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:720px;margin:16px auto 0;padding:0 20px">
+        <div role="status" style="display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border-radius:14px;background:#fff;border:1px solid #e6c47a;box-shadow:0 12px 24px -18px rgba(80,20,20,.5);animation:fadeUp .6s both">
+          <span style="width:30px;height:30px;flex:none;border-radius:50%;background:#8e1b1f;color:#f7efe3;display:grid;place-items:center;font-size:14px;font-weight:600">!</span>
+          <span style="flex:1;display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.5"><strong style="font-weight:600;color:#8e1b1f">Thông tin tiệc vừa cập nhật</strong><span style="color:#5e534b">{{ updateMsg }}</span></span>
+          <button onClick="{{ closeUpdate }}" aria-label="Đóng" style="border:0;background:transparent;font-size:18px;color:#8a7d72;cursor:pointer;padding:0 4px">×</button>
+        </div>
+      </div>
+    </sc-if>
 
     <section style="min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;padding:80px 24px;position:relative">
       <div style="position:absolute;inset:0;pointer-events:none;opacity:.6">{{ petals }}</div>
@@ -143,9 +152,10 @@ body{margin:0;background:#f7efe3;color:#1a1412;font-family:'Be Vietnam Pro',sans
 <script type="text/x-dc" data-dc-script>
 const TARGET = new Date('2026-11-09T17:00:00+07:00').getTime();
 class Component extends DCLogic {
-  state = { opened: false, bursting: false, envOut: false, now: Date.now(), rsvp: null, count: '2', rsvped: false, wish: '', wishes: [['Chúc hai bạn trăm năm hạnh phúc!','Minh Thư'],['Mãi yêu nhau như ngày đầu nhé.','Anh Tuấn']], playing: false };
+  state = { opened: false, bursting: false, envOut: false, now: Date.now(), rsvp: null, count: '2', rsvped: false, sent: [], wish: '', wishes: [['Chúc hai bạn trăm năm hạnh phúc!','Minh Thư'],['Mãi yêu nhau như ngày đầu nhé.','Anh Tuấn']], playing: false, sent: [], upd: null };
   componentDidMount() { this._t = setInterval(() => this.setState({ now: Date.now() }), 1000);
     const p = new URLSearchParams(location.search); this._guest = p.get('to') || '';
+    try { const u = JSON.parse(localStorage.getItem('moc_update')); if (u && !sessionStorage.getItem('moc_update_seen_' + u.at)) this.setState({ upd: u }); } catch (e) {}
     setTimeout(() => this.setupReveal(), 60); }
   componentWillUnmount() { clearInterval(this._t); this.io && this.io.disconnect(); }
   setupReveal() {
@@ -186,6 +196,8 @@ class Component extends DCLogic {
       album: Array.from({ length: 6 }, (_, i) => ({ id: `guest-album-${i}`, src: 'assets/photos/' + ['studio-hoa-trang','hoa-hong-phan','sofa-han-quoc','o-hoa','lau-dai-trang','vest-xanh-navy','om-hem-nui','vuon-xanh','han-quoc-toi-gian'][i] + '.jpg' })),
       musicIcon: s.playing ? '❙❙' : '▶', toggleMusic: () => this.setState(st => ({ playing: !st.playing })),
       bars: Array.from({ length: 4 }, (_, i) => `eq ${0.7+i*.15}s ease-in-out ${-i*.1}s ${s.playing ? 'infinite' : 'paused'}`),
+      hasUpdate: !!s.upd, updateMsg: s.upd ? s.upd.msg + (s.upd.note && !s.upd.msg.startsWith('Ghi chú') ? '. ' + s.upd.note : '') + '.' : '',
+      closeUpdate: () => { try { sessionStorage.setItem('moc_update_seen_' + s.upd.at, '1'); } catch (e) {} this.setState({ upd: null }); },
       rsvped: s.rsvped, guestCount: s.count, onCount: e => this.setState({ count: e.target.value }),
       rsvpChoices: [['yes','Sẽ tham dự'],['no','Xin phép vắng']].map(([k,label]) => ({ label, border: s.rsvp===k?'#8e1b1f':'#ddd2c4', bg: s.rsvp===k?'#8e1b1f':'transparent', fg: s.rsvp===k?'#fff':'#1a1412', pick: () => this.setState({ rsvp: k }) })),
       submitRsvp: () => { if (s.rsvp) this.setState({ rsvped: true }); },

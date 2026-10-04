@@ -31,12 +31,16 @@ export const SECTION_GROUPS: { label: string; items: SectionItem[] }[] = [
       { key: "party", label: "Tiệc cưới", desc: "Giờ đón khách, giờ khai tiệc và địa chỉ nhà hàng có chỉ đường.", panel: "events", preview: ".inv-party" },
       { key: "schedule", label: "Lịch trình trong ngày", desc: "Các mốc trong ngày để khách biết khi nào đến và khi nào có phần chính.", panel: "events", anchor: "Lịch trình trong ngày", preview: ".inv-schedule" },
       { key: "countdown", label: "Đếm ngược", desc: "Đồng hồ đếm ngược và nút lưu ngày cưới vào lịch điện thoại.", panel: "events", preview: ".inv-countdown" },
+      { key: "venue", label: "Địa điểm chi tiết", desc: "Ảnh nơi đãi tiệc, đường đi và chỗ đỗ xe cho khách ở xa.", panel: "events", anchor: "Địa điểm chi tiết", preview: ".inv-venue" },
+      { key: "dressCode", label: "Trang phục gợi ý", desc: "Mức độ trang trọng và màu sắc gợi ý để khách chọn đồ.", panel: "events", anchor: "Trang phục gợi ý", preview: ".inv-dresscode" },
     ],
   },
   {
-    label: "Ảnh & âm nhạc",
+    label: "Câu chuyện & media",
     items: [
+      { key: "story", label: "Chuyện tình yêu", desc: "Vài cột mốc đáng nhớ của hai bạn, kể bằng ngày, ảnh và lời ngắn.", panel: "media", anchor: "Chuyện tình yêu", preview: ".inv-story" },
       { key: "album", label: "Album ảnh", desc: "Ảnh cưới hiển thị dạng lưới, bấm để phóng to.", panel: "media", anchor: "Album ảnh", preview: ".inv-albumsec" },
+      { key: "video", label: "Video cưới", desc: "Một video ngắn phát ngay trên thiệp, kèm ảnh bìa.", panel: "media", anchor: "Video cưới", preview: ".inv-video" },
       { key: "music", label: "Nhạc nền", desc: "Chọn bản nhạc phát khi khách mở thiệp.", panel: "media", anchor: "Nhạc nền" },
     ],
   },
@@ -63,13 +67,16 @@ export const SECTIONS: SectionItem[] = SECTION_GROUPS.flatMap((g) => g.items);
 const has = (s: string) => s.trim() !== "";
 
 /** Parts with an on/off switch in the outline (design SECS third column). */
-export const OPTIONAL = new Set(["envelope", "schedule", "countdown", "album", "music", "rsvp", "guestbook", "gift", "thanks"]);
-type SectionFlag = "envelope" | "schedule" | "countdown" | "album" | "music" | "thanks";
+export const OPTIONAL = new Set(["envelope", "schedule", "countdown", "venue", "dressCode", "story", "album", "video", "music", "rsvp", "guestbook", "gift", "thanks"]);
+type SectionFlag = "envelope" | "schedule" | "countdown" | "venue" | "album" | "video" | "music" | "thanks";
 
 export function isOn(key: string, c: Content): boolean {
   if (key === "rsvp") return c.rsvp.enabled;
   if (key === "guestbook") return c.guestbook.enabled;
   if (key === "gift") return c.gift.enabled;
+  if (key === "story") return c.story.enabled;
+  if (key === "video") return c.video.enabled;
+  if (key === "dressCode") return c.dressCode.enabled;
   return OPTIONAL.has(key) ? c.sections[key as SectionFlag] : true;
 }
 
@@ -77,6 +84,20 @@ export function toggleOn(key: string, c: Content): Content {
   if (key === "rsvp") return { ...c, rsvp: { ...c.rsvp, enabled: !c.rsvp.enabled } };
   if (key === "guestbook") return { ...c, guestbook: { ...c.guestbook, enabled: !c.guestbook.enabled } };
   if (key === "gift") return { ...c, gift: { ...c.gift, enabled: !c.gift.enabled } };
+  // The section objects own the on/off state; sections.* mirrors them so render
+  // and outline read one canonical toggle (see normalizeContent in lib/content.ts).
+  if (key === "story") {
+    const enabled = !c.story.enabled;
+    return { ...c, story: { ...c.story, enabled }, sections: { ...c.sections, story: enabled } };
+  }
+  if (key === "video") {
+    const enabled = !c.video.enabled;
+    return { ...c, video: { ...c.video, enabled }, sections: { ...c.sections, video: enabled } };
+  }
+  if (key === "dressCode") {
+    const enabled = !c.dressCode.enabled;
+    return { ...c, dressCode: { ...c.dressCode, enabled }, sections: { ...c.sections, dressCode: enabled } };
+  }
   if (!OPTIONAL.has(key)) return c;
   const k = key as SectionFlag;
   return { ...c, sections: { ...c.sections, [k]: !c.sections[k] } };
@@ -100,6 +121,18 @@ export function missingReason(key: string, c: Content): string | null {
       return c.events.some((e) => e.kind === "reception" && has(e.venue) && has(e.address)) ? null : "Thiếu nhà hàng hoặc địa chỉ";
     case "schedule":
       return c.schedule.length > 0 ? null : "Chưa có mốc thời gian";
+    case "venue": {
+      const reception = c.events.find((e) => e.kind === "reception") ?? c.events[0];
+      return reception && has(reception.venue) && has(reception.address) ? null : "Thiếu nơi đãi tiệc hoặc địa chỉ";
+    }
+    case "dressCode":
+      return has(c.dressCode.title) && c.dressCode.colors.length > 0 && c.dressCode.colors.every((col) => has(col.label))
+        ? null
+        : "Chưa có tiêu đề hoặc màu gợi ý";
+    case "story":
+      return c.story.items.some((i) => has(i.title) && has(i.date)) ? null : "Chưa có cột mốc nào trong chuyện tình yêu";
+    case "video":
+      return has(c.video.url) && has(c.video.posterUrl) ? null : "Chưa có link video hoặc ảnh bìa";
     case "rsvp":
       return has(c.rsvp.deadline) ? null : "Chưa đặt hạn phản hồi";
     case "gift":

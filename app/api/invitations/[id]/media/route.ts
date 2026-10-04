@@ -18,7 +18,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     try { form = await request.formData(); } catch { throw new HttpError(400, "Dữ liệu tải lên chưa hợp lệ."); }
     const kind = form.get("kind");
     const file = form.get("file");
-    if ((kind !== "image" && kind !== "audio") || !(file instanceof File)) throw new HttpError(400, "Cần chọn loại và file tải lên.");
+    if ((kind !== "image" && kind !== "audio" && kind !== "video") || !(file instanceof File)) throw new HttpError(400, "Cần chọn loại và file tải lên.");
     return auth.applyCookies(NextResponse.json(await uploadMedia(auth.admin, id, kind as MediaKind, file, auth.editKey, auth.userId), { status: 201 }));
   });
 }

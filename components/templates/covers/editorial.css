@@ -1,0 +1,464 @@
+/* Batch 3 — Editorial ảnh cưới. Photo is the hero; type is large and structural.
+   Same --cv-* contract as batch 1. */
+
+/* Thư Dọc — outlined words stand on both edges, portrait between them. */
+.cv-edge-invite {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-edge-invite__word {
+  position: absolute;
+  top: 6cqw;
+  font-family: var(--display);
+  font-size: 19cqw;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  color: transparent;
+  -webkit-text-stroke: 0.4cqw var(--cv-deep);
+}
+.cv-edge-invite__word--l {
+  left: 2cqw;
+  transform: rotate(180deg);
+}
+.cv-edge-invite__word--r {
+  right: 2cqw;
+}
+.cv-edge-invite__photo {
+  position: absolute;
+  left: 24cqw;
+  top: 10cqw;
+  width: 52cqw;
+  height: 104cqw;
+  overflow: hidden;
+  box-shadow: 0 1.4cqw 3cqw rgba(0, 0, 0, 0.22);
+}
+.cv-edge-invite__text {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 120cqw;
+}
+.cv-edge-invite__names {
+  font-family: var(--display);
+  font-size: 8.8cqw;
+  line-height: 1.16;
+}
+.cv-edge-invite__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-edge-invite__date {
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+  margin-top: 5cqw;
+  font-size: 3.8cqw;
+  letter-spacing: 0.3em;
+}
+.cv-edge-invite__date::before,
+.cv-edge-invite__date::after {
+  content: "";
+  flex: 1;
+  height: 0.3cqw;
+  background: var(--cv-deep);
+  opacity: 0.5;
+}
+.cv-edge-invite__place {
+  margin-top: 2.4cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.22em;
+  opacity: 0.85;
+}
+
+/* Phòng Tối — contact sheet, one frame printed in colour and circled. */
+.cv-mono-contact {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+}
+.cv-mono-contact__head {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 6cqw;
+  display: flex;
+  justify-content: space-between;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 2.2cqw;
+  letter-spacing: 0.14em;
+  opacity: 0.85;
+}
+.cv-mono-contact__sheet {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 14cqw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3cqw 2.4cqw;
+}
+.cv-mono-contact__frame {
+  margin: 0;
+}
+.cv-mono-contact__img {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2 / 3;
+  border: 0.5cqw solid color-mix(in srgb, var(--cv-paper) 70%, transparent);
+  background: color-mix(in srgb, var(--cv-paper) 12%, transparent);
+}
+.cv-mono-contact__img .cv-slot--img {
+  filter: grayscale(1) contrast(1.12);
+}
+.cv-mono-contact__frame--pick .cv-slot--img {
+  filter: none;
+}
+.cv-mono-contact__frame figcaption {
+  margin-top: 0.9cqw;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 2cqw;
+  letter-spacing: 0.2em;
+  color: var(--cv-gold);
+}
+.cv-mono-contact__mark {
+  position: absolute;
+  left: 25cqw;
+  top: 41cqw;
+  width: 38cqw;
+  height: 54cqw;
+  color: var(--cv-gold);
+  animation: cvMarkIn 0.9s 0.3s ease-out both;
+}
+.cv-mono-contact__note {
+  position: absolute;
+  left: 24cqw;
+  top: 98cqw;
+  font-family: var(--hand);
+  font-size: 6.4cqw;
+  color: var(--cv-gold);
+  transform: rotate(-5deg);
+  white-space: nowrap;
+}
+.cv-mono-contact__names {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 124cqw;
+  font-family: var(--display);
+  font-size: 9.6cqw;
+  line-height: 1.16;
+}
+.cv-mono-contact__place {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  top: 156cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.24em;
+  opacity: 0.8;
+}
+.cv-mono-contact::after {
+  content: "";
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  bottom: 7cqw;
+  height: 5cqw;
+  background: repeating-linear-gradient(90deg, var(--cv-paper) 0 0.5cqw, transparent 0.5cqw 1.5cqw, var(--cv-paper) 1.5cqw 2.7cqw, transparent 2.7cqw 3.2cqw);
+  opacity: 0.55;
+}
+
+/* Song Ảnh — 40/60 portraits, names on the seam, a big day in the base. */
+.cv-split-portrait {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-split-portrait__photo {
+  position: absolute;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--cv-deep) 18%, var(--cv-paper));
+}
+.cv-split-portrait__photo--a {
+  left: 0;
+  top: 0;
+  width: 40cqw;
+  height: 132cqw;
+}
+.cv-split-portrait__block {
+  position: absolute;
+  left: 46cqw;
+  top: 22cqw;
+  width: 54cqw;
+  height: 120cqw;
+  background: var(--cv-deep);
+}
+.cv-split-portrait__photo--b {
+  left: 40cqw;
+  top: 12cqw;
+  width: 54cqw;
+  height: 120cqw;
+  animation: cvRise 0.9s ease-out both;
+}
+.cv-split-portrait__names {
+  position: absolute;
+  left: 34cqw;
+  top: 26cqw;
+  width: 12cqw;
+  padding: 4cqw 0;
+  background: var(--cv-paper);
+  writing-mode: vertical-rl;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 6.4cqw;
+  letter-spacing: 0.08em;
+}
+.cv-split-portrait__base {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 138cqw;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 5cqw;
+  padding: 2cqw 8cqw 0;
+}
+.cv-split-portrait__day {
+  grid-row: 1 / 3;
+  font-family: var(--display);
+  font-size: 26cqw;
+  line-height: 0.9;
+}
+.cv-split-portrait__day sup {
+  font-size: 7cqw;
+  vertical-align: top;
+  letter-spacing: 0;
+}
+.cv-split-portrait__date {
+  text-align: left;
+  font-size: 3.4cqw;
+  letter-spacing: 0.24em;
+  align-self: end;
+}
+.cv-split-portrait__place {
+  text-align: left;
+  font-size: 2.4cqw;
+  letter-spacing: 0.18em;
+  opacity: 0.85;
+  align-self: start;
+}
+
+/* Cờ Hiệu — bunting, rod and one swallow-tail pennant carrying the photo. */
+.cv-pennant {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--cv-gold) 22%, transparent), transparent 62%), var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-pennant__bunting {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100cqw;
+  height: 24cqw;
+  color: var(--cv-deep);
+}
+.cv-pennant__rod {
+  position: absolute;
+  left: 14cqw;
+  right: 14cqw;
+  top: 30cqw;
+  height: 2.4cqw;
+  border-radius: 1.2cqw;
+  background: var(--cv-gold);
+  box-shadow: 0 0.6cqw 1.2cqw rgba(0, 0, 0, 0.2);
+}
+.cv-pennant__flag {
+  position: absolute;
+  left: 19cqw;
+  top: 32cqw;
+  width: 62cqw;
+  height: 118cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3cqw;
+  padding: 6cqw 4cqw 0;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 92%, 0 100%);
+  transform-origin: 50% 0;
+  animation: cvSwing 4.5s ease-in-out infinite alternate;
+}
+.cv-pennant__photo {
+  position: relative;
+  flex: none;
+  width: 34cqw;
+  height: 34cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0.8cqw solid var(--cv-gold);
+}
+.cv-pennant__save {
+  font-size: 2.6cqw;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+}
+.cv-pennant__names {
+  font-family: var(--hand);
+  font-size: 9cqw;
+  line-height: 1.02;
+}
+.cv-pennant__amp {
+  color: var(--cv-gold);
+}
+.cv-pennant__date {
+  font-family: var(--display);
+  font-size: 4.6cqw;
+  letter-spacing: 0.14em;
+}
+.cv-pennant__place {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  top: 156cqw;
+  font-size: 2.6cqw;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+}
+.cv-pennant__dot {
+  position: absolute;
+  width: 2.4cqw;
+  height: 2.4cqw;
+  border-radius: 50%;
+  background: var(--cv-gold);
+}
+.cv-pennant__dot--a { left: 8cqw; top: 70cqw; }
+.cv-pennant__dot--b { right: 9cqw; top: 100cqw; background: var(--cv-deep); }
+.cv-pennant__dot--c { left: 11cqw; top: 130cqw; width: 1.6cqw; height: 1.6cqw; background: var(--cv-deep); }
+
+/* Sắc Đôi — duotone print beside a date column, handwriting across the seam. */
+.cv-duotone-script {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--cv-paper);
+  color: var(--cv-deep);
+}
+.cv-duotone-script__column {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 26cqw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8cqw;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+}
+.cv-duotone-script__column span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--display);
+  font-size: 5.4cqw;
+  letter-spacing: 0.3em;
+}
+.cv-duotone-script__photo {
+  position: absolute;
+  left: 26cqw;
+  right: 0;
+  top: 18cqw;
+  height: 110cqw;
+  overflow: hidden;
+  isolation: isolate;
+}
+.cv-duotone-script__photo .cv-slot--img {
+  filter: grayscale(1) contrast(1.1);
+}
+.cv-duotone-script__photo::before,
+.cv-duotone-script__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cv-duotone-script__photo::before {
+  background: var(--cv-deep);
+  mix-blend-mode: lighten;
+}
+.cv-duotone-script__photo::after {
+  background: var(--cv-gold);
+  mix-blend-mode: multiply;
+}
+.cv-duotone-script__script {
+  position: absolute;
+  left: 12cqw;
+  top: 8cqw;
+  font-family: var(--hand);
+  font-size: 27cqw;
+  line-height: 0.82;
+  color: var(--cv-paper);
+  text-shadow: 0 0.6cqw 2.4cqw rgba(0, 0, 0, 0.45);
+  animation: cvRise 1s ease-out both;
+}
+.cv-duotone-script__text {
+  position: absolute;
+  left: 31cqw;
+  right: 6cqw;
+  top: 134cqw;
+}
+.cv-duotone-script__names {
+  text-align: left;
+  font-family: var(--display);
+  font-size: 7.4cqw;
+  line-height: 1.18;
+}
+.cv-duotone-script__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-duotone-script__place {
+  margin-top: 2cqw;
+  text-align: left;
+  font-size: 2.4cqw;
+  letter-spacing: 0.2em;
+  opacity: 0.85;
+}
+
+@keyframes cvMarkIn {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+@keyframes cvRise {
+  from { opacity: 0; transform: translateY(3cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvSwing {
+  from { transform: rotate(-1.1deg); }
+  to { transform: rotate(1.1deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-mono-contact__mark,
+  .cv-split-portrait__photo--b,
+  .cv-pennant__flag,
+  .cv-duotone-script__script {
+    animation: none;
+  }
+}

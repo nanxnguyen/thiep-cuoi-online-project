@@ -143,11 +143,11 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
           <div className="sh__fields">
             <label>
               Cô dâu
-              <input value={bride} onChange={(e) => setBride(e.target.value)} />
+              <input name="brideName" value={bride} onChange={(e) => setBride(e.target.value)} />
             </label>
             <label>
               Chú rể
-              <input value={groom} onChange={(e) => setGroom(e.target.value)} />
+              <input name="groomName" value={groom} onChange={(e) => setGroom(e.target.value)} />
             </label>
             <label className="sh__full">
               Ngày cưới
@@ -200,7 +200,7 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
         </h2>
         <p style={{ margin: "8px 0 18px", color: "var(--muted)" }}>Dán link để mở lại thiệp trên thiết bị này.</p>
         <form onSubmit={bringBack} className="import__form">
-          <input className="input" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://…/studio/…#k=…" aria-label="Link chỉnh sửa" />
+          <input className="input" name="editLink" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://…/studio/…#k=…" aria-label="Link chỉnh sửa" />
           <button type="submit" className="button-primary" disabled={importing || !link.trim()}>
             {importing ? "Đang mở…" : "Mở thiệp"}
           </button>

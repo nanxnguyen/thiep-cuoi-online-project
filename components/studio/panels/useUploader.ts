@@ -7,20 +7,21 @@ import { compressImage } from "@/lib/image-compress";
 import { newId } from "@/lib/list";
 
 export type MediaProps = { invitationId: string; editKey: string };
-export type UploadKind = "image" | "audio";
+export type UploadKind = "image" | "audio" | "video";
 export type UploadStatus = "queued" | "compressing" | "uploading" | "done" | "error";
 // Uploads live only in this list. Nothing goes into the invitation content until the server has
 // answered with a public URL, so a pending or failed file can never end up in `content`.
 export type UploadItem = { id: string; name: string; status: UploadStatus; error?: string };
 
 const MAX_AUDIO_BYTES = 8 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 const isBusy = (s: UploadStatus) => s === "queued" || s === "compressing" || s === "uploading";
 
 function friendlyError(e: unknown): string {
   if (e instanceof ApiError) {
     if (e.status === 401 || e.status === 403) return "Link chỉnh sửa không còn hiệu lực. Hãy mở lại thiệp bằng link chỉnh sửa của bạn.";
     if (e.status === 413) return "File nặng quá giới hạn cho phép. Hãy chọn file nhẹ hơn.";
-    if (e.status === 400 || e.status === 415) return "Máy chủ không nhận file này. Ảnh cần là JPG, PNG hoặc WebP, nhạc cần là mp3.";
+    if (e.status === 400 || e.status === 415) return "Máy chủ không nhận file này. Ảnh cần là JPG, PNG hoặc WebP, nhạc cần là mp3, video cần là MP4 hoặc WebM.";
     if (e.status === 429) return "Bạn tải lên hơi nhanh. Chờ một chút rồi thử lại.";
     if (e.status === 503) return "Kho lưu trữ chưa sẵn sàng. Bạn thử lại sau ít phút nhé.";
     return `Không tải lên được (lỗi ${e.status}). Bạn thử lại nhé.`;
@@ -91,6 +92,11 @@ export function useUploader({ invitationId, editKey }: MediaProps) {
             patch(id, { status: "compressing" });
             body = await compressImage(file);
             filename = `${baseName(file.name)}.${body.type === "image/webp" ? "webp" : "jpg"}`;
+          } else if (kind === "video") {
+            if (file.type !== "video/mp4" && file.type !== "video/webm" && !/\.(mp4|webm)$/i.test(file.name)) {
+              throw new Error("Chỉ nhận video MP4 hoặc WebM. Hãy đổi định dạng rồi thử lại.");
+            }
+            if (file.size > MAX_VIDEO_BYTES) throw new Error("File video nặng hơn 50 MB. Hãy chọn bản nhẹ hơn.");
           } else {
             if (file.type !== "audio/mpeg" && !/\.mp3$/i.test(file.name)) throw new Error("Chỉ nhận file mp3. Hãy đổi định dạng rồi thử lại.");
             if (file.size > MAX_AUDIO_BYTES) throw new Error("File nhạc nặng hơn 8 MB. Hãy chọn bản mp3 nhẹ hơn.");
