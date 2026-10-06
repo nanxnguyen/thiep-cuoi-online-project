@@ -25,3 +25,10 @@
 .tdt__actions a:first-child:hover { background: var(--accent-hover); color: var(--surface); }
 .tdt__actions a:last-child { color: var(--ink); padding: 16px 22px; border-radius: 999px; font-size: 15px; border: 1px solid var(--ink); }
 .tdt__actions a:last-child:hover { background: var(--ink); color: var(--paper); }
+
+/* Single column below ~860px: sticky preview would overlay the info while scrolling. */
+@media (max-width: 860px) {
+  .tdt { grid-template-columns: minmax(0, 1fr); gap: 36px; padding: 40px 20px 80px; }
+  .tdt__stage { position: static; }
+  .tdt__card { width: min(320px, 100%); }
+}

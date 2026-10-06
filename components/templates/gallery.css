@@ -168,3 +168,16 @@
 .gal-demo__actions button { font-family: inherit; font-size: 14px; padding: 14px 22px; border-radius: 999px; border: 1px solid var(--line-on-dark); background: transparent; color: var(--on-dark); cursor: pointer; }
 .gal-demo__actions button:hover { border-color: var(--on-dark); }
 .gal-rank__rail { padding-top: 44px; }
+
+/* Mobile: sticky filter bar was 200px tall (~24% viewport). Compact it. */
+@media (max-width: 760px) {
+  .gal-filters > div { padding: 10px 16px; gap: 8px; flex-direction: column; align-items: stretch; }
+  .gal-chips { flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding-bottom: 2px; scrollbar-width: none; }
+  .gal-chips::-webkit-scrollbar { display: none; }
+  .gal-chips button { flex: none; white-space: nowrap; font-size: 13px; padding: 7px 12px; }
+  .gal-chips button span { font-size: 10px; }
+  .gal-dots { margin-left: 0; gap: 6px; }
+  .gal-dots > span { font-size: 12px; }
+  .gal-dots button { width: 22px; height: 22px; }
+  .gal-main { padding: 40px 20px 80px; }
+}
