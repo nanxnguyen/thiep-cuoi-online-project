@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Be_Vietnam_Pro, Cormorant_Garamond, Great_Vibes, Playfair_Display } from "next/font/google";
-import { SITE_URL } from "@/lib/site";
+import { SITE_URL, THEME_COLOR } from "@/lib/site";
 import { HOME_TITLE, SEO_PAGES } from "@/lib/seo";
 import { Motion } from "@/components/site/Motion";
 import "./styles/tokens.css";
@@ -29,6 +29,16 @@ export const metadata: Metadata = {
   openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", url: "/", title: HOME_TITLE, description: SEO_PAGES["/"].description, images: [{ url: "/og.png", width: 1200, height: 630, alt: "MỘC Wedding — thiệp cưới online" }] },
   twitter: { card: "summary_large_image", images: [{ url: "/og.png", alt: "MỘC Wedding — thiệp cưới online" }] },
   robots: { index: true, follow: true },
+};
+
+// Phones: ivory browser bar, and on Android the layout shrinks above the keyboard so Studio's bottom sheets and the
+// guest RSVP form stay visible (iOS ignores it and scrolls the focused field into view itself). The viewport
+// is not extended under the notch: the site runs as display "browser", where Safari keeps content clear of the notch (spec D5).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: THEME_COLOR,
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

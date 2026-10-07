@@ -1158,3 +1158,23 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+/* Phones opening the real guest page only (data-mode="live"; spec §2.1). The Studio preview and the template
+   showcase keep design/ values, and no container-type is added because it would trap the fixed envelope gate and
+   music button inside the 430px column. 16px inputs stop iOS from zooming in while a guest types. */
+@media (max-width: 767px) {
+  .inv-stage[data-mode="live"] .inv-rsvp__name,
+  .inv-stage[data-mode="live"] .inv-rsvp__row input,
+  .inv-stage[data-mode="live"] .inv-wishform input,
+  .inv-stage[data-mode="live"] .inv-wishform textarea { font-size: 16px; }
+  .inv-stage[data-mode="live"] .inv-rsvp__choices button { min-height: var(--m-tap); }
+  .inv-stage[data-mode="live"] .inv-rsvp__yn button { min-height: var(--m-tap); padding: 0 16px; }
+  .inv-stage[data-mode="live"] .inv-rsvp__submit { min-height: 48px; }
+  .inv-stage[data-mode="live"] .inv-wishform__send { min-height: var(--m-tap); padding: 0 22px; }
+  .inv-stage[data-mode="live"] .inv-cal a,
+  .inv-stage[data-mode="live"] .inv-cal button { display: inline-flex; align-items: center; min-height: var(--m-tap); padding: 0 16px; }
+  .inv-stage[data-mode="live"] .inv-party__map { display: inline-flex; align-items: center; min-height: var(--m-tap); }
+  .inv-stage[data-mode="live"] .inv-nav > div { padding-block: 0; }
+  .inv-stage[data-mode="live"] .inv-nav a { display: inline-flex; align-items: center; min-height: var(--m-tap); }
+  .inv-stage[data-mode="live"] .inv-music { width: var(--m-tap); height: var(--m-tap); }
+}

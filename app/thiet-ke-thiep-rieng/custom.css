@@ -76,3 +76,27 @@
 }
 .cd-zalo-link--plain { color: var(--accent); }
 .cd-zalo-link--plain:hover { color: var(--accent-hover); }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .cd-kicker { font-size: var(--m-kicker); }
+  .cd-hero__grid { gap: 8px; padding: var(--m-hero-top) var(--m-gutter) 36px; }
+  .cd-hero h1 { font-size: var(--m-display-l); }
+  .cd-hero__lede { font-size: 15px; }
+  .cd-stats { gap: 16px 22px; }
+  .cd-stats dt { font-size: 19px; }
+  .cd-actions > a { flex: 1 1 auto; justify-content: center; }
+  .cd-zalo-btn { min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+  /* the floating card stack keeps its composition, just smaller */
+  .cd-stack { height: 300px; margin-block: -28px; transform: scale(0.82); }
+  .cd-steps { padding: 40px var(--m-gutter) 8px; }
+  .cd-steps li { gap: 8px; }
+  .cd-palettes { padding: 32px var(--m-gutter) 8px; }
+  .cd-palettes h2 { font-size: 22px; }
+  .cd-palettes ul { gap: 8px; }
+  .cd-palettes li { padding: 6px 12px 6px 6px; font-size: 12.5px; }
+  .cd-request { gap: 28px; padding: 40px var(--m-gutter) var(--m-section-y); }
+  .cd-request__intro h2 { font-size: var(--m-h2); }
+  .cd-zalo-link { min-height: var(--m-tap); }
+  .custom-form .button-primary { justify-self: stretch; }
+}

@@ -18,3 +18,7 @@ export const CONTACT_ZALO = (process.env.NEXT_PUBLIC_CONTACT_ZALO ?? "").replace
 if (process.env.NODE_ENV === "production" && SITE_URL.startsWith("http://localhost")) {
   console.warn("NEXT_PUBLIC_SITE_URL is not set: sitemap, canonical and Open Graph URLs will point to localhost.");
 }
+
+// Browser chrome colour on phones (viewport themeColor). Mirrors --paper in app/styles/tokens.css, which a
+// meta tag cannot read; tests/site.test.ts keeps the two equal.
+export const THEME_COLOR = "#f8f4ee";

@@ -54,6 +54,7 @@
 .sh__meta { display: flex; flex-direction: column; gap: 2px; }
 .sh__meta span:first-child { font-family: var(--display); font-size: 15px; color: var(--ink); }
 .sh__meta span:last-child { font-size: 11px; color: var(--faint); }
+.sh__jump { display: none; } /* phone-only bar, shown in the ≤767px block at the end of this file */
 @media (max-width: 1023px) {
   .sh { grid-template-columns: 1fr; }
   .sh__aside { position: static; height: auto; padding: 32px 20px; }
@@ -658,3 +659,84 @@
 .edf-mini { padding:7px 12px; border:1px solid var(--line-strong); border-radius:var(--radius-full); background:var(--surface); color:var(--ink); font:400 12px var(--sans); cursor:pointer; }
 .edf-mini--danger { padding:7px 10px; color:var(--accent); }
 .ed-form__body .pn-stack { gap:18px; }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  /* /studio: pick first (step 1), the tinted panel with names + create button follows */
+  .sh__left { order: -1; gap: 20px; padding: 28px var(--m-gutter) 32px; }
+  .sh__intro h1 { font-size: var(--m-display-l); }
+  .sh__chips { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--m-gutter)); padding: 0 var(--m-gutter) 4px; scrollbar-width: none; }
+  .sh__chips button { flex: none; min-height: var(--m-tap); white-space: nowrap; }
+  .sh__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; }
+  .sh__grid > button:hover .sh__thumb { transform: none; }
+  .sh__jump {
+    position: sticky;
+    bottom: 12px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 52px;
+    padding: 0 6px 0 18px;
+    border-radius: var(--radius-full);
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 0 16px 30px -14px rgb(26 20 18 / 0.55);
+    font-size: 14px;
+  }
+  .sh__jump span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sh__jump b { flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: var(--radius-full); background: var(--surface); color: var(--ink); font-weight: 600; }
+  .sh__aside { gap: 18px; padding: 28px var(--m-gutter) 32px; scroll-margin-top: var(--m-header-h); }
+  .sh__asideTop { gap: 16px; }
+  .sh__steps { display: none; }
+  .sh__bob { width: 128px; margin-top: 0; }
+  .sh__fields input { min-height: var(--m-tap); }
+  .sh__fields input[type="date"] { font-size: var(--m-input-fs); }
+  .sh__go { min-height: 48px; padding: 0 20px; }
+  .my-item { padding: 18px; }
+  .my-item__actions .button-primary,
+  .my-item__actions .button-ghost { min-height: var(--m-tap); }
+  .link-quiet { min-height: var(--m-tap); }
+
+  /* Editor: sheets get a grab handle and sit higher; every control reaches 44px; 16px inputs so iOS never zooms */
+  .ed-bar__back { min-width: var(--m-tap); min-height: var(--m-tap); }
+  .ed-seg button { min-height: var(--m-tap); font-size: 12.5px; }
+  .ed-publish { min-height: var(--m-tap); padding: 0 16px; font-size: 13px; }
+  .ed-outline,
+  .ed-form { top: 10%; box-shadow: 0 -18px 40px -20px rgb(26 20 18 / 0.45); }
+  .ed-outline::before,
+  .ed-form::before { content: ""; flex: none; align-self: center; width: 36px; height: 4px; margin: 10px 0 2px; border-radius: var(--radius-full); background: var(--line-strong); }
+  .ed-outline__head button { min-width: var(--m-tap); min-height: var(--m-tap); }
+  .ed-item__main { min-height: 48px; }
+  .ed-switch { position: relative; }
+  .ed-switch::after { content: ""; position: absolute; inset: -13px -6px; }
+  .ed-form__head { padding: 12px var(--m-gutter) 14px; }
+  .ed-form__head h1 { font-size: 22px; }
+  .ed-form__body { gap: 16px; padding: 18px var(--m-gutter) 24px; }
+  .ed-form__foot { padding: 10px var(--m-gutter); }
+  .ed-form__prev,
+  .ed-form__next { min-height: var(--m-tap); padding: 0 18px; font-size: 14px; }
+  .ed-chipbtn { min-height: var(--m-tap); padding: 0 14px; }
+  .edf-input,
+  .edf-textarea { font-size: var(--m-input-fs); }
+  .edf-input { min-height: 46px; }
+  .edf-chip,
+  .edf-chip--s { min-height: var(--m-tap); }
+  .ed-guestbar .chip { min-height: var(--m-tap); }
+  /* the preview is the phone: no device frame around it */
+  .ed-canvas { padding: 8px 8px 80px; }
+  .ed-frame { width: 100%; padding: 0; border-radius: 18px; background: transparent; box-shadow: 0 10px 30px -18px rgb(26 20 18 / 0.5); }
+  .ed-frame[data-device="mobile"]::before { display: none; }
+  .ed-frame__screen { border-radius: 18px; }
+  .ed-mobilebar button { min-height: 48px; font-size: 14px; }
+
+  /* publish dialog: a bottom sheet */
+  .dlg { width: 100%; max-width: 100%; max-height: calc(100dvh - 24px); margin: auto 0 0; border-width: 1px 0 0; border-radius: 24px 24px 0 0; animation: mSheetUp 0.28s var(--ease) both; }
+  .dlg__body { padding: 28px var(--m-gutter) 24px; }
+  .dlg__body::before { content: ""; display: block; width: 36px; height: 4px; margin: -14px auto 14px; border-radius: var(--radius-full); background: var(--line-strong); }
+  .dlg__body h2 { font-size: 26px; }
+  .dlg__close { top: 10px; right: 10px; width: var(--m-tap); height: var(--m-tap); }
+  .resp-stat strong { font-size: 24px; }
+  @keyframes mSheetUp { from { transform: translateY(100%); } }
+}

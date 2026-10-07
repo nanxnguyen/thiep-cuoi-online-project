@@ -208,3 +208,62 @@ label.tool-outline { color: var(--ink); }
 .tool-progress { width:100%; accent-color:var(--accent); }
 .tool-video { display:flex; flex-direction:column; gap:10px; padding:14px; border-radius:var(--radius); background:var(--surface); box-shadow:0 12px 26px -18px rgb(26 20 18 / .3); }
 .tool-video video { width:100%; border-radius:10px; }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  /* hub */
+  .tools-hero { gap: 20px; padding: var(--m-hero-top) var(--m-gutter) 32px; }
+  .tools-hero__head { gap: 16px; }
+  .tools-hero__kicker { font-size: var(--m-kicker); }
+  .tools-hero h1 { font-size: var(--m-display-xl); }
+  .tools-hero__side p { font-size: var(--m-lede); line-height: var(--m-lede-lh); }
+  .tools-hero__chips span { padding: 6px 12px; font-size: 12px; }
+  .tools-grid { gap: 12px; padding: 0 var(--m-gutter) var(--m-section-y); }
+  .tool-tile { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 16px; row-gap: 6px; min-height: 0; padding: 22px; border-radius: var(--m-radius-card); }
+  .tool-tile:hover { transform: none; box-shadow: none; }
+  .tool-tile__top { grid-row: 1 / span 3; flex-direction: column; align-items: center; gap: 8px; }
+  .tool-tile__glyph { width: 52px; height: 52px; border-radius: 14px; font-size: 22px; }
+  .tool-tile__name { margin-top: 0; font-size: 21px; }
+  .tool-tile__desc { font-size: 13.5px; }
+  .tool-tile__orbit { top: -40px; right: -40px; width: 140px; height: 140px; }
+
+  /* tool page shell (ToolPage sets max-width and gap inline; padding is ours) */
+  .tool-page { padding: var(--m-hero-top) var(--m-gutter) var(--m-section-y); }
+  .tool-page h1 { font-size: var(--m-display-l); line-height: 1.15; }
+  .tool-crumb a { padding-block: 14px; margin-block: -14px; }
+  .tool-guide { margin-top: 40px; }
+  .tool-guide h2 { font-size: 21px; }
+
+  /* forms: one column, 16px text */
+  .tool-field .input,
+  .tool-qr-input,
+  .tool-form-grid input,
+  .tool-add input,
+  .tool-guests__detail .input,
+  .tool-std__form input:not([type="file"]) { font-size: var(--m-input-fs); }
+  .tool-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .tool-segment { width: 100%; }
+  .tool-segment button { flex: 1; min-height: var(--m-tap); }
+  .tool-add input { flex-basis: 100%; min-width: 0; }
+  .tool-add input + input { flex: 1 1 0; min-width: 0; }
+  .tool-add__btn { min-height: var(--m-btn-h); }
+  .tool-std__form input[type="file"] { min-height: var(--m-tap); padding-block: 10px; }
+  .tool-drop { padding: 32px 20px; }
+  .tool-qr { justify-content: center; gap: 20px; }
+  .tool-qr__side { width: 100%; }
+  .tool-qr__dl,
+  .tool-std__dl { display: flex; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); }
+  .tool-copy,
+  .tool-outline,
+  .tool-dark-pill { display: inline-flex; align-items: center; justify-content: center; min-height: var(--m-tap); }
+  .tool-link { min-height: var(--m-tap); padding: 0 6px; }
+
+  /* guest list: each guest is a card, the name owns the first line */
+  .tool-titlebar > div { flex-wrap: wrap; }
+  .tool-guests__row { flex-wrap: wrap; gap: 6px 12px; padding: 14px 2px; }
+  .tool-guests__name { flex: 1 1 100%; font-size: 15px; }
+  .tool-guests__group { flex: 1 1 auto; }
+  .tool-guests__status { min-height: var(--m-tap); }
+  .tool-empty { padding: 36px 20px; }
+  .tool-toast { bottom: 20px; max-width: calc(100vw - 2 * var(--m-gutter)); text-align: center; }
+}

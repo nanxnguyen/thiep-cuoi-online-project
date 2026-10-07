@@ -56,3 +56,31 @@
 .lp-quotes > div { background: var(--surface); border-radius: 16px; padding: 24px; box-shadow: 0 16px 30px -22px rgba(26, 20, 18, .3); display: flex; flex-direction: column; gap: 10px; }
 .lp-quotes > div > span:first-child { font-size: 12px; letter-spacing: .15em; color: var(--gold-deep); font-weight: 600; }
 .lp-quotes > div > span:last-child { font-family: var(--script); font-style: italic; font-size: 19px; line-height: 1.6; color: var(--ink-800); }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  /* !important: /tin-nhan-moi-cuoi passes its hero padding as an inline style */
+  .lp-hero { gap: 16px; padding: var(--m-hero-top) var(--m-gutter) 40px !important; }
+  .lp-kicker { font-size: var(--m-kicker); }
+  .lp-hero h1 { font-size: var(--m-display-l); }
+  .lp-hero > p { font-size: var(--m-lede); line-height: var(--m-lede-lh); }
+  .lp-cta,
+  .lp-cta--small,
+  .lp-qr-hero__copy > a { display: inline-flex; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+  .lp-steps { gap: 24px; padding: 16px var(--m-gutter) var(--m-section-y); }
+  .lp-steps > div > span:nth-child(1) { font-size: 36px; }
+  .lp-why { padding: var(--m-section-y) 0; }
+  .lp-why > div { padding: 0 var(--m-gutter); }
+  .lp-why__title { font-size: var(--m-h2); }
+  .lp-why > div > div > div { padding: 18px; }
+  .lp-checklist { padding: 16px var(--m-gutter) var(--m-section-y); }
+  .lp-checklist > div > div { padding: 14px 0; font-size: 14.5px; }
+  .lp-qr-hero { gap: 32px; padding: var(--m-hero-top) var(--m-gutter) 40px; }
+  .lp-qr-hero h1 { font-size: var(--m-display-l); }
+  .lp-qr { max-width: 260px; padding: 20px; }
+  .lp-ruled { padding: 0 var(--m-gutter) var(--m-section-y); }
+  .lp-ruled__title { font-size: 22px; }
+  .lp-quotes { gap: 14px; padding: 0 var(--m-gutter) var(--m-section-y); }
+  .lp-quotes > div { padding: 20px; }
+  .lp-quotes > div > span:last-child { font-size: 17px; }
+}

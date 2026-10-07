@@ -181,3 +181,87 @@
   .gal-dots button { width: 22px; height: 22px; }
   .gal-main { padding: 40px 20px 80px; }
 }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .gal-kicker,
+  .gal-hero__kicker { font-size: var(--m-kicker); letter-spacing: 0.2em; }
+  .gal-hero { gap: 20px; padding: var(--m-hero-top) var(--m-gutter) 32px; }
+  .gal-hero__kicker { margin-bottom: 16px; }
+  .gal-hero h1 { font-size: var(--m-display-xl); line-height: 1.02; }
+  .gal-hero__side { gap: 20px; }
+  .gal-hero__side > p { font-size: var(--m-lede); line-height: var(--m-lede-lh); }
+  .gal-stats > div > span:first-child { font-size: 17px; }
+  .gal-stats > div > span:last-child { font-size: 11px; }
+
+  /* rank rail: swipe, no arrow buttons */
+  .gal-rank { padding: var(--m-section-y) 0; }
+  .gal-rank__head { margin-bottom: 8px; padding: 0 var(--m-gutter); }
+  .gal-rank h2 { font-size: var(--m-h2); }
+  .gal-rank__nav { display: none; }
+  .gal-rank__rail { gap: 18px; scroll-padding: 0 var(--m-gutter); padding: 36px var(--m-gutter) 8px; }
+  .gal-rank__rail > a { flex-basis: min(64vw, 240px); gap: 14px; }
+  .gal-rank__card:hover { translate: none; rotate: none; scale: 1; }
+  .gal-rank__n { top: -16px; left: -10px; width: 38px; height: 38px; font-size: 19px; }
+  .gal-rank__meta > span:first-child { font-size: 19px; }
+
+  /* filters (the ≤760px block above already makes the chips a scrolling row; its flex-wrap: wrap left over from the
+     desktop rule sized both rows to the chips' full 696px content and made the whole page scroll sideways) */
+  .gal-filters > div { flex-wrap: nowrap; }
+  .gal-filters { top: calc(var(--m-header-h) - 1px); }
+  .gal-chips button { min-height: var(--m-tap); }
+  .gal-dots { gap: 14px; }
+  .gal-dots button { width: 26px; height: 26px; }
+
+  /* catalogue: two columns, actions under the cover instead of over it */
+  .gal-main { padding: 32px var(--m-gutter) var(--m-section-y); }
+  .gal-main__head { margin-bottom: 28px; }
+  .gal-main__head h2 { font-size: var(--m-h2); }
+  .gal-sort button { min-height: var(--m-tap); }
+  .gal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 14px; }
+  .gal-grid > article { gap: 12px; padding: 16px 10px 24px; margin: -16px -10px -24px; contain-intrinsic-size: auto 380px; }
+  .gal-card { box-shadow: none; }
+  .gal-card[data-hover] { transform: none; box-shadow: none; }
+  .gal-card > a { overflow: hidden; border-radius: 10px; box-shadow: 0 14px 30px -20px rgb(26 20 18 / 0.45); }
+  .gal-card__actions { position: static; gap: 6px; padding: 10px 0 0; border-radius: 0; background: none; }
+  .gal-card__actions a,
+  .gal-card__actions button { display: inline-flex; align-items: center; justify-content: center; min-height: var(--m-tap); padding: 0 6px; font-size: 12.5px; }
+  .gal-card__actions > :first-child { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .gal-card__meta { gap: 6px; }
+  .gal-card__meta > div:first-child > span:first-child { font-size: 18px; }
+  .gal-card__meta > div:first-child > span:last-child { font-size: 12px; }
+  .gal-card__meta > div:last-child { flex-wrap: wrap; gap: 6px 10px; }
+  .gal-swatches { gap: 8px; }
+  .gal-swatches button { position: relative; }
+  .gal-swatches button::after { content: ""; position: absolute; inset: -4px; }
+  .gal-card__tags { font-size: 12px; }
+
+  /* suggestion, collections, FAQ */
+  .gal-discover { gap: 20px; padding: 0 var(--m-gutter) var(--m-section-y); }
+  .gal-suggest { gap: 14px; padding: 28px 22px; border-radius: var(--m-radius-card); }
+  .gal-suggest h3 { font-size: 26px; }
+  .gal-suggest input { flex-basis: 100%; min-width: 0; padding: 12px 18px; font-size: var(--m-input-fs); }
+  .gal-suggest button { flex: 1; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); }
+  .gal-collections a { min-height: var(--m-tap); padding: 0 14px; font-size: 13px; }
+  .gal-links { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .gal-links a { padding: 18px 20px; }
+  .gal-faq > div { gap: 24px; padding: var(--m-section-y) var(--m-gutter); }
+  .gal-faq h2 { font-size: var(--m-h2); }
+  .gal-faq__list button { min-height: 60px; padding: 18px 0; font-size: 18px; }
+  .gal-faq__list p { padding: 0 8px 20px 0; font-size: 14.5px; }
+
+  /* "Xem thử": the phone takes the width, details and actions follow below it */
+  .gal-demo { align-content: flex-start; align-items: flex-start; gap: 18px; padding: 16px var(--m-gutter) 24px; }
+  .gal-demo__phone { margin: 0 auto; padding: 10px; border-radius: 36px; }
+  .gal-demo__scroller { width: min(300px, 100vw - 2 * var(--m-gutter) - 20px); height: min(62dvh, 560px); border-radius: 28px; }
+  .gal-demo__zoom { width: calc(min(300px, 100vw - 2 * var(--m-gutter) - 20px) / 1.4); }
+  .gal-demo__side { width: 100%; max-width: none; gap: 14px; }
+  .gal-demo__title span:first-child { font-size: 30px; }
+  .gal-demo__actions a,
+  .gal-demo__actions button { display: inline-flex; flex: 1; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+}
+@media (max-width: 479px) {
+  /* seven colour dots plus their label no longer fit one row at 320px: keep them 26px and let the row wrap */
+  .gal-dots { flex-wrap: wrap; gap: 10px; }
+  .gal-dots button { flex: none; }
+}

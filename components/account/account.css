@@ -119,3 +119,45 @@
 .login-dlg__close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: transparent; color: var(--faint); font-size: 16px; cursor: pointer; }
 .login-dlg__close:hover { background: var(--paper-alt); color: var(--ink); }
 .login-dlg__mark { width: 52px; height: 52px; flex: none; border-radius: 12px; background: var(--accent); color: var(--paper); display: grid; place-items: center; font-family: var(--display); font-size: 26px; font-weight: 600; }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .acc { min-height: 0; }
+  .acc-access { order: -1; padding: 32px var(--m-gutter) 40px; }
+  .acc-access > div { gap: 22px; }
+  .acc-access__title h2 { font-size: 28px; }
+  .acc-tabs button { min-height: var(--m-tap); padding: 0 11px; }
+  .acc-google { min-height: 48px; }
+  .acc-form input,
+  .acc-claim input { font-size: var(--m-input-fs); }
+  .acc-form button { min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); }
+  .acc-form .acc-forgot { min-height: var(--m-tap); }
+  .acc-story { min-height: 340px; padding: 36px var(--m-gutter) 40px; }
+  .acc-story__a { top: 28px; right: 8%; width: 104px; height: 156px; font-size: 44px; }
+  .acc-story__b { top: 64px; right: 34%; width: 88px; height: 130px; }
+  .acc-story__b span:last-child { font-size: 22px; }
+  .acc-story h1 { font-size: var(--m-display-l); }
+
+  .acc-dash { gap: 28px; padding: var(--m-hero-top) var(--m-gutter) var(--m-section-y); }
+  .acc-dash__head h1 { font-size: var(--m-display-l); }
+  .acc-dash__head > div:last-child { width: 100%; margin-left: 0; }
+  .acc-outline,
+  .acc-new { display: inline-flex; flex: 1; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 14px; }
+  .acc-claim button { min-height: var(--m-btn-h); }
+  .acc-card:hover { transform: none; }
+  .acc-card__body > div:last-child a { display: inline-flex; align-items: center; justify-content: center; min-height: var(--m-tap); }
+  .acc-empty-card h2 { font-size: 24px; }
+  .acc-empty-card__cta { min-height: var(--m-tap); }
+
+  /* header login popup: a bottom sheet */
+  .login-dlg { width: 100%; max-width: 100%; max-height: calc(100dvh - 24px); margin: auto 0 0; border-radius: 24px 24px 0 0; animation: mLoginSheet 0.3s var(--ease) both; }
+  .login-dlg__body { gap: 18px; padding: 30px var(--m-gutter) 28px; }
+  .login-dlg__body::before { content: ""; position: absolute; top: 10px; left: 50%; width: 36px; height: 4px; margin-left: -18px; border-radius: var(--radius-full); background: var(--line-strong); }
+  .login-dlg__close { top: 8px; right: 8px; width: var(--m-tap); height: var(--m-tap); }
+  .login-dlg__mark { width: 44px; height: 44px; font-size: 22px; }
+  .acc-authform--modal .acc-access__title h2 { font-size: 26px; }
+  @keyframes mLoginSheet { from { transform: translateY(100%); } }
+}
+@media (max-width: 359px) {
+  .acc-story__b { display: none; }
+}

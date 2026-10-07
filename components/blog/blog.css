@@ -450,3 +450,15 @@
     transform: none;
   }
 }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .bl-feature__main { gap: 12px; padding: 22px; }
+  .bl-feature__title { font-size: var(--m-h2); }
+  .bl-feature__excerpt { font-size: 15px; }
+  .bl-feature__go { display: inline-flex; align-items: center; min-height: var(--m-tap); }
+  .bl-toc--fold summary { display: flex; align-items: center; min-height: var(--m-tap); padding: 0; }
+  .bl-toc a { padding-block: 12px; }
+  .bl-related h2 { font-size: 24px; }
+  .bl-seal { margin-top: 40px; font-size: 36px; }
+}

@@ -42,7 +42,7 @@
     "@netlify/functions": "^6.0.0",
     "@netlify/plugin-nextjs": "^5.16.0",
     "@opennextjs/cloudflare": "^1.20.6",
-    "@playwright/mcp": "^0.0.82",
+    "@playwright/mcp": "^0.0.83",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",

@@ -102,7 +102,7 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
   return (
     <div className="studio-home">
       <main className="sh">
-        <aside className="sh__aside" aria-label="Thiệp đang chọn" style={{ "--sh-deep": cur.deep, "--sh-gold": cur.gold } as CSSProperties}>
+        <aside id="tao-thiep" className="sh__aside" aria-label="Thiệp đang chọn" style={{ "--sh-deep": cur.deep, "--sh-gold": cur.gold } as CSSProperties}>
           <div className="sh__asideTop">
             <div className="sh__brand">
               <span>MỘC · TẠO THIỆP MỚI</span>
@@ -192,6 +192,11 @@ export function StudioHome({ initialTemplate, initialColor }: { initialTemplate?
               );
             })}
           </div>
+          {/* Phones only (studio.css): the picker comes first there, so this bar takes the couple to the form. */}
+          <a className="sh__jump" href="#tao-thiep">
+            <span>Mẫu {selected.name}</span>
+            <b>Tiếp tục ↓</b>
+          </a>
         </div>
       </main>
       <div className="section studio-home__more">

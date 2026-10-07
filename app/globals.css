@@ -457,6 +457,7 @@ h3 em {
 .nav-menu[open] summary {
   background: color-mix(in oklab, var(--gold) 16%, transparent);
 }
+.nav-menu__scrim { display: none; } /* dimmed backdrop, shown by the ≤767px block at the end of this file */
 .nav-menu nav {
   position: absolute;
   top: calc(100% + 10px);
@@ -849,3 +850,81 @@ h3 em {
 .preview-colors a { display:flex; align-items:center; gap:5px; color:var(--ink); font-size:12px; text-decoration:none; }
 .preview-colors a[aria-current="true"] { font-weight:700; text-decoration:underline; }
 .preview-colors i { width:15px; height:15px; border-radius:50%; }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md. Appended last so it wins by
+   order; nothing above this line changes, so desktop stays pixel-identical. ---------- */
+@media (max-width: 767px) {
+  .lede { font-size: var(--m-lede); line-height: var(--m-lede-lh); }
+  .wrap, .wrap-read, .wrap-narrow { padding-inline: var(--m-gutter); }
+  .section { padding: var(--m-section-y) var(--m-gutter); }
+  .section-head { margin-bottom: 28px; }
+  .actions { gap: 10px; margin-top: 24px; }
+  .eyebrow { font-size: var(--m-kicker); }
+
+  /* header: one compact row of 44px targets */
+  .site-header__inner { gap: 8px; padding: 8px var(--m-gutter); }
+  .brand { min-height: var(--m-tap); }
+  .brand-mark { width: 30px; height: 30px; font-size: 16px; }
+  .brand-word { font-size: 16px; }
+  .nav-cta { display: inline-flex; align-items: center; min-height: var(--m-tap); padding: 0 16px; font-size: var(--m-btn-fs); }
+
+  /* menu: a full-width sheet right under the header, with a dimmed backdrop. Both are absolutely positioned from
+     .nav-menu (position: relative, sitting var(--m-gutter) from the right edge and 8px + 1px border above the
+     header's bottom), so they do not depend on what the sticky header does to fixed descendants. MobileMenu
+     closes the menu when the backdrop is tapped. */
+  .nav-menu__scrim {
+    display: block;
+    position: absolute;
+    top: calc(100% + 9px);
+    right: calc(-1 * var(--m-gutter));
+    z-index: 59;
+    width: 100vw;
+    height: 100dvh;
+    background: rgb(28 16 18 / 0.42);
+    animation: mMenuFade 0.2s var(--ease) both;
+  }
+  .nav-menu nav {
+    top: calc(100% + 9px);
+    right: calc(-1 * var(--m-gutter));
+    width: 100vw;
+    max-height: calc(100dvh - var(--m-header-h) - 24px);
+    overflow-y: auto;
+    gap: 2px;
+    padding: 8px var(--m-gutter) 20px;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0 0 22px 22px;
+    animation: mMenuSheet 0.24s var(--ease) both;
+  }
+  .nav-menu nav a,
+  .nav-menu nav button { display: flex; align-items: center; min-height: 52px; padding: 0 12px; font-size: 17px; }
+  @keyframes mMenuFade { from { opacity: 0; } }
+  @keyframes mMenuSheet { from { opacity: 0; transform: translateY(-8px); } }
+
+  /* footer: shorter band, two link columns, 44px rows */
+  .footer__wrap { gap: 40px; padding: 48px var(--m-gutter) 32px; }
+  .footer__cta { gap: 20px; }
+  .footer__cta h2 { font-size: clamp(32px, 9vw, 38px); }
+  .footer__cta a { display: inline-flex; align-items: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+  .footer__cta a:hover { transform: none; }
+  .footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; padding-top: 32px; }
+  .footer__brand { grid-column: 1 / -1; }
+  .footer__col { gap: 0; }
+  .footer__title { margin-bottom: 4px; }
+  .footer__col a { display: flex; align-items: center; min-height: var(--m-tap); }
+  .footer__legal { font-size: 12px; }
+
+  /* controls */
+  .button-primary,
+  .button-ghost { min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+  .button-primary:hover { transform: none; }
+  .chip { min-height: var(--m-tap); }
+  .input,
+  .select,
+  .textarea { font-size: var(--m-input-fs); }
+  .card--lift:hover { transform: none; box-shadow: var(--shadow-card); }
+
+  /* /templates/[id]?preview=1 top bar */
+  .preview-bar { padding: 8px var(--m-gutter); }
+  .preview-bar > a { display: inline-flex; align-items: center; min-height: var(--m-tap); }
+}

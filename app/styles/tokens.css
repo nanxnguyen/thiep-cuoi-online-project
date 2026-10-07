@@ -121,3 +121,39 @@
   --lattice-soft: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 0 56 28 28 56 0 28Z' fill='none' stroke='%23b8892f' stroke-opacity='.16'/%3E%3Cpath d='M28 14 42 28 28 42 14 28Z' fill='none' stroke='%23b8892f' stroke-opacity='.09'/%3E%3C/svg%3E");
   --lattice: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 0 56 28 28 56 0 28Z' fill='none' stroke='%23c9a86a' stroke-opacity='.2'/%3E%3Cpath d='M28 14 42 28 28 42 14 28Z' fill='none' stroke='%23c9a86a' stroke-opacity='.12'/%3E%3C/svg%3E");
 }
+
+/* Phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md §4.1. Desktop never reads --m-*, and the
+   --fs-* overrides only apply below 768px, so nothing above changes. */
+@media (max-width: 767px) {
+  :root {
+    --m-gutter: 20px;
+    --m-section-y: 56px;
+    --m-section-y-s: 40px;
+    --m-hero-top: 28px;
+    --m-hero-bottom: 40px;
+    --m-stack: 20px;
+    --m-display-xl: clamp(34px, 10vw, 42px);
+    --m-display-l: clamp(30px, 8.6vw, 36px);
+    --m-h2: clamp(26px, 7.4vw, 30px);
+    --m-h3: 20px;
+    --m-lede: 16px;
+    --m-lede-lh: 1.65;
+    --m-body: 15px;
+    --m-kicker: 11px;
+    --m-btn-h: 44px;
+    --m-btn-px: 20px;
+    --m-btn-fs: 14px;
+    --m-tap: 44px;
+    --m-input-fs: 16px;
+    --m-radius-card: 18px;
+    --m-header-h: 61px;
+    --fs-h1: var(--m-display-l);
+    --fs-h2: var(--m-h2);
+    --fs-h3: var(--m-h3);
+  }
+}
+@media (max-width: 359px) {
+  :root {
+    --m-gutter: 16px;
+  }
+}

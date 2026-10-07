@@ -35,3 +35,21 @@
   .help-sidebar > button { flex: none; gap: 12px; white-space: nowrap; }
   .help-legal { display: none; }
 }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .help-hero { padding: 40px var(--m-gutter) 36px; }
+  .help-hero__inner { gap: 18px; }
+  .help-hero__kicker { font-size: var(--m-kicker); }
+  .help-hero h1 { font-size: var(--m-display-l); }
+  .help-search input { padding: 14px 20px; }
+  .help-layout { gap: 24px; padding: 24px var(--m-gutter) var(--m-section-y); }
+  .help-sidebar { gap: 6px; margin-inline: calc(-1 * var(--m-gutter)); padding: 0 var(--m-gutter) 4px; scroll-padding-inline: var(--m-gutter); }
+  .help-sidebar > button { min-height: var(--m-tap); padding: 0 14px; border-radius: var(--radius-full); font-size: 14px; }
+  .help-results { gap: 36px; }
+  .help-results h2 { font-size: 26px; }
+  .help-q button { gap: 12px; min-height: 60px; padding: 16px 0; font-size: 16px; }
+  .help-q button span:last-child { width: 32px; height: 32px; }
+  .help-q p { padding: 0 8px 20px 0; font-size: 14.5px; }
+  .help-empty { padding: 40px 20px; font-size: 20px; }
+}

@@ -30,3 +30,20 @@
 .pricing-donate__heart { font-size: 34px; display: inline-block; animation: heart 1.6s ease-in-out infinite; align-self: flex-start; }
 .pricing-donate h2 { font-size: 28px; line-height: 1.2; }
 .pricing-donate p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--rose-on-red); }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .pricing-hero { gap: 16px; padding: var(--m-hero-top) var(--m-gutter) 36px; }
+  .pricing-kicker { font-size: var(--m-kicker); }
+  .pricing-zero { font-size: clamp(110px, 34vw, 140px); }
+  .pricing-hero h1 { font-size: var(--m-display-l); }
+  .pricing-hero > p { font-size: 15px; }
+  .pricing-grid { gap: 16px; padding: 0 var(--m-gutter) var(--m-section-y); }
+  .pricing-grid h2 { font-size: 26px; }
+  .pricing-included,
+  .pricing-planned,
+  .pricing-donate { gap: 20px; padding: 28px 22px; border-radius: 22px; }
+  .pricing-included li { padding: 12px 0; font-size: 14.5px; }
+  .pricing-cta { display: flex; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+  .pricing-donate h2 { font-size: 24px; }
+}

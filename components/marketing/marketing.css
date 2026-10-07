@@ -455,3 +455,32 @@ a.mk-card:hover {
 .legal__body p, .legal__body ul { margin: 0; }
 .legal__body ul { padding-left: 20px; }
 
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .mk-hero { padding: var(--m-hero-top) var(--m-gutter) 32px; }
+  .mk-hero h1 { margin: 14px auto 16px; font-size: var(--m-display-l); }
+  .mk-hero .actions { gap: 10px; margin-top: 22px; }
+  .mk-hero .actions > * { flex: 1 1 0; }
+  .mk-crumbs { margin-bottom: 16px; }
+  .mk-crumbs a { display: inline-block; padding-block: 14px; margin-block: -14px; }
+  .mk-section { padding: 32px var(--m-gutter) 44px; }
+  .mk-section > h2 { margin-bottom: 20px; font-size: var(--m-h2); }
+  .mk-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .mk-card { padding: 22px; border-radius: var(--m-radius-card); }
+  a.mk-card:hover { transform: none; box-shadow: var(--shadow); }
+  .mk-faq summary { min-height: 60px; padding: 14px 2px; font-size: 16px; }
+  .mk-faq summary::after { width: 32px; height: 32px; }
+  .mk-chips { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; margin-inline: calc(-1 * var(--m-gutter)); padding: 0 var(--m-gutter) 4px; scrollbar-width: none; }
+  .mk-chips a { display: inline-flex; align-items: center; min-height: var(--m-tap); white-space: nowrap; }
+  .mk-group { scroll-margin-top: calc(var(--m-header-h) + 16px); }
+  .mk-group > h2 { font-size: 24px; }
+  .mk-prose blockquote { padding-left: 16px; font-size: 20px; }
+  .mk-cta { padding: var(--m-section-y) var(--m-gutter); }
+  .mk-cta h2 { margin-bottom: 20px; font-size: var(--m-h2); }
+  .legal { gap: 24px; padding: var(--m-hero-top) var(--m-gutter) var(--m-section-y); }
+  .legal__head h1 { font-size: var(--m-display-l); line-height: 1.15; }
+  .legal__tabs { overflow-x: auto; scrollbar-width: none; }
+  .legal__tabs a { display: inline-flex; align-items: center; min-height: var(--m-tap); white-space: nowrap; }
+  .legal__body h2 { font-size: 19px; line-height: 1.5; }
+}

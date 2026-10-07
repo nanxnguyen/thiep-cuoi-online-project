@@ -99,6 +99,17 @@ Asset: mọi ornament của 30 mẫu mới là CSS/SVG vẽ riêng (`original`),
 
 Màu cover mới chạy qua biến `--cv-deep/--cv-paper/--cv-gold` do `ThiepPreview` truyền từ palette registry (`lib/templates.ts`); không hex rời ngoài token và registry. Thêm family mới: thêm slug vào `NEW_FAMILIES` + meta trong `lib/covers.ts`, thêm renderer vào `coverRenderers` (typecheck bắt exhaustive), thêm catalog row + sample + SEO trong `lib/templates.ts`.
 
+## Mobile (≤767px): độ lệch có chủ đích so với design/
+
+`design/` chỉ có mockup desktop (spec 2026-10-07, D4), nên giao diện điện thoại do MỘC tự thiết kế và chỉ cộng thêm: mọi rule nằm trong block `@media (max-width: 767px)` (thêm 479/359px khi cần) ở cuối file CSS sở hữu selector, không dòng CSS cũ nào bị sửa. Desktop không đổi: snapshot layout 768/1024/1280/1440px trước và sau phase cho 0 khác biệt (`scripts/layout-probe.js`, `scripts/layout-diff.ts`).
+
+- Token: `--m-*` trong `app/styles/tokens.css` (gutter 20px, section 56px, h1 hero `clamp(34px, 10vw, 42px)`, nút cao 44px chữ 14px, vùng chạm 44px, input 16px). `--fs-h1/h2/h3` được ghi đè dưới 768px.
+- Mẫu: hero gọn với cặp CTA đứng cạnh nhau; danh sách dài thành hàng vuốt ngang (thẻ tính năng Trang chủ, bảng xếp hạng, họ bìa ở /demo); menu thành sheet toàn chiều ngang có nền tối; hộp thoại đăng nhập/xuất bản thành bottom sheet; lưới mẫu 2 cột với nút dưới ảnh; `/studio` đặt chọn mẫu lên trước kèm thanh "Tiếp tục" dính đáy; cặp nút ở `/templates/[id]` dính đáy màn hình.
+- Trang khách chỉ đổi khi `data-mode="live"` (input 16px để iOS không zoom, vùng chạm 44px). Preview trong Studio và `/templates/[id]?preview=1` giữ đúng giá trị design vì dùng chung renderer.
+- Vùng chạm nhóm chấm màu ≥24px (WCAG 2.5.8), phần còn lại ≥44px.
+- Không `viewport-fit=cover` và không safe-area: site chạy `display: "browser"`. `viewport` export chỉ thêm `themeColor` (ivory) và `interactiveWidget: "resizes-content"`.
+- Spec: `docs/superpowers/specs/2026-10-07-mobile-first-design.md`.
+
 ## Do's and Don'ts
 
 - Dùng đúng tên 16 mẫu và palette trong design v2; ID cũ chỉ là alias dữ liệu.

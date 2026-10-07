@@ -52,3 +52,18 @@
   .demo-family small { overflow: hidden; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
   .demo-full { grid-template-columns: 1fr; gap: 32px; padding-block: 64px 80px; }
 }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .demo-hero { gap: 20px; padding-block: var(--m-hero-top) 32px; }
+  .demo-hero h1 { font-size: var(--m-display-xl); }
+  /* five cover families: one swipeable row, labels readable again (the ≤760px block above shrank them to 9px) */
+  .demo-family-grid { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; scrollbar-width: none; }
+  .demo-family { flex: 0 0 84px; min-height: 64px; scroll-snap-align: start; }
+  .demo-family small { font-size: 11px; }
+  .demo-family:hover { transform: none; }
+  .demo-color { min-height: var(--m-tap); }
+  .demo-full-toggle { min-height: 64px; }
+  .demo-actions .button-primary,
+  .demo-actions .button-ghost { flex: 1; }
+}

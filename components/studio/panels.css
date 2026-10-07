@@ -739,3 +739,13 @@
   body[data-pq] .pq-card, body[data-pq] .pq-card * { visibility: visible; }
   body[data-pq] .pq-card { position: fixed; left: 50%; top: 20mm; transform: translateX(-50%); box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .pn-icon-btn { min-width: var(--m-tap); min-height: var(--m-tap); }
+  .pn-color-options button { min-height: var(--m-tap); }
+  .pn-library__item button { min-height: var(--m-tap); }
+  .pq__stage { min-height: 320px; padding: 24px 12px; }
+  .pq__controls { padding: 18px; }
+  .pq__chips button { min-height: var(--m-tap); }
+}

@@ -32,3 +32,24 @@
   .tdt__stage { position: static; }
   .tdt__card { width: min(320px, 100%); }
 }
+
+/* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
+@media (max-width: 767px) {
+  .tdt { gap: 28px; padding: var(--m-hero-top) var(--m-gutter) var(--m-section-y); }
+  .tdt__card { width: min(260px, 72vw); }
+  .tdt__info { gap: 22px; }
+  .tdt__head h1 { font-size: var(--m-display-l); }
+  .tdt__head p { font-size: 15px; }
+  .tdt__crumb a { padding-block: 14px; margin-block: -14px; }
+  .tdt__colors > div { gap: 12px; }
+  .tdt__colors a { width: 36px; height: 36px; }
+  .tdt__incl { padding: 20px; }
+  /* the two actions stay pinned to the bottom of the screen while the details scroll by */
+  .tdt__actions { position: sticky; bottom: 0; z-index: 5; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-inline: calc(-1 * var(--m-gutter)); padding: 12px var(--m-gutter); background: linear-gradient(to top, var(--paper) 70%, transparent); }
+  .tdt__actions a:first-child,
+  .tdt__actions a:last-child { display: inline-flex; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 12px; font-size: var(--m-btn-fs); white-space: nowrap; }
+  .tdt__actions a:last-child { background: var(--paper); }
+}
+@media (max-width: 359px) {
+  .tdt__actions { grid-template-columns: minmax(0, 1fr); }
+}

@@ -27,8 +27,8 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   use: { baseURL, trace: "retain-on-failure", screenshot: "only-on-failure", locale: "vi-VN", timezoneId: "Asia/Ho_Chi_Minh" },
-  // Serves the production build; set E2E_BASE_URL to test an already running server (dev, preview, staging) instead.
-  webServer: process.env.E2E_BASE_URL ? undefined : { command: `npx next start -p ${PORT}`, url: baseURL, reuseExistingServer: true, timeout: 120_000 },
+  // Không tự start server ngầm. Tự chạy server trước (vd: `npx next start -p 3100`),
+  // rồi trỏ tới nó bằng E2E_BASE_URL hoặc E2E_PORT.
   projects: [
     { name: "chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
     { name: "edge", use: { ...devices["Desktop Edge"], channel: "msedge" } },
