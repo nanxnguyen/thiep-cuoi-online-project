@@ -15,7 +15,8 @@
 /* ---------- sidebar (desktop) ---------- */
 .adm-sidebar {
   width: 240px; flex: none; background: var(--night); color: var(--on-dark);
-  min-height: 100vh; display: flex; flex-direction: column;
+  min-height: 100vh; max-height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column;
   padding: 28px 18px; gap: 30px; position: sticky; top: 0; align-self: flex-start;
   box-sizing: border-box;
 }
