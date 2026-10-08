@@ -69,9 +69,14 @@ Endpoints mới (`routeResponse` + `createRouteClient`, pattern như route hiệ
   `applyCookies`.
 - `POST /api/admin/logout` — `assertSameOrigin` + `logoutUser` (reuse).
 - `GET /api/admin/me` — `requireAdmin` → 200 DTO admin; 401/403 tương ứng.
-- Ops (ghi vào `DEPLOY.md` hoặc `docs/`): cấp quyền bằng service-role —
+- Ops (ghi vào `DEPLOY.md` hoặc `docs/`): tạo user qua Supabase Dashboard
+  (Authentication > Add user) với email mặc định `admin@moc.vn`, password
+  mặc định `admin`, rồi gán quyền bằng service-role —
   `auth.admin.updateUserById(id, { app_metadata: { is_admin: true } })`.
-  Không hardcode email admin trong code.
+  Không hardcode email admin trong code. Lưu ý bảo mật: `admin/admin` là
+  credential mặc định cho dev — production BẮT BUỘC đổi password mạnh sau khi
+  tạo (rate-limit login 10 lần/10 phút chỉ giảm brute-force, không thay thế
+  password mạnh).
 
 ## 4. DB migrations — `supabase/migrations/202610090001_admin.sql`
 

@@ -95,6 +95,35 @@ netlify deploy --prod --alias rollback-check # kiểm tra trước
 # Supabase: chưa có down-migration, sửa bằng migration mới rồi db push lại
 ```
 
+## 7. Cấp quyền quản trị (/admin)
+
+Khu quản trị không có bảng role riêng: admin = Supabase user có
+`app_metadata.is_admin === true` (code check `app_metadata`, không check
+`user_metadata` vì user tự sửa được). Tạo và cấp quyền bằng tay:
+
+1. Supabase Dashboard → Authentication → Add user → Create new user:
+   email mặc định `admin@moc.vn`, password mặc định `admin` (dev).
+   Copy `id` (UUID) của user vừa tạo.
+2. Gán quyền bằng service-role key (script Node với
+   `SUPABASE_SERVICE_ROLE_KEY` — không dùng anon key, không chạy ở client):
+```js
+await supabase.auth.admin.updateUserById("<USER_UUID>", {
+  app_metadata: { is_admin: true },
+});
+```
+3. Mở `/admin/login`, đăng nhập bằng email + password trên. Chưa login vào
+   `/admin`, `/admin/users`, `/admin/cards`, `/admin/templates` đều bounce về
+   `/admin/login`; đã login nhưng không phải admin thì API trả 403.
+
+CẢNH BÁO BẢO MẬT (production bắt buộc):
+- Đổi password mạnh ngay sau khi tạo — `admin/admin` chỉ là credential mặc
+  định cho dev. Rate-limit login (10 lần/10 phút/IP) chỉ giảm brute-force,
+  không thay thế password mạnh.
+- Không hardcode email admin trong code; không để service-role key lọt ra
+  client (mọi `/api/admin/*` chạy server-side, response strip `app_metadata`).
+- Thu hồi quyền: `updateUserById(id, { app_metadata: { is_admin: false } })`
+  hoặc xoá user; user bị thu hồi sẽ 403 ở mọi API admin.
+
 ## Ghi nhớ
 
 - Đổi `NEXT_PUBLIC_*` phải deploy lại mới có tác dụng (nướng vào build).

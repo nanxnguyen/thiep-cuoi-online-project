@@ -24,7 +24,8 @@ function routeExists(path: string): boolean {
   if (path === "/") return pages.includes("/");
   const want = path.split("/");
   return pages.some((page) => {
-    const have = page.split("/");
+    // Route group `(...)` không xuất hiện trong URL (chuẩn Next.js App Router).
+    const have = page.split("/").filter((seg) => !/^\(.*\)$/.test(seg));
     return have.length === want.length && have.every((seg, i) => /^\[.+\]$/.test(seg) || seg === want[i]);
   });
 }

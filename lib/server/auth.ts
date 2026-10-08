@@ -44,6 +44,18 @@ export async function requireUser(client: SupabaseClient): Promise<AccountUser> 
   return userDto(data.user);
 }
 
+export type AdminUser = AccountUser & { isAdmin: true };
+
+export async function requireAdmin(client: SupabaseClient): Promise<AdminUser> {
+  const { data, error } = await client.auth.getUser();
+  if (error || !data.user) throw new HttpError(401, "Phiên đăng nhập đã hết hạn.");
+  // The flag lives in app_metadata (service-role only). user_metadata is
+  // user-editable and must never grant admin access.
+  const appMetadata = data.user.app_metadata as Record<string, unknown> | undefined;
+  if (appMetadata?.is_admin !== true) throw new HttpError(403, "Bạn không có quyền quản trị.");
+  return { ...userDto(data.user), isAdmin: true };
+}
+
 export async function logoutUser(client: SupabaseClient): Promise<void> {
   const { error } = await client.auth.signOut();
   if (error) throw new HttpError(400, "Chưa đăng xuất được, bạn thử lại nhé.");

@@ -102,6 +102,56 @@ export type AccountUser = { id: string; email: string; name?: string; avatarUrl?
 export type AuthResponse = { accessToken?: string; user: AccountUser; emailConfirmationRequired?: boolean };
 export type AccountInvitation = { id: string; slug: string; templateId: string; published: boolean; updatedAt: string; groomName: string; brideName: string; weddingDate: string; paletteKey: string };
 
+// Admin panel contracts (§5 of the admin spec). All admin fetches are
+// same-origin, so the session cookie is sent automatically.
+export type AdminStats = {
+  users: { total: number; active: number; suspended: number };
+  cards: { total: number; published: number; draft: number; flagged: number };
+  pendingWishes: number;
+  usersWeekly: number[];
+  cardsWeekly: number[];
+  topTemplates: { templateId: string; name: string; count: number }[];
+  recentUsers: { id: string; email: string; name: string; createdAt: string }[];
+  recentCards: {
+    id: string;
+    slug: string;
+    couple: string;
+    templateId: string;
+    status: "published" | "draft" | "reported";
+    confirmed: string;
+    createdAt: string;
+  }[];
+};
+export type AdminUserRow = {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string;
+  createdAt: string;
+  inviteCount: number;
+  status: "active" | "suspended";
+};
+export type AdminCardRow = {
+  id: string;
+  slug: string;
+  couple: string;
+  templateId: string;
+  templateName: string;
+  ownerEmail: string;
+  createdAt: string;
+  status: "published" | "draft" | "reported";
+  confirmed: string;
+};
+export type AdminTemplateRow = {
+  id: string;
+  name: string;
+  style: string;
+  badge: "" | "MỚI" | "HOT";
+  hidden: boolean;
+  pop: number;
+};
+export type AdminList<T> = { items: T[]; page: number; pageCount: number; total: number };
+
 export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => fetch(...a)) {
   async function call<T>(path: string, init: RequestInit = {}, key?: string): Promise<T> {
     const headers = new Headers(init.headers);
@@ -190,7 +240,41 @@ export function createApi(baseUrl: string, fetchImpl: typeof fetch = (...a) => f
         throw e;
       }
     },
+    admin: {
+      login: (email: string, password: string) =>
+        call<{ user: AccountUser }>("/api/admin/login", json("POST", { email, password })),
+      logout: () => call<void>("/api/admin/logout", { method: "POST" }),
+      me: () => call<AccountUser & { isAdmin: true }>("/api/admin/me", { cache: "no-store" }),
+      stats: () => call<AdminStats>("/api/admin/stats", { cache: "no-store" }),
+      listUsers: (params: { q?: string; status?: string; page?: number; perPage?: number }) =>
+        call<AdminList<AdminUserRow>>(`/api/admin/users${query(params)}`, { cache: "no-store" }),
+      patchUser: (id: string, action: "ban" | "unban") =>
+        call<AdminUserRow>(`/api/admin/users/${encodeURIComponent(id)}`, json("PATCH", { action })),
+      deleteUser: (id: string) =>
+        call<void>(`/api/admin/users/${encodeURIComponent(id)}`, { method: "DELETE" }),
+      listCards: (params: { q?: string; status?: string; page?: number; perPage?: number }) =>
+        call<AdminList<AdminCardRow>>(`/api/admin/cards${query(params)}`, { cache: "no-store" }),
+      patchCard: (id: string, patch: { published?: boolean; is_flagged?: boolean }) =>
+        call<AdminCardRow>(`/api/admin/cards/${encodeURIComponent(id)}`, json("PATCH", patch)),
+      deleteCard: (id: string) =>
+        call<void>(`/api/admin/cards/${encodeURIComponent(id)}`, { method: "DELETE" }),
+      listTemplates: (params: { q?: string; style?: string; page?: number; perPage?: number }) =>
+        call<AdminList<AdminTemplateRow>>(`/api/admin/templates${query(params)}`, { cache: "no-store" }),
+      patchTemplate: (
+        id: string,
+        patch: { name?: string; style?: string; badge?: "" | "MỚI" | "HOT"; hidden?: boolean },
+      ) => call<AdminTemplateRow>(`/api/admin/templates/${encodeURIComponent(id)}`, json("PATCH", patch)),
+    },
   };
+}
+
+function query(params: Record<string, string | number | undefined>): string {
+  const sp = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") sp.set(key, String(value));
+  }
+  const text = sp.toString();
+  return text ? `?${text}` : "";
 }
 
 export const api = createApi(process.env.NEXT_PUBLIC_API_BASE_URL ?? "");
