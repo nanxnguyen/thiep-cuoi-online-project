@@ -106,10 +106,17 @@ test("listAdminTemplates filters style + search in SQL and orders pop desc, id",
   const result = await listAdminTemplates(client, { page: 1, perPage: 12, q: "Song", style: "Truyền thống" });
   assert.deepEqual(result, { items: [ROW], page: 1, pageCount: 1, total: 1 });
   assert.ok(calls.some((c) => c.method === "eq" && c.args[0] === "style" && c.args[1] === "Truyền thống"), "style filter in SQL");
-  assert.ok(calls.some((c) => c.method === "ilike" && c.args[0] === "name"), "name search in SQL");
+  assert.ok(calls.some((c) => c.method === "ilike" && c.args[0] === "search_norm"), "accent-insensitive search via search_norm");
   const orders = calls.filter((c) => c.method === "order");
   assert.deepEqual(orders.map((c) => c.args[0]), ["pop", "id"]);
   assert.deepEqual(calls.find((c) => c.method === "range")?.args, [0, 11]);
+});
+
+test("listAdminTemplates folds accents before searching", async () => {
+  const { client, calls } = mockAdminClient({ range: { data: [], error: null, count: 0 } });
+  await listAdminTemplates(client, { page: 1, perPage: 12, q: "Phụng Vũ", style: "all" });
+  const ilike = calls.find((c) => c.method === "ilike");
+  assert.equal(ilike?.args[1], "%phung vu%");
 });
 
 test("listAdminTemplates escapes LIKE wildcards in q", async () => {

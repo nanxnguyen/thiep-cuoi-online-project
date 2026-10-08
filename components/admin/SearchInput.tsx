@@ -43,6 +43,8 @@ export function SearchInput({ defaultValue = "", placeholder = "Tìm kiếm…",
         <path d="M10.8 10.8L14 14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
       <input
+        id="adm-search"
+        name="q"
         className="adm-search-input"
         type="search"
         value={text}

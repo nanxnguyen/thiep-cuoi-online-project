@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AdminList, AdminTemplateRow } from "../api.ts";
 import type { AdminTemplatePatch, AdminTemplatesQuery } from "./admin-schemas.ts";
+import { normalizeVi } from "../vietnamese.ts";
 import { HttpError } from "./http.ts";
 
 // Service layer for the templates slice (spec §5): thin API routes in
@@ -39,7 +40,9 @@ export async function listAdminTemplates(
   const { page, perPage, q, style } = query;
   let select = admin.from("templates").select("id,name,style,badge,hidden,pop", { count: "exact" });
   if (style !== "all") select = select.eq("style", style);
-  if (q) select = select.ilike("name", `%${escapeLike(q)}%`);
+  // Accent-insensitive: fold q and match the `search_norm` generated column
+  // (migration 202610090001_admin), whose translate() mapping mirrors normalizeVi.
+  if (q) select = select.ilike("search_norm", `%${escapeLike(normalizeVi(q))}%`);
   const from = (page - 1) * perPage;
   const { data, error, count } = await select
     .order("pop", { ascending: false })

@@ -20,6 +20,23 @@ alter table public.invitations
 add column is_flagged boolean not null default false;
 create index invitations_flagged_idx on public.invitations(updated_at desc) where is_flagged;
 
+-- Accent-insensitive admin search: normalized generated columns. The JS mirror
+-- is normalizeVi() in lib/vietnamese.ts (lower + NFD strip + đ→d); the
+-- translate() mapping below must stay identical to VI_ACCENT_FROM/TO
+-- (67 chars each). translate()/lower()/coalesce() are immutable, so generated
+-- columns are allowed. No extra index: admin search uses leading-wildcard
+-- ILIKE over a small table.
+alter table public.invitations add column search_norm text generated always as (
+  translate(lower(coalesce(slug, '') || ' ' || coalesce(template_id, '') || ' ' || coalesce(content::text, '')),
+  'áàảãạâấầẩẫậăắằẳẵặéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ',
+  'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd')
+) stored;
+alter table public.templates add column search_norm text generated always as (
+  translate(lower(coalesce(name, '') || ' ' || coalesce(style, '')),
+  'áàảãạâấầẩẫậăắằẳẵặéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđ',
+  'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd')
+) stored;
+
 alter table public.templates enable row level security;
 
 -- The only anon policy: visible (non-hidden) templates. Admins go through

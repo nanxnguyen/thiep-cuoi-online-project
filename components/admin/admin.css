@@ -211,9 +211,11 @@
   .adm-scrim-open { opacity: 1; visibility: visible; }
   .adm-drawer {
     display: block; position: fixed; top: 0; left: 0; bottom: 0; z-index: 80;
-    transform: translateX(-105%); transition: transform 0.22s ease; overflow-y: auto;
+    transform: translateX(-105%); visibility: hidden;
+    transition: transform 0.22s ease, visibility 0.22s;
+    overflow-y: auto;
   }
-  .adm-drawer-open { transform: none; }
+  .adm-drawer-open { transform: none; visibility: visible; transition: transform 0.22s ease; }
   .adm-drawer .adm-sidebar { min-height: 100%; position: static; }
   .adm-drawer-close {
     position: absolute; top: 12px; right: 12px; z-index: 1;

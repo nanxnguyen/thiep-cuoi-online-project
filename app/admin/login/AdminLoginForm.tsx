@@ -101,6 +101,8 @@ export function AdminLoginForm() {
       <label style={labelStyle}>
         Email quản trị
         <input
+          id="admin-email"
+          name="email"
           type="email"
           autoComplete="username"
           required
@@ -114,6 +116,8 @@ export function AdminLoginForm() {
       <label style={labelStyle}>
         Mật khẩu
         <input
+          id="admin-password"
+          name="password"
           type="password"
           autoComplete="current-password"
           required

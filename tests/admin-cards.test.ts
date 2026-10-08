@@ -114,12 +114,14 @@ test("cards list orders newest first with offset pagination plus a count query",
   assert.match(listSource, /count: "exact", head: true/);
 });
 
-test("cards list searches slug, template and content with bound filter values", () => {
-  assert.match(listSource, /content::text\.ilike\./);
+test("cards list searches accent-insensitively through search_norm", () => {
+  assert.match(listSource, /search_norm\.ilike\./);
+  assert.match(listSource, /normalizeVi\(q\)/);
+  assert.doesNotMatch(listSource, /content::text\.ilike\./);
   assert.match(listSource, /\.or\(searchOr\)/);
   assert.match(listSource, /escapeLikePattern/);
-  // The validated q is escaped and bound through the query builder — it is
-  // never interpolated into a SQL string.
+  // The validated q is folded with normalizeVi then escaped and bound through
+  // the query builder — it is never interpolated into a SQL string.
   assert.doesNotMatch(listSource, /\$\{\s*q\s*\}/);
   assert.doesNotMatch(listSource, /request\.json\(/);
 });

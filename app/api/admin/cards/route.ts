@@ -4,6 +4,7 @@ import { adminCardsQuerySchema, type AdminCardsQuery } from "@/lib/server/admin-
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
 import { HttpError, routeResponse } from "@/lib/server/http";
 import { getTemplate } from "@/lib/templates";
+import { normalizeVi } from "@/lib/vietnamese";
 import type { AdminCardRow, AdminList } from "@/lib/api";
 
 const GUEST_OWNER_EMAIL = "Khách vãng lai";
@@ -72,13 +73,16 @@ function confirmedDisplay(published: boolean, summary: CardSummary | null): stri
 // PostgREST `ilike` uses `*` wildcards. Escape SQL LIKE specials (`\`, `%`, `_`)
 // and the or() structural chars (via double-quote wrapping) so the validated q
 // travels as a bound filter value — it is never concatenated into SQL.
+// Search is accent-insensitive: q is folded with normalizeVi() and matched
+// against the `search_norm` generated column (migration 202610090001_admin),
+// whose translate() mapping mirrors normalizeVi.
 function escapeLikePattern(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_").replace(/"/g, '\\"');
 }
 
 function buildCardSearchOr(q: string): string {
-  const pattern = `*${escapeLikePattern(q)}*`;
-  return `slug.ilike."${pattern}",template_id.ilike."${pattern}",content::text.ilike."${pattern}"`;
+  const pattern = `*${escapeLikePattern(normalizeVi(q))}*`;
+  return `search_norm.ilike."${pattern}"`;
 }
 
 // Replicates public.get_response_summary (supabase/migrations/202609260001_backend.sql):

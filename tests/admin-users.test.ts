@@ -52,6 +52,12 @@ test("list route maps banned users to suspended with a metadata name fallback", 
   assert.match(listRoute, /split\("@"\)/);
 });
 
+test("list route searches accent-insensitively on both sides", () => {
+  assert.match(listRoute, /normalizeVi\(q\)/);
+  assert.match(listRoute, /normalizeVi\(user\.email/);
+  assert.match(listRoute, /normalizeVi\(adminDisplayName\(user\)\)/);
+});
+
 test("list route never leaks auth metadata and disables caching", () => {
   assert.doesNotMatch(listRoute, /app_metadata/);
   assert.doesNotMatch(listRoute, /\.\.\.[^\n]*metadata/i, "auth metadata must not be spread into the DTO");

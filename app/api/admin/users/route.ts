@@ -5,6 +5,7 @@ import { adminUsersQuerySchema } from "@/lib/server/admin-schemas";
 import { requireAdmin } from "@/lib/server/auth";
 import { HttpError, routeResponse } from "@/lib/server/http";
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
+import { normalizeVi } from "@/lib/vietnamese";
 
 // GET /api/admin/users — §5 of the admin spec. Auth users are enumerated via
 // the Auth Admin API (max 10 pages x 100) because there is no denormalized
@@ -101,12 +102,13 @@ export async function GET(request: NextRequest) {
       if (row.owner_id) counts.set(row.owner_id, (counts.get(row.owner_id) ?? 0) + 1);
     }
 
-    const needle = q.toLowerCase();
+    // Accent-insensitive (normalizeVi): "anh nhut" matches "Anh Nhựt".
+    const needle = normalizeVi(q);
     const filtered = all.filter((user) => {
       if (status !== "all" && adminUserStatus(user) !== status) return false;
       if (!needle) return true;
-      const email = (user.email ?? "").toLowerCase();
-      return email.includes(needle) || adminDisplayName(user).toLowerCase().includes(needle);
+      const email = normalizeVi(user.email ?? "");
+      return email.includes(needle) || normalizeVi(adminDisplayName(user)).includes(needle);
     });
     filtered.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
 
