@@ -1,221 +1,239 @@
-# Todo: Workers Free optimization
+# Task list: Khu quản trị (/admin)
 
-## Task 1: Đo baseline CPU/bundle/routes
+Spec: `docs/superpowers/specs/2026-10-09-admin-design.md`. Convention repo:
+`node --test "tests/**/*.test.ts"`, `npm run typecheck`, e2e `playwright test`,
+mọi API qua `routeResponse`, validate bằng `parseJson` + zod.
 
-**Description:** Thu thập số liệu gốc để mọi fix sau so sánh được: handler bytes, dry-run upload + startup_time, danh sách route static/dynamic, TTFB 3 URL, log `wrangler tail` khi tái hiện 1102.
+## Task 1: `requireAdmin()` + unit tests
+
+**Description:** Thêm `requireAdmin()` vào `lib/server/auth.ts`: `getUser()`,
+401 khi chưa login, 403 khi `app_metadata.is_admin !== true`, trả `AdminUser`
+(reuse `userDto`).
 
 **Acceptance criteria:**
-- [ ] Có `handler.mjs` bytes hiện tại và sau mỗi task để diff
-- [ ] Có output `wrangler deploy --dry-run` (Total Upload + startup_time_ms)
-- [ ] Có bảng routes nào `force-dynamic` / static (từ grep + build output)
-- [ ] Có TTFB `curl -w` cho `/`, `/templates`, `/invite/<slug>` trên prod + preview (nếu có)
+- [ ] No session → 401; user thường → 403; `is_admin=true` → ok + DTO đúng shape
+- [ ] Check đọc `app_metadata`, không đọc `user_metadata`
 
 **Verification:**
-- [ ] Lệnh chạy được: `ls -l .open-next/server-functions/default/handler.mjs && ./node_modules/.bin/opennextjs-cloudflare build --dry-run 2>&1 | head` (hoặc `npx wrangler deploy --dry-run --outdir bundled/`)
-- [ ] Lệnh TTFB: `curl -s -o /dev/null -w "%{http_code} %{time_starttransfer}\n" "$B/"` với `B=https://taothiepcuoimienphi.raystudio.com.vn`
-- [ ] Log: `npx wrangler tail` ghi lại `outcome=exceededCpu|exceededMemory` khi lỗi
+- [ ] `node --test tests/admin-auth.test.ts` (mới, client mock như pattern `auth-routes.test.ts`)
 
 **Dependencies:** None
 
 **Files likely touched:**
-- (read-only, không sửa code)
-- `tasks/baseline.md` (tạo mới để lưu số)
+- `lib/server/auth.ts`
+- `tests/admin-auth.test.ts`
 
-**Estimated scope:** S (1-2 files, chỉ đo)
+**Estimated scope:** S (1–2 files)
 
----
+## Task 2: migration + seed + SQL tests
 
-## Task 2: Homepage marquee SSR 40 → ~6 previews + client defer
-
-**Description:** `app/page.tsx` đang SSR ~40 `ThiepPreview` (2 track x2, mới chỉ từ 10 TPL hardcode). Yêu cầu mới: mặc định viewport thấy 20, scroll xuống hiện đủ 50 (full registry `templates`). Cách làm để qua Workers Free 10ms: server chỉ SSR 6-8 cards đầu, client hydrate xong render ngay 20 trong viewport từ data có sẵn (không fetch), scroll tới đâu `IntersectionObserver` mở dần tới 50. Reuse pattern `Defer` như `GalleryCatalog.tsx:24-40` (placeholder cùng class `tp-root`, không layout shift). Mở rộng nguồn data từ 10 TPL hardcode → 50 `templates`, tách marquee thành Client Component (`components/home/HomeMarquee.tsx`).
-
-**Acceptance criteria:**
-- [ ] Server HTML `/` chỉ chứa 6-8 `ThiepPreview` đầy đủ (để qua CPU 10ms), còn lại là placeholder `tp-root` cùng kích thước
-- [ ] Client mở lên thấy ngay 20 cards trong viewport, scroll xuống load dần đủ 50 templates (không fetch thêm, data từ registry)
-- [ ] Không CLS mới (placeholder cùng `maxWidth`/`borderRadius`/class, CLS ≤0.1)
-- [ ] Link `/templates/<id>` và badge/style giữ nguyên, keyboard Tab được, `aria-hidden` cho cards lặp marquee
-
-**Verification:**
-- [ ] `npm run build` + đếm `ThiepPreview` trong HTML: `curl -s $B/ | grep -o "tp-root" | wc -l` — server ít, nhưng DOM sau hydrate đủ 20 rồi 50 khi scroll
-- [ ] Tests: `npm test -- --grep "template|home|design-system"` (theo `package.json:19`)
-- [ ] Manual: mở `/` ẩn danh, thấy 20 ngay, scroll xuống đủ 50 mượt, view-source chỉ vài preview đầu; check 320px/768px/1024px/1440px + Tab keyboard
-
-**Dependencies:** Task 1
-
-**Files likely touched:**
-- `app/page.tsx`
-- `components/home/HomeMarquee.tsx` (tạo mới, client)
-- `components/templates/ThiepPreview.tsx` (nếu cần export placeholder)
-
-**Estimated scope:** M (3-5 files)
-
----
-
-## Task 3: Fonts + CSS runtime
-
-**Description:** `app/layout.tsx:15-20` load 4 Google Fonts + `next.config.ts:8` bật `experimental.inlineCss`. Giữ `sans` + `display` preload, `script`/`hand` giữ `preload:false`; đánh giá tắt `inlineCss` trên Workers (giảm memory/CPU) và xác nhận không FOUC. Không đổi font-family/voice.
+**Description:** Viết `supabase/migrations/202610090001_admin.sql` (bảng
+`templates`, cột `invitations.is_flagged` + index, RLS theo spec §4) và script
+`scripts/seed-templates.mjs` import `lib/templates.ts` để sinh `INSERT ... ON
+CONFLICT DO NOTHING` (assert style thuộc 6 giá trị). Thêm
+`supabase/tests/admin.sql` (RLS anon, default `is_flagged`, trigger
+`updated_at`).
 
 **Acceptance criteria:**
-- [ ] Chỉ 2 fonts preload trên `/`, 2 fonts còn lại lazy theo route dùng `var(--script)`/`var(--hand)`
-- [ ] Quyết định `inlineCss: true/false` có số TTFB + visual diff kèm theo
-- [ ] Không đổi token trong `app/styles/tokens.css`, `app/globals.css`
+- [ ] Migration apply sạch; seed đủ rows = số key `templateSamples`
+- [ ] Anon chỉ đọc được template `hidden=false`; service-role full
 
 **Verification:**
-- [ ] Network tab: số font requests trên `/` giảm, `document.fonts` OK
-- [ ] `npx tsc --noEmit` + `npm run build` pass
-- [ ] So sánh screenshot trước–sau (symbol ♥ ✓ ✉ cao độ dòng không đổi)
+- [ ] Review SQL + chạy `supabase test db` nếu có local stack (không bắt buộc CI)
+- [ ] Test consistency trong `tests/admin-auth.test.ts` assert seed khớp code
 
-**Dependencies:** Task 1 (song song với Task 2 được)
+**Dependencies:** None (song song Task 1 được)
 
 **Files likely touched:**
-- `app/layout.tsx`
-- `next.config.ts`
-- `app/globals.css` (chỉ đọc/kiểm tra, tránh sửa)
+- `supabase/migrations/202610090001_admin.sql`
+- `scripts/seed-templates.mjs`
+- `supabase/tests/admin.sql`
 
-**Estimated scope:** S (1-2 files)
+**Estimated scope:** M (3 files)
 
----
+## Task 3: shared contracts (api client + zod + shell/UI kit)
 
-## Task 4: Tách swagger-ui-react khỏi server bundle
-
-**Description:** `app/docs/page.tsx:3` + `app/docs/layout.tsx:2` import `swagger-ui-react` tĩnh nên chui vào `handler.mjs` 15MB. Chuyển sang `next/dynamic(() => import(...), { ssr:false })` + loading fallback, CSS chỉ load client. Route `/docs` và `/api/docs` giữ nguyên contract.
+**Description:** Dựng hạ tầng dùng chung để 5 slice code song song không dẫm
+nhau: cụm `admin` trong `createApi` (`lib/api.ts`, append cuối object, kèm
+types `AdminStats, AdminUserRow, AdminCardRow, AdminTemplateRow`);
+`lib/server/admin-schemas.ts` (zod login, pagination, patch user/card/template);
+`components/admin/` (`AdminShell` + `AdminSidebar` theo design Sidebar,
+`StatCard`, `BarChart`, `Donut`, `FilterPills`, `SearchInput`, `Pagination`,
+`Toast`, `ConfirmDialog`, `EmptyState/ErrorState`) + `components/admin/admin.css`
+(tokens #1c1012/#f8f4ee/#a3161c, breakpoints 1024/768, table scroll pattern,
+target chạm ≥44px).
 
 **Acceptance criteria:**
-- [ ] `handler.mjs` giảm kích thước đo được (ghi số trước–sau vào `tasks/baseline.md`)
-- [ ] `/docs` vẫn mở được, Swagger UI render client-side
-- [ ] Không import `swagger-ui-react` trong server bundle (grep build output)
+- [ ] Mọi endpoint §5 spec đều có type + schema tương ứng, export từ 2 file trên
+- [ ] Sidebar render 4 mục + tên admin + logout prop; drawer mobile hoạt động
+- [ ] Không dependency mới trong `package.json`
 
 **Verification:**
-- [ ] `ls -l .open-next/server-functions/default/handler.mjs` trước–sau
-- [ ] Manual: mở `/docs` + `/api/docs` (theo `DEPLOY.md §5`)
-- [ ] `npm test` + `npx tsc --noEmit` pass
+- [ ] `npm run typecheck`; render smoke test nếu có (ít nhất không vỡ build)
 
-**Dependencies:** Task 1
+**Dependencies:** Task 1, Task 2
 
 **Files likely touched:**
-- `app/docs/page.tsx`
-- `app/docs/layout.tsx`
+- `lib/api.ts`, `lib/server/admin-schemas.ts`
+- `components/admin/*` (~10 files), `components/admin/admin.css`
 
-**Estimated scope:** S (1-2 files)
+**Estimated scope:** L (chia 2 sub-task nếu 1 agent: 3a contracts, 3b UI kit)
 
----
+## Task 4: auth slice
 
-## Task 5: Audit server imports nặng
-
-**Description:** Rà soát server components/API có vô tình import `motion`, `@ffmpeg/*`, `yet-another-react-lightbox`, `embla-carousel-react` hay không. `lib/celebrate.ts:6` đã dynamic tốt — giữ pattern đó. FFmpeg/VideoCompress chỉ chạy browser; Lightbox/embla chỉ client. Chuyển mọi import tĩnh còn sót sang `dynamic ssr:false` hoặc move vào client leaf.
+**Description:** `POST /api/admin/login` (rate-limit IP 10/600s, message lỗi
+chung duy nhất, non-admin sign-out ngay), `POST /api/admin/logout`
+(assertSameOrigin), `GET /api/admin/me`. Trang `app/admin/login/page.tsx`
+(server redirect khi đã admin + client form) và `(panel)/layout.tsx` (guard +
+`AdminShell`, metadata noindex).
 
 **Acceptance criteria:**
-- [ ] `grep` server files (`app/**/page.tsx`, `app/api/**`, `lib/server/**`) không còn import tĩnh 4 lib trên
-- [ ] `handler.mjs` tiếp tục giảm hoặc không tăng
-- [ ] Tính năng nén video/album/embla vẫn chạy client như cũ
+- [ ] Login đúng → cookie + redirect `/admin`; sai/pass thường dân → cùng 1 message lỗi
+- [ ] `/admin` chưa login → redirect `/admin/login`; 10 sai liên tiếp → 429
+- [ ] Ma trận 401/403 cho cả 3 endpoint
 
 **Verification:**
-- [ ] Lệnh: `grep -rn "from \"@ffmpeg\|yet-another-react-lightbox\|embla-carousel\|from \"motion" app lib --include="*.ts" --include="*.tsx"` chỉ còn file client/`"use client"`
-- [ ] `npm test` + manual `/cong-cu/nen-video`, album lightbox
+- [ ] Unit login schema + requireAdmin path; manual login bằng user thật
 
-**Dependencies:** Task 1 (song song với Task 4 được)
+**Dependencies:** Task 1, Task 2, Task 3
 
 **Files likely touched:**
-- `components/tools/VideoCompressTool.tsx` (xác nhận client-only)
-- `components/invitation/client/AlbumGallery.tsx` (xác nhận)
-- Bất kỳ server file nào grep ra
+- `app/api/admin/login|logout|me/route.ts`, `app/admin/login/page.tsx`,
+  `app/admin/(panel)/layout.tsx`, `tests/admin-auth.test.ts` (bổ sung)
 
-**Estimated scope:** S-M (2-4 files)
+**Estimated scope:** M (4–5 files)
 
----
+## Task 5: users slice
 
-## Task 6: Route segment audit (static-first)
-
-**Description:** Marketing giữ static/prerender (`/`, `/templates` đã static tốt, `/templates/[id]` đã có `generateStaticParams`), chỉ `/invite/[slug]` (`app/invite/[slug]/page.tsx:15`) và API mutations giữ `force-dynamic`. `app/api/docs/route.ts:5` đang `force-dynamic` → chuyển static/cache. Thêm `revalidate` hợp lý cho sitemap/blog nếu chưa có, không cache nhầm trang private.
+**Description:** `GET /api/admin/users` (duyệt listUsers ≤10 pages, merge count
+`group by owner_id`, search/sort/slice trong code, strip DTO),
+`PATCH /api/admin/users/[id]` (ban/unban, chặn tự thao tác),
+`DELETE` (chặn tự xoá). Trang `users/page.tsx`: bar tuần + 4 KPI, filter +
+search, bảng + pagination + toast/confirm, responsive theo §7.
 
 **Acceptance criteria:**
-- [ ] Bảng routes cuối cùng: static cho marketing, dynamic chỉ invite/API cần fresh
-- [ ] `/invite/*` giữ `Cache-Control: private,no-store` + `robots noindex` (đã có trong `generateMetadata`)
-- [ ] `/templates/[id]?preview=1&gate=1` không bị cache chéo màu/khách khác
+- [ ] List/search/filter/pagination đúng; ban → suspended, unban ngược lại
+- [ ] Không ban/xoá chính mình; DTO không lọt `app_metadata`
 
 **Verification:**
-- [ ] `npm run build` log routes (○ static, ƒ dynamic) đúng kỳ vọng
-- [ ] Header check: `curl -sI "$B/templates" | grep -i cache`, `curl -sI "$B/invite/<slug>" | grep -i cache`
-- [ ] Manual ẩn danh `?g=<token>` đúng tên hộ (theo `DEPLOY.md §5`)
+- [ ] `tests/admin-users.test.ts`; manual trên user thật
 
-**Dependencies:** Task 2, 4, 5
+**Dependencies:** Task 1, Task 2, Task 3
 
 **Files likely touched:**
-- `app/api/docs/route.ts`
-- `app/sitemap.ts` (nếu thêm revalidate)
-- `app/blog/[slug]/page.tsx` tương tự (nếu có)
-- `lib/server/security.ts` (headers cache, nếu cần)
+- `app/api/admin/users/route.ts`, `app/api/admin/users/[id]/route.ts`,
+  `app/admin/(panel)/users/page.tsx`, `components/admin/UsersClient.tsx`,
+  `tests/admin-users.test.ts`
 
-**Estimated scope:** S (2-3 files)
+**Estimated scope:** M (5 files)
 
----
+## Task 6: cards slice
 
-## Task 7: Cache headers + Cloudflare cache rules
-
-**Description:** Thêm `Cache-Control` đúng cho từng loại (`/_next/static/*` immutable 1y, pages static `s-maxage` + `stale-while-revalidate`, API/invite `no-store`), rồi cấu hình Cloudflare Cache Rules/Tiered Cache cho assets + pages static. Không phụ thuộc ISR memory của OpenNext.
+**Description:** `GET /api/admin/cards` (lọc SQL, search SQL, count + page query,
+batch owner email, 1 query LATERAL xác nhận, couple fallback),
+`PATCH` (published/is_flagged, refine ≥1 field), `DELETE`.
+Trang `cards/page.tsx`: donut + top templates, filter + search, bảng 5 cột
+(Xem → `/invite/[slug]`, Xuất bản/Ẩn, Bỏ báo cáo khi flagged, Xoá) +
+pagination + toast/confirm, responsive.
 
 **Acceptance criteria:**
-- [ ] `/_next/static/*` trả `immutable,max-age=31536000`
-- [ ] `/`, `/templates*`, `/blog*` có `s-maxage` + SWR, hit cache lần 2 (`cf-cache-status: HIT`)
-- [ ] `/invite/*`, `/api/*` (trừ `/api/docs`) `no-store/private`, không HIT nhầm
+- [ ] Filter 4 trạng thái + search slug/template/tên đúng; draft hiện "—"
+- [ ] Không query N+1 (1 LATERAL cho cả trang); perPage clamp ≤ 50
 
 **Verification:**
-- [ ] `curl -sI` từng nhóm URL kiểm tra `cache-control` + `cf-cache-status` 2 lần liên tiếp
-- [ ] `npm run build && npx wrangler deploy` lên preview, verify theo `DEPLOY.md §5` (home/invite/api-docs)
+- [ ] `tests/admin-cards.test.ts` (mapping, validation, clamp)
 
-**Dependencies:** Task 6
+**Dependencies:** Task 1, Task 2, Task 3
 
 **Files likely touched:**
-- `next.config.ts` (headers)
-- `wrangler.jsonc` (assets/cache nếu cần)
-- Cloudflare dashboard (Cache Rules, ghi lại rule vào `tasks/baseline.md`)
+- `app/api/admin/cards/route.ts`, `app/api/admin/cards/[id]/route.ts`,
+  `app/admin/(panel)/cards/page.tsx`, `components/admin/CardsClient.tsx`,
+  `tests/admin-cards.test.ts`
 
-**Estimated scope:** S (1-2 files + dashboard)
+**Estimated scope:** M (5 files)
 
----
+## Task 7: templates slice
 
-## Task 8: CI guard (bundle budget + Lighthouse + wrangler check)
-
-**Description:** Chặn tái phát 1102: check `handler.mjs` size + `wrangler deploy --dry-run` (Total Upload + `startup_time_ms`), Lighthouse Performance ≥90, không tăng bundle quá ngưỡng. Ghi vào CI hiện có (`.github/`).
+**Description:** `GET /api/admin/templates` (filter style + search SQL, order
+`pop desc`), `PATCH /[id]` (name/style/badge/hidden + enum checks). Trang
+`templates/page.tsx`: 4 KPI + style bars, filter + search, lưới card (dải màu
+resolve từ code theo id, badge xoay Thường→MỚI→HOT, Ẩn/Hiện, modal Sửa) +
+pagination + toast/undo (re-PATCH), responsive.
 
 **Acceptance criteria:**
-- [ ] CI fail khi `handler.mjs` vượt budget (đề xuất khởi điểm: <8MB, thắt dần về <5MB)
-- [ ] CI chạy Lighthouse cho `/` + `/templates` (LCP ≤2.5s, CLS ≤0.1)
-- [ ] Có `wrangler check startup` hoặc dry-run startup_time trong log CI
+- [ ] Mọi mutation persist trong DB và hiện lại sau reload
+- [ ] Style/badge lạ → 400; id lạ → 404
 
 **Verification:**
-- [ ] `git push` thử vượt budget → CI đỏ; giảm xuống → CI xanh
-- [ ] `npm test && npx tsc --noEmit && git diff --check` vẫn xanh (theo `DEPLOY.md §4`)
+- [ ] `tests/admin-templates.test.ts`; manual reload kiểm tra persist
 
-**Dependencies:** Task 2-7
+**Dependencies:** Task 1, Task 2, Task 3
 
 **Files likely touched:**
-- `.github/workflows/*`
-- `scripts/check-bundle.mjs` (tạo mới)
-- `tasks/baseline.md` (ngưỡng budget)
+- `app/api/admin/templates/route.ts`, `app/api/admin/templates/[id]/route.ts`,
+  `app/admin/(panel)/templates/page.tsx`,
+  `components/admin/TemplatesClient.tsx`, `tests/admin-templates.test.ts`
 
-**Estimated scope:** M (3-5 files)
+**Estimated scope:** M (5 files)
 
----
+## Task 8: dashboard slice
 
-## Checkpoint log
+**Description:** `GET /api/admin/stats` (≤ ~6 query gộp theo §8.1 + đếm users
+qua Auth API, `no-store`). Trang `(panel)/page.tsx`: greeting + ngày, 4
+StatCards (sparkline + delta), bar 8 tuần + donut, 2 list gần đây + link "Xem
+tất cả →", responsive.
 
-### Checkpoint: Baseline (sau Task 1)
-- [ ] handler bytes + dry-run + startup_time đã lưu
-- [ ] Bảng static/dynamic routes đã lưu
-- [ ] TTFB 3 URL đã lưu
+**Acceptance criteria:**
+- [ ] Mọi con số từ DB/Auth thật, khớp với trang chi tiết (tổng users,
+      published...)
+- [ ] Stats handler ≤ 6 round-trip DB (đếm bằng review code)
 
-### Checkpoint: CPU (sau Task 2-3)
-- [ ] `/` hết 1102 trên preview
-- [ ] TTFB giảm vs baseline
-- [ ] Lighthouse CLS không rớt
+**Verification:**
+- [ ] `tests/admin-stats.test.ts` (shape DTO); manual đối chiếu số liệu
 
-### Checkpoint: Bundle (sau Task 4-5)
-- [ ] handler.mjs giảm (ghi số)
-- [ ] dry-run + startup_time OK
-- [ ] `/docs` + tools client vẫn chạy
+**Dependencies:** Task 1, Task 2, Task 3
 
-### Checkpoint: Complete (sau Task 6-8)
-- [ ] Prod verify `DEPLOY.md §5` (home/invite/api-docs 200)
-- [ ] `?g=` ẩn danh đúng tên
-- [ ] CI xanh, plan được review trước khi merge
+**Files likely touched:**
+- `app/api/admin/stats/route.ts`, `app/admin/(panel)/page.tsx`,
+  `components/admin/DashboardClient.tsx`, `tests/admin-stats.test.ts`
+
+**Estimated scope:** M (4 files)
+
+## Task 9: e2e admin + mock-api
+
+**Description:** Mở rộng `e2e/support/mock-api.ts` mock `**/api/admin/**`
+(login/me/stats/users/cards/templates + mutations). Viết `e2e/admin.spec.ts`:
+guard redirect, login sai/đúng, CRUD mỗi trang, pagination + search,
+`unmocked` rỗng; chạy lại trên mobile viewport (project sẵn có).
+
+**Acceptance criteria:**
+- [ ] Xanh trên cả desktop + mobile projects; console/page errors rỗng
+
+**Verification:**
+- [ ] `npx playwright test e2e/admin.spec.ts` (sau khi slices xong)
+
+**Dependencies:** Task 4, 5, 6, 7, 8
+
+**Files likely touched:**
+- `e2e/support/mock-api.ts`, `e2e/admin.spec.ts`
+
+**Estimated scope:** M (2 files)
+
+## Task 10: responsive sweep + final verification
+
+**Description:** Đối chiếu 4 trang với 4 file `.dc.html` (bố cục + copy tiếng
+Việt), sweep 360/768/1280 (không scroll ngang, drawer/charts/tables đúng §7),
+chạy `npm test` + `typecheck` + e2e full, review chéo conflict (đặc biệt
+`lib/api.ts`), cập nhật `DEPLOY.md`/docs (cách cấp `is_admin`).
+
+**Acceptance criteria:**
+- [ ] Checklist §7 + §9 spec pass hết; docs ops có SQL cấp quyền
+
+**Verification:**
+- [ ] `npm test`, `npm run typecheck`, `playwright test` xanh
+
+**Dependencies:** Task 9
+
+**Files likely touched:** `components/admin/*`, `DEPLOY.md`/`docs/*`, fix lẻ các slice
+
+**Estimated scope:** M

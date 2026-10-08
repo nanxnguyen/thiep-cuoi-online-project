@@ -1,89 +1,97 @@
-# Implementation Plan: Workers Free optimization (Error 1102)
+# Implementation Plan: Khu quản trị (/admin)
 
 ## Overview
 
-`taothiepcuoi.raystudio.com.vn` chạy trên Cloudflare Workers Free (CPU 10ms/req, RAM 128MB, startup 1s) qua `@opennextjs/cloudflare`. Bundle server hiện 15.5MB (`handler.mjs`), homepage SSR ~40 `ThiepPreview`, `app/docs` import `swagger-ui-react` tĩnh vào server bundle. Mục tiêu: chạy ổn định trên Free mà không lên Paid, bằng cách giảm CPU/request, giảm bundle/startup, và đưa marketing pages về static + cache. Không đổi hành vi sản phẩm.
-
-Baseline đã đo (Oct 2026):
-- `handler.mjs`: 15,754,355 bytes
-- `.open-next` tổng: 86M, `assets`: 18M
-- Error: 1102 = exceeded CPU (Free limit 10ms), sau commit `ff7f582` thêm marquee thứ 2.
+Xây khu quản trị riêng tách hẳn route public theo spec
+`docs/superpowers/specs/2026-10-09-admin-design.md`: login email+password tại
+`/admin/login` (Supabase user + `app_metadata.is_admin`), 4 trang sau login
+(Tổng quan, Người dùng, Thiệp cưới, Mẫu thiệp) dùng chung sidebar, APIs
+`/api/admin/*` guard bởi `requireAdmin()`, migrations (`templates` + seed,
+`invitations.is_flagged`), responsive bắt buộc 360/768/1280. Không audit log,
+không trang duyệt wishes, public `/templates` V1 giữ nguyên đọc code.
 
 ## Architecture Decisions
 
-- Giữ Next.js + OpenNext + Workers, không đổi platform. Netlify/Vercel vẫn là fallback (`DEPLOY.md`).
-- Ưu tiên static/prerender + edge cache cho mọi trang marketing; chỉ `/invite/[slug]` và API mutations giữ `force-dynamic`.
-- Homepage: server SSR 6-8 cards, client hiện ngay 20 trong viewport, scroll mở dần đủ 50 (reuse `Defer` + `IntersectionObserver`).
-- Mọi lib nặng client-only (`swagger-ui-react`, `@ffmpeg`, `yet-another-react-lightbox`, `embla`, `motion`) không được lọt vào server bundle — dùng `next/dynamic ssr:false` hoặc route tách riêng.
-- Fonts: giữ tối đa 2 fonts preload (`sans` + `display`), `script`/`hand` đã `preload:false` giữ nguyên; không fetch font runtime ngoài build.
-- Đo trước–sau mọi thay đổi: `handler.mjs` bytes, `wrangler deploy --dry-run`, TTFB/`curl -w`, Lighthouse.
+- Tái dùng session cookie Supabase hiện có; không hệ auth thứ hai. Cờ admin
+  trong `app_metadata` (không phải `user_metadata`).
+- Mọi `/api/admin/*` gọi `requireAdmin()` độc lập — layout guard chỉ lo UX.
+  Admin query dùng `createAdminClient` (service-role) sau guard.
+- Route group `app/admin/(panel)/` giữ URL sạch; `/admin/*` noindex, không
+  sitemap, không link public.
+- `templates` là bảng mới duy nhất public-liên quan: RLS anon chỉ đọc
+  `hidden=false` (dọn đường follow-up), V1 public chưa đọc bảng này.
+- Xoá thật → confirm dialog; toggle đảo ngược được → toast + hoàn tác.
+- Không dependency FE mới; chart = SVG/div inline.
 
 ## Dependency Graph
 
 ```
-Đo baseline (Task 1)
+Task 1 requireAdmin + tests
   │
-  ├── Homepage CPU (Task 2: marquee SSR → client defer)
-  │       │
-  │       └── Fonts + CSS (Task 3) — song song được sau Task 1
-  │
-  ├── Server bundle (Task 4: /docs swagger dynamic, Task 5: audit ffmpeg/motion/lightbox)
-  │       │
-  │       └── Route configs (Task 6: static vs dynamic, generateStaticParams)
-  │
-  └── Cache + headers (Task 7: Cache-Control, Cloudflare cache rules)
+Task 2 migration + seed + SQL tests ──┐ (độc lập với Task 1, gộp chung P0)
+  │                                    │
+Task 3 shared contracts (api client + zod + shell/sidebar/css)
+  │  ▲ cả 3 task P0 xong mới tới slices
+  ├── Task 4 auth (login API + trang login)
+  ├── Task 5 users (API + trang)
+  ├── Task 6 cards (API + trang)        } song song (5 agents)
+  ├── Task 7 templates (API + trang)  }
+  └── Task 8 dashboard (stats API + trang)
           │
-          └── Guard CI (Task 8: bundle budget + Lighthouse + wrangler check)
+  Task 9 e2e admin.spec.ts + mock-api
+          │
+  Task 10 responsive sweep + final verification
 ```
-
-Thứ tự: Task 1 trước. Task 2–5 song song sau Task 1. Task 6–7 sau 2–5. Task 8 cuối.
 
 ## Task List
 
-### Phase 1: Measure (bắt buộc trước mọi fix)
+### Phase 0: Foundation (1 agent, tuần tự T1→T3)
 
-- [ ] Task 1: Đo baseline CPU/bundle/routes
+- [ ] Task 1: `requireAdmin()` + unit tests
+- [ ] Task 2: migration `templates` + `is_flagged` + seed script + SQL tests
+- [ ] Task 3: shared contracts — admin api client, zod schemas, shell/sidebar/UI kit
 
-### Checkpoint: Baseline
-- [ ] Có số handler bytes, top chunks, danh sách routes static/dynamic, TTFB `/`, `/templates`, `/invite/<slug>`, ảnh `wrangler tail` khi lỗi
+### Checkpoint: Foundation
 
-### Phase 2: Giảm CPU/request (win lớn nhất)
+- [ ] `node --test tests/admin-auth.test.ts` xanh; migration apply được trên DB
+      local (`supabase db reset` hoặc review SQL); seed sinh đủ rows
+- [ ] Các slice P1–P5 có hợp đồng API để code độc lập
 
-- [ ] Task 2: Homepage marquee SSR 40 → ~6 previews + client defer
-- [ ] Task 3: Fonts + CSS runtime (giữ 2 fonts preload, kiểm tra `inlineCss`)
+### Phase 1: Slices (5 agents song song, sau Checkpoint Foundation)
 
-### Checkpoint: CPU
-- [ ] `/` hết 1102 trên preview deploy, TTFB giảm, Lighthouse không rớt
+- [ ] Task 4: auth slice — login/logout/me + trang `/admin/login`
+- [ ] Task 5: users slice — API + trang Người dùng
+- [ ] Task 6: cards slice — API + trang Thiệp cưới
+- [ ] Task 7: templates slice — API + trang Mẫu thiệp
+- [ ] Task 8: dashboard slice — stats API + trang Tổng quan
 
-### Phase 3: Giảm bundle/startup
+### Checkpoint: Slices
 
-- [ ] Task 4: Tách `swagger-ui-react` khỏi server bundle (`app/docs`)
-- [ ] Task 5: Audit server imports nặng (ffmpeg/motion/lightbox/embla)
+- [ ] `npm test` toàn xanh, `npm run typecheck` sạch
+- [ ] Mỗi slice demo được bằng tay (login bằng user `is_admin` thật)
 
-### Checkpoint: Bundle
-- [ ] `handler.mjs` giảm rõ rệt, `wrangler --dry-run` + `startup_time_ms` OK
+### Phase 2: Verification (1–2 agents)
 
-### Phase 4: Static + cache + guard
-
-- [ ] Task 6: Route segment audit (static cho marketing, dynamic chỉ invite/API cần)
-- [ ] Task 7: Cache headers + Cloudflare cache rules cho static/ISR
-- [ ] Task 8: CI guard (bundle budget, Lighthouse, wrangler check)
+- [ ] Task 9: e2e `admin.spec.ts` + mở rộng mock-api (desktop + mobile viewport)
+- [ ] Task 10: responsive sweep 360/768/1280 + full verification + review chéo
 
 ### Checkpoint: Complete
-- [ ] Preview Cloudflare hết 1102, prod verify theo `DEPLOY.md §5`, CI xanh
+
+- [ ] `npm test`, `typecheck`, `e2e` xanh; không scroll ngang mobile
+- [ ] Human review trước khi merge/deploy
+
+Chi tiết từng task (acceptance + verification + files) xem `tasks/todo.md`.
 
 ## Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Giảm SSR homepage làm SEO/Layout shift | Med | Giữ SSR 6 cards đầu + placeholder cùng class/kích thước như `GalleryCatalog:Defer`; test `?` + Lighthouse CLS |
-| Tách `/docs` làm hỏng API docs nội bộ | Low | Giữ route, chỉ `dynamic(ssr:false)` + loading fallback; e2e `/docs` |
-| `inlineCss:false` đổi FOUC | Low | So sánh visual trước–sau, giữ `tokens.css`/`globals.css` order |
-| Cache sai làm lộ thiệp private `/invite` | High | `robots noindex` giữ nguyên, `Cache-Control: private,no-store` cho `/invite/*` + API; test ẩn danh `?g=` |
-| OpenNext cache mặc định memory-only, cold start vẫn SSR | Med | Ưu tiên static prerender + Cloudflare CDN cache, không dựa vào ISR memory |
+| 5 agents sửa chung file (`lib/api.ts`, css) gây conflict | Med | Task 3 chia sẵn vùng sở hữu: mỗi slice chỉ append section của mình; merge theo thứ tự P6 review |
+| `listUsers` chậm khi users nhiều | Low | Budget ≤10 pages trong code + comment ngưỡng follow-up; V1 users ít |
+| Seed templates lệch với `lib/templates.ts` sau này | Low | Test consistency số lượng + style/badge hợp lệ chạy mỗi `npm test` |
+| Schema `content.couple` đổi làm vỡ trích tên | Low | Fallback `"Thiệp chưa đặt tên"` + test mapping |
+| Hiểu sai design pixel | Med | P6 đối chiếu từng trang với file `.dc.html` tương ứng |
 
 ## Open Questions
 
-- Có chấp nhận giảm số preview SSR homepage từ 40 → 6–8 không, hay muốn giữ 20?
-- `/docs` (Swagger) có cần public trên Workers không, hay chỉ nội bộ (có thể bỏ khỏi Workers bundle)?
-- Có cho bật Cloudflare Cache Rules / Tiered Cache cho `/_next/static/*` và pages static không?
+- Không còn câu hỏi mở — mọi quyết định đã chốt trong spec §1.
