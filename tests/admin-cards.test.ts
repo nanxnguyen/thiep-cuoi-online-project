@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { adminCardPatchSchema, adminCardsQuerySchema } from "../lib/server/admin-schemas.ts";
 import { getTemplate } from "../lib/templates.ts";
 import { toAccountInvitation } from "../lib/server/auth.ts";
+import { buildCardSearchOr, escapeLikePattern } from "../lib/server/admin-card-search.ts";
 
 // The admin cards slice keeps route handlers thin: validation lives in
 // lib/server/admin-schemas.ts (executed below) while row mapping, bound
@@ -114,12 +115,30 @@ test("cards list orders newest first with offset pagination plus a count query",
   assert.match(listSource, /count: "exact", head: true/);
 });
 
+const searchSource = readFileSync(new URL("../lib/server/admin-card-search.ts", import.meta.url), "utf8");
+
+test("card search escapes LIKE wildcards for both the LIKE and the PostgREST quoted-string layer", () => {
+  assert.equal(escapeLikePattern("50%"), "50\\\\%");
+  assert.equal(escapeLikePattern("a_b"), "a\\\\_b");
+  assert.equal(escapeLikePattern('say "hi"'), 'say \\"hi\\"');
+  assert.equal(escapeLikePattern("a\\b"), "a\\\\\\\\b");
+  assert.equal(escapeLikePattern("a*b"), "a b", "* is PostgREST's own wildcard alias and cannot be escaped");
+});
+
+test("card search also matches the template display name (song hy -> song-hy)", () => {
+  const clause = buildCardSearchOr("Song Hỷ");
+  assert.match(clause, /^search_norm\.ilike\."\*song hy\*",template_id\.in\.\(.*song-hy.*\)$/);
+  assert.equal(buildCardSearchOr("zzzz-no-such-template"), 'search_norm.ilike."*zzzz-no-such-template*"');
+  // q cannot break out of the quoted value into another or() clause.
+  assert.doesNotMatch(buildCardSearchOr('x",template_id.eq.y'), /,template_id\.eq\./);
+});
+
 test("cards list searches accent-insensitively through search_norm", () => {
-  assert.match(listSource, /search_norm\.ilike\./);
-  assert.match(listSource, /normalizeVi\(q\)/);
+  assert.match(listSource, /buildCardSearchOr\(q\)/);
+  assert.match(searchSource, /search_norm\.ilike\./);
+  assert.match(searchSource, /normalizeVi\(q\)/);
   assert.doesNotMatch(listSource, /content::text\.ilike\./);
   assert.match(listSource, /\.or\(searchOr\)/);
-  assert.match(listSource, /escapeLikePattern/);
   // The validated q is folded with normalizeVi then escaped and bound through
   // the query builder — it is never interpolated into a SQL string.
   assert.doesNotMatch(listSource, /\$\{\s*q\s*\}/);
@@ -139,6 +158,15 @@ test("cards list batches owner emails and confirmations instead of N+1 queries",
   assert.match(listSource, /Promise\.all\(\s*ownerIds\.map/);
   assert.match(listSource, /getUserById/);
   assert.match(listSource, /\.in\("invitation_id", ids\)/);
+});
+
+test("card rows are labelled so mobile renders them as stacked cards, not a side-scrolling table", () => {
+  const cardsClient = readFileSync(new URL("../components/admin/CardsClient.tsx", import.meta.url), "utf8");
+  for (const label of ["Chủ tài khoản", "Trạng thái", "Xác nhận"]) {
+    assert.match(cardsClient, new RegExp(`<td data-label="${label}"`));
+  }
+  assert.match(cardsClient, /<td className="adm-cell-actions">/);
+  assert.doesNotMatch(cardsClient, /adm-hide-m/);
 });
 
 test("card item route guards origin, validates uuid and refines the patch body", () => {

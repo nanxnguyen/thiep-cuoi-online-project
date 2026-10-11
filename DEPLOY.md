@@ -102,7 +102,8 @@ Khu quản trị không có bảng role riêng: admin = Supabase user có
 `user_metadata` vì user tự sửa được). Tạo và cấp quyền bằng tay:
 
 1. Supabase Dashboard → Authentication → Add user → Create new user:
-   email mặc định `admin@moc.vn`, password mặc định `admin` (dev).
+   email mặc định `admin@moc.vn`, password mặc định `admin123` (dev).
+   (Supabase bắt password ≥ 6 ký tự nên không dùng được `admin`.)
    Copy `id` (UUID) của user vừa tạo.
 2. Gán quyền bằng service-role key (script Node với
    `SUPABASE_SERVICE_ROLE_KEY` — không dùng anon key, không chạy ở client):
@@ -116,7 +117,7 @@ await supabase.auth.admin.updateUserById("<USER_UUID>", {
    `/admin/login`; đã login nhưng không phải admin thì API trả 403.
 
 CẢNH BÁO BẢO MẬT (production bắt buộc):
-- Đổi password mạnh ngay sau khi tạo — `admin/admin` chỉ là credential mặc
+- Đổi password mạnh ngay sau khi tạo — `admin@moc.vn`/`admin123` chỉ là credential mặc
   định cho dev. Rate-limit login (10 lần/10 phút/IP) chỉ giảm brute-force,
   không thay thế password mạnh.
 - Không hardcode email admin trong code; không để service-role key lọt ra

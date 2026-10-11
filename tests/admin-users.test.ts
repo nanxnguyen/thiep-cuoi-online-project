@@ -5,6 +5,7 @@ import { adminUserPatchSchema, adminUsersQuerySchema } from "../lib/server/admin
 
 const listRoute = readFileSync(new URL("../app/api/admin/users/route.ts", import.meta.url), "utf8");
 const idRoute = readFileSync(new URL("../app/api/admin/users/[id]/route.ts", import.meta.url), "utf8");
+const clientSource = readFileSync(new URL("../components/admin/UsersClient.tsx", import.meta.url), "utf8");
 
 // --- query schema: pagination defaults + perPage clamp (§8.6) ---
 
@@ -50,6 +51,19 @@ test("list route maps banned users to suspended with a metadata name fallback", 
   assert.match(listRoute, /banned_until\s*!=\s*null\s*\?\s*"suspended"\s*:\s*"active"/);
   assert.match(listRoute, /full_name/);
   assert.match(listRoute, /split\("@"\)/);
+});
+
+test("user rows are labelled so mobile renders them as stacked cards, not a side-scrolling table", () => {
+  for (const label of ["Ngày tham gia", "Số thiệp", "Trạng thái"]) {
+    assert.match(clientSource, new RegExp(`<td data-label="${label}"`));
+  }
+  assert.match(clientSource, /<td className="adm-cell-actions">/);
+  assert.doesNotMatch(clientSource, /adm-hide-m/);
+});
+
+test("the admin's own row cannot be banned or deleted from the UI", () => {
+  assert.match(clientSource, /disabled=\{mutating === row\.id \|\| row\.isSelf\}/);
+  assert.match(listRoute, /isSelf: true/);
 });
 
 test("list route searches accent-insensitively on both sides", () => {

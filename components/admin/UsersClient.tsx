@@ -243,24 +243,25 @@ export function UsersClient() {
                         <span className="adm-avatar" aria-hidden="true">{adminInitials(row.name)}</span>
                       )}
                       <span style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-                        <span className="adm-cell-main">{row.name}</span>
+                        <span className="adm-cell-main">{row.name}{row.isSelf ? " (Bạn)" : ""}</span>
                         <span className="adm-cell-sub">{row.email}</span>
                       </span>
                     </span>
                   </td>
-                  <td>{formatJoined(row.createdAt)}</td>
-                  <td><span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17 }}>{row.inviteCount}</span></td>
-                  <td>
+                  <td data-label="Ngày tham gia">{formatJoined(row.createdAt)}</td>
+                  <td data-label="Số thiệp"><span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17 }}>{row.inviteCount}</span></td>
+                  <td data-label="Trạng thái">
                     <span className={row.status === "active" ? "adm-status adm-status-active" : "adm-status adm-status-suspended"}>
                       {row.status === "active" ? "Hoạt động" : "Đã khoá"}
                     </span>
                   </td>
-                  <td>
+                  <td className="adm-cell-actions">
                     <span className="adm-actions">
                       <button
                         type="button"
                         className="adm-btn adm-btn-ghost"
-                        disabled={mutating === row.id}
+                        disabled={mutating === row.id || row.isSelf}
+                        title={row.isSelf ? "Không thể khoá chính bạn" : undefined}
                         onClick={() => toggleStatus(row)}
                       >
                         {row.status === "active" ? "Khoá" : "Mở khoá"}
@@ -269,7 +270,8 @@ export function UsersClient() {
                         type="button"
                         className="adm-btn adm-btn-ghost"
                         style={{ color: "var(--accent)" }}
-                        disabled={mutating === row.id}
+                        disabled={mutating === row.id || row.isSelf}
+                        title={row.isSelf ? "Không thể xoá chính bạn" : undefined}
                         onClick={() => setConfirm({ row, busy: false })}
                       >
                         Xoá

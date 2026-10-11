@@ -272,14 +272,14 @@ export function CardsClient() {
                         {row.templateName} · {formatDate(row.createdAt)}
                       </div>
                     </td>
-                    <td title={row.ownerEmail}>{row.ownerEmail}</td>
-                    <td>
+                    <td data-label="Chủ tài khoản" title={row.ownerEmail}>{row.ownerEmail}</td>
+                    <td data-label="Trạng thái">
                       <span className={`adm-status adm-status-${row.status}`}>{STATUS_LABEL[row.status]}</span>
                     </td>
-                    <td>{row.confirmed}</td>
-                    <td>
+                    <td data-label="Xác nhận">{row.confirmed}</td>
+                    <td className="adm-cell-actions">
                       <div className="adm-actions">
-                        <a className="adm-btn adm-btn-ghost" href={`/invite/${encodeURIComponent(row.slug)}`}>
+                        <a className="adm-btn adm-btn-ghost" href={`/invite/${encodeURIComponent(row.slug)}`} target="_blank" rel="noopener noreferrer">
                           Xem
                         </a>
                         <button
@@ -287,7 +287,7 @@ export function CardsClient() {
                           className="adm-btn adm-btn-ghost"
                           onClick={() => void togglePublish(row)}
                         >
-                          {row.status === "draft" ? "Xuất bản" : "Ẩn"}
+                          {row.status === "draft" ? "Xuất bản" : "Ẩn xuất bản"}
                         </button>
                         {row.status === "reported" ? (
                           <button
