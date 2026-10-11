@@ -293,57 +293,83 @@
   opacity: 0.85;
 }
 
-/* Hồng Nhung — drawn roses spill in from the top onto a deep ground. */
+/* Hồng Nhung — one velvet-rose cascade from the top, text grounded at the base. */
 .cv-rose-cluster {
   position: relative;
   height: 100%;
   overflow: hidden;
   color: var(--cv-paper);
-  background: radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--cv-paper) 12%, var(--cv-deep)), var(--cv-deep) 70%);
+  background: radial-gradient(circle at 50% 16%, color-mix(in srgb, var(--cv-paper) 14%, var(--cv-deep)), var(--cv-deep) 72%);
 }
-.cv-rose-cluster__art {
+.cv-rose-cluster__cascade {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  overflow: visible;
+  animation: cvQlRoseSway 7s ease-in-out infinite alternate;
+  transform-origin: 50% 0;
+}
+.cv-rose-cluster__bloom {
+  animation: cvQlRoseIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.cv-rose-cluster__bloom--hero {
+  filter: drop-shadow(0 1.2cqw 2.4cqw color-mix(in srgb, var(--cv-deep) 55%, transparent));
+}
+.cv-rose-cluster__text {
+  position: absolute;
+  left: 8cqw;
+  right: 8cqw;
+  bottom: 8cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.2cqw;
+  animation: cvQlRoseIn 0.8s 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-rose-cluster__kicker {
-  position: absolute;
-  top: 66cqw;
-  left: 0;
-  right: 0;
-}
-.cv-rose-cluster__names {
-  position: absolute;
-  left: 6cqw;
-  right: 6cqw;
-  top: 73cqw;
-  font-family: var(--hand);
-  font-size: 15cqw;
-  line-height: 1.02;
-}
-.cv-rose-cluster__amp {
-  display: block;
-  margin: 1cqw 0;
-  font-family: var(--script);
-  font-style: italic;
-  font-size: 6.4cqw;
   color: var(--cv-gold);
 }
+.cv-rose-cluster__names {
+  font-family: var(--display);
+  font-size: 8.8cqw;
+  line-height: 1.16;
+  text-wrap: balance;
+}
+.cv-rose-cluster__amp {
+  font-family: var(--script);
+  font-style: italic;
+  color: var(--cv-gold);
+}
+.cv-rose-cluster__rule {
+  width: 16cqw;
+  height: 0.35cqw;
+  background: var(--cv-gold);
+  opacity: 0.9;
+}
 .cv-rose-cluster__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 138cqw;
   font-size: 4.2cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
+  color: var(--cv-paper);
+}
+.cv-rose-cluster__date--cols {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3cqw;
+  font-size: 6cqw;
+  letter-spacing: 0.08em;
+  text-indent: 0;
+}
+.cv-rose-cluster__date--cols span + span::before {
+  content: "/";
+  margin-right: 3cqw;
+  color: var(--cv-gold);
 }
 .cv-rose-cluster__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 148cqw;
   font-size: 2.6cqw;
   letter-spacing: 0.22em;
   text-indent: 0.22em;
@@ -363,10 +389,21 @@
   15% { opacity: 0.9; }
   100% { opacity: 0; transform: translateY(-22cqw); }
 }
+@keyframes cvQlRoseIn {
+  from { opacity: 0; transform: translateY(-3cqw) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvQlRoseSway {
+  from { transform: rotate(-0.8deg); }
+  to { transform: rotate(0.8deg); }
+}
 @media (prefers-reduced-motion: reduce) {
   .cv-floral-monogram__stem,
   .cv-octagon-frame__photo,
-  .cv-champagne-line__bubble {
+  .cv-champagne-line__bubble,
+  .cv-rose-cluster__cascade,
+  .cv-rose-cluster__bloom,
+  .cv-rose-cluster__text {
     animation: none;
   }
   .cv-champagne-line__bubble {

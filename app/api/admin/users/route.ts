@@ -79,7 +79,7 @@ export function bucketWeekly(createdAts: readonly string[], weeks = 8, now = Dat
 export async function GET(request: NextRequest) {
   return routeResponse(request, async () => {
     const { client, applyCookies } = createRouteClient(request);
-    await requireAdmin(client);
+    const self = await requireAdmin(client);
     const parsed = adminUsersQuerySchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
     if (!parsed.success) {
       throw new HttpError(400, parsed.error.issues[0]?.message ?? "Tham số không hợp lệ.");
@@ -118,7 +118,11 @@ export async function GET(request: NextRequest) {
     const safePage = Math.min(page, pageCount);
     const items = filtered
       .slice((safePage - 1) * perPage, safePage * perPage)
-      .map((user) => mapAuthUserToRow(user, counts.get(user.id) ?? 0));
+      .map((user) => ({
+        ...mapAuthUserToRow(user, counts.get(user.id) ?? 0),
+        // The UI disables ban/delete on the admin's own row (the PATCH/DELETE routes refuse it anyway).
+        ...(user.id === self.id ? { isSelf: true } : {}),
+      }));
 
     const response = NextResponse.json({
       items,

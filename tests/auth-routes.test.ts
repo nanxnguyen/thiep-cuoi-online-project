@@ -178,19 +178,27 @@ test("account invitation list is scoped to the authenticated owner", async () =>
   assert.equal(result[0]?.published, true);
 });
 
-// Regression (2026-09-27): after Google sign-in the header stayed logged-out because SiteHeader only calls
-// api.me when the sessionStorage hint exists, and nothing on the Google path set it. These are source guards:
-// the components are TSX and `npm test` has no DOM, so the wiring is checked textually.
-test("Google sign-in leaves the session hint the header needs to show the avatar", async () => {
+// Regression (2026-09-27, fix 2026-10-08): after Google sign-in the header stayed logged-out.
+// Root cause: the login hint lived in sessionStorage (per-tab) — a new tab (or a return visit)
+// has a valid httpOnly cookie but no hint, so the header showed "Đăng nhập" instead of the avatar.
+// Fix: hint lives in localStorage (shared by all tabs); the header only asks /api/auth/me when the
+// hint exists. No request means no 401, and Chrome logs console.error for 401 responses even when
+// the promise has .catch — so always-fetching broke e2e "no console errors" on every public page.
+// These are source guards: the components are TSX and `npm test` has no DOM, so the wiring is checked textually.
+test("Header uses the cross-tab login hint so the avatar shows in any tab without 401 noise", async () => {
   const { readFileSync } = await import("node:fs");
   const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
+
+  const hint = read("lib/account.ts");
+  assert.match(hint, /localStorage\.getItem\(TOKEN\)/);
+  assert.doesNotMatch(hint, /sessionStorage\.(get|set|remove)Item/);
 
   const authForm = read("components/account/AuthForm.tsx");
   assert.match(authForm, /className="acc-google"[^>]*onClick=\{\(\) => accountToken\.set\("session"\)\}/);
 
   const header = read("components/site/SiteHeader.tsx");
-  assert.match(header, /if \(!accountToken\.get\(\)\) setProfile\(null\)/);
-  assert.match(header, /\.catch\(\(\) => \{ accountToken\.clear\(\); setProfile\(null\); \}\)/);
+  assert.match(header, /if \(!accountToken\.get\(\)\)/);
+  assert.match(header, /api\.me\(accountToken\.get\(\)\)\.then\(/);
 
   const account = read("components/account/AccountClient.tsx");
   assert.match(account, /accountToken\.set\("session"\);\s*broadcastAuth\(currentUser\)/);

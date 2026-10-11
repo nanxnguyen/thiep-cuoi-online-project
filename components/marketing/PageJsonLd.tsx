@@ -7,7 +7,7 @@ type Parent = { name: string; path: string };
 
 // Structured data for one indexable page: BreadcrumbList (Trang chủ > parents > this page), plus an ItemList
 // (`list`) for hub pages or WebApplication (`app`) for the browser tools. Renders nothing visible.
-export function PageJsonLd({ path, name, parents = [], list, app = false }: { path: string; name: string; parents?: Parent[]; list?: { name: string; path: string }[]; app?: boolean }) {
+export function PageJsonLd({ path, name, parents = [], list, app = false }: { path: string; name: string; parents?: Parent[]; list?: { name: string; path: string; image?: string }[]; app?: boolean }) {
   const trail = [{ name: "Trang chủ", path: "/" }, ...parents, { name }];
   return (
     <>

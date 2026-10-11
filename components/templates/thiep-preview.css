@@ -4,7 +4,7 @@
    without this an over-long unbroken name silently disappears past the card edge instead of wrapping. */
 .tp-root [class*="__name"] { overflow-wrap: anywhere; max-width: 100%; white-space: normal !important; }
 @media (min-width: 860px) { .tp-root--std { width: 70% !important; max-width: 70% !important; } }
-.tp-slot { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; background: rgba(127, 127, 127, .08); font: 13px/1.3 system-ui, -apple-system, sans-serif; overflow: hidden; }
+.tp-slot { position: absolute; inset: 0; aspect-ratio: 3 / 4; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; background: rgba(127, 127, 127, .08); font: 13px/1.3 system-ui, -apple-system, sans-serif; overflow: hidden; }
 .tp-slot svg { opacity: .45; }
 .tp-slot__cap { max-width: 90%; font-weight: 500; letter-spacing: .01em; opacity: .75; }
 .tp-slot__ring { position: absolute; inset: 0; pointer-events: none; border: 1.5px dashed currentColor; opacity: .35; }

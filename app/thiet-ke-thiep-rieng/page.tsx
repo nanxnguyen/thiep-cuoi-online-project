@@ -42,7 +42,7 @@ function HeroCard({ id, palette, cls }: { id: string; palette: ColorKey; cls: st
   const c = colors[palette];
   return (
     <div className={`cd-card ${cls}`} aria-hidden="true">
-      <ThiepPreview family={t.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} radius="14px" fit maxW="100%" />
+      <ThiepPreview family={t.family} deep={c.deep} paper={c.paper} gold={c.gold} a={s.a} b={s.b} date={s.date} place={s.place} radius="14px" fit maxW="100%" eager />
     </div>
   );
 }

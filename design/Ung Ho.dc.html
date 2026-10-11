@@ -7,6 +7,7 @@
 </head>
 <body>
 <x-dc>
+
 <helmet>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
 <script src="./image-slot.js"></script>
@@ -18,28 +19,44 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-b
 @keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.8}100%{transform:translateY(-420px) scale(1.1);opacity:0}}
 @keyframes cardIn{0%{opacity:0;transform:translateY(40px) rotate(-3deg)}100%{opacity:1;transform:rotate(-1.5deg)}}
 @keyframes toast{0%{opacity:0;transform:translate(-50%,10px)}15%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-6px)}}
+@keyframes glow{0%,100%{box-shadow:0 40px 80px -30px rgba(0,0,0,.5),0 0 0 0 rgba(163,22,28,.35)}50%{box-shadow:0 40px 80px -30px rgba(0,0,0,.5),0 0 0 10px rgba(163,22,28,0)}}
+@keyframes tickIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
 </style>
 <script src="motion.js"></script>
 </helmet>
 <div style="min-height:100vh">
   <dc-import name="Site Header" style="position:sticky;top:0;z-index:40;display:block" hint-size="100%,64px"></dc-import>
+
   <section style="position:relative;overflow:hidden;background:#a3161c;color:#fff">
     <div style="position:absolute;inset:0;pointer-events:none">{{ hearts }}</div>
-    <div style="max-width:1280px;margin:0 auto;padding:96px 32px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px;align-items:center;position:relative">
-      <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="max-width:1280px;margin:0 auto;padding:88px 32px 72px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px;align-items:center;position:relative">
+      <div style="display:flex;flex-direction:column;gap:22px">
         <span style="font-size:44px;display:inline-block;animation:heart 1.6s ease-in-out infinite;align-self:flex-start">♥</span>
-        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(46px,6vw,84px);line-height:1;animation:fadeUp .9s .1s both">Ủng hộ <em style="color:#f3d9a6">Mộc</em></h1>
-        <p style="margin:0;font-size:17px;line-height:1.75;color:#fbe3e3;max-width:460px;animation:fadeUp .9s .25s both">Mộc miễn phí cho tất cả mọi người. Nếu tấm thiệp giúp ngày cưới của bạn nhẹ nhàng hơn, một khoản ủng hộ nhỏ sẽ giúp dự án tiếp tục.</p>
-        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;animation:fadeUp .9s .4s both">
-          <sc-for list="{{ uses }}" as="u" hint-placeholder-count="3">
-            <div style="display:flex;gap:14px;align-items:center;font-size:15px"><span style="width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;font-size:12px;flex:none">{{ u.n }}</span>{{ u.t }}</div>
-          </sc-for>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(44px,5.6vw,76px);line-height:1.04;animation:fadeUp .9s .1s both">Giữ Mộc sống, <em style="color:#f3d9a6">miễn phí mãi mãi</em></h1>
+        <p style="margin:0;font-size:17px;line-height:1.75;color:#fbe3e3;max-width:460px;animation:fadeUp .9s .25s both">Mỗi tháng Mộc phục vụ hàng nghìn tấm thiệp miễn phí. Chi phí máy chủ và thời gian thiết kế vẫn phải trả — một khoản ủng hộ nhỏ ngay hôm nay giúp Mộc tiếp tục đứng vững cho tháng tới.</p>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:4px;animation:fadeUp .9s .32s both">
+          <span style="display:flex">{{ avatarStack }}</span>
+          <span style="font-size:14px;color:#fbe3e3">{{ supporterCount }} đã ủng hộ trong tháng này</span>
         </div>
+        <a href="#bank-card" style="margin-top:6px;align-self:flex-start;background:#fff;color:#a3161c;font-weight:600;padding:16px 30px;border-radius:999px;font-size:16px;animation:fadeUp .9s .4s both" style-hover="background:#f3d9a6;color:#5a1119">Ủng hộ ngay ↓</a>
       </div>
-      <div style="justify-self:center;width:100%;max-width:400px;background:#fff;color:#1a1412;border-radius:24px;padding:32px;box-shadow:0 40px 80px -30px rgba(0,0,0,.5);animation:cardIn 1s .3s cubic-bezier(.2,.8,.2,1) both;position:relative">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">CHUYỂN KHOẢN</span><span style="font-size:13px;font-weight:600;color:#6b2d8c">TPBank</span></div>
+
+      <div id="bank-card" style="justify-self:center;width:100%;max-width:400px;background:#fff;color:#1a1412;border-radius:24px;padding:28px;animation:cardIn 1s .3s cubic-bezier(.2,.8,.2,1) both,glow 2.8s 1.3s ease-in-out infinite;position:relative;scroll-margin-top:90px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><span style="font-size:12px;letter-spacing:.2em;color:#8a6425;font-weight:600">CHUYỂN KHOẢN</span><span style="font-size:13px;font-weight:600;color:#6b2d8c">TPBank</span></div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <span style="font-size:12px;color:#8a7d72">Chọn mức ủng hộ</span>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+            <sc-for list="{{ amounts }}" as="am" hint-placeholder-count="4">
+              <button onClick="{{ am.pick }}" style="font-family:inherit;font-size:14px;font-weight:500;padding:11px 8px;border-radius:12px;border:1.5px solid {{ am.bd }};background:{{ am.bg }};color:{{ am.fg }};cursor:pointer">{{ am.label }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasImpact }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#5e534b;line-height:1.5;animation:tickIn .25s both">♥ {{ impactText }}</span></sc-if>
+        </div>
+
         <div style="aspect-ratio:1;border-radius:16px;overflow:hidden;position:relative;background:#f4efe8;border:1px solid #efe6d9"><image-slot id="ungho-qr" shape="rect" fit="contain" placeholder="Thả ảnh mã QR TPBank"></image-slot></div>
-        <div style="display:flex;flex-direction:column;gap:2px;margin-top:22px">
+
+        <div style="display:flex;flex-direction:column;gap:2px;margin-top:18px">
           <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
             <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #efe6d9">
               <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#8a7d72">{{ f.label }}</span><span style="font-size:15px;font-weight:500">{{ f.value }}</span></div>
@@ -51,16 +68,24 @@ a{color:#a3161c;text-decoration:none}a:hover{color:#7d0f14}*{box-sizing:border-b
       </div>
     </div>
   </section>
+
   <section style="max-width:880px;margin:0 auto;padding:96px 32px;text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center">
-    <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(28px,3.4vw,40px);line-height:1.35">“Không ủng hộ cũng không sao. Hãy dùng Mộc, và kể cho một cặp đôi khác nghe.”</span>
-    <a href="Studio.dc.html" style="margin-top:12px;background:#1a1412;color:#fff;padding:15px 26px;border-radius:999px;font-size:15px" style-hover="background:#3a2e28;color:#fff">Tạo thiệp miễn phí</a>
+    <span style="font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(24px,2.8vw,32px);line-height:1.4">“Dùng thử rồi mới tin là thật miễn phí. Ủng hộ một chút để Mộc còn đó cho những cặp đôi sau mình.”</span>
+    <span style="font-size:13px;color:#8a7d72">— Thu Hà &amp; Quốc Bảo, đã tạo thiệp trên Mộc</span>
+    <a href="#bank-card" style="margin-top:12px;background:#a3161c;color:#fff;padding:16px 30px;border-radius:999px;font-size:15px;font-weight:500" style-hover="background:#7d0f14;color:#fff">Ủng hộ ngay</a>
   </section>
+
   <dc-import name="Site Footer" show-cta="{{ false }}" hint-size="100%,360px"></dc-import>
 </div>
+
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const AMOUNTS = [[50000,'50.000đ','Duy trì máy chủ cho khoảng 1.000 lượt xem thiệp'],[100000,'100.000đ','Giữ máy chủ hoạt động thêm 1 ngày cho mọi người dùng'],[200000,'200.000đ','Góp phần thiết kế một mẫu thiệp mới'],[500000,'500.000đ','Giữ Mộc miễn phí thêm một tuần cho hàng nghìn cặp đôi']];
+const AV_NAMES = ['Chị Hương','Anh Nam','Minh Anh & Gia Huy','Khánh Vy'];
+const AV = [['#f7f0e0','#8a6425'],['#e7eee6','#24493a'],['#eef1f4','#1f3a5f'],['#fbf1ef','#a4505f'],['#f3ece2','#6b4a33']];
+const SUPPORTERS = 238;
 class Component extends DCLogic {
-  state = { copied: null };
+  state = { copied: null, amount: null };
   hearts() {
     if (this._h) return this._h;
     this._h = Array.from({ length: 16 }, (_, i) => { const r = n => { const x = Math.sin(i * 71.3 + n * 9.1) * 1e4; return x - Math.floor(x); }; const d = 6 + r(1) * 6;
@@ -68,10 +93,15 @@ class Component extends DCLogic {
     return this._h;
   }
   renderVals() {
-    const fields = [['Ngân hàng', 'TPBank'], ['Chủ tài khoản', 'Điền tên chủ tài khoản'], ['Số tài khoản', 'Điền số tài khoản'], ['Nội dung', 'Ung ho Moc']];
+    const s = this.state;
+    const chosen = AMOUNTS.find(a => a[0] === s.amount);
+    const fields = [['Ngân hàng', 'TPBank'], ['Số tài khoản', 'Điền số tài khoản'], ...(chosen ? [['Số tiền', chosen[1]]] : []), ['Nội dung', 'Ung ho Moc']];
     return {
-      hearts: this.hearts(), copied: this.state.copied,
-      uses: [{ n: '1', t: 'Trả tiền máy chủ để thiệp luôn mở nhanh' }, { n: '2', t: 'Thiết kế thêm mẫu thiệp mới' }, { n: '3', t: 'Giữ Mộc miễn phí cho mọi người' }],
+      hearts: this.hearts(), copied: s.copied,
+      supporterCount: `${SUPPORTERS} người`,
+      avatarStack: AV.slice(0, 4).map((c, i) => React.createElement('span', { key: i, style: { width: 24, height: 24, borderRadius: '50%', background: c[0], color: c[1], display: 'grid', placeItems: 'center', fontSize: 10, fontWeight: 600, border: '2px solid #a3161c', marginLeft: i ? -8 : 0 } }, AV_NAMES[i].trim().split(' ').pop()[0])),
+      amounts: AMOUNTS.map(([val, label]) => ({ label, bd: s.amount === val ? '#a3161c' : '#e0d5c6', bg: s.amount === val ? '#a3161c' : '#fff', fg: s.amount === val ? '#fff' : '#1a1412', pick: () => this.setState({ amount: s.amount === val ? null : val }) })),
+      hasImpact: !!chosen, impactText: chosen ? chosen[2] : '',
       fields: fields.map(([label, value]) => ({ label, value, copy: () => { navigator.clipboard && navigator.clipboard.writeText(value); this.setState({ copied: null }, () => this.setState({ copied: label.toLowerCase() })); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ copied: null }), 1800); } })),
     };
   }

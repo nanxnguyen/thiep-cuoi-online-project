@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
+import { product } from "@/lib/jsonld";
+import { SITE_URL } from "@/lib/site";
 import Link from "next/link";
+import { JsonLd } from "@/components/marketing/JsonLd";
+import { FaqList, type Faq } from "@/components/marketing/FaqList";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { templates } from "@/lib/templates";
@@ -23,6 +27,21 @@ const included = [
 
 const planned = ["Video trong thiệp"];
 
+const PRICE_FAQ: Faq[] = [
+  {
+    q: "Dùng MỘC có mất phí không?",
+    a: "Hiện tại toàn bộ tính năng miễn phí. Nếu sau này có gói trả phí, thông tin sẽ được đăng ở trang Bảng giá.",
+  },
+  {
+    q: "Thiệp cưới online có miễn phí thật không?",
+    a: "Có. Hiện tại MỘC miễn phí toàn bộ: tạo thiệp, chọn mẫu, ảnh nhạc, xác nhận tham dự, sổ lưu bút và mã QR mừng cưới. Bạn không cần nhập thẻ hay đăng ký gói nào.",
+  },
+  {
+    q: "Tôi có cần đăng ký tài khoản không?",
+    a: "Không bắt buộc. Hai bạn có thể tạo thiệp ngay và lưu link chỉnh sửa. Nếu tạo tài khoản, bạn có thể nhận thiệp vào tài khoản để mở lại trên thiết bị khác.",
+  },
+];
+
 export default function PricingPage() {
   return (
     <MarketingLayout path="/bang-gia" name="Bảng giá">
@@ -34,7 +53,7 @@ export default function PricingPage() {
           <span className="pricing-zero__unit">đ</span>
         </div>
         <h1>
-          Miễn phí cho mọi cặp đôi, <em>mọi tính năng.</em>
+          Bảng giá thiệp cưới online: <em>miễn phí toàn bộ.</em>
         </h1>
         <p>Không có gói trả phí, không giới hạn số khách, không cần thẻ ngân hàng. Mộc được duy trì nhờ sự ủng hộ tự nguyện.</p>
       </section>
@@ -81,6 +100,21 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+      <section className="pricing-faq" aria-label="Hỏi đáp về giá">
+        <h2>Thắc mắc về giá?</h2>
+        <FaqList items={PRICE_FAQ} schema />
+        <p>
+          Xem thêm <Link href="/tro-giup">31 câu hỏi thường gặp</Link> và <Link href="/templates">50 mẫu thiệp</Link>.
+        </p>
+      </section>
+      <JsonLd
+        data={product(SITE_URL, {
+          name: "Thiệp cưới online MỘC",
+          description: "Tạo thiệp cưới online: chọn mẫu, thêm ảnh và câu chuyện, gửi qua Zalo; khách xác nhận tham dự và mừng cưới ngay trên thiệp.",
+          image: "/og.png",
+          url: "/bang-gia",
+        })}
+      />
     </MarketingLayout>
   );
 }

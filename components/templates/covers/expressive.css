@@ -293,160 +293,158 @@
   opacity: 0.85;
 }
 
-/* Cắt Giấy — four stacked sheets, depth from shadow only. */
+/* Cắt Giấy — three crisp sheets tunnelled into an arch, swaying charm. */
 .cv-paper-cut {
   position: relative;
   height: 100%;
   overflow: hidden;
   color: var(--cv-deep);
   background: var(--cv-deep);
-  --cv-l2: color-mix(in srgb, var(--cv-deep) 55%, var(--cv-paper));
-  --cv-l3: color-mix(in srgb, var(--cv-gold) 72%, var(--cv-paper));
+}
+.cv-paper-cut__layer {
+  position: absolute;
+}
+.cv-paper-cut__layer--mid {
+  left: 5cqw;
+  right: 5cqw;
+  top: 6cqw;
+  bottom: 4cqw;
+  border-radius: 47.5cqw 47.5cqw 4cqw 4cqw;
+  background: color-mix(in srgb, var(--cv-gold) 55%, var(--cv-paper));
+  box-shadow: 0 1.2cqw 2.4cqw color-mix(in srgb, var(--cv-deep) 40%, transparent);
+  animation: cvLift 0.9s ease-out both;
 }
 .cv-paper-cut__sheet {
   position: absolute;
-}
-.cv-paper-cut__sheet--2 {
-  left: 4cqw;
-  right: 4cqw;
-  top: 6cqw;
-  bottom: 6cqw;
-  border-radius: 50cqw 50cqw 6cqw 6cqw;
-  background: var(--cv-l2);
-  box-shadow: 0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.4);
-}
-.cv-paper-cut__sheet--3 {
-  left: 9cqw;
-  right: 9cqw;
+  left: 10cqw;
+  right: 10cqw;
   top: 12cqw;
-  bottom: 11cqw;
-  border-radius: 45cqw 45cqw 6cqw 6cqw;
-  background: var(--cv-l3);
-  box-shadow: 0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.35);
-}
-.cv-paper-cut__sheet--4 {
-  left: 14cqw;
-  right: 14cqw;
-  top: 18cqw;
-  bottom: 16cqw;
-  border-radius: 36cqw 36cqw 5cqw 5cqw;
+  bottom: 9cqw;
+  border-radius: 40cqw 40cqw 4cqw 4cqw;
   background: var(--cv-paper);
-  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.3);
-  animation: cvLift 0.9s ease-out both;
+  box-shadow: 0 1.2cqw 2.4cqw color-mix(in srgb, var(--cv-deep) 45%, transparent);
+  animation: cvLift 0.9s 0.08s ease-out both;
   text-align: center;
-}
-.cv-paper-cut__sprig {
-  position: absolute;
-  width: 11cqw;
-  color: var(--cv-deep);
-  filter: drop-shadow(0 0.6cqw 0.6cqw rgba(0, 0, 0, 0.4));
-}
-.cv-paper-cut__sprig--l {
-  left: 2cqw;
-  bottom: 14cqw;
-  transform: rotate(-12deg);
-}
-.cv-paper-cut__sprig--r {
-  right: 2cqw;
-  bottom: 14cqw;
-  transform: rotate(12deg) scaleX(-1);
 }
 .cv-paper-cut__kicker {
   position: absolute;
-  top: 9cqw;
+  top: 5cqw;
   left: 0;
   right: 0;
-  font-size: 2.2cqw;
 }
 .cv-paper-cut__photo {
   position: absolute;
   left: 15cqw;
-  top: 17cqw;
-  width: 42cqw;
-  height: 56cqw;
-  border-radius: 50%;
+  top: 13cqw;
+  width: 50cqw;
+  height: 58cqw;
+  border-radius: 25cqw 25cqw 3cqw 3cqw;
   overflow: hidden;
-  border: 1cqw solid var(--cv-l3);
+  border: 0.8cqw solid var(--cv-paper);
+  box-shadow:
+    0 0 0 1.6cqw color-mix(in srgb, var(--cv-gold) 70%, var(--cv-paper)),
+    0 1.2cqw 2.4cqw color-mix(in srgb, var(--cv-deep) 40%, transparent);
+  background: color-mix(in srgb, var(--cv-deep) 12%, var(--cv-paper));
+  animation: cvPop 0.8s 0.25s ease-out both;
+}
+.cv-paper-cut__charm {
+  position: absolute;
+  left: 50%;
+  top: 74cqw;
+  width: 10cqw;
+  height: 17cqw;
+  margin-left: -5cqw;
+  color: var(--cv-deep);
+  animation: cvLift 0.7s 0.45s ease-out both;
+}
+.cv-paper-cut__sway {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: cvSway 5s ease-in-out infinite alternate;
+}
+.cv-paper-cut__text {
+  position: absolute;
+  left: 4cqw;
+  right: 4cqw;
+  bottom: 3cqw;
+  animation: cvLift 0.8s 0.35s ease-out both;
 }
 .cv-paper-cut__names {
-  position: absolute;
-  left: 3cqw;
-  right: 3cqw;
-  top: 80cqw;
   font-family: var(--display);
-  font-size: 7.2cqw;
+  font-size: 7.6cqw;
   line-height: 1.16;
+  text-wrap: balance;
+}
+.cv-paper-cut--long .cv-paper-cut__names {
+  font-size: 6.2cqw;
 }
 .cv-paper-cut__amp {
   font-family: var(--script);
   font-style: italic;
-  color: var(--cv-gold);
+  color: color-mix(in srgb, var(--cv-gold) 60%, var(--cv-deep));
 }
 .cv-paper-cut__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 106cqw;
-  font-size: 3.6cqw;
-  letter-spacing: 0.26em;
-  text-indent: 0.26em;
+  margin-top: 2.4cqw;
+  font-size: 3.8cqw;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
 }
 .cv-paper-cut__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 115cqw;
-  font-size: 2.2cqw;
-  letter-spacing: 0.18em;
-  text-indent: 0.18em;
+  margin-top: 1cqw;
+  font-size: 2.4cqw;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
   opacity: 0.85;
 }
 
-/* Duyên Tinh Tú — date-seeded constellation, photo planet on a tilted orbit. */
+/* Duyên Tinh Tú — date-seeded star chart, photo planet on a tilted orbit. */
 .cv-constellation {
   position: relative;
   height: 100%;
   overflow: hidden;
   color: var(--cv-paper);
-  background: radial-gradient(circle at 50% 36%, color-mix(in srgb, var(--cv-gold) 22%, var(--cv-deep)), var(--cv-deep) 65%);
+  background: radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--cv-gold) 20%, var(--cv-deep)), var(--cv-deep) 68%);
 }
 .cv-constellation__sky {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 100cqw;
-  height: 110cqw;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.cv-constellation__field {
+  opacity: 0.6;
   animation: cvTwinkle 4s ease-in-out infinite alternate;
 }
-.cv-constellation__shoot {
-  position: absolute;
-  left: 66cqw;
-  top: 14cqw;
-  width: 22cqw;
-  height: 0.35cqw;
-  background: linear-gradient(90deg, transparent, var(--cv-paper));
-  transform: rotate(32deg);
-  opacity: 0;
-  animation: cvShoot 6s 1s ease-in infinite;
+.cv-constellation__line {
+  animation: cvLift 1s 0.5s ease-out both;
+}
+.cv-constellation__star {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cvPop 0.7s ease-out both;
 }
 .cv-constellation__orbit {
   position: absolute;
-  left: 0;
-  top: 40cqw;
-  width: 100cqw;
+  left: -10cqw;
+  top: 44cqw;
+  width: 120cqw;
   height: 40cqw;
   transform: rotate(-14deg);
 }
 .cv-constellation__planet {
   position: absolute;
-  left: 32cqw;
+  left: 30cqw;
   top: 42cqw;
-  width: 36cqw;
-  height: 36cqw;
+  width: 40cqw;
+  height: 40cqw;
   border-radius: 50%;
   overflow: hidden;
   border: 0.6cqw solid var(--cv-gold);
-  box-shadow: 0 0 6cqw 1cqw color-mix(in srgb, var(--cv-gold) 45%, transparent);
+  box-shadow:
+    0 0 5cqw 1cqw color-mix(in srgb, var(--cv-gold) 45%, transparent),
+    0 0 12cqw 3cqw color-mix(in srgb, var(--cv-paper) 18%, transparent);
+  background: color-mix(in srgb, var(--cv-deep) 30%, var(--cv-paper));
+  animation: cvPop 0.9s 0.2s ease-out both;
 }
 .cv-constellation__kicker {
   position: absolute;
@@ -454,36 +452,37 @@
   left: 0;
   right: 0;
 }
-.cv-constellation__names {
+.cv-constellation__text {
   position: absolute;
   left: 6cqw;
   right: 6cqw;
-  top: 106cqw;
+  bottom: 8cqw;
+  animation: cvLift 0.8s 0.45s ease-out both;
+}
+.cv-constellation__names {
   font-family: var(--hand);
-  font-size: 13cqw;
-  line-height: 1.02;
+  font-size: 12cqw;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.cv-constellation--long .cv-constellation__names {
+  font-size: 9.5cqw;
 }
 .cv-constellation__amp {
   display: block;
   font-family: var(--script);
   font-style: italic;
-  font-size: 6cqw;
+  font-size: 5.5cqw;
   color: var(--cv-gold);
 }
 .cv-constellation__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 150cqw;
+  margin-top: 2cqw;
   font-size: 4cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
 }
 .cv-constellation__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 159cqw;
+  margin-top: 1cqw;
   font-size: 2.5cqw;
   letter-spacing: 0.22em;
   text-indent: 0.22em;
@@ -514,10 +513,13 @@
   from { opacity: 0; transform: translateY(3cqw); }
   to { opacity: 1; transform: none; }
 }
-@keyframes cvShoot {
-  0% { opacity: 0; transform: rotate(32deg) translateX(0); }
-  8% { opacity: 1; }
-  30%, 100% { opacity: 0; transform: rotate(32deg) translateX(30cqw); }
+@keyframes cvTwinkle {
+  from { opacity: 0.45; }
+  to { opacity: 1; }
+}
+@keyframes cvSway {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
 }
 @media (prefers-reduced-motion: reduce) {
   .cv-kinetic-type__line,
@@ -525,9 +527,17 @@
   .cv-color-block__disc,
   .cv-chibi-story__bubble,
   .cv-chibi-story__heart,
-  .cv-paper-cut__sheet--4,
-  .cv-constellation__sky,
-  .cv-constellation__shoot {
+  .cv-paper-cut__layer--mid,
+  .cv-paper-cut__sheet,
+  .cv-paper-cut__photo,
+  .cv-paper-cut__charm,
+  .cv-paper-cut__sway,
+  .cv-paper-cut__text,
+  .cv-constellation__field,
+  .cv-constellation__line,
+  .cv-constellation__star,
+  .cv-constellation__planet,
+  .cv-constellation__text {
     animation: none;
   }
 }

@@ -274,8 +274,11 @@
   /* smaller envelope: the stage still grows with the 9:16 card so the card never covers the copy */
   .hm-stage { --card: min(210px, 52vw); --env: min(330px, 84vw); height: calc(var(--card) * 16 / 9 + 56px); }
   .hm-env__card { width: var(--card); margin-left: calc(var(--card) / -2); }
-  .hm-chip--rsvp { top: 64px; left: 0; }
-  .hm-chip--days { top: 12px; right: 0; }
+  /* RSVP toast docks over the card photo (decorative), not the names row:
+     on phones the card fills the stage so top:64px lands the toast on the
+     couple names + 囍 glyph (BUG-01). top:150px clears the names zone. */
+  .hm-chip--rsvp { top: 150px; left: 0; }
+  .hm-chip--days { top: 210px; right: 0; }
   .hm-chip--wish { right: 0; max-width: 200px; }
   .hm-chip--rsvp > div,
   .hm-chip--days > div,

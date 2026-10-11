@@ -70,6 +70,8 @@ export function AdminLoginForm() {
         boxSizing: "border-box",
       }}
     >
+      {/* iOS Safari zooms into inputs under 16px; the design's 14px stays on desktop. */}
+      <style>{"@media (max-width: 768px) { #admin-email, #admin-password { font-size: 16px !important; } }"}</style>
       <span
         aria-hidden="true"
         style={{

@@ -17,8 +17,8 @@ values
   ('t-hidden', 'Ẩn', 'Hoa', 'HOT', 20, true);
 
 set local role anon;
-select is((select count(*)::integer from public.templates), 1, 'anon sees only non-hidden templates');
-select is((select id from public.templates), 't-visible', 'anon sees the visible template');
+select is((select count(*)::integer from public.templates where id like 't-%'), 1, 'anon sees only non-hidden templates');
+select is((select id from public.templates where id like 't-%'), 't-visible', 'anon sees the visible template');
 select throws_ok(
   $$insert into public.templates (id, name, style) values ('t-blocked', 'Chặn', 'Hoa')$$,
   '42501',

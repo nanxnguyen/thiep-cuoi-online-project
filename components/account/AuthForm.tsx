@@ -26,9 +26,9 @@ export function AuthForm({ googleNext, variant = "page" }: Props) {
     <div className={variant === "modal" ? "acc-authform acc-authform--modal" : "acc-authform"}>
       <div className="acc-access__title">
         {variant === "modal" ? (
-          <h2>
+          <p>
             Đăng nhập vào <em>Mộc</em>
-          </h2>
+          </p>
         ) : (
           <h2>Đăng nhập</h2>
         )}

@@ -132,7 +132,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
             </textPath>
           </text>
         </svg>
-        <div className="tpA__photo">{S(ph, "Ảnh cưới")}</div>
+        <div className="tpA__photo">{S(ph, "Mẫu thiệp cưới Song Hỷ phong cách truyền thống chữ Hỷ")}</div>
         <div className="tpA__foot">
           <span className="tpA__date">{date}</span>
           <span className="tpA__place">{place}</span>
@@ -148,7 +148,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         </div>
         <span className="tpB__dm">{dm}</span>
         <div className="tpB__rule" />
-        <div className="tpB__photo">{S(ph, "Ảnh cưới")}</div>
+        <div className="tpB__photo">{S(ph, "Mẫu thiệp cưới Nét Mực phong cách tối giản chữ lớn")}</div>
         <div className="tpB__foot">
           <span className="tpB__names">
             {a} &amp; {b}
@@ -186,7 +186,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
             <span className="tpD__line" />
           </div>
           <span className="tpD__kicker">LỄ THÀNH HÔN</span>
-          <div className="tpD__photo">{S(ph, "Ảnh cưới")}</div>
+          <div className="tpD__photo">{S(ph, "Mẫu thiệp cưới Hoàng Gia phong cách cổ điển khung vàng")}</div>
           <span className="tpD__names">
             {a} &amp; {b}
           </span>
@@ -206,7 +206,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         <div className="tpE__env" />
         <div className="tpE__env2" />
         <div className="tpE__polaroid">
-          <div className="tpE__photo">{S(ph, "Ảnh cưới")}</div>
+          <div className="tpE__photo">{S(ph, "Mẫu thiệp cưới Phong Thư phong cách lãng mạn phong bì thư")}</div>
         </div>
         <div className="tpE__seal">&amp;</div>
         <div className="tpE__names">
@@ -349,7 +349,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
           <circle cx="50" cy="8" r="1.2" style={{ fill: gold }} />
         </svg>
         <div className="tpJ__arch">
-          <div className="tpJ__photo">{S(ph, "Ảnh cưới")}</div>
+          <div className="tpJ__photo">{S(ph, "Mẫu thiệp cưới Song Cửa phong cách truyền thống khung vòm")}</div>
         </div>
         <div className="tpJ__foot">
           <span className="tpJ__date">{date}</span>
@@ -370,7 +370,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         </div>
         <div className="tpK__stamp">
           <div className="tpK__stampIn">
-            <div className="tpK__photo">{S(ph, "Ảnh cưới")}</div>
+            <div className="tpK__photo">{S(ph, "Mẫu thiệp cưới Tem Thư phong cách lãng mạn tem bưu điện")}</div>
             <div className="tpK__stampFoot">
               <span className="tpK__country">VIỆT NAM</span>
               <span className="tpK__value">1 đời</span>
@@ -401,7 +401,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         <div className="tpL__bg" />
         <div className="tpL__kicker">VÉ HẠNH PHÚC · MỘT CHIỀU</div>
         <div className="tpL__ticket">
-          <div className="tpL__photo">{S(ph, "Ảnh cưới")}</div>
+          <div className="tpL__photo">{S(ph, "Mẫu thiệp cưới Vé Hạnh Phúc phong cách hiện đại vé tàu")}</div>
           <div className="tpL__route">
             <div className="tpL__stop">
               <span className="tpL__label">GA ĐI</span>
@@ -532,7 +532,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         <div className="tpP__content">
           <span className="tpP__kicker">THIỆP BÁO HỶ</span>
           <span className="tpP__xi">囍</span>
-          <div className="tpP__photo">{S(ph, "Ảnh cưới")}</div>
+          <div className="tpP__photo">{S(ph, "Mẫu thiệp cưới Hỷ Sự phong cách truyền thống chữ Hỷ")}</div>
           <span className="tpP__names">{a} &amp; {b}</span>
           <span className="tpP__date">{date}</span>
           <span className="tpP__place">{place}</span>
@@ -545,7 +545,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         <div className="tpQ__bg" />
         <div className="tpQ__content">
           <span className="tpQ__kicker">VƯỜN ƯƠM HẠNH PHÚC</span>
-          <div className="tpQ__trellis"><div className="tpQ__photo">{S(ph, "Ảnh cưới")}</div></div>
+          <div className="tpQ__trellis"><div className="tpQ__photo">{S(ph, "Mẫu thiệp cưới Vườn Ươm phong cách sân vườn nên thơ")}</div></div>
           <div className="tpQ__tag"><span>{a} &amp; {b}</span></div>
           <span className="tpQ__date">{date}</span>
           <span className="tpQ__place">{place}</span>
@@ -558,7 +558,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
         <div className="tpR__bg" />
         <div className="tpR__panel" />
         <div className="tpR__ribbon">LỄ THÀNH HÔN</div>
-        <div className="tpR__photo">{S(ph, "Ảnh cưới")}</div>
+        <div className="tpR__photo">{S(ph, "Mẫu thiệp cưới Nhung Lam phong cách cổ điển")}</div>
         <div className="tpR__names">{a} &amp; {b}</div>
         <div className="tpR__foot">{date} · {place}</div>
       </>
@@ -567,7 +567,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
     body = (
       <>
         <div className="tpS__bg" />
-        <div className="tpS__card"><div className="tpS__photo">{S(ph, "Ảnh cưới")}</div></div>
+        <div className="tpS__card"><div className="tpS__photo">{S(ph, "Mẫu thiệp cưới Thư Tình phong cách lãng mạn sáp niêm")}</div></div>
         <div className="tpS__seal"><span>{initials}</span></div>
         <div className="tpS__foot">
           <span className="tpS__names">{a} &amp; {b}</span>
@@ -578,7 +578,7 @@ export function ThiepPreview(p: ThiepPreviewProps) {
   else if (f === "T")
     body = (
       <>
-        <div className="tpT__photo">{S(ph, "Ảnh cưới")}</div>
+        <div className="tpT__photo">{S(ph, "Mẫu thiệp cưới Chân Dung phong cách hiện đại ảnh lớn")}</div>
         <div className="tpT__inset" />
         <div className="tpT__label">
           <span className="tpT__names">{a} &amp; {b}</span>

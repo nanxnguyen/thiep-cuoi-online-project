@@ -83,7 +83,7 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 ### 4.3 Mẫu thiệp
 | Trang | Trỏ đến | Chức năng chính |
 |---|---|---|
-| `Mau Thiep v2.dc.html` | Mau Thiep Chi Tiet, Studio | Bản chính thức: bảng xếp hạng cuộn ngang, lọc theo phong cách + màu, 20 mẫu, đổi màu ngay trên thẻ. Nút "Xem thử" mở popup demo: thiệp đầy đủ trong khung điện thoại, tự cuộn từ trên xuống rồi quay lại đầu; rê chuột (hoặc chạm) vào thiệp thì dừng và cuộn tay được; Esc/bấm nền để đóng |
+| `Mau Thiep v2.dc.html` | Mau Thiep Chi Tiet, Studio | Bản chính thức: bảng xếp hạng cuộn ngang, lọc theo phong cách + màu, 50 mẫu, đổi màu ngay trên thẻ. Nút "Xem thử" mở popup demo: thiệp đầy đủ trong khung điện thoại, tự cuộn từ trên xuống rồi quay lại đầu; rê chuột (hoặc chạm) vào thiệp thì dừng và cuộn tay được; Esc/bấm nền để đóng |
 | `Mau Thiep Chi Tiet.dc.html` (?id=) | Studio | 1 mẫu: đổi màu, mô tả, tính năng đi kèm |
 
 ### 4.4 Trang khách
@@ -108,6 +108,17 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 | `CC So Do Cho Ngoi.dc.html` | Xếp khách vào bàn (giới hạn số ghế/bàn) |
 | `CC Save The Date.dc.html` | Vẽ ảnh báo ngày cưới bằng canvas, tải PNG |
 | `CC Nen Video.dc.html` | **Chưa tạo**: hub có trỏ tới nhưng trang chưa thiết kế |
+
+### 4.5b Trang quản trị (chỉ admin, không có liên kết công khai)
+| Trang | Chức năng chính |
+|---|---|
+| `Admin.dc.html` | Cổng vào khu quản trị: màn đăng nhập riêng (demo: email bất kỳ + mật khẩu `admin`, lưu ở `localStorage.moc_admin`) → Tổng quan: 4 thẻ KPI (có sparkline), biểu đồ cột "Thiệp tạo mới theo tuần", biểu đồ tròn trạng thái thiệp, danh sách người dùng mới & thiệp gần đây |
+| `Admin Nguoi Dung.dc.html` | Quản lý người dùng: biểu đồ cột người dùng mới theo tuần, 4 chỉ số nhanh, tìm kiếm, lọc Hoạt động/Đã khoá, khoá–mở khoá tài khoản, xoá (có Hoàn tác) |
+| `Admin Thiep Cuoi.dc.html` | Quản lý thiệp cưới toàn hệ thống: biểu đồ tròn trạng thái + biểu đồ thanh ngang mẫu được dùng nhiều nhất, tìm kiếm, lọc Đã xuất bản/Bản nháp/Bị báo cáo, xem thiệp, ẩn xuất bản/xuất bản lại, bỏ báo cáo, xoá (có Hoàn tác) |
+| `Admin Mau Thiep.dc.html` **(mới)** | Quản lý 50 mẫu thiệp: 4 thẻ KPI (tổng mẫu, nhãn HOT, nhãn MỚI, phong cách nhiều nhất), biểu đồ thanh phân bổ theo phong cách, lưới thẻ mẫu (dải màu theo bảng màu mẫu) — lọc theo phong cách, tìm kiếm, gắn/đổi nhãn HOT·MỚI (bấm vào nhãn để xoay vòng), ẩn/hiện mẫu khỏi trang Mẫu thiệp công khai, sửa tên & phong cách qua popup |
+| `Admin Sidebar.dc.html` | Component dùng chung: sidebar tối có icon cho 4 trang quản trị trên (Tổng quan/Người dùng/Thiệp cưới/Mẫu thiệp, có số đếm), hồ sơ admin, đăng xuất |
+
+Không có liên kết nào từ header/footer/trang công khai trỏ tới các trang này — truy cập trực tiếp bằng tên file. Mỗi trang tự kiểm tra `localStorage.moc_admin`; chưa đăng nhập sẽ thấy màn đăng nhập quản trị thay vì nội dung. Biểu đồ (cột, tròn, thanh ngang, sparkline) vẽ bằng CSS/SVG thuần (không dùng thư viện ngoài), dữ liệu là số liệu mô phỏng.
 
 ### 4.6 Trang tạm ẩn (giữ file, không còn link nào trỏ tới)
 | Trang | Lý do / thay thế |
@@ -146,7 +157,7 @@ Site Footer trỏ tới toàn bộ trang còn lại (Sản phẩm, Công cụ, H
 
 Album dùng lần lượt các ảnh còn lại. Thiep Khach (ảnh bìa `studio-hoa-trang`), Thiep Mau Day Du / Studio Editor v3 (chú rể `vest-xanh-navy`, cô dâu `studio-hoa-trang`), Trang chủ (ô Album) cũng dùng ảnh mặc định.
 
-### 4.9 Danh sách mẫu thiệp (Mẫu thiệp v2, 20 mẫu)
+### 4.9 Danh sách mẫu thiệp (Mẫu thiệp v2, 50 mẫu)
 | # | Tên | Kiểu | Phong cách | Hoạ tiết | Màu | Nhãn |
 |---|---|---|---|---|---|---|
 | 1 | Song Hỷ | A | Truyền thống | Chữ Hỷ | Đỏ, Xanh rêu | HOT |
@@ -169,8 +180,38 @@ Album dùng lần lượt các ảnh còn lại. Thiep Khach (ảnh bìa `studio
 | 19 | Đĩa Than | M | Hiện đại | Vinyl | Mực, Đỏ đậm, Cam đất | MỚI |
 | 20 | Cuộn Phim | N | Hiện đại | Phim nhựa | Mực, Nâu, Hồng | MỚI |
 | 21 | Lịch Bloc | O | Truyền thống | Lịch xé | Đỏ, Xanh rêu, Lam | MỚI |
+| 22 | Xóc Đĩa | U | Truyền thống | Xì dách đỏ | Đỏ, Vàng kim | MỚI |
+| 23 | Pháo Hỷ | U | Truyền thống | Pháo giấy | Đỏ, Đỏ đậm | — |
+| 24 | Thế Nối | U | Truyền thống | Dây tơ hồng | Đỏ đậm, Vàng kim | — |
+| 25 | Mực Loang | Z | Tối giản | Vệt mực | Mực, Tím | MỚI |
+| 26 | Lam Sĩ | Z | Tối giản | Thư pháp | Lam, Mực | — |
+| 27 | Cắt Giấy | Z | Tối giản | Giấy cắt | Xanh rêu, Tím | — |
+| 28 | Mai Lan | X | Hoa | Lan rừng | Tím, Xanh rêu | — |
+| 29 | Dạ Hoa | X | Hoa | Hoa dạ yến | Tím, Mực | MỚI |
+| 30 | Liên Hoa | X | Hoa | Hoa sen | Xanh rêu, Hồng | — |
+| 31 | Vườn Ép Hoa | CC | Hoa | Hoa ép | Ô liu, Hồng, Cam đất | MỚI |
+| 32 | Hoa Chỉ | CC | Hoa | Thêu chỉ | Hồng, Vàng kim | — |
+| 33 | Hoa Báo | CC | Hoa | Thiếp hoa | Xanh rêu, Ô liu | — |
+| 34 | Ngọc Trai | Y | Cổ điển | Ngọc trai | Vàng kim, Nâu | — |
+| 35 | Hồng Nhung | Y | Cổ điển | Nhung đỏ | Đỏ đậm, Vàng kim | HOT |
+| 36 | Duyên Tình Tứ | Y | Cổ điển | Thư pháp đôi | Lam, Vàng kim | — |
+| 37 | Phụng Vũ | BB | Cổ điển | Phượng mú a | Đỏ, Vàng kim | HOT |
+| 38 | Vườn Kinh | BB | Cổ điển | Vườn kinh thành | Vàng kim, Nâu | — |
+| 39 | Khói Hỷ | BB | Cổ điển | Khói nhang | Đỏ đậm, Mực | — |
+| 40 | Nhậ Ký Đôi Mình | W | Lãng mạn | Nhậ ký | Hồng, Nâu | MỚI |
+| 41 | Tơ Hồng | W | Lãng mạn | Chỉ đỏ | Đỏ, Hồng | — |
+| 42 | Thư Học | W | Cổ điển | Thư viện | Nâu, Lam | — |
+| 43 | Giao Điểm | AA | Hiện đại | Giao lộ | Lam, Mực | — |
+| 44 | Chứng Minh | AA | Hiện đại | Thẻ bài | Mực, Xanh rêu | — |
+| 45 | Nơi Mình Hẹn | AA | Lãng mạn | Bản đồ hẹn hò | Hồng, Lam | MỚI |
+| 46 | Sâm Panh | V | Hiện đại | Ly sâm panh | Mực, Vàng kim | HOT |
+| 47 | Phòng Tối | V | Hiện đại | Ánh đèn studio | Mực, Đỏ đậm | — |
+| 48 | Cổ Hiến | V | Hiện đại | Cổ điển hiện đại | Nâu, Mực | — |
+| 49 | Quán Quen | DD | Hiện đại | Polaroid quán quen | Cam đất, Nâu | MỚI |
+| 50 | Hồ Thân | DD | Hiện đại | Bến hồ | Xanh rêu, Lam | — |
+| 51 | Song Ánh | DD | Lãng mạn | Ánh đôi | Hồng, Mực | — |
 
-Không còn mẫu dùng chung bố cục — xem chi tiết đợt thiết kế lại 5 mẫu ở mục 8 (04/10/2026). Đã xoá: Giấy Dó (trùng Nét Mực).
+Không còn mẫu dùng chung bố cục. Tổng 50 mẫu (id 1–51, bỏ qua id 8 đã xoá): Truyền thống 9, Tối giản 4, Hoa 8, Cổ điển 9, Lãng mạn 8, Hiện đại 12.
 
 ## 5. Cấu trúc nội dung thiệp (Studio Editor v3)
 
@@ -269,6 +310,44 @@ Chuyển màu/font/spacing/radius/shadow thành CSS variables hoặc Tailwind th
 Mở file `.dc.html` bằng browser (kéo thả) hoặc chạy local server tĩnh bất kỳ tại thư mục gốc. Các trang tham chiếu nhau bằng đường dẫn tương đối. Trang bắt đầu gợi ý: `Trang Chu.dc.html`; xem thiệp mẫu hoàn chỉnh: `Thiep Mau Day Du.dc.html`.
 
 ## 8. Nhật ký thay đổi
+
+### Cập nhật 08/10/2026
+`Admin Mau Thiep.dc.html`: thêm Hoàn tác (undo) cho thao tác ẩn/hiện mẫu và đổi nhãn HOT/MỚI, đồng bộ với pattern toast+Hoàn tác đã có ở `Admin Nguoi Dung.dc.html` và `Admin Thiep Cuoi.dc.html`.
+
+### Cập nhật 05/10/2026 (7)
+`Ung Ho.dc.html`: bỏ hẳn khối "Vừa ủng hộ" (danh sách mô phỏng cùng vấn đề số liệu tĩnh không thật). Thêm padding cho khối trích dẫn cuối trang để bù khoảng cách.
+
+### Cập nhật 05/10/2026 (6)
+`Ung Ho.dc.html`: bỏ khối "Minh bạch" (biểu đồ phân bổ chi phí máy chủ/thiết kế/vận hành) để tối ưu không gian trang. Khối "Vừa ủng hộ" đổi từ 2 cột sang 1 cột căn giữa, gọn hơn.
+
+### Cập nhật 05/10/2026 (5)
+`Ung Ho.dc.html`: bỏ trường "Chủ tài khoản" khỏi thẻ chuyển khoản. Bỏ thanh tiến độ gây quỹ tháng (đã gây quỹ/mục tiêu/đếm ngược ngày) vì số liệu tĩnh không thể tự tăng khi có người chuyển khoản thật — dễ bị hiểu nhầm là giả. Thay bằng dòng social proof đơn giản hơn: chồng avatar + "238 người đã ủng hộ trong tháng này", không gắn mục tiêu/thời hạn.
+
+### Cập nhật 05/10/2026 (4)
+Thiết kế lại `Ung Ho.dc.html` để thúc đẩy ủng hộ ngay: đổi tiêu đề/mô tả hero mạnh hơn, thêm thanh tiến độ gây quỹ tháng (đã đạt/mục tiêu + số người đã ủng hộ + số ngày còn lại), nút "Ủng hộ ngay" nhảy tới thẻ chuyển khoản (thẻ có viền phát sáng nhẹ liên tục), thêm mức ủng hộ gợi ý (50k/100k/200k/500k) kèm câu mô tả tác động, chọn mức sẽ thêm dòng "Số tiền" vào danh sách có thể sao chép. Thêm 2 khối minh bạch: biểu đồ thanh phân bổ chi phí (máy chủ, thiết kế mẫu, vận hành) và danh sách "Vừa ủng hộ" (mô phỏng). Đổi trích dẫn cuối trang thành lời chứng thực của một cặp đôi đã dùng Mộc, thêm nút Ủng hộ ngay thứ hai ở cuối trang.
+
+### Cập nhật 05/10/2026 (3)
+Khu quản trị: bỏ số đếm bên cạnh menu `Admin Sidebar.dc.html` (128/342/50). Thêm phân trang (Trang X / Y, nút Trước/Sau) cho bảng Người dùng và Thiệp cưới (6 dòng/trang) và lưới Mẫu thiệp (12 thẻ/trang) trong `Admin Nguoi Dung.dc.html`, `Admin Thiep Cuoi.dc.html`, `Admin Mau Thiep.dc.html`.
+
+### Cập nhật 05/10/2026 (2)
+Thiết kế lại khu quản trị đẹp và "ấn tượng" hơn theo hướng CMS hiện đại, thêm biểu đồ quan sát:
+- `Admin Sidebar.dc.html`: thêm icon đường nét cho từng mục, số đếm bên cạnh (128/342/50), vạch nhấn bên trái cho mục đang chọn.
+- `Admin.dc.html`: 4 thẻ KPI có sparkline SVG + badge tăng/giảm, biểu đồ cột "Thiệp tạo mới theo tuần" (8 tuần), biểu đồ tròn (conic-gradient) tỉ lệ Đã xuất bản/Bản nháp/Bị báo cáo kèm chú giải, avatar người dùng đổi màu luân phiên theo bảng màu hệ thống.
+- `Admin Nguoi Dung.dc.html`: thêm biểu đồ cột người dùng mới theo tuần + 4 ô chỉ số nhanh (đang hoạt động, đã khoá, tổng thiệp, TB thiệp/người).
+- `Admin Thiep Cuoi.dc.html`: thêm biểu đồ tròn trạng thái + biểu đồ thanh ngang "Mẫu được dùng nhiều nhất".
+- **Trang mới `Admin Mau Thiep.dc.html`**: quản lý toàn bộ 50 mẫu thiệp — KPI tổng mẫu/nhãn HOT/nhãn MỚI/phong cách nhiều nhất, biểu đồ thanh phân bổ theo phong cách, lưới thẻ mẫu (dải màu deep/paper/gold), lọc + tìm kiếm, bấm nhãn để xoay vòng Thường→MỚI→HOT, ẩn/hiện mẫu, sửa tên/phong cách qua popup. Thêm vào menu `Admin Sidebar`.
+Toàn bộ biểu đồ vẽ bằng CSS/SVG thuần, không thêm thư viện ngoài.
+
+### Cập nhật 05/10/2026
+Thêm **khu vực quản trị** (chỉ admin, ẩn khỏi điều hướng công khai): `Admin.dc.html` (đăng nhập quản trị demo + Tổng quan), `Admin Nguoi Dung.dc.html` (quản lý người dùng: khoá/mở khoá, xoá có Hoàn tác, tìm & lọc), `Admin Thiep Cuoi.dc.html` (quản lý thiệp cưới toàn hệ thống: xuất bản/ẩn, bỏ báo cáo, xoá có Hoàn tác, tìm & lọc), và component dùng chung `Admin Sidebar.dc.html`. Đăng nhập demo lưu ở `localStorage.moc_admin`, độc lập với đăng nhập Google của người dùng thường (`moc_user`). Xem mục 4.5b.
+
+### Cập nhật 04/10/2026 (7)
+Đồng bộ bộ sưu tập lên **50 mẫu thiệp** (trước đó 20) trên toàn dự án, theo bản thiết kế tham khảo người dùng gửi (tên, số lượng, nhóm phong cách):
+- Thêm **10 bố cục (family) mới** vào `Thiep Preview.dc.html`: U (Xóc Đĩa – phong bì đỏ dấu triện vàng), V (Sâm Panh – ly rượu line-art tối giản), W (Nhật Ký Đôi Mình – sổ tay gáy lò xo, ảnh dán băng keo), X (Mai Lan – khung oval viền hoa lan), Y (Ngọc Trai – khung tròn viền ngọc trai kép), Z (Mực Loang – vệt mực mờ, chữ lớn tối giản), AA (Giao Điểm – hai đường kẻ đứt bản đồ giao nhau), BB (Phụng Vũ – hoa văn phượng đối xứng cổ điển), CC (Vườn Ép Hoa – ảnh dán kiểu hoa ép), DD (Quán Quen – polaroid ghim trên nền cork). Mỗi bố cục mới dùng cho 2–3 mẫu khác tên/màu/ảnh, không mẫu nào trùng bố cục với mẫu khác.
+- Mở rộng danh mục mẫu (`T` trong `Mau Thiep v2.dc.html`, `TPL` trong `Studio.dc.html`) từ 20 lên **50 mẫu**: thêm Xóc Đĩa, Pháo Hỷ, Thế Nối, Mực Loang, Lam Sĩ, Cắt Giấy, Mai Lan, Dạ Hoa, Liên Hoa, Vườn Ép Hoa, Hoa Chỉ, Hoa Báo, Ngọc Trai, Hồng Nhung, Duyên Tình Tứ, Phụng Vũ, Vườn Kinh, Khói Hỷ, Nhật Ký Đôi Mình, Tơ Hồng, Thư Học, Giao Điểm, Chứng Minh, Nơi Mình Hẹn, Sâm Panh, Phòng Tối, Cổ Hiến, Quán Quen, Hồ Thân, Song Ánh. Phân bổ theo phong cách: Truyền thống 9, Tối giản 4, Hoa 8, Cổ điển 9, Lãng mạn 8, Hiện đại 12 (tổng 50).
+- Bảng xếp hạng (top 7 theo độ phổ biến) và bộ lọc phong cách/màu trên `Mau Thiep v2.dc.html` tự tính lại từ danh mục 50 mẫu, không cần sửa riêng.
+- `Trang Chu.dc.html`: thêm 10 mục mới vào dải cuộn mẫu (marquee) ứng với 10 bố cục mới, đặt tên hiển thị riêng theo phong cách thương hiệu (Hồng Phát, Velvet Toast, Thư Nhật, Lan Dạ, Trân Châu, Mực Loang, Giao Lộ, Phụng Hoàng, Ép Hoa, Quán Nhỏ).
+- `Thiep Preview.dc.html`: mở rộng enum `family` thêm U, V, W, X, Y, Z, AA, BB, CC, DD; thêm ảnh mặc định cho các family mới trong `DEF` (tái dùng ảnh có sẵn trong `assets/photos`, không có ảnh riêng).
 
 ### Cập nhật 04/10/2026 (6)
 Thiết kế lại trang `Thiet Ke Rieng.dc.html` ấn tượng hơn, tối ưu không gian trống ở hero:

@@ -46,4 +46,11 @@
   .pricing-included li { padding: 12px 0; font-size: 14.5px; }
   .pricing-cta { display: flex; align-items: center; justify-content: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
   .pricing-donate h2 { font-size: 24px; }
+  .pricing-faq h2 { font-size: 24px; }
+}
+.pricing-faq { display: flex; flex-direction: column; gap: 18px; padding: 4px 0 48px; }
+.pricing-faq h2 { font-size: 28px; line-height: 1.2; margin: 0; }
+.pricing-faq p { margin: 0; font-size: 15px; line-height: 1.7; }
+@media (max-width: 767px) {
+  .pricing-faq { padding-bottom: 32px; }
 }

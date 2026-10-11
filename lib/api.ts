@@ -130,6 +130,8 @@ export type AdminUserRow = {
   createdAt: string;
   inviteCount: number;
   status: "active" | "suspended";
+  /** Set only on the requesting admin's own row. */
+  isSelf?: boolean;
 };
 export type AdminCardRow = {
   id: string;

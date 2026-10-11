@@ -1,24 +1,21 @@
 import type { CoverProps } from "./types";
 import { r2 } from "./util";
 
-// Ngọc Trai — two pearl festoons swing across the top and a pearl chain
-// lowers an oval photo ringed in pearls. Pearls are circles on computed
-// curves (quadratic Béziers and an ellipse); the shine is one radial gradient.
-type Pt = [number, number];
-const quad = (p0: Pt, p1: Pt, p2: Pt, t: number): Pt => [
-  r2((1 - t) * (1 - t) * p0[0] + 2 * (1 - t) * t * p1[0] + t * t * p2[0]),
-  r2((1 - t) * (1 - t) * p0[1] + 2 * (1 - t) * t * p1[1] + t * t * p2[1]),
-];
-const festoon = (p0: Pt, p1: Pt, p2: Pt, n: number) => Array.from({ length: n + 1 }, (_, i) => quad(p0, p1, p2, i / n));
-const ring = (cx: number, cy: number, rx: number, ry: number, n: number) =>
-  Array.from({ length: n }, (_, i) => [r2(cx + rx * Math.cos((i / n) * Math.PI * 2 - Math.PI / 2)), r2(cy + ry * Math.sin((i / n) * Math.PI * 2 - Math.PI / 2))] as Pt);
+// Ngọc Trai — an oval photo under three concentric pearl strands (bigger beads
+// where the arch lands) with a short strand hanging at each side. 30 beads.
+type Bead = { x: number; y: number; r: number; d: number };
+const CX = 50;
+const CY = 66;
+const strand = (rx: number, ry: number, n: number, rEnd: number, rTop: number): Bead[] =>
+  Array.from({ length: n }, (_, i) => {
+    const u = i / (n - 1);
+    const ang = Math.PI + Math.PI * u;
+    const k = Math.abs(2 * u - 1); // 0 at the crown, 1 at the feet
+    return { x: r2(CX + rx * Math.cos(ang)), y: r2(CY + ry * Math.sin(ang)), r: r2(rTop + (rEnd - rTop) * k * k), d: r2(Math.min(u, 1 - u) * 0.9) };
+  });
+const hang = (x: number): Bead[] => [0, 1, 2].map((i) => ({ x, y: CY + 5 + i * 5.2, r: 2.3 - i * 0.3, d: 0.5 + i * 0.12 }));
 
-const PEARLS: [Pt, number][] = [
-  ...festoon([-2, 6], [50, 42], [102, 6], 22).map((p) => [p, 2.1] as [Pt, number]),
-  ...festoon([-2, 18], [50, 58], [102, 18], 22).map((p) => [p, 2.4] as [Pt, number]),
-  ...Array.from({ length: 5 }, (_, i) => [[50, 38 + i * 3.4], 1.5] as [Pt, number]),
-  ...ring(50, 82, 21.5, 26, 30).map((p) => [p, 1.8] as [Pt, number]),
-];
+const BEADS: Bead[] = [...strand(32, 42, 8, 2.8, 1.8), ...strand(37, 47, 8, 2.8, 1.8), ...strand(42, 52, 8, 2.8, 1.8), ...hang(8), ...hang(92)];
 
 export function PearlArchCover({ a, b, date, place, slot }: CoverProps) {
   return (
@@ -31,17 +28,20 @@ export function PearlArchCover({ a, b, date, place, slot }: CoverProps) {
             <stop offset="1" stopColor="var(--cv-deep)" stopOpacity="0.45" />
           </radialGradient>
         </defs>
-        {PEARLS.map(([[x, y], r]) => (
-          <circle key={`${x}-${y}-${r}`} cx={x} cy={y} r={r} fill="url(#cv-pearl-shine)" stroke="var(--cv-deep)" strokeOpacity="0.25" strokeWidth="0.2" />
+        {BEADS.map(({ x, y, r, d }) => (
+          <circle key={`${x}-${y}-${r}`} className="cv-pearl-arch__bead" style={{ animationDelay: `${d}s` }} cx={x} cy={y} r={r} fill="url(#cv-pearl-shine)" stroke="var(--cv-deep)" strokeOpacity="0.2" strokeWidth="0.25" />
         ))}
+        <circle cx={CX} cy={CY - 52.5} r="0.9" fill="var(--cv-gold)" />
       </svg>
-      <div className="cv-pearl-arch__photo">{slot(0, "Ảnh cưới")}</div>
       <span className="cv-kicker cv-pearl-arch__kicker">TRÂN TRỌNG KÍNH MỜI</span>
-      <p className="cv-names cv-pearl-arch__names">
-        {b} <span className="cv-pearl-arch__amp">&amp;</span> {a}
-      </p>
-      <p className="cv-date cv-pearl-arch__date">{date}</p>
-      {place && <p className="cv-place cv-pearl-arch__place">{place}</p>}
+      <div className="cv-pearl-arch__photo">{slot(0, "Mẫu thiệp cưới Ngọc Trai phong cách tối giản vòm ngọc")}</div>
+      <div className="cv-pearl-arch__text">
+        <p className="cv-names cv-pearl-arch__names">
+          {b} <span className="cv-pearl-arch__amp">&amp;</span> {a}
+        </p>
+        <p className="cv-date cv-pearl-arch__date">{date}</p>
+        {place && <p className="cv-place cv-pearl-arch__place">{place}</p>}
+      </div>
     </div>
   );
 }

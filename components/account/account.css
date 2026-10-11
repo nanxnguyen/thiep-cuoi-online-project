@@ -22,7 +22,7 @@
 .acc-tabs button { flex: 1; font-family: inherit; font-size: 14px; padding: 11px; border: 0; border-radius: 999px; cursor: pointer; background: transparent; color: var(--faint); box-shadow: none; transition: all .25s; }
 .acc-tabs button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(26, 20, 18, .12); }
 .acc-access__title { display: flex; flex-direction: column; gap: 8px; }
-.acc-access__title h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 34px; line-height: normal; }
+.acc-access__title h2, .acc-access__title p { margin: 0; font-family: var(--display); font-weight: 400; font-size: 34px; line-height: normal; }
 .acc-access__title span { font-size: 14px; color: var(--faint); }
 .acc-google { min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 12px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 500; transition: border-color .2s, background .2s, transform .2s; }
 .acc-google:hover { border-color: var(--ink); background: var(--paper); color: var(--ink); transform: translateY(-1px); }
@@ -105,7 +105,7 @@
 /* AuthForm (design/Tai Khoan.dc.html guest half), shared by the /account page and the header's login popup. */
 .acc-authform { display: flex; flex-direction: column; gap: 28px; width: 100%; }
 .acc-authform--modal { gap: 24px; }
-.acc-authform--modal .acc-access__title h2 { font-size: 30px; }
+.acc-authform--modal .acc-access__title h2, .acc-authform--modal .acc-access__title p { font-size: 30px; }
 .acc-authform--modal .acc-form { text-align: left; }
 .acc-consent { font-size: 12px; line-height: 1.6; color: var(--faint); text-align: center; }
 .acc-consent a { color: var(--accent); }
@@ -125,7 +125,7 @@
   .acc { min-height: 0; }
   .acc-access { order: -1; padding: 32px var(--m-gutter) 40px; }
   .acc-access > div { gap: 22px; }
-  .acc-access__title h2 { font-size: 28px; }
+  .acc-access__title h2, .acc-access__title p { font-size: 28px; }
   .acc-tabs button { min-height: var(--m-tap); padding: 0 11px; }
   .acc-google { min-height: 48px; }
   .acc-form input,
@@ -155,7 +155,7 @@
   .login-dlg__body::before { content: ""; position: absolute; top: 10px; left: 50%; width: 36px; height: 4px; margin-left: -18px; border-radius: var(--radius-full); background: var(--line-strong); }
   .login-dlg__close { top: 8px; right: 8px; width: var(--m-tap); height: var(--m-tap); }
   .login-dlg__mark { width: 44px; height: 44px; font-size: 22px; }
-  .acc-authform--modal .acc-access__title h2 { font-size: 26px; }
+  .acc-authform--modal .acc-access__title h2, .acc-authform--modal .acc-access__title p { font-size: 26px; }
   @keyframes mLoginSheet { from { transform: translateY(100%); } }
 }
 @media (max-width: 359px) {

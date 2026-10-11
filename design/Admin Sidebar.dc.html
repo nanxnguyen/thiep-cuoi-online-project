@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<div style="width:240px;flex:none;background:#1c1012;color:#f1e7d6;min-height:100vh;display:flex;flex-direction:column;padding:28px 18px;gap:30px;position:sticky;top:0;align-self:flex-start;font-family:'Be Vietnam Pro',sans-serif;box-sizing:border-box">
+  <a href="Admin.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#f1e7d6">
+    <span style="width:32px;height:32px;border-radius:9px;background:#a3161c;display:grid;place-items:center;font-family:'Playfair Display',serif;font-weight:600;font-size:16px;color:#fff;flex:none">M</span>
+    <span style="display:flex;flex-direction:column;line-height:1.25"><span style="font-family:'Playfair Display',serif;font-size:15px;letter-spacing:.16em">MỘC</span><span style="font-size:10px;letter-spacing:.16em;color:#8a7b70">QUẢN TRỊ</span></span>
+  </a>
+  <nav style="display:flex;flex-direction:column;gap:3px">
+    <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+      <a href="{{ it.href }}" style="display:flex;align-items:center;gap:11px;font-size:14px;padding:10px 13px;border-radius:10px;text-decoration:none;color:{{ it.fg }};background:{{ it.bg }};font-weight:{{ it.weight }};border-left:2px solid {{ it.accent }};transition:background .2s" style-hover="background:#2a1d1a;color:#f1e7d6">
+        <span style="flex:none;display:flex;color:{{ it.fg }}">
+          <sc-if value="{{ it.isOverview }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"></rect></svg></sc-if>
+          <sc-if value="{{ it.isUsers }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.4" r="2.6" stroke="currentColor" stroke-width="1.3"></circle><path d="M2.8 13.4c.9-2.4 2.8-3.6 5.2-3.6s4.3 1.2 5.2 3.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg></sc-if>
+          <sc-if value="{{ it.isCards }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3" width="13" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"></rect><path d="M2 4.5L8 9l6-4.5" stroke="currentColor" stroke-width="1.3"></path></svg></sc-if>
+          <sc-if value="{{ it.isTemplates }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.3"></rect><rect x="2" y="10.5" width="12" height="3.5" rx="1.2" stroke="currentColor" stroke-width="1.3"></rect></svg></sc-if>
+        </span>
+        <span style="flex:1">{{ it.label }}</span>
+        <sc-if value="{{ it.hasCount }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;padding:2px 7px;border-radius:999px;background:{{ it.countBg }};color:{{ it.countFg }}">{{ it.count }}</span></sc-if>
+      </a>
+    </sc-for>
+  </nav>
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:4px;border-top:1px solid #3a2c28;padding-top:14px">
+    <div style="display:flex;align-items:center;gap:10px;min-width:0;padding:4px 2px 12px;border-bottom:1px solid #3a2c28;margin-bottom:6px">
+      <span style="width:32px;height:32px;border-radius:50%;background:#a3161c;display:grid;place-items:center;font-size:12px;font-weight:600;color:#fff;flex:none">{{ initials }}</span>
+      <span style="display:flex;flex-direction:column;min-width:0;flex:1;gap:1px">
+        <span style="font-size:13px;color:#f1e7d6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ adminName }}</span>
+        <span style="font-size:11px;color:#8a7b70">Quản trị viên</span>
+      </span>
+    </div>
+    <a href="Trang Chu.dc.html" style="display:flex;align-items:center;gap:9px;font-size:13px;padding:8px 6px;border-radius:9px;color:#b9ad9f;text-decoration:none" style-hover="color:#f1e7d6;background:#2a1d1a">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><path d="M2 8.5l6-5.5 6 5.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3.5 7.5V13a.8.8 0 0 0 .8.8h7.4a.8.8 0 0 0 .8-.8V7.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      Về trang chủ
+    </a>
+    <button onClick="{{ onLogout }}" style="font-family:inherit;display:flex;align-items:center;gap:9px;font-size:13px;padding:8px 6px;border-radius:9px;border:0;background:transparent;color:#b9ad9f;text-align:left;cursor:pointer" style-hover="color:#e08d88;background:#2a1d1a">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none"><path d="M6 2.5H3.3a.8.8 0 0 0-.8.8v9.4a.8.8 0 0 0 .8.8H6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path><path d="M10.5 11l3-3-3-3M13.3 8H6.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      Đăng xuất quản trị
+    </button>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:240,&quot;height&quot;:600},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;overview&quot;,&quot;users&quot;,&quot;cards&quot;,&quot;templates&quot;],&quot;default&quot;:&quot;overview&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;adminName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Quản trị viên&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onLogout&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+const ITEMS = [['overview','Tổng quan','Admin.dc.html',null],['users','Người dùng','Admin Nguoi Dung.dc.html',null],['cards','Thiệp cưới','Admin Thiep Cuoi.dc.html',null],['templates','Mẫu thiệp','Admin Mau Thiep.dc.html',null]];
+class Component extends DCLogic {
+  renderVals() {
+    const a = this.props.active ?? 'overview';
+    const items = ITEMS.map(([key, label, href, count]) => {
+      const active = key === a;
+      return { key, label, href, isOverview: key === 'overview', isUsers: key === 'users', isCards: key === 'cards', isTemplates: key === 'templates',
+        fg: active ? '#1a1412' : '#e3d9cd', bg: active ? '#f1e7d6' : 'transparent', weight: active ? 500 : 400, accent: active ? '#a3161c' : 'transparent',
+        hasCount: count != null, count, countBg: active ? '#a3161c' : '#342723', countFg: active ? '#fff' : '#c9bcab' };
+    });
+    const name = this.props.adminName || 'Quản trị viên';
+    const letters = name.trim().match(/\p{L}/u);
+    const initials = (letters ? letters[0] : 'A').toUpperCase();
+    return { items, adminName: name, initials, onLogout: this.props.onLogout };
+  }
+}
+</script>
+</body>
+</html>

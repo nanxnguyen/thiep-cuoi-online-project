@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,16px)}100%{opacity:1;transform:translate(-50%,0)}}
+</style>
+<script src="motion.js" data-lite></script>
+</helmet>
+
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:grid;place-items:center;padding:24px">
+    <div style="width:100%;max-width:400px;background:#fff;border-radius:20px;padding:40px 32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 20px 50px -24px rgba(26,20,18,.35);animation:fadeUp .5s both">
+      <span style="width:44px;height:44px;border-radius:10px;background:#1c1012;color:#f1e7d6;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:600">M</span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:12px;letter-spacing:.18em;color:#8a6425;font-weight:600">KHU VỰC QUẢN TRỊ</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:26px">Đăng nhập quản trị</h1>
+        <p style="margin:0;font-size:13px;color:#5e534b;line-height:1.6">Chỉ dành cho quản trị viên của Mộc. Trang này không có liên kết công khai trên website.</p>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Email quản trị<input value="{{ email }}" onInput="{{ onEmail }}" placeholder="admin@moc.vn" style="font-family:inherit;font-size:14px;padding:12px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Mật khẩu<input type="password" value="{{ pass }}" onInput="{{ onPass }}" placeholder="••••••••" style="font-family:inherit;font-size:14px;padding:12px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+      <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#a3161c">{{ errorMsg }}</span></sc-if>
+      <button onClick="{{ login }}" style="font-family:inherit;font-size:15px;font-weight:500;padding:14px;border-radius:999px;border:0;background:#1c1012;color:#f1e7d6;cursor:pointer" style-hover="background:#2a1d1a">Đăng nhập</button>
+      <span style="font-size:12px;color:#8a7d72;text-align:center">Demo: nhập email bất kỳ, mật khẩu là <strong>admin</strong></span>
+      <a href="Trang Chu.dc.html" style="font-size:13px;color:#8a7d72;text-align:center;text-decoration:none" style-hover="color:#1a1412">← Về trang chủ</a>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ showDash }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;min-height:100vh">
+    <dc-import name="Admin Sidebar" active="users" admin-name="{{ adminName }}" on-logout="{{ logout }}" hint-size="240px,100vh"></dc-import>
+    <main style="flex:1;min-width:0;padding:44px 48px;display:flex;flex-direction:column;gap:28px;max-width:1280px">
+      <div style="display:flex;flex-direction:column;gap:6px;animation:fadeUp .4s both">
+        <span style="font-size:12px;letter-spacing:.18em;color:#8a6425;font-weight:600">QUẢN TRỊ · NGƯỜI DÙNG</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(28px,3vw,38px)">Người dùng ({{ total }})</h1>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px">
+        <div style="background:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Playfair Display',serif;font-size:19px">Người dùng mới theo tuần</span><span style="font-size:12px;color:#8a7d72">8 tuần gần nhất</span></div>
+          <div style="display:flex;align-items:flex-end;gap:12px;height:110px;padding:0 4px">
+            <sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end">
+                <span style="font-size:10px;color:#1a1412;font-weight:500">{{ b.v }}</span>
+                <div style="width:100%;max-width:26px;height:{{ b.h }}px;background:{{ b.bg }};border-radius:6px 6px 2px 2px"></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="3">
+            <div style="background:#fff;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:6px;justify-content:center">
+              <span style="display:flex;gap:7px;align-items:center;font-size:12px;color:#5e534b"><span style="width:8px;height:8px;border-radius:50%;background:{{ k.dot }}"></span>{{ k.l }}</span>
+              <span style="font-family:'Playfair Display',serif;font-size:28px;line-height:1">{{ k.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="3">
+            <button onClick="{{ f.pick }}" style="font-family:inherit;font-size:13px;padding:9px 16px;border-radius:999px;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};cursor:pointer">{{ f.label }}</button>
+          </sc-for>
+        </div>
+        <input value="{{ q }}" onInput="{{ onQ }}" placeholder="Tìm theo tên hoặc email…" style="font-family:inherit;font-size:13px;padding:10px 14px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;outline:none;width:220px">
+      </div>
+
+      <div style="background:#fff;border-radius:20px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) 90px minmax(0,1fr) minmax(0,1.4fr);gap:12px;padding:14px 22px;font-size:12px;letter-spacing:.08em;color:#8a7d72;border-bottom:1px solid #efe6d9"><span>NGƯỜI DÙNG</span><span>NGÀY THAM GIA</span><span>SỐ THIỆP</span><span>TRẠNG THÁI</span><span>HÀNH ĐỘNG</span></div>
+        <sc-for list="{{ rows }}" as="u" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) 90px minmax(0,1fr) minmax(0,1.4fr);gap:12px;padding:14px 22px;font-size:14px;align-items:center;border-bottom:1px solid #f3ece2;transition:background .15s" style-hover="background:#faf7f2">
+            <span style="display:flex;gap:10px;align-items:center;min-width:0"><span style="width:32px;height:32px;flex:none;border-radius:50%;background:{{ u.bg }};color:{{ u.fg }};display:grid;place-items:center;font-size:13px;font-weight:500">{{ u.init }}</span><span style="display:flex;flex-direction:column;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.name }}</span><span style="font-size:12px;color:#8a7d72;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.email }}</span></span></span>
+            <span style="color:#5e534b;font-size:13px">{{ u.joined }}</span>
+            <span style="font-family:'Playfair Display',serif;font-size:17px">{{ u.cards }}</span>
+            <span><span style="font-size:12px;padding:4px 10px;border-radius:999px;background:{{ u.stBg }};color:{{ u.stFg }}">{{ u.stLabel }}</span></span>
+            <span style="display:flex;gap:6px">
+              <button onClick="{{ u.toggle }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer" style-hover="border-color:#1a1412">{{ u.toggleLabel }}</button>
+              <button onClick="{{ u.remove }}" style="font-family:inherit;font-size:12px;padding:7px 12px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer;color:#a3161c" style-hover="border-color:#a3161c">Xoá</button>
+            </span>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}"><div style="padding:40px;text-align:center;font-size:14px;color:#8a7d72">Không có người dùng nào khớp.</div></sc-if>
+        <sc-if value="{{ hasPages }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1px solid #efe6d9">
+            <span style="font-size:12px;color:#8a7d72">Trang {{ page }} / {{ pageCount }} · {{ matchCount }} người dùng</span>
+            <div style="display:flex;gap:8px">
+              <button onClick="{{ prevPage }}" disabled="{{ atFirst }}" style="font-family:inherit;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer;opacity:{{ prevOp }}">← Trước</button>
+              <button onClick="{{ nextPage }}" disabled="{{ atLast }}" style="font-family:inherit;font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid #ddd2c4;background:#fff;cursor:pointer;opacity:{{ nextOp }}">Sau →</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </main>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1a1412;color:#fff;padding:13px 22px;border-radius:999px;font-size:14px;z-index:60;animation:toast .3s both;box-shadow:0 16px 30px -12px rgba(0,0,0,.4);display:flex;gap:14px;align-items:center">{{ toast }}<sc-if value="{{ hasUndo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ undo }}" style="font-family:inherit;font-size:13px;color:#c9a86a;background:transparent;border:0;cursor:pointer;font-weight:500">Hoàn tác</button></sc-if></div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY = 'moc_admin';
+const readAdmin = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
+const USERS = [
+  ['Nguyễn Thu Hà','thuha.nguyen@gmail.com','02/10/2026',2,'active'],
+  ['Trần Quốc Bảo','quocbao.tran@gmail.com','01/10/2026',1,'active'],
+  ['Lê Minh Anh','minhanh.le@gmail.com','29/09/2026',1,'active'],
+  ['Phạm Gia Hân','giahan.pham@gmail.com','27/09/2026',1,'active'],
+  ['Đỗ Khánh Vy','khanhvy.do@gmail.com','25/09/2026',3,'active'],
+  ['Vũ Ngọc Diệp','ngocdiep.vu@gmail.com','22/09/2026',1,'active'],
+  ['Hoàng Tiến Dũng','tiendung.hoang@gmail.com','20/09/2026',1,'suspended'],
+  ['Bùi Nhật Nam','nhatnam.bui@gmail.com','18/09/2026',2,'active'],
+  ['Đặng Minh Quân','minhquan.dang@gmail.com','15/09/2026',1,'active'],
+  ['Ngô Thanh Hương','thanhhuong.ngo@gmail.com','12/09/2026',1,'suspended'],
+  ['Phan Gia Bảo','giabao.phan@gmail.com','10/09/2026',1,'active'],
+  ['Trương Khánh Linh','khanhlinh.truong@gmail.com','08/09/2026',2,'active'],
+  ['Lý Tuấn Kiệt','tuankiet.ly@gmail.com','05/09/2026',1,'active'],
+  ['Mai Thuỳ Trang','thuytrang.mai@gmail.com','01/09/2026',1,'suspended'],
+].map((u, id) => ({ id, name: u[0], email: u[1], joined: u[2], cards: u[3], status: u[4] }));
+const AV = [['#f7f0e0','#8a6425'],['#e7eee6','#24493a'],['#eef1f4','#1f3a5f'],['#fbf1ef','#a4505f'],['#f3ece2','#6b4a33']];
+const USER_WEEKLY = [8,10,9,14,12,16,15,19];
+class Component extends DCLogic {
+  state = { admin: readAdmin(), email: '', pass: '', error: '', users: USERS, q: '', filter: 'all', toast: '', undoFn: null, page: 1 };
+  PAGE_SIZE = 6;
+  setAdmin(u) { try { u ? localStorage.setItem(KEY, JSON.stringify(u)) : localStorage.removeItem(KEY); } catch (e) {} }
+  flash(msg, undoFn) { clearTimeout(this._tt); this.setState({ toast: msg, undoFn: undoFn || null }); this._tt = setTimeout(() => this.setState({ toast: '', undoFn: null }), 4500); }
+  componentWillUnmount() { clearTimeout(this._tt); }
+  renderVals() {
+    const s = this.state, a = s.admin;
+    const q = s.q.trim().toLowerCase();
+    const filtered = s.users.filter(u => (s.filter === 'all' || u.status === s.filter) && (!q || u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)));
+    const pageCount = Math.max(1, Math.ceil(filtered.length / this.PAGE_SIZE));
+    const page = Math.min(s.page, pageCount);
+    const paged = filtered.slice((page - 1) * this.PAGE_SIZE, page * this.PAGE_SIZE);
+    const maxBar = Math.max(...USER_WEEKLY);
+    const activeN = s.users.filter(u => u.status === 'active').length, suspN = s.users.length - activeN;
+    return {
+      showLogin: !a, showDash: !!a,
+      email: s.email, pass: s.pass, onEmail: e => this.setState({ email: e.target.value, error: '' }), onPass: e => this.setState({ pass: e.target.value, error: '' }),
+      hasError: !!s.error, errorMsg: s.error,
+      login: () => {
+        if (!s.email.trim()) { this.setState({ error: 'Nhập email quản trị.' }); return; }
+        if (s.pass !== 'admin') { this.setState({ error: 'Sai mật khẩu. (Demo: mật khẩu là "admin")' }); return; }
+        const u = { name: s.email.split('@')[0].replace(/[.\-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), email: s.email };
+        this.setAdmin(u); this.setState({ admin: u, error: '' });
+      },
+      logout: () => { this.setAdmin(null); this.setState({ admin: null, email: '', pass: '' }); },
+      adminName: a?.name ?? '',
+      total: s.users.length,
+      bars: USER_WEEKLY.map((v, i) => ({ v, h: Math.round(v / maxBar * 86) + 8, bg: i === USER_WEEKLY.length - 1 ? '#a3161c' : '#e9ddc9' })),
+      kpis: [{ l: 'Đang hoạt động', v: activeN, dot: '#24493a' }, { l: 'Đã khoá', v: suspN, dot: '#a3161c' }, { l: 'Tổng số thiệp', v: s.users.reduce((t, u) => t + u.cards, 0), dot: '#8a6425' }, { l: 'TB thiệp / người', v: (s.users.reduce((t, u) => t + u.cards, 0) / s.users.length).toFixed(1), dot: '#1f3a5f' }],
+      filters: [['all','Tất cả'],['active','Hoạt động'],['suspended','Đã khoá']].map(([k, label]) => ({ label, bg: s.filter === k ? '#1a1412' : '#fff', fg: s.filter === k ? '#fff' : '#5e534b', bd: s.filter === k ? '#1a1412' : '#e0d5c6', pick: () => this.setState({ filter: k, page: 1 }) })),
+      q: s.q, onQ: e => this.setState({ q: e.target.value, page: 1 }),
+      noRows: filtered.length === 0,
+      hasPages: filtered.length > this.PAGE_SIZE, page, pageCount, matchCount: filtered.length,
+      atFirst: page <= 1, atLast: page >= pageCount, prevOp: page <= 1 ? 0.4 : 1, nextOp: page >= pageCount ? 0.4 : 1,
+      prevPage: () => this.setState({ page: Math.max(1, page - 1) }), nextPage: () => this.setState({ page: Math.min(pageCount, page + 1) }),
+      rows: paged.map((u, i) => ({
+        name: u.name, email: u.email, joined: u.joined, cards: u.cards, init: u.name.trim().split(' ').pop()[0], bg: AV[i % AV.length][0], fg: AV[i % AV.length][1],
+        stLabel: u.status === 'active' ? 'Hoạt động' : 'Đã khoá', stBg: u.status === 'active' ? '#e7eee6' : '#f5e3e1', stFg: u.status === 'active' ? '#24493a' : '#8e1b1f',
+        toggleLabel: u.status === 'active' ? 'Khoá' : 'Mở khoá',
+        toggle: () => { const users = s.users.map(x => x.id === u.id ? { ...x, status: x.status === 'active' ? 'suspended' : 'active' } : x); this.setState({ users }); this.flash(u.status === 'active' ? `Đã khoá tài khoản ${u.name}` : `Đã mở khoá tài khoản ${u.name}`); },
+        remove: () => { const users = s.users.filter(x => x.id !== u.id); this.setState({ users }); this.flash(`Đã xoá tài khoản ${u.name}`, () => this.setState({ users: [...this.state.users, u] })); },
+      })),
+      hasToast: !!s.toast, toast: s.toast, hasUndo: !!s.undoFn, undo: () => { if (s.undoFn) s.undoFn(); clearTimeout(this._tt); this.setState({ toast: '', undoFn: null }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

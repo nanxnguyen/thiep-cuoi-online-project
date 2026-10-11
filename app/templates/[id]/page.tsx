@@ -8,8 +8,10 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { sampleContent } from "@/lib/content";
 import { metadataFor, templateSeo } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
-import { colors, familyLayout, getTemplate, templateSamples, templates } from "@/lib/templates";
+import { colors, familyLayout, familyPhotos, getTemplate, templateSamples, templates } from "@/lib/templates";
+import { product } from "@/lib/jsonld";
 import "./detail.css";
+import { JsonLd } from "@/components/marketing/JsonLd";
 import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
 export function generateStaticParams() {
@@ -20,7 +22,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const template = getTemplate((await params).id);
   if (!template) return {};
   const { title, description } = templateSeo(template);
-  return metadataFor(`/templates/${template.id}`, title, description);
+  const meta = metadataFor(`/templates/${template.id}`, title, description);
+  const photo = familyPhotos[template.family]?.[0] ?? "/og.png";
+  return { ...meta, openGraph: { ...meta.openGraph, images: [{ url: `${SITE_URL}${photo}`, alt: title }] } };
 }
 
 // `?gate=1` shows the opening envelope addressed to a sample guest.
@@ -54,11 +58,14 @@ export default async function TemplatePreviewPage({
 
   const sample = templateSamples[template.id];
   const pal = colors[paletteKey as keyof typeof colors];
+  const { title: productName, description: productDescription } = templateSeo(template);
+  const productImage = familyPhotos[template.family]?.[0] ?? "/og.png";
   // design/Mau Thiep Chi Tiet.dc.html, value for value.
   return (
     <>
       <SiteHeader />
       <PageJsonLd path={`/templates/${template.id}`} name={template.name} parents={[{ name: "Mẫu thiệp", path: "/templates" }]} />
+      <JsonLd data={product(SITE_URL, { name: productName, description: productDescription, image: productImage, url: `/templates/${template.id}` })} />
       <main className="tdt">
         <div className="tdt__stage">
           <div className="tdt__card">

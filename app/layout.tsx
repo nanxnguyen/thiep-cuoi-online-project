@@ -28,7 +28,6 @@ export const metadata: Metadata = {
   icons: { icon: "/icon.svg", apple: "/apple-touch-icon.png" },
   openGraph: { type: "website", locale: "vi_VN", siteName: "MỘC Wedding", url: "/", title: HOME_TITLE, description: SEO_PAGES["/"].description, images: [{ url: "/og.png", width: 1200, height: 630, alt: "MỘC Wedding — thiệp cưới online" }] },
   twitter: { card: "summary_large_image", images: [{ url: "/og.png", alt: "MỘC Wedding — thiệp cưới online" }] },
-  robots: { index: true, follow: true },
 };
 
 // Phones: ivory browser bar, and on Android the layout shrinks above the keyboard so Studio's bottom sheets and the

@@ -1,7 +1,9 @@
 /* Batch 1 — Di sản Việt tái hiện (thủy mặc, phụng, sen, sứ, tơ hồng). Each cover fills the 9:16 .tp-root card;
    sizing in cqw so it scales with its box. Palette arrives as --cv-deep,
-   --cv-paper, --cv-gold on the wrapper. Long Vietnamese names must wrap,
-   never overflow. */
+   --cv-paper, --cv-gold on the wrapper. Names/dates/places live in
+   bottom-anchored wrappers so 2-line names never collide with ornament.
+   Motion is transform/opacity only: one entrance sequence plus a single
+   ambient infinite animation per cover. */
 .cv-wrap {
   position: absolute;
   inset: 0;
@@ -12,6 +14,7 @@
 .cv-slot {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 3 / 4;
   background: color-mix(in srgb, currentColor 12%, transparent);
   display: flex;
   flex-direction: column;
@@ -47,6 +50,7 @@
 .cv-names {
   overflow-wrap: anywhere;
   text-align: center;
+  text-wrap: balance;
 }
 .cv-date,
 .cv-place {
@@ -54,7 +58,7 @@
   text-align: center;
 }
 
-/* Mực Loang — thủy mặc: mist, far mountains, brush ring round the photo. */
+/* Mực Loang — enso brush ring round the photo, drifting mist, far mountains. */
 .cv-ink-wash {
   position: relative;
   height: 100%;
@@ -68,27 +72,53 @@
   width: 100%;
   height: 100%;
 }
+.cv-ink-wash__mist {
+  animation: cvHtMist 9s ease-in-out infinite alternate;
+}
+.cv-ink-wash__ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cvHtPop 1.1s ease-out both;
+}
 .cv-ink-wash__kicker {
   position: absolute;
   top: 9cqw;
   left: 0;
   right: 0;
 }
+.cv-ink-wash__seal {
+  position: absolute;
+  top: 15cqw;
+  right: 9cqw;
+  width: 9cqw;
+  height: 9cqw;
+  display: grid;
+  place-items: center;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  font-family: serif;
+  font-size: 5.8cqw;
+  border-radius: 0.8cqw;
+  animation: cvHtStamp 0.5s 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
 .cv-ink-wash__photo {
   position: absolute;
-  left: 23cqw;
-  top: 43cqw;
-  width: 54cqw;
-  height: 54cqw;
+  left: 24cqw;
+  top: 40cqw;
+  width: 52cqw;
+  height: 52cqw;
   border-radius: 50%;
   overflow: hidden;
-  animation: cvInkIn 1.2s ease-out both;
+  animation: cvHtPop 0.9s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.cv-ink-wash__names {
+.cv-ink-wash__text {
   position: absolute;
   left: 8cqw;
   right: 8cqw;
-  top: 107cqw;
+  bottom: 10cqw;
+  animation: cvHtRise 0.8s 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-ink-wash__names {
   font-family: var(--display);
   font-size: 9.4cqw;
   line-height: 1.18;
@@ -97,44 +127,23 @@
   font-family: var(--script);
   font-style: italic;
   font-size: 1.15em;
-  color: var(--cv-gold);
+  color: color-mix(in srgb, var(--cv-gold) 70%, var(--cv-deep));
 }
 .cv-ink-wash__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 140cqw;
+  margin-top: 2.4cqw;
   font-size: 4.6cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
 }
 .cv-ink-wash__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 150cqw;
+  margin-top: 1.4cqw;
   font-size: 2.8cqw;
   letter-spacing: 0.24em;
   text-indent: 0.24em;
   opacity: 0.8;
 }
-.cv-ink-wash__seal {
-  position: absolute;
-  right: 9cqw;
-  bottom: 9cqw;
-  width: 10cqw;
-  height: 10cqw;
-  display: grid;
-  place-items: center;
-  background: var(--cv-deep);
-  color: var(--cv-paper);
-  font-family: serif;
-  font-size: 6.6cqw;
-  transform: rotate(-7deg);
-  border-radius: 0.8cqw;
-}
 
-/* Phụng Vũ — gatefold doors open onto an arched photo under a feather crest. */
+/* Phụng Vũ — deco feather fan over parting gatefold doors, names under the fold. */
 .cv-phoenix-fold {
   position: relative;
   height: 100%;
@@ -155,12 +164,22 @@
   width: 64cqw;
   color: color-mix(in srgb, var(--cv-deep) 72%, var(--cv-gold));
 }
+.cv-phoenix-fold__sway {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: cvHtSway 7s ease-in-out infinite alternate;
+}
+.cv-phoenix-fold__feather {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: cvHtBloom 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
 .cv-phoenix-fold__stage {
   position: absolute;
   left: 12cqw;
-  top: 40cqw;
+  top: 44cqw;
   width: 76cqw;
-  height: 90cqw;
+  height: 82cqw;
 }
 .cv-phoenix-fold__photo {
   position: absolute;
@@ -187,18 +206,21 @@
 .cv-phoenix-fold__door--l {
   left: 0;
   clip-path: polygon(0 6%, 100% 0, 100% 100%, 0 94%);
-  animation: cvDoorL 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: cvHtDoorL 1s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-phoenix-fold__door--r {
   right: 0;
   clip-path: polygon(0 0, 100% 6%, 100% 94%, 0 100%);
-  animation: cvDoorR 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: cvHtDoorR 1s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.cv-phoenix-fold__names {
+.cv-phoenix-fold__text {
   position: absolute;
   left: 8cqw;
   right: 8cqw;
-  top: 134cqw;
+  bottom: 9cqw;
+  animation: cvHtRise 0.8s 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-phoenix-fold__names {
   font-family: var(--display);
   font-size: 7.6cqw;
   line-height: 1.2;
@@ -206,22 +228,16 @@
 .cv-phoenix-fold__amp {
   font-family: var(--script);
   font-style: italic;
-  color: var(--cv-gold);
+  color: color-mix(in srgb, var(--cv-gold) 70%, var(--cv-deep));
 }
 .cv-phoenix-fold__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 154cqw;
+  margin-top: 2cqw;
   font-size: 4cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
 }
 .cv-phoenix-fold__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 162cqw;
+  margin-top: 1cqw;
   font-size: 2.6cqw;
   letter-spacing: 0.24em;
   text-indent: 0.24em;
@@ -248,7 +264,7 @@
   align-items: center;
   border-radius: 2.5cqw;
   background: linear-gradient(var(--cv-gold), color-mix(in srgb, var(--cv-gold) 55%, var(--cv-deep)));
-  box-shadow: 0 0.8cqw 1.6cqw rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0.8cqw 1.6cqw color-mix(in srgb, var(--cv-deep) 30%, transparent);
 }
 .cv-lotus-scroll__rod i {
   width: 0.5cqw;
@@ -265,9 +281,9 @@
   right: 8cqw;
   top: 9cqw;
   bottom: 9cqw;
-  background: color-mix(in srgb, var(--cv-paper) 90%, white);
-  box-shadow: 0 0 0 0.3cqw color-mix(in srgb, var(--cv-deep) 30%, transparent), 0 2cqw 4cqw rgba(0, 0, 0, 0.12);
-  animation: cvScrollIn 1s ease-out both;
+  background: var(--cv-paper);
+  box-shadow: 0 0 0 0.3cqw color-mix(in srgb, var(--cv-deep) 30%, transparent), 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 25%, transparent);
+  animation: cvHtSheet 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-lotus-scroll__kicker {
   position: absolute;
@@ -281,6 +297,7 @@
   top: 20cqw;
   width: 78cqw;
   color: color-mix(in srgb, var(--cv-deep) 85%, var(--cv-gold));
+  animation: cvHtPop 0.8s 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-lotus-scroll__bloom--back {
   opacity: 0.95;
@@ -294,12 +311,17 @@
   border-radius: 50%;
   overflow: hidden;
   border: 0.6cqw solid var(--cv-paper);
+  box-shadow: 0 1cqw 2cqw color-mix(in srgb, var(--cv-deep) 30%, transparent);
+  animation: cvHtPop 0.8s 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.cv-lotus-scroll__names {
+.cv-lotus-scroll__text {
   position: absolute;
   left: 4cqw;
   right: 4cqw;
-  top: 82cqw;
+  bottom: 34cqw;
+  animation: cvHtRise 0.8s 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-lotus-scroll__names {
   font-family: var(--display);
   font-size: 8.4cqw;
   line-height: 1.2;
@@ -307,27 +329,23 @@
 .cv-lotus-scroll__amp {
   font-family: var(--script);
   font-style: italic;
-  color: var(--cv-gold);
+  color: color-mix(in srgb, var(--cv-gold) 70%, var(--cv-deep));
 }
 .cv-lotus-scroll__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 104cqw;
+  margin-top: 2cqw;
   font-size: 4.2cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
 }
 .cv-lotus-scroll__weekday {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 112cqw;
+  margin-top: 1.2cqw;
   text-align: center;
-  font-size: 2.6cqw;
-  letter-spacing: 0.4em;
-  text-indent: 0.4em;
-  opacity: 0.75;
+  font-family: var(--script);
+  font-style: italic;
+  font-size: 3.4cqw;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  color: color-mix(in srgb, var(--cv-gold) 65%, var(--cv-deep));
 }
 .cv-lotus-scroll__pond {
   position: absolute;
@@ -337,8 +355,16 @@
   color: var(--cv-deep);
   opacity: 0.65;
 }
+.cv-lotus-scroll__ripple {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cvHtRipple 3.4s ease-in-out infinite alternate;
+}
+.cv-lotus-scroll__ripple--wide {
+  animation-delay: -1.7s;
+}
 
-/* Lam Sứ — tiled porcelain ground, scalloped plate, cartouche. */
+/* Lam Sứ — hand-painted cobalt frame on bright paper, oval photo under names. */
 .cv-porcelain-blue {
   position: relative;
   height: 100%;
@@ -346,56 +372,60 @@
   background: var(--cv-paper);
   color: var(--cv-deep);
 }
-.cv-porcelain-blue__tiles {
+.cv-porcelain-blue__frame {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.22;
+  color: color-mix(in srgb, var(--cv-deep) 88%, var(--cv-gold));
+}
+.cv-porcelain-blue__settle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cvHtSettle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-porcelain-blue__kicker {
   position: absolute;
-  top: 9cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  width: max-content;
-  padding: 1.6cqw 4cqw;
-  background: var(--cv-paper);
-}
-.cv-porcelain-blue__plate {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  color: var(--cv-deep);
-}
-.cv-porcelain-blue__photo {
-  position: absolute;
-  left: 24cqw;
-  top: 50cqw;
-  width: 52cqw;
-  height: 52cqw;
-  border-radius: 50%;
-  overflow: hidden;
+  top: 10cqw;
+  left: 0;
+  right: 0;
 }
 .cv-porcelain-blue__label {
   position: absolute;
-  left: 13cqw;
-  right: 13cqw;
-  top: 120cqw;
-  padding: 5cqw 3cqw;
-  background: var(--cv-paper);
-  border: 0.5cqw solid var(--cv-deep);
-  outline: 0.4cqw solid var(--cv-deep);
-  outline-offset: -1.7cqw;
+  left: 14cqw;
+  right: 14cqw;
+  bottom: 12cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: cvHtRise 0.8s 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-porcelain-blue__names {
   font-family: var(--display);
   font-size: 7.4cqw;
   line-height: 1.2;
 }
+.cv-porcelain-blue__photo {
+  position: relative;
+  margin-top: 3cqw;
+  width: 34cqw;
+  height: 44cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0.7cqw solid color-mix(in srgb, var(--cv-deep) 88%, var(--cv-gold));
+  box-shadow: 0 1.4cqw 3cqw color-mix(in srgb, var(--cv-deep) 30%, transparent);
+  animation: cvHtPop 0.8s 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-porcelain-blue__glaze {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 30%, color-mix(in srgb, var(--cv-paper) 55%, transparent) 46%, transparent 60%);
+  animation: cvHtGlaze 4s ease-in-out infinite alternate;
+  pointer-events: none;
+}
 .cv-porcelain-blue__date {
-  margin-top: 2cqw;
+  margin-top: 2.6cqw;
   font-size: 3.6cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
@@ -408,7 +438,7 @@
   opacity: 0.8;
 }
 
-/* Tơ Hồng — a red silk thread loops round the photo and ties a bow. */
+/* Tơ Hồng — one silk thread: bow, loop round the photo, flourishes to the knot. */
 .cv-silk-knot {
   position: relative;
   height: 100%;
@@ -425,11 +455,12 @@
 .cv-silk-knot__photo {
   position: absolute;
   left: 28cqw;
-  top: 50cqw;
+  top: 44cqw;
   width: 44cqw;
   height: 44cqw;
   border-radius: 50%;
   overflow: hidden;
+  animation: cvHtPop 0.9s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-silk-knot__thread {
   position: absolute;
@@ -437,14 +468,21 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
+  animation: cvHtFade 1.2s 0.3s ease-out both;
+}
+.cv-silk-knot__bow {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: cvHtBow 5s ease-in-out infinite alternate;
 }
 .cv-silk-knot__text {
   position: absolute;
   left: 10cqw;
   right: 10cqw;
-  top: 112cqw;
+  bottom: 9cqw;
   text-align: center;
   text-shadow: 0 0 1.5cqw var(--cv-paper), 0 0 3cqw var(--cv-paper), 0 0 5cqw var(--cv-paper);
+  animation: cvHtRise 0.8s 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-silk-knot__names {
   font-family: var(--display);
@@ -454,10 +492,22 @@
 .cv-silk-knot__amp {
   font-family: var(--script);
   font-style: italic;
-  color: var(--cv-gold);
+  color: color-mix(in srgb, var(--cv-gold) 70%, var(--cv-deep));
+}
+.cv-silk-knot__flourish {
+  width: 72cqw;
+  height: 4cqw;
+  margin: 1.6cqw auto 0;
+  color: color-mix(in srgb, var(--cv-deep) 80%, var(--cv-gold));
+  animation: cvHtFade 1s 0.8s ease-out both;
+}
+.cv-silk-knot__flourish--short {
+  width: 44cqw;
+  height: 3cqw;
+  margin-top: 1.2cqw;
 }
 .cv-silk-knot__date {
-  margin-top: 3cqw;
+  margin-top: 2.4cqw;
   font-size: 4.2cqw;
   letter-spacing: 0.3em;
   text-indent: 0.3em;
@@ -470,26 +520,86 @@
   opacity: 0.8;
 }
 
-@keyframes cvInkIn {
-  from { opacity: 0; transform: scale(0.94); }
+@keyframes cvHtRise {
+  from { opacity: 0; transform: translateY(3cqw); }
   to { opacity: 1; transform: none; }
 }
-@keyframes cvDoorL {
-  from { transform: translateX(16cqw); }
-  to { transform: none; }
+@keyframes cvHtPop {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: none; }
 }
-@keyframes cvDoorR {
-  from { transform: translateX(-16cqw); }
-  to { transform: none; }
+@keyframes cvHtFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-@keyframes cvScrollIn {
-  from { clip-path: inset(0 0 100% 0); }
-  to { clip-path: inset(0); }
+@keyframes cvHtStamp {
+  from { opacity: 0; transform: rotate(-16deg) scale(1.7); }
+  to { opacity: 1; transform: rotate(-7deg) scale(1); }
+}
+@keyframes cvHtMist {
+  from { opacity: 0.7; transform: translateX(-4cqw); }
+  to { opacity: 1; transform: translateX(4cqw); }
+}
+@keyframes cvHtDoorL {
+  from { opacity: 0; transform: translateX(14cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvHtDoorR {
+  from { opacity: 0; transform: translateX(-14cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvHtBloom {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvHtSway {
+  from { transform: rotate(-1.2deg); }
+  to { transform: rotate(1.2deg); }
+}
+@keyframes cvHtSheet {
+  from { opacity: 0; transform: translateY(-4cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvHtRipple {
+  from { opacity: 0.15; transform: translateX(-2cqw); }
+  to { opacity: 0.6; transform: translateX(2cqw); }
+}
+@keyframes cvHtSettle {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvHtGlaze {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+@keyframes cvHtBow {
+  from { transform: rotate(-2deg); }
+  to { transform: rotate(2deg); }
 }
 @media (prefers-reduced-motion: reduce) {
+  .cv-ink-wash__mist,
+  .cv-ink-wash__ring,
+  .cv-ink-wash__seal,
   .cv-ink-wash__photo,
+  .cv-ink-wash__text,
+  .cv-phoenix-fold__sway,
+  .cv-phoenix-fold__feather,
   .cv-phoenix-fold__door,
-  .cv-lotus-scroll__sheet {
+  .cv-phoenix-fold__text,
+  .cv-lotus-scroll__sheet,
+  .cv-lotus-scroll__bloom,
+  .cv-lotus-scroll__photo,
+  .cv-lotus-scroll__text,
+  .cv-lotus-scroll__ripple,
+  .cv-porcelain-blue__settle,
+  .cv-porcelain-blue__label,
+  .cv-porcelain-blue__photo,
+  .cv-porcelain-blue__glaze,
+  .cv-silk-knot__photo,
+  .cv-silk-knot__thread,
+  .cv-silk-knot__bow,
+  .cv-silk-knot__text,
+  .cv-silk-knot__flourish {
     animation: none;
   }
 }

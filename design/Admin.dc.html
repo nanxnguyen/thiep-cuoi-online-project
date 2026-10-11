@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f8f4ee;color:#1a1412;font-family:'Be Vietnam Pro',sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+</style>
+<script src="motion.js" data-lite></script>
+</helmet>
+
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:grid;place-items:center;padding:24px">
+    <div style="width:100%;max-width:400px;background:#fff;border-radius:20px;padding:40px 32px;display:flex;flex-direction:column;gap:18px;box-shadow:0 20px 50px -24px rgba(26,20,18,.35);animation:fadeUp .5s both">
+      <span style="width:44px;height:44px;border-radius:10px;background:#1c1012;color:#f1e7d6;display:grid;place-items:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:600">M</span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:12px;letter-spacing:.18em;color:#8a6425;font-weight:600">KHU VỰC QUẢN TRỊ</span>
+        <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:26px">Đăng nhập quản trị</h1>
+        <p style="margin:0;font-size:13px;color:#5e534b;line-height:1.6">Chỉ dành cho quản trị viên của Mộc. Trang này không có liên kết công khai trên website.</p>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Email quản trị<input value="{{ email }}" onInput="{{ onEmail }}" placeholder="admin@moc.vn" style="font-family:inherit;font-size:14px;padding:12px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:#5e534b">Mật khẩu<input type="password" value="{{ pass }}" onInput="{{ onPass }}" placeholder="••••••••" style="font-family:inherit;font-size:14px;padding:12px 14px;border-radius:12px;border:1px solid #ddd2c4;background:#faf7f2;outline:none"></label>
+      <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#a3161c">{{ errorMsg }}</span></sc-if>
+      <button onClick="{{ login }}" style="font-family:inherit;font-size:15px;font-weight:500;padding:14px;border-radius:999px;border:0;background:#1c1012;color:#f1e7d6;cursor:pointer" style-hover="background:#2a1d1a">Đăng nhập</button>
+      <span style="font-size:12px;color:#8a7d72;text-align:center">Demo: nhập email bất kỳ, mật khẩu là <strong>admin</strong></span>
+      <a href="Trang Chu.dc.html" style="font-size:13px;color:#8a7d72;text-align:center;text-decoration:none" style-hover="color:#1a1412">← Về trang chủ</a>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ showDash }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;min-height:100vh">
+    <dc-import name="Admin Sidebar" active="overview" admin-name="{{ adminName }}" on-logout="{{ logout }}" hint-size="240px,100vh"></dc-import>
+    <main style="flex:1;min-width:0;padding:44px 48px;display:flex;flex-direction:column;gap:36px;max-width:1280px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;animation:fadeUp .4s both">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:12px;letter-spacing:.18em;color:#8a6425;font-weight:600">QUẢN TRỊ · TỔNG QUAN</span>
+          <h1 style="margin:0;font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(28px,3vw,38px)">Chào, {{ adminFirstName }}</h1>
+        </div>
+        <span style="font-size:13px;color:#8a7d72">{{ today }}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;animation:fadeUp .45s both">
+        <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+          <div style="background:#fff;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px;box-shadow:0 14px 34px -22px rgba(26,20,18,.3)">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+              <span style="font-size:13px;color:#5e534b">{{ s.l }}</span>
+              <sc-if value="{{ s.hasDelta }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;background:{{ s.deltaBg }};color:{{ s.deltaFg }};white-space:nowrap">{{ s.delta }}</span></sc-if>
+            </div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
+              <span style="font-family:'Playfair Display',serif;font-size:34px;line-height:1">{{ s.v }}</span>
+              <sc-if value="{{ s.hasSpark }}" hint-placeholder-val="{{ false }}">
+                <svg width="64" height="26" viewBox="0 0 64 26" style="flex:none"><polyline points="{{ s.spark }}" fill="none" stroke="#a3161c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+              </sc-if>
+            </div>
+            <span style="font-size:12px;color:#8a7d72">{{ s.sub }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;align-items:stretch">
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Playfair Display',serif;font-size:20px">Thiệp tạo mới theo tuần</span><span style="font-size:12px;color:#8a7d72">8 tuần gần nhất</span></div>
+          <div style="display:flex;align-items:flex-end;gap:14px;height:150px;padding:0 4px">
+            <sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">
+                <span style="font-size:11px;color:#1a1412;font-weight:500">{{ b.v }}</span>
+                <div style="width:100%;max-width:30px;height:{{ b.h }}px;background:{{ b.bg }};border-radius:7px 7px 3px 3px;transition:height .3s"></div>
+                <span style="font-size:11px;color:#8a7d72">{{ b.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:18px">
+          <span style="font-family:'Playfair Display',serif;font-size:20px">Trạng thái thiệp</span>
+          <div style="display:flex;align-items:center;gap:22px;flex:1">
+            <div style="width:124px;height:124px;border-radius:50%;background:{{ donut }};position:relative;flex:none">
+              <div style="position:absolute;inset:22px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                <span style="font-family:'Playfair Display',serif;font-size:21px">{{ cardsTotal }}</span>
+                <span style="font-size:10px;letter-spacing:.1em;color:#8a7d72">TỔNG</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;flex:1;min-width:0">
+              <sc-for list="{{ legend }}" as="g" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span style="width:9px;height:9px;border-radius:50%;background:{{ g.color }};flex:none"></span>
+                  <span style="font-size:13px;color:#5e534b;flex:1">{{ g.label }}</span>
+                  <span style="font-size:13px;font-weight:500">{{ g.val }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:20px">
+        <div style="background:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-family:'Playfair Display',serif;font-size:20px">Người dùng mới</span><a href="Admin Nguoi Dung.dc.html" style="font-size:13px;color:#a3161c;text-decoration:none">Xem tất cả →</a></div>
+          <sc-for list="{{ recentUsers }}" as="u" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #f3ece2">
+              <span style="width:32px;height:32px;border-radius:50%;background:{{ u.bg }};color:{{ u.fg }};display:grid;place-items:center;font-size:12px;font-weight:600;flex:none">{{ u.init }}</span>
+              <span style="display:flex;flex-direction:column;min-width:0;flex:1"><span style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.name }}</span><span style="font-size:12px;color:#8a7d72;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.email }}</span></span>
+              <span style="font-size:12px;color:#8a7d72;flex:none">{{ u.joined }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="background:#fff;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-family:'Playfair Display',serif;font-size:20px">Thiệp gần đây</span><a href="Admin Thiep Cuoi.dc.html" style="font-size:13px;color:#a3161c;text-decoration:none">Xem tất cả →</a></div>
+          <sc-for list="{{ recentCards }}" as="c" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #f3ece2">
+              <span style="font-size:12px;padding:4px 10px;border-radius:999px;background:{{ c.bg }};color:{{ c.fg }};flex:none">{{ c.st }}</span>
+              <span style="display:flex;flex-direction:column;min-width:0;flex:1"><span style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.couple }}</span><span style="font-size:12px;color:#8a7d72">{{ c.tpl }}</span></span>
+              <span style="font-size:12px;color:#8a7d72;flex:none">{{ c.at }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </main>
+  </div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const KEY = 'moc_admin';
+const readAdmin = () => { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
+const U = [['Nguyễn Thu Hà','thuha.nguyen@gmail.com','02/10/2026'],['Trần Quốc Bảo','quocbao.tran@gmail.com','01/10/2026'],['Lê Minh Anh','minhanh.le@gmail.com','29/09/2026'],['Phạm Gia Hân','giahan.pham@gmail.com','27/09/2026'],['Đỗ Khánh Vy','khanhvy.do@gmail.com','25/09/2026']];
+const C = [['Thu Hà & Quốc Bảo','Song Hỷ','published','02/10/2026'],['Minh Anh & Gia Huy','Hoàng Gia','published','01/10/2026'],['Gia Hân & Đức Thắng','Phong Thư','draft','29/09/2026'],['Khánh Vy & Nhật Nam','Đĩa Than','published','27/09/2026'],['Ngọc Diệp & Tiến Dũng','Nét Mực','reported','25/09/2026']];
+const STBG = { published: ['#e7eee6','#24493a','Đã xuất bản'], draft: ['#efe6d9','#8a7d72','Bản nháp'], reported: ['#f5e3e1','#8e1b1f','Bị báo cáo'] };
+const AV = [['#f7f0e0','#8a6425'],['#e7eee6','#24493a'],['#eef1f4','#1f3a5f'],['#fbf1ef','#a4505f'],['#f3ece2','#6b4a33']];
+const CARD_WEEKLY = [22,28,25,34,30,39,36,44];
+const WK_LABELS = ['T1','T2','T3','T4','T5','T6','T7','T8'];
+const spark = arr => { const max = Math.max(...arr), min = Math.min(...arr); return arr.map((v, i) => `${(i / (arr.length - 1) * 64).toFixed(1)},${(24 - (v - min) / (max - min || 1) * 22).toFixed(1)}`).join(' '); };
+class Component extends DCLogic {
+  state = { admin: readAdmin(), email: '', pass: '', error: '' };
+  setAdmin(u) { try { u ? localStorage.setItem(KEY, JSON.stringify(u)) : localStorage.removeItem(KEY); } catch (e) {} }
+  renderVals() {
+    const s = this.state, a = s.admin;
+    const today = new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const maxBar = Math.max(...CARD_WEEKLY);
+    const pub = 289, draft = 47, rep = 6, total = pub + draft + rep;
+    const p1 = pub / total * 100, p2 = p1 + draft / total * 100;
+    return {
+      showLogin: !a, showDash: !!a,
+      email: s.email, pass: s.pass, onEmail: e => this.setState({ email: e.target.value, error: '' }), onPass: e => this.setState({ pass: e.target.value, error: '' }),
+      hasError: !!s.error, errorMsg: s.error,
+      login: () => {
+        if (!s.email.trim()) { this.setState({ error: 'Nhập email quản trị.' }); return; }
+        if (s.pass !== 'admin') { this.setState({ error: 'Sai mật khẩu. (Demo: mật khẩu là "admin")' }); return; }
+        const u = { name: s.email.split('@')[0].replace(/[.\-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), email: s.email };
+        this.setAdmin(u); this.setState({ admin: u, error: '' });
+      },
+      logout: () => { this.setAdmin(null); this.setState({ admin: null, email: '', pass: '' }); },
+      adminName: a?.name ?? '', adminFirstName: (a?.name || '').split(' ')[0] || '',
+      today,
+      stats: [
+        { l: 'Tổng người dùng', v: 128, sub: '7 tài khoản bị khoá', hasDelta: true, delta: '+6 tuần này', deltaBg: '#e7eee6', deltaFg: '#24493a', hasSpark: true, spark: spark([62,70,75,80,92,101,112,128]) },
+        { l: 'Tổng số thiệp', v: 342, sub: '53 bản nháp', hasDelta: true, delta: '+18 tuần này', deltaBg: '#e7eee6', deltaFg: '#24493a', hasSpark: true, spark: spark(CARD_WEEKLY) },
+        { l: 'Đã xuất bản', v: '289', sub: '84% tổng số thiệp', hasDelta: false, hasSpark: false },
+        { l: 'Lời chúc cần duyệt', v: 14, sub: 'Trên 18 thiệp khác nhau', hasDelta: true, delta: 'Cần xử lý', deltaBg: '#efe6d9', deltaFg: '#8a6425', hasSpark: false },
+      ],
+      bars: CARD_WEEKLY.map((v, i) => ({ v, h: Math.round(v / maxBar * 120) + 10, label: WK_LABELS[i], bg: i === CARD_WEEKLY.length - 1 ? '#a3161c' : '#e9ddc9' })),
+      donut: `conic-gradient(#24493a 0% ${p1}%, #c9a86a ${p1}% ${p2}%, #a3161c ${p2}% 100%)`,
+      cardsTotal: total,
+      legend: [{ label: 'Đã xuất bản', val: pub, color: '#24493a' }, { label: 'Bản nháp', val: draft, color: '#c9a86a' }, { label: 'Bị báo cáo', val: rep, color: '#a3161c' }],
+      recentUsers: U.map(([name, email, joined], i) => ({ name, email, joined, init: name.trim().split(' ').pop()[0], bg: AV[i % AV.length][0], fg: AV[i % AV.length][1] })),
+      recentCards: C.map(([couple, tpl, st, at]) => { const [bg, fg, label] = STBG[st]; return { couple, tpl, at, bg, fg, st: label }; }),
+    };
+  }
+}
+</script>
+</body>
+</html>

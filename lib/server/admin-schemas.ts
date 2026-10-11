@@ -10,8 +10,8 @@ export type AdminStyle = (typeof ADMIN_STYLES)[number];
 export type AdminBadge = (typeof ADMIN_BADGES)[number];
 
 export const adminLoginSchema = z.object({
-  email: z.email().max(254),
-  password: z.string().min(1).max(128),
+  email: z.email("Email không hợp lệ.").max(254, "Email quá dài."),
+  password: z.string().min(1, "Nhập mật khẩu.").max(128, "Mật khẩu quá dài."),
 });
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 

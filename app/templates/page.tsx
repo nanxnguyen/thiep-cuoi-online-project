@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/marketing/JsonLd";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { GalleryCatalog, GalleryFaq } from "@/components/templates/GalleryCatalog";
-import { colors, templates } from "@/lib/templates";
+import { colors, familyPhotos, templates } from "@/lib/templates";
 import "@/components/templates/gallery.css";
 import { PageJsonLd } from "@/components/marketing/PageJsonLd";
 
@@ -27,7 +27,7 @@ export default function TemplatesPage() {
   return (
     <div className="gal">
       <SiteHeader />
-      <PageJsonLd path="/templates" name="Mẫu thiệp" list={templates.map((t) => ({ name: t.name, path: `/templates/${t.id}` }))} />
+      <PageJsonLd path="/templates" name="Mẫu thiệp" list={templates.map((t) => ({ name: t.name, path: `/templates/${t.id}`, image: familyPhotos[t.family]?.[0] }))} />
       <section className="gal-hero">
         <div>
           <div className="gal-hero__kicker">
@@ -35,9 +35,9 @@ export default function TemplatesPage() {
             BỘ SƯU TẬP MẪU THIỆP
           </div>
           <h1>
-            Chọn cảm giác
+            50 mẫu thiệp cưới online
             <br />
-            <em>đúng là mình.</em>
+            <em>cho mọi phong cách.</em>
           </h1>
         </div>
         <div className="gal-hero__side">
@@ -103,9 +103,9 @@ export default function TemplatesPage() {
           <div>
             <span className="gal-kicker">HỎI ĐÁP</span>
             <h2>
-              Trước khi
+              Mẫu thiệp cưới nào
               <br />
-              <em>bạn chọn</em>
+              <em>hợp với bạn?</em>
             </h2>
           </div>
           <GalleryFaq items={FAQ} />

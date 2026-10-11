@@ -2,6 +2,18 @@
 // free of env access and runs under plain Node in tests.
 type Crumb = { name: string; path?: string };
 const abs = (base: string, path: string) => `${base}${path === "/" ? "" : path}`;
+// Callers may pass a site-relative path ("/photos/a.jpg") or an already-absolute URL; never double-prefix.
+const toAbs = (base: string, value: string) => (value.startsWith("http") ? value : abs(base, value.startsWith("/") ? value : `/${value}`));
+
+// Absolute URL of the site logo (public/logo.png). Single source so Organization and publisher markup agree.
+export function logoUrl(base: string) {
+  return abs(base, "/logo.png");
+}
+
+// Shared publisher logo ImageObject (Google requires a logo for Article rich results).
+export function publisherLogo(base: string) {
+  return { "@type": "ImageObject", url: logoUrl(base) };
+}
 
 // The last crumb is the current page; Google wants its `item` omitted or equal to the page URL.
 export function breadcrumbList(base: string, trail: Crumb[]) {
@@ -12,11 +24,11 @@ export function breadcrumbList(base: string, trail: Crumb[]) {
   };
 }
 
-export function itemList(base: string, items: { name: string; path: string }[]) {
+export function itemList(base: string, items: { name: string; path: string; image?: string }[]) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, url: abs(base, it.path) })),
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, url: abs(base, it.path), ...(it.image ? { image: toAbs(base, it.image) } : {}) })),
   };
 }
 
@@ -36,7 +48,28 @@ export function blogPosting(base: string, post: { slug: string; title: string; d
     inLanguage: "vi-VN",
     image: abs(base, post.cover?.src ?? "/og.png"),
     author: org,
-    publisher: org,
+    publisher: { ...org, logo: publisherLogo(base) },
+  };
+}
+
+// One template (or the launch offer) as a Product with a free Offer. `image`/`url` accept site-relative
+// paths or absolute URLs. `relatedUrls` is optional and omitted when there is nothing real to link.
+export function product(base: string, p: { name: string; description: string; image: string; url: string; relatedUrls?: string[] }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    description: p.description,
+    image: toAbs(base, p.image),
+    brand: { "@type": "Brand", name: "MỘC Wedding" },
+    ...(p.relatedUrls?.length ? { isRelatedTo: p.relatedUrls.map((u) => toAbs(base, u)) } : {}),
+    offers: {
+      "@type": "Offer",
+      url: toAbs(base, p.url),
+      price: "0",
+      priceCurrency: "VND",
+      availability: "https://schema.org/InStock",
+    },
   };
 }
 

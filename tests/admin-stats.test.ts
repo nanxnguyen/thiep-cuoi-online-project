@@ -177,7 +177,7 @@ test("getAdminStats maps counts, series, top templates and recents", async () =>
     {
       id: "inv-1",
       slug: "thu-ha-quoc-bao",
-      couple: "Quốc Bảo & Thu Hà",
+      couple: "Thu Hà & Quốc Bảo",
       templateId: "song-hy",
       status: "published",
       confirmed: "—",

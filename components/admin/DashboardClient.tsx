@@ -60,7 +60,8 @@ export function DashboardClient({ adminName }: { adminName: string }) {
     void load();
   }, [load]);
 
-  const firstName = adminName.trim().split(" ")[0] || "quản trị viên";
+  // Vietnamese given name is the last word of the full name.
+  const firstName = adminName.trim().split(/\s+/).pop() || "quản trị viên";
   const today = new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   return (
@@ -137,7 +138,7 @@ export function DashboardClient({ adminName }: { adminName: string }) {
             <section className="adm-card" aria-label="Người dùng mới">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
                 <h2 className="adm-card-title" style={{ margin: 0 }}>Người dùng mới</h2>
-                <Link href="/admin/users" style={{ fontSize: 13, color: "var(--accent)", textDecoration: "none" }}>
+                <Link href="/admin/users" className="adm-link-more">
                   Xem tất cả →
                 </Link>
               </div>
@@ -168,7 +169,7 @@ export function DashboardClient({ adminName }: { adminName: string }) {
             <section className="adm-card" aria-label="Thiệp gần đây">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
                 <h2 className="adm-card-title" style={{ margin: 0 }}>Thiệp gần đây</h2>
-                <Link href="/admin/cards" style={{ fontSize: 13, color: "var(--accent)", textDecoration: "none" }}>
+                <Link href="/admin/cards" className="adm-link-more">
                   Xem tất cả →
                 </Link>
               </div>

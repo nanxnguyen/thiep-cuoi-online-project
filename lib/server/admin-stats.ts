@@ -34,8 +34,8 @@ const ADMIN_STATS_SCAN_LIMIT = 10000;
 
 export const ADMIN_COUPLE_FALLBACK = "Thiệp chưa đặt tên";
 
-export function adminCoupleLabel(groomName: string, brideName: string): string {
-  const label = [groomName, brideName].filter(Boolean).join(" & ");
+export function adminCoupleLabel(firstName: string, secondName: string): string {
+  const label = [firstName, secondName].filter(Boolean).join(" & ");
   return label || ADMIN_COUPLE_FALLBACK;
 }
 
@@ -199,7 +199,7 @@ export async function getAdminStats(admin: SupabaseClient, now: Date = new Date(
     return {
       id: row.id,
       slug: row.slug,
-      couple: adminCoupleLabel(account.groomName, account.brideName),
+      couple: adminCoupleLabel(account.brideName, account.groomName),
       templateId: row.template_id,
       status: row.is_flagged ? ("reported" as const) : row.published ? ("published" as const) : ("draft" as const),
       // The dashboard never surfaces per-card RSVP counts, so stats skips the

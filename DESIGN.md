@@ -99,6 +99,28 @@ Asset: mọi ornament của 30 mẫu mới là CSS/SVG vẽ riêng (`original`),
 
 Màu cover mới chạy qua biến `--cv-deep/--cv-paper/--cv-gold` do `ThiepPreview` truyền từ palette registry (`lib/templates.ts`); không hex rời ngoài token và registry. Thêm family mới: thêm slug vào `NEW_FAMILIES` + meta trong `lib/covers.ts`, thêm renderer vào `coverRenderers` (typecheck bắt exhaustive), thêm catalog row + sample + SEO trong `lib/templates.ts`.
 
+## Thiết kế lại cover 30 mẫu mới (2026-10-08, mẫu #21–#50)
+
+Phạm vi đã chốt với chủ dự án: làm lại cover + ornament + motion cho 30 mẫu archetype mới (#21–#50: Mực Loang … Duyên Tinh Tú), giữ nguyên 20 mẫu gốc A–T và toàn bộ section bên trong. `design/` không sửa (read-only); code là nguồn mới.
+
+Quy ước redesign (áp dụng đều cho cả 30 cover):
+- Ornament vẽ lại theo archetype; text (tên/ngày/địa điểm) nằm trong wrapper neo đáy để tên 2 dòng không va ornament.
+- Màu chỉ qua `var(--cv-deep)/--cv-paper/--cv-gold` (+ `color-mix`), kích thước `cqw`, class BEM `.cv-<family>__*`, SVG trang trí `aria-hidden`, không emoji.
+- Motion: một chuỗi entrance + tối đa một ambient infinite, chỉ transform/opacity; mọi stylesheet có animation đều giữ guard `prefers-reduced-motion` (test `tests/covers.test.ts` bắt).
+- Mỗi cover một điểm nhấn, còn lại tiết chế; groundedin DB design của skill `ui-ux-pro-max`, gu `frontend-design`.
+
+Điểm nhấn từng mẫu (theo collection):
+- Di sản Việt (`heritage.css`): Mực Loang — vòng cọ enso + con dấu đóng góc; Phụng Vũ — quạt lông + cửa xếp mở ra ảnh; Liên Hoa — sen nét mảnh + cuộn giấy nẹp tre; Lam Sứ — khung men lam vẽ tay + ảnh oval; Tơ Hồng — dải lụa đỏ liền một nét.
+- Vườn hoa (`garden.css`): Vườn Kính — nhà kính vòm + bóng lóa quét + dây leo; Mai Lan — cành lan 7 hoa; Vườn Ép Hoa — tờ tiêu bản + nhãn khoa học; Nơi Mình Hẹn — phác thảo điểm cưới + biển ngày; Dạ Hoa — vườn đêm + đom đóm.
+- Editorial (`editorial.css`, không đổi đợt này): Thư Dọc — chân dung tràn + chữ gáy; Phòng Tối — contact sheet + khung màu; Song Ảnh — hai chân dung + chỉ vàng; Cờ Hiệu — dây cờ + pennant; Sắc Đôi — ảnh 2 mực + tên tay khổ lớn.
+- Quiet luxury (`quiet-luxury.css`): Hoa Chữ — monogram + cành hoa; Bát Giác — ảnh bát giác + sao 16 cánh; Sâm Panh — đường vàng + ly cụng; Ngọc Trai — 3 chuỗi ngọc + ảnh oval; Hồng Nhung — thác hồng nhung + thân vàng.
+- Kỷ vật (`story.css`): Nhật Ký — trang nhật ký + lò xo vàng; Hành Trình — bản đồ + lộ trình 3 ghim; Quán Quen — menu card + ảnh lót ly; Giao Điểm — 2 vòng tròn + thấu kính; Thẻ Nổi — thẻ bay + nền lưới.
+- Đương đại (`expressive.css`): Chữ Chuyển Nhịp — tên trượt + số ngày lớn; Khối Hỷ — 3 khối chéo + chữ Hỷ; Chúng Mình — cặp chibi vẽ tay; Cắt Giấy — 3 lớp giấy + charm đung đưa; Duyên Tinh Tú — chòm sao từ ngày cưới + ảnh-hành tinh.
+
+Sửa kèm trong đợt: `app/thiet-ke-thiep-rieng/page.tsx` thêm `eager` cho preview card; `components/home/home.css` dời 2 chip mobile xuống dưới vùng tên (BUG-01: chip đè tên + chữ Hỷ); auth header — hint đăng nhập chuyển sang `localStorage` (chung mọi tab, fix avatar mất ở tab mới) và header chỉ fetch `/api/auth/me` khi có hint (fetch 401 của khách vãng lai bị Chrome log console.error dù đã `.catch`, làm rớt e2e mọi trang public).
+
+Kiểm chứng: `tsc --noEmit` sạch, `node --test tests/covers.test.ts tests/templates.test.ts` 16/16, e2e `all-pages` đủ matrix (trang trong `e2e/all-pages.spec.ts`).
+
 ## Mobile (≤767px): độ lệch có chủ đích so với design/
 
 `design/` chỉ có mockup desktop (spec 2026-10-07, D4), nên giao diện điện thoại do MỘC tự thiết kế và chỉ cộng thêm: mọi rule nằm trong block `@media (max-width: 767px)` (thêm 479/359px khi cần) ở cuối file CSS sở hữu selector, không dòng CSS cũ nào bị sửa. Desktop không đổi: snapshot layout 768/1024/1280/1440px trước và sau phase cho 0 khác biệt (`scripts/layout-probe.js`, `scripts/layout-diff.ts`).

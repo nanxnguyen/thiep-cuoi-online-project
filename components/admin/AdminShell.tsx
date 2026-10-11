@@ -17,6 +17,7 @@ export type AdminShellProps = {
 export function AdminShell({ active, adminName, onLogout, children }: AdminShellProps) {
   const [open, setOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
   const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
@@ -26,7 +27,12 @@ export function AdminShell({ active, adminName, onLogout, children }: AdminShell
       if (event.key === "Escape") close();
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const burger = burgerRef.current;
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      // Hand focus back to the opener (skipped when navigation unmounts the shell).
+      burger?.focus();
+    };
   }, [open, close]);
 
   return (
@@ -37,6 +43,7 @@ export function AdminShell({ active, adminName, onLogout, children }: AdminShell
       <div className="adm-main-col">
         <header className="adm-topbar">
           <button
+            ref={burgerRef}
             type="button"
             className="adm-burger"
             aria-label="Mở menu quản trị"

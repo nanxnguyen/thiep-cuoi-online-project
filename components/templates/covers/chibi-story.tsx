@@ -8,13 +8,27 @@ const BLUSH = "color-mix(in srgb, var(--cv-deep) 22%, white)";
 
 export function ChibiStoryCover({ a, b, date, place, slot }: CoverProps) {
   return (
-    <div className="cv-chibi-story">
+    <div className={`cv-chibi-story${a.length + b.length >= 22 ? " cv-chibi-story--long" : ""}`}>
       <i className="cv-chibi-story__sun" aria-hidden="true" />
+      <svg className="cv-chibi-story__sky" viewBox="0 0 100 178" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <g fill="white" opacity="0.8">
+          <path d="M6 52a6 6 0 0 1 6-6a8 8 0 0 1 15 2a5 5 0 0 1 0 10H10a4 4 0 0 1-4-6Z" />
+          <path d="M72 70a5 5 0 0 1 5-5a7 7 0 0 1 13 2a4 4 0 0 1 0 8H75a3 3 0 0 1-3-5Z" />
+          <path d="M80 22a4 4 0 0 1 4-4a6 6 0 0 1 11 1.5a3.5 3.5 0 0 1 0 7H83a3 3 0 0 1-3-4.5Z" />
+        </g>
+        <g fill="var(--cv-gold)">
+          <path d="M14 30l1.2 3.2L18.4 34.4l-3.2 1.2L14 38.8l-1.2-3.2L9.6 34.4l3.2-1.2Z" />
+          <path d="M90 52l.9 2.4L93.3 55.3l-2.4.9L90 58.6l-.9-2.4L86.7 55.3l2.4-.9Z" />
+          <path d="M8 92l.9 2.4L11.3 95.3l-2.4.9L8 98.6l-.9-2.4L4.7 95.3l2.4-.9Z" />
+          <path d="M93 98l1.2 3.2L97.4 102.4l-3.2 1.2L93 104.8l-1.2-3.2L88.6 102.4l3.2-1.2Z" />
+        </g>
+      </svg>
+      <i className="cv-chibi-story__ground" aria-hidden="true" />
       <div className="cv-chibi-story__bubble">chúng mình cưới nhau nhé!</div>
-      <div className="cv-chibi-story__photo">{slot(0, "Ảnh cưới", true)}</div>
+      <div className="cv-chibi-story__photo">{slot(0, "Mẫu thiệp cưới Chúng Mình phong cách chibi bong bóng", true)}</div>
       <svg className="cv-chibi-story__couple" viewBox="0 0 100 100" aria-hidden="true">
-        <ellipse cx="50" cy="94" rx="36" ry="3.4" fill="var(--cv-deep)" opacity="0.18" />
-        <g>
+        <ellipse cx="50" cy="94" rx="40" ry="4" fill="var(--cv-deep)" opacity="0.22" />
+        <g className="cv-chibi-story__fig cv-chibi-story__fig--1">
           <rect x="24" y="76" width="5" height="16" rx="2.4" fill="var(--cv-deep)" />
           <rect x="34" y="76" width="5" height="16" rx="2.4" fill="var(--cv-deep)" />
           <path d="M20 54h24a4 4 0 0 1 4 4v22H16V58a4 4 0 0 1 4-4Z" fill="var(--cv-deep)" />
@@ -28,7 +42,7 @@ export function ChibiStoryCover({ a, b, date, place, slot }: CoverProps) {
           <circle cx="23.6" cy="44" r="2.2" fill={BLUSH} />
           <circle cx="40.4" cy="44" r="2.2" fill={BLUSH} />
         </g>
-        <g>
+        <g className="cv-chibi-story__fig cv-chibi-story__fig--2">
           <path d="M52 82C52 70 58 56 68 56S84 70 84 82Z" fill="white" stroke="var(--cv-deep)" strokeWidth="0.8" strokeLinejoin="round" />
           <path d="M60 80C62 72 66 66 68 62C70 66 74 72 76 80Z" fill="var(--cv-paper)" opacity="0.7" />
           <rect x="60" y="82" width="4" height="10" rx="2" fill={SKIN} />
@@ -48,11 +62,13 @@ export function ChibiStoryCover({ a, b, date, place, slot }: CoverProps) {
         <path d="M45 66C45 60 51 60 51 66" fill="none" stroke="var(--cv-gold)" strokeWidth="0" />
         <path d="M50 52C44 46 40 49 44 54L50 60L56 54C60 49 56 46 50 52Z" fill="var(--cv-deep)" className="cv-chibi-story__heart" />
       </svg>
-      <p className="cv-names cv-chibi-story__names">
-        {b} <span className="cv-chibi-story__amp">&amp;</span> {a}
-      </p>
-      <p className="cv-date cv-chibi-story__date">{date}</p>
-      {place && <p className="cv-place cv-chibi-story__place">{place}</p>}
+      <div className="cv-chibi-story__text">
+        <p className="cv-names cv-chibi-story__names">
+          {b} <span className="cv-chibi-story__amp">&amp;</span> {a}
+        </p>
+        <p className="cv-date cv-chibi-story__date">{date}</p>
+        {place && <p className="cv-place cv-chibi-story__place">{place}</p>}
+      </div>
     </div>
   );
 }

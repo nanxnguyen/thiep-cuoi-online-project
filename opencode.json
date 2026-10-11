@@ -1,17 +1,9 @@
 {
   "mcp": {
     "servers": {
-      "github": {
-        "type": "remote",
-        "url": "https://api.githubcopilot.com/mcp/"
-      },
       "supabase": {
         "type": "remote",
         "url": "https://mcp.supabase.com/mcp"
-      },
-      "sentry": {
-        "type": "remote",
-        "url": "https://mcp.sentry.dev/mcp"
       },
       "cloudflare-api": {
         "type": "remote",
@@ -20,10 +12,6 @@
       "cloudflare-docs": {
         "type": "remote",
         "url": "https://docs.mcp.cloudflare.com/mcp"
-      },
-      "cloudflare-bindings": {
-        "type": "remote",
-        "url": "https://bindings.mcp.cloudflare.com/mcp"
       },
       "shadcn": {
         "type": "local",

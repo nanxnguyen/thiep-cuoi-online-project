@@ -24,17 +24,48 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
+  // Parents pass inline callbacks; keep the latest in a ref so the effect below
+  // runs once per open (re-running it would steal focus on every re-render).
+  const onCancelRef = useRef(onCancel);
+  useEffect(() => {
+    onCancelRef.current = onCancel;
+  });
 
   useEffect(() => {
     if (!open) return;
-    confirmRef.current?.focus();
+    const opener = document.activeElement as HTMLElement | null;
+    // Destructive dialog: land on the safe choice, not on "delete".
+    cancelRef.current?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCancel();
+      if (event.key === "Escape") {
+        onCancelRef.current();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      // Two focusable buttons: wrap Tab / Shift+Tab inside the dialog.
+      const first = cancelRef.current;
+      const last = confirmRef.current;
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (active !== first && active !== last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onCancel]);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      opener?.focus?.();
+    };
+  }, [open]);
 
   if (!open) return null;
   return (
@@ -49,7 +80,7 @@ export function ConfirmDialog({
         <h2 className="adm-modal-title">{title}</h2>
         <p className="adm-modal-msg">{message}</p>
         <div className="adm-modal-actions">
-          <button type="button" className="adm-btn adm-btn-ghost" disabled={busy} onClick={onCancel}>
+          <button ref={cancelRef} type="button" className="adm-btn adm-btn-ghost" disabled={busy} onClick={onCancel}>
             Huỷ bỏ
           </button>
           <button

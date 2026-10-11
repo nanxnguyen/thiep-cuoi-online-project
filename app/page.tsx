@@ -9,6 +9,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { JsonLd } from "@/components/marketing/JsonLd";
 import { ThiepPreview } from "@/components/templates/ThiepPreview";
 import { SITE_URL } from "@/lib/site";
+import { logoUrl } from "@/lib/jsonld";
 import { colors, templates, templateSamples } from "@/lib/templates";
 import "@/components/home/home.css";
 
@@ -98,7 +99,7 @@ export default function HomePage() {
         data={{
           "@context": "https://schema.org",
           "@graph": [
-            { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "MỘC Wedding", url: SITE_URL },
+            { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "MỘC Wedding", url: SITE_URL, logo: logoUrl(SITE_URL), description: "MỘC — tạo thiệp cưới online đẹp, miễn phí cho các cặp đôi Việt Nam." },
             { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: SITE_URL, name: "MỘC Wedding", inLanguage: "vi-VN", publisher: { "@id": `${SITE_URL}/#organization` } },
           ],
         }}

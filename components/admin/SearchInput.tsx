@@ -23,6 +23,9 @@ export function SearchInput({ defaultValue = "", placeholder = "Tìm kiếm…",
 
   useEffect(() => {
     if (timer.current) clearTimeout(timer.current);
+    // The API rejects 1-char queries (2..80 after trim): keep the current
+    // results until the second character instead of flashing an error state.
+    if (text.trim().length === 1) return;
     timer.current = setTimeout(() => {
       inflight.current?.abort();
       const controller = new AbortController();

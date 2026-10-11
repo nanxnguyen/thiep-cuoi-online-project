@@ -292,7 +292,7 @@ export function TemplatesClient() {
       <p style={eyebrow}>QUẢN TRỊ · MẪU THIỆP</p>
       <div style={titleRow}>
         <h1 className="adm-h1">Mẫu thiệp ({total})</h1>
-        <a style={publicLink} href="/templates">
+        <a className="adm-tpl-public-link" style={publicLink} href="/templates">
           Xem trang Mẫu thiệp công khai →
         </a>
       </div>
@@ -361,6 +361,7 @@ export function TemplatesClient() {
                         <span style={tplName}>{row.name}</span>
                         <button
                           type="button"
+                          className="adm-tpl-badge"
                           style={badgeStyle(row.badge)}
                           onClick={() => cycleBadge(row)}
                           disabled={mutating !== null}

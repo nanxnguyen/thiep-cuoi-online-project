@@ -265,7 +265,7 @@
   .adm-table .adm-btn { width: 100%; white-space: normal; text-align: center; line-height: 1.2; }
   .adm-table .adm-cell-main { overflow-wrap: anywhere; }
   .adm-table .adm-cell-sub { overflow-wrap: anywhere; }
-  .adm-tpl-badge { min-height: 44px !important; min-width: 44px; }
+  .adm-tpl-badge { min-height: 44px !important; padding: 0 18px !important; }
   .adm-tpl-public-link { display: inline-flex; align-items: center; min-height: 44px; }
 }
 

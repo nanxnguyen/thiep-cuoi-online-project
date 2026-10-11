@@ -1,21 +1,22 @@
 /* Batch 5 — Kỷ vật và câu chuyện. Story-led covers: handwriting, paper
-   objects, a map. Same --cv-* contract. */
+   objects, a map. Same --cv-* contract. Keyframes are prefixed cvSt* so they
+   never collide with the other cover files. */
 
-/* Nhật Ký Đôi Mình — ruled journal page, spiral, taped print, circled date. */
+/* Nhật Ký Đôi Mình — ruled journal page, gold spiral, taped print, circled date. */
 .cv-story-journal {
   position: relative;
   height: 100%;
   overflow: hidden;
   color: var(--cv-deep);
-  background: color-mix(in srgb, var(--cv-deep) 26%, var(--cv-paper));
+  background: linear-gradient(160deg, color-mix(in srgb, var(--cv-deep) 40%, var(--cv-paper)), color-mix(in srgb, var(--cv-deep) 22%, var(--cv-paper)));
 }
 .cv-story-journal__spiral {
   position: absolute;
   left: 3cqw;
-  top: 9cqw;
-  bottom: 9cqw;
+  top: 10cqw;
+  bottom: 10cqw;
   width: 12cqw;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -23,50 +24,60 @@
 .cv-story-journal__spiral i {
   display: block;
   width: 12cqw;
-  height: 2.6cqw;
-  border-radius: 1.3cqw;
-  background: linear-gradient(var(--cv-deep), color-mix(in srgb, var(--cv-deep) 40%, white));
-  box-shadow: 0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.3);
+  height: 3cqw;
+  border-radius: 1.5cqw;
+  background: linear-gradient(var(--cv-gold), color-mix(in srgb, var(--cv-gold) 45%, var(--cv-deep)) 55%, var(--cv-gold));
+  box-shadow: 0 0.5cqw 1cqw rgba(0, 0, 0, 0.35);
 }
 .cv-story-journal__sheet {
   position: absolute;
   left: 10cqw;
-  right: 9cqw;
+  right: 13cqw;
   top: 5cqw;
   bottom: 5cqw;
-  background: repeating-linear-gradient(transparent 0 7.6cqw, color-mix(in srgb, var(--cv-deep) 22%, transparent) 7.6cqw 7.9cqw), var(--cv-paper);
-  box-shadow: 0 1cqw 3cqw rgba(0, 0, 0, 0.22);
+  background: repeating-linear-gradient(transparent 0 9cqw, color-mix(in srgb, var(--cv-deep) 12%, transparent) 9cqw 9.25cqw), var(--cv-paper);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  animation: cvStFade 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-story-journal__fold {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 10cqw;
+  height: 10cqw;
+  background: linear-gradient(225deg, color-mix(in srgb, var(--cv-deep) 40%, var(--cv-paper)) 50%, color-mix(in srgb, var(--cv-gold) 30%, var(--cv-paper)) 50%);
+  box-shadow: -0.6cqw 0.6cqw 1cqw rgba(0, 0, 0, 0.18);
 }
 .cv-story-journal__margin {
   position: absolute;
-  left: 9cqw;
+  left: 8cqw;
   top: 0;
   bottom: 0;
-  width: 0.7cqw;
-  border-left: 0.3cqw solid color-mix(in srgb, var(--cv-deep) 55%, transparent);
-  border-right: 0.3cqw solid color-mix(in srgb, var(--cv-deep) 55%, transparent);
+  border-left: 0.3cqw solid color-mix(in srgb, var(--cv-gold) 70%, transparent);
 }
 .cv-story-journal__title {
   position: absolute;
-  left: 13cqw;
-  top: 2cqw;
+  left: 11cqw;
+  right: 12cqw;
+  top: 3cqw;
+  margin: 0;
   font-family: var(--hand);
-  font-size: 11.4cqw;
-  line-height: 1;
+  font-size: 8.4cqw;
+  line-height: 1.05;
   transform: rotate(-2deg);
 }
 .cv-story-journal__print {
   position: absolute;
-  left: 15cqw;
-  top: 28cqw;
-  width: 50cqw;
-  height: 60cqw;
+  left: 12cqw;
+  top: 17cqw;
+  width: 54cqw;
+  height: 66cqw;
   margin: 0;
   padding: 2.4cqw 2.4cqw 10cqw;
   background: white;
-  box-shadow: 0 1.2cqw 3cqw rgba(0, 0, 0, 0.25);
-  transform: rotate(2.5deg);
-  animation: cvPrintIn 0.9s ease-out both;
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  transform: rotate(3deg);
+  animation: cvStPrint 0.9s 0.15s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-story-journal__photo {
   position: relative;
@@ -74,36 +85,68 @@
   height: 100%;
   overflow: hidden;
 }
+.cv-story-journal__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 70%, color-mix(in srgb, var(--cv-deep) 18%, transparent));
+}
 .cv-story-journal__print figcaption {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 2cqw;
+  bottom: 2.2cqw;
   text-align: center;
   font-family: var(--hand);
   font-size: 6.4cqw;
 }
 .cv-story-journal__tape {
   position: absolute;
-  top: -2.4cqw;
-  left: 18cqw;
-  width: 14cqw;
-  height: 4.4cqw;
+  top: -2.6cqw;
+  left: 19cqw;
+  width: 15cqw;
+  height: 5cqw;
   background: color-mix(in srgb, var(--cv-gold) 55%, rgba(255, 255, 255, 0.55));
   opacity: 0.85;
   transform: rotate(-4deg);
 }
-.cv-story-journal__lines {
+.cv-story-journal__sticker {
   position: absolute;
-  left: 13cqw;
-  right: 4cqw;
-  top: 98cqw;
+  width: 9cqw;
+  height: 9cqw;
+  filter: drop-shadow(0 0.4cqw 0.5cqw rgba(0, 0, 0, 0.25));
+}
+.cv-story-journal__sticker--heart {
+  right: 5cqw;
+  top: 28cqw;
+  color: var(--cv-deep);
+  transform: rotate(12deg);
+}
+.cv-story-journal__sticker--star {
+  right: 8cqw;
+  top: 50cqw;
+  width: 7cqw;
+  height: 7cqw;
+  color: var(--cv-gold);
+  transform: rotate(-10deg);
+}
+.cv-story-journal__text {
+  position: absolute;
+  left: 11cqw;
+  right: 6cqw;
+  bottom: 6cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+}
+.cv-story-journal__lines {
   margin: 0;
   padding: 0;
   list-style: none;
   font-family: var(--hand);
-  font-size: 6.4cqw;
-  line-height: 7.9cqw;
+  font-size: 5.6cqw;
+  line-height: 1.3;
 }
 .cv-story-journal__lines li::before {
   content: "– ";
@@ -113,40 +156,50 @@
   font-weight: 400;
   box-shadow: inset 0 -1.6cqw 0 color-mix(in srgb, var(--cv-gold) 45%, transparent);
 }
-.cv-story-journal__date {
-  position: absolute;
-  left: 14cqw;
-  top: 125cqw;
-  padding: 2cqw 5cqw;
-  border: 0.5cqw solid var(--cv-deep);
-  border-radius: 50%;
-  font-family: var(--display);
-  font-size: 5cqw;
-  letter-spacing: 0.1em;
-  transform: rotate(-2deg);
-}
 .cv-story-journal__names {
-  position: absolute;
-  left: 13cqw;
-  right: 4cqw;
-  top: 139cqw;
+  margin: 0;
   text-align: left;
   font-family: var(--hand);
-  font-size: 9.2cqw;
+  font-size: 11cqw;
   line-height: 1.05;
+  text-wrap: balance;
 }
 .cv-story-journal__amp {
   color: var(--cv-gold);
 }
-.cv-story-journal__place {
+.cv-story-journal__date {
+  position: relative;
+  align-self: flex-start;
+  margin: 1cqw 0 0;
+  padding: 2.4cqw 5cqw;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 5cqw;
+  letter-spacing: 0.1em;
+}
+.cv-story-journal__date svg {
   position: absolute;
-  left: 13cqw;
-  right: 4cqw;
-  top: 152cqw;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--cv-deep);
+  stroke-width: 0.6cqw;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  animation: cvStDraw 0.8s 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-story-journal__date svg path {
+  vector-effect: non-scaling-stroke;
+}
+.cv-story-journal__place {
+  margin: 0;
   text-align: left;
-  font-size: 2.4cqw;
-  letter-spacing: 0.2em;
-  opacity: 0.8;
+  font-size: 2.6cqw;
+  letter-spacing: 0.16em;
+  opacity: 0.85;
 }
 .cv-story-journal__tab {
   position: absolute;
@@ -156,7 +209,7 @@
   border-radius: 0 1.4cqw 1.4cqw 0;
   writing-mode: vertical-rl;
   text-align: center;
-  font-size: 2.2cqw;
+  font-size: 2.4cqw;
   letter-spacing: 0.2em;
   box-shadow: 0 0.4cqw 0.8cqw rgba(0, 0, 0, 0.2);
 }
@@ -179,65 +232,100 @@
   height: 100%;
 }
 .cv-route-map__route {
-  animation: cvDash 10s linear infinite;
+  stroke-dashoffset: 0;
+  animation: cvStRoute 2.4s 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
+.cv-route-map__pinbody {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: cvStPin 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-route-map__pin--1 .cv-route-map__pinbody { animation-delay: 0.3s; }
+.cv-route-map__pin--2 .cv-route-map__pinbody { animation-delay: 1.2s; }
 .cv-route-map__stop {
   position: absolute;
-  left: 40cqw;
-  top: 26cqw;
-  width: 24cqw;
+  left: 50cqw;
+  top: 80cqw;
+  width: 32cqw;
+  z-index: 1;
 }
 .cv-route-map__photo {
   position: relative;
-  width: 24cqw;
-  height: 24cqw;
+  width: 32cqw;
+  height: 32cqw;
   border-radius: 50%;
   overflow: hidden;
-  border: 1cqw solid var(--cv-deep);
-  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.3);
+  border: 1.4cqw solid var(--cv-gold);
+  outline: 0.5cqw solid var(--cv-deep);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  animation: cvStPin 0.5s 2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-route-map__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 60%, color-mix(in srgb, var(--cv-deep) 18%, transparent));
 }
 .cv-route-map__flag {
   position: absolute;
   left: 50%;
-  top: 25cqw;
+  top: 33.5cqw;
   transform: translateX(-50%);
-  padding: 0.9cqw 2.4cqw;
+  padding: 1cqw 2.6cqw;
   white-space: nowrap;
   background: var(--cv-deep);
   color: var(--cv-paper);
-  font-size: 2.3cqw;
+  font-size: 2.6cqw;
   letter-spacing: 0.16em;
 }
 .cv-route-map__card {
   position: absolute;
   left: 8cqw;
   right: 8cqw;
-  top: 116cqw;
-  padding: 3.6cqw 4cqw;
+  bottom: 7cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6cqw;
+  padding: 4cqw 5cqw 4.4cqw;
   background: var(--cv-paper);
   border: 0.4cqw solid var(--cv-deep);
-  box-shadow: 0 1.4cqw 3cqw rgba(0, 0, 0, 0.25);
+  box-shadow: 2cqw 2cqw 0 color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  animation: cvStRise 0.8s 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-route-map__card::before {
+  content: "";
+  position: absolute;
+  left: 5cqw;
+  right: 5cqw;
+  top: 15.5cqw;
+  border-top: 0.4cqw dashed color-mix(in srgb, var(--cv-deep) 45%, transparent);
+}
+.cv-route-map__code {
+  order: -1;
+  font-family: var(--display);
+  font-size: 9cqw;
+  line-height: 1.1;
+  letter-spacing: 0.06em;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 .cv-route-map__names {
+  margin: 1.6cqw 0 0;
   font-family: var(--display);
-  font-size: 7.4cqw;
+  font-size: 6.8cqw;
   line-height: 1.18;
-}
-.cv-route-map__date {
-  margin-top: 2cqw;
-  font-size: 3.8cqw;
-  letter-spacing: 0.28em;
-  text-indent: 0.28em;
+  text-wrap: balance;
 }
 .cv-route-map__place {
-  margin-top: 1cqw;
-  font-size: 2.4cqw;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
+  margin: 0;
+  font-size: 2.6cqw;
+  letter-spacing: 0.16em;
   opacity: 0.85;
 }
 
-/* Quán Quen — a menu card; the photo is the coaster under a drawn cup. */
+/* Quán Quen — a menu card; the photo is a coaster beside a drawn cup. */
 .cv-cafe-card {
   position: relative;
   height: 100%;
@@ -249,65 +337,93 @@
   position: absolute;
   left: 9cqw;
   right: 9cqw;
-  top: 8cqw;
-  bottom: 8cqw;
+  top: 7cqw;
+  bottom: 7cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3.6cqw;
+  padding: 7cqw 5cqw 6cqw;
   background: var(--cv-paper);
   border-radius: 2cqw;
-  box-shadow: 0 2cqw 5cqw rgba(0, 0, 0, 0.45);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent), 0 2cqw 6cqw rgba(0, 0, 0, 0.4);
   outline: 0.4cqw solid var(--cv-gold);
-  outline-offset: -2cqw;
+  outline-offset: -1.6cqw;
+  animation: cvStRise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-cafe-card__menu::before {
+  content: "";
+  position: absolute;
+  inset: 2.6cqw;
+  border: 0.3cqw solid var(--cv-gold);
+  border-radius: 1cqw;
+  pointer-events: none;
 }
 .cv-cafe-card__kicker {
-  position: absolute;
-  top: 8cqw;
-  left: 0;
-  right: 0;
+  display: block;
 }
-.cv-cafe-card__coaster {
-  position: absolute;
-  left: 10cqw;
-  top: 18cqw;
-  width: 38cqw;
-  height: 38cqw;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 1.2cqw solid white;
-  box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.3);
-}
-.cv-cafe-card__cup {
-  position: absolute;
-  left: 40cqw;
-  top: 30cqw;
-  width: 34cqw;
-  color: var(--cv-deep);
-}
-.cv-cafe-card__steam {
-  animation: cvSteam 3s ease-in-out infinite alternate;
+.cv-cafe-card__sign {
+  padding: 2.4cqw 3cqw;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
+  border-radius: 1cqw;
+  box-shadow: 0 1cqw 0 color-mix(in srgb, var(--cv-gold) 70%, var(--cv-deep));
 }
 .cv-cafe-card__names {
-  position: absolute;
-  left: 6cqw;
-  right: 6cqw;
-  top: 64cqw;
+  margin: 0;
   font-family: var(--display);
-  font-size: 7.4cqw;
-  line-height: 1.18;
+  font-style: italic;
+  font-size: 8cqw;
+  line-height: 1.12;
+  text-wrap: balance;
 }
 .cv-cafe-card__amp {
   font-family: var(--script);
   font-style: italic;
   color: var(--cv-gold);
 }
-.cv-cafe-card__items {
+.cv-cafe-card__hero {
+  position: relative;
+  height: 46cqw;
+  flex: none;
+}
+.cv-cafe-card__cup {
   position: absolute;
-  left: 8cqw;
-  right: 8cqw;
-  top: 92cqw;
+  left: 0;
+  top: 2cqw;
+  width: 44cqw;
+  color: var(--cv-deep);
+}
+.cv-cafe-card__steam {
+  animation: cvStSteam 3s ease-in-out infinite alternate;
+}
+.cv-cafe-card__steam--2 { animation-delay: -1s; }
+.cv-cafe-card__steam--3 { animation-delay: -2s; }
+.cv-cafe-card__coaster {
+  position: absolute;
+  right: -4cqw;
+  top: 3cqw;
+  width: 40cqw;
+  height: 40cqw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.2cqw solid white;
+  outline: 0.4cqw solid var(--cv-gold);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+}
+.cv-cafe-card__coaster::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 65%, color-mix(in srgb, var(--cv-deep) 18%, transparent));
+}
+.cv-cafe-card__items {
   margin: 0;
-  padding: 0;
+  padding: 0 1cqw;
   list-style: none;
   display: grid;
-  gap: 3.6cqw;
+  gap: 2.8cqw;
 }
 .cv-cafe-card__items li {
   display: flex;
@@ -315,10 +431,9 @@
   gap: 1.6cqw;
 }
 .cv-cafe-card__items span {
-  font-size: 2.9cqw;
-  letter-spacing: 0.14em;
+  font-size: 3.2cqw;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  white-space: nowrap;
 }
 .cv-cafe-card__items i {
   flex: 1;
@@ -329,30 +444,30 @@
   font-family: var(--display);
   font-style: italic;
   font-weight: 400;
-  font-size: 3.8cqw;
+  font-size: 3.6cqw;
   text-align: right;
 }
+.cv-cafe-card__foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1cqw;
+}
 .cv-cafe-card__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 124cqw;
-  font-size: 4.2cqw;
-  letter-spacing: 0.3em;
-  text-indent: 0.3em;
+  margin: 0;
+  font-size: 4.4cqw;
+  letter-spacing: 0.26em;
+  text-indent: 0.26em;
 }
 .cv-cafe-card__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 135cqw;
+  margin: 0;
   font-size: 2.6cqw;
-  letter-spacing: 0.22em;
-  text-indent: 0.22em;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
   opacity: 0.85;
 }
 
-/* Giao Điểm — two circles intersect: photo ring and a solid ring with the day. */
+/* Giao Điểm — two circles overlap diagonally; the names sit in the paper lens. */
 .cv-overlap-rings {
   position: relative;
   height: 100%;
@@ -362,45 +477,65 @@
 }
 .cv-overlap-rings__kicker {
   position: absolute;
-  top: 8cqw;
+  top: 7cqw;
   left: 0;
   right: 0;
 }
 .cv-overlap-rings__photo {
   position: absolute;
-  left: 8cqw;
-  top: 18cqw;
-  width: 66cqw;
-  height: 66cqw;
+  left: -6cqw;
+  top: 16cqw;
+  width: 70cqw;
+  height: 70cqw;
   border-radius: 50%;
   overflow: hidden;
+  border: 1cqw solid var(--cv-gold);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  animation: cvStInL 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-overlap-rings__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 60%, color-mix(in srgb, var(--cv-deep) 18%, transparent));
 }
 .cv-overlap-rings__solid {
   position: absolute;
-  left: 30cqw;
-  top: 46cqw;
-  width: 62cqw;
-  height: 62cqw;
+  left: 36cqw;
+  top: 64cqw;
+  width: 70cqw;
+  height: 70cqw;
   border-radius: 50%;
   background: var(--cv-deep);
-  mix-blend-mode: multiply;
-  opacity: 0.94;
-  animation: cvRingIn 1s ease-out both;
+  border: 1cqw solid var(--cv-gold);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  animation: cvStInR 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 .cv-overlap-rings__outline {
   position: absolute;
-  left: 20cqw;
-  top: 34cqw;
-  width: 64cqw;
-  height: 64cqw;
+  left: 12cqw;
+  top: 38cqw;
+  width: 74cqw;
+  height: 74cqw;
   border-radius: 50%;
-  border: 0.4cqw solid var(--cv-gold);
+  border: 0.4cqw solid color-mix(in srgb, var(--cv-gold) 70%, transparent);
+  pointer-events: none;
 }
+.cv-overlap-rings__dot {
+  position: absolute;
+  width: 2.6cqw;
+  height: 2.6cqw;
+  border-radius: 50%;
+  background: var(--cv-gold);
+}
+.cv-overlap-rings__dot--1 { left: 76cqw; top: 40cqw; }
+.cv-overlap-rings__dot--2 { left: 10cqw; top: 96cqw; }
 .cv-overlap-rings__day {
   position: absolute;
-  left: 48cqw;
-  top: 64cqw;
-  width: 40cqw;
+  left: 56cqw;
+  top: 84cqw;
+  width: 44cqw;
   text-align: center;
   color: var(--cv-paper);
 }
@@ -408,23 +543,36 @@
   display: block;
   font-family: var(--display);
   font-weight: 400;
-  font-size: 26cqw;
+  font-size: 32cqw;
   line-height: 1;
 }
 .cv-overlap-rings__day span {
   display: block;
   margin-top: 1cqw;
-  font-size: 2.4cqw;
-  letter-spacing: 0.22em;
+  font-size: 2.8cqw;
+  letter-spacing: 0.16em;
 }
-.cv-overlap-rings__names {
+.cv-overlap-rings__text {
   position: absolute;
   left: 8cqw;
   right: 8cqw;
-  top: 118cqw;
+  bottom: 7cqw;
+  width: 50cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4cqw;
+  padding: 3cqw 3cqw 3.4cqw;
+  background: color-mix(in srgb, var(--cv-paper) 90%, transparent);
+  border: 0.3cqw solid var(--cv-gold);
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  animation: cvStRise 0.8s 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.cv-overlap-rings__names {
+  margin: 0;
   font-family: var(--display);
-  font-size: 8cqw;
-  line-height: 1.18;
+  font-size: 7cqw;
+  line-height: 1.15;
+  text-wrap: balance;
 }
 .cv-overlap-rings__amp {
   font-family: var(--script);
@@ -432,26 +580,20 @@
   color: var(--cv-gold);
 }
 .cv-overlap-rings__date {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 144cqw;
-  font-size: 4cqw;
-  letter-spacing: 0.3em;
-  text-indent: 0.3em;
+  margin: 0;
+  font-size: 3.2cqw;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
 }
 .cv-overlap-rings__place {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 154cqw;
-  font-size: 2.5cqw;
-  letter-spacing: 0.22em;
-  text-indent: 0.22em;
+  margin: 0;
+  font-size: 2.4cqw;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
   opacity: 0.85;
 }
 
-/* Thẻ Nổi — a paper card floats over a lattice ground. */
+/* Thẻ Nổi — a paper card floats over a layered lattice ground. */
 .cv-floating-card {
   position: relative;
   height: 100%;
@@ -465,12 +607,24 @@
   width: 100%;
   height: 100%;
 }
+.cv-floating-card__back {
+  position: absolute;
+  left: 12cqw;
+  top: 17cqw;
+  width: 76cqw;
+  bottom: 12cqw;
+  background: color-mix(in srgb, var(--cv-gold) 55%, var(--cv-paper));
+  border-radius: 3cqw;
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent);
+  transform: rotate(-3deg);
+}
 .cv-floating-card__card {
   position: absolute;
   left: 12cqw;
-  top: 20cqw;
+  top: 14cqw;
   width: 76cqw;
-  height: 130cqw;
+  min-height: 130cqw;
+  bottom: 9cqw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -478,39 +632,61 @@
   padding: 8cqw 6cqw 5cqw;
   background: var(--cv-paper);
   border-radius: 3cqw;
-  box-shadow: 0 3cqw 6cqw rgba(0, 0, 0, 0.45);
-  animation: cvFloat 5s ease-in-out infinite alternate;
+  box-shadow: 0 2cqw 4cqw color-mix(in srgb, var(--cv-deep) 35%, transparent), 0 3cqw 6cqw rgba(0, 0, 0, 0.35);
+  transform: rotate(2deg);
+  animation: cvStCardIn 1s cubic-bezier(0.2, 0.7, 0.2, 1) both, cvStFloat 5s 1s ease-in-out infinite alternate;
 }
+.cv-floating-card__corner {
+  position: absolute;
+  width: 6cqw;
+  height: 6cqw;
+  color: var(--cv-gold);
+}
+.cv-floating-card__corner--tl { left: 2cqw; top: 2cqw; }
+.cv-floating-card__corner--tr { right: 2cqw; top: 2cqw; transform: scaleX(-1); }
+.cv-floating-card__corner--bl { left: 2cqw; bottom: 2cqw; transform: scaleY(-1); }
+.cv-floating-card__corner--br { right: 2cqw; bottom: 2cqw; transform: scale(-1); }
 .cv-floating-card__badge {
   position: absolute;
   top: -5cqw;
-  left: 50%;
-  width: 10cqw;
-  height: 10cqw;
-  margin-left: -5cqw;
+  right: -4cqw;
+  width: 15cqw;
+  height: 15cqw;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--cv-deep);
-  color: var(--cv-paper);
+  background: var(--cv-gold);
+  color: var(--cv-deep);
+  border: 0.6cqw dashed var(--cv-deep);
+  outline: 1cqw solid var(--cv-gold);
   box-shadow: 0 1cqw 2cqw rgba(0, 0, 0, 0.35);
+  transform: rotate(12deg);
 }
 .cv-floating-card__badge svg {
-  width: 5cqw;
-  height: 5cqw;
+  width: 7cqw;
+  height: 7cqw;
 }
 .cv-floating-card__photo {
   position: relative;
   width: 100%;
-  height: 42cqw;
+  height: 50cqw;
   flex: none;
   overflow: hidden;
   border-radius: 1.6cqw;
 }
+.cv-floating-card__photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(transparent 65%, color-mix(in srgb, var(--cv-deep) 18%, transparent));
+}
 .cv-floating-card__names {
+  margin: 0;
   font-family: var(--display);
-  font-size: 6.6cqw;
+  font-size: 7.4cqw;
   line-height: 1.1;
+  text-wrap: balance;
 }
 .cv-floating-card__amp {
   display: block;
@@ -520,14 +696,19 @@
   color: var(--cv-gold);
 }
 .cv-floating-card__date {
+  margin: 0;
+  padding: 1.4cqw 4cqw;
+  background: var(--cv-deep);
+  color: var(--cv-paper);
   font-size: 3.6cqw;
-  letter-spacing: 0.28em;
-  text-indent: 0.28em;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
 }
 .cv-floating-card__place {
-  font-size: 2.3cqw;
-  letter-spacing: 0.2em;
-  text-indent: 0.2em;
+  margin: 0;
+  font-size: 2.4cqw;
+  letter-spacing: 0.16em;
+  text-indent: 0.16em;
   opacity: 0.85;
 }
 .cv-floating-card__pill {
@@ -536,35 +717,69 @@
   border-radius: 99cqw;
   background: var(--cv-deep);
   color: var(--cv-paper);
-  font-size: 3cqw;
+  font-size: 3.2cqw;
   letter-spacing: 0.1em;
 }
 
-@keyframes cvPrintIn {
-  from { opacity: 0; transform: rotate(8deg) translateY(4cqw); }
-  to { opacity: 1; transform: rotate(2.5deg); }
+@keyframes cvStFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-@keyframes cvDash {
-  to { stroke-dashoffset: -80; }
+@keyframes cvStRise {
+  from { opacity: 0; transform: translateY(4cqw); }
+  to { opacity: 1; transform: none; }
 }
-@keyframes cvSteam {
-  from { opacity: 0.5; transform: translateY(0); }
+@keyframes cvStPrint {
+  from { opacity: 0; transform: rotate(9deg) translateY(4cqw); }
+  to { opacity: 1; transform: rotate(3deg); }
+}
+@keyframes cvStDraw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cvStRoute {
+  from { stroke-dashoffset: 1; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+@keyframes cvStPin {
+  from { opacity: 0; transform: scale(0.3); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvStSteam {
+  from { opacity: 0.4; transform: translateY(0); }
   to { opacity: 1; transform: translateY(-1.2cqw); }
 }
-@keyframes cvRingIn {
-  from { opacity: 0; transform: translate(6cqw, 6cqw); }
-  to { opacity: 0.94; transform: none; }
+@keyframes cvStInL {
+  from { opacity: 0; transform: translateX(-10cqw); }
+  to { opacity: 1; transform: none; }
 }
-@keyframes cvFloat {
-  from { transform: translateY(0); }
-  to { transform: translateY(-1.4cqw); }
+@keyframes cvStInR {
+  from { opacity: 0; transform: translateX(10cqw); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cvStCardIn {
+  from { opacity: 0; transform: translateY(6cqw) rotate(2deg); }
+  to { opacity: 1; transform: translateY(0) rotate(2deg); }
+}
+@keyframes cvStFloat {
+  from { transform: translateY(0) rotate(2deg); }
+  to { transform: translateY(-1.4cqw) rotate(2deg); }
 }
 @media (prefers-reduced-motion: reduce) {
+  .cv-story-journal__sheet,
   .cv-story-journal__print,
+  .cv-story-journal__date svg,
   .cv-route-map__route,
+  .cv-route-map__pinbody,
+  .cv-route-map__photo,
+  .cv-route-map__card,
+  .cv-cafe-card__menu,
   .cv-cafe-card__steam,
+  .cv-overlap-rings__photo,
   .cv-overlap-rings__solid,
+  .cv-overlap-rings__text,
   .cv-floating-card__card {
     animation: none;
   }
+  .cv-story-journal__date svg { stroke-dashoffset: 0; }
 }

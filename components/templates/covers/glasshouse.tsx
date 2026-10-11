@@ -1,13 +1,35 @@
 import type { CoverProps } from "./types";
 
-// Vườn Kính — a gabled greenhouse seen straight on: photo behind glazing
-// bars, glare bands, a climbing vine and two potted plants. The gable (not an
-// arch) is the silhouette so it never reads as another arched-photo cover.
+// Vườn Kính — a tall arched glasshouse seen straight on: photo behind a 4x6
+// glazing grid, a one-off glare sweep, big vines climbing both walls over the
+// glass, and the names on a stone plinth at its foot.
+const LEAVES_L: [number, number, number][] = [
+  [100, 6, 0], [86, 14, 180], [72, 5, 0], [58, 15, 180], [44, 6, 0], [30, 13, 180], [16, 7, 0],
+];
+
+function Vine({ side }: { side: "l" | "r" }) {
+  return (
+    <svg className={`cv-glasshouse__vine cv-glasshouse__vine--${side}`} viewBox="0 0 22 110" fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true">
+      <path d="M6 110C2 92 12 82 7 66S11 36 8 20C7 12 9 6 12 0" strokeWidth="0.7" />
+      {LEAVES_L.map(([y, x, flip]) => (
+        <path
+          key={y}
+          d="M0 0C5-3 11-1 13 5 7 7 2 5 0 0Z"
+          fill="currentColor"
+          fillOpacity="0.8"
+          strokeWidth="0.3"
+          transform={`translate(${x} ${y}) rotate(${flip ? 200 : -20})`}
+        />
+      ))}
+    </svg>
+  );
+}
+
 function Pot({ x }: { x: number }) {
   return (
-    <g transform={`translate(${x} 44) scale(0.75)`}>
-      <path d="M-5 168h10l-1.6 8h-6.8Z" fill="currentColor" opacity="0.85" />
-      <path d="M0 168C-8 160-9 152-4 146 0 152 0 160 0 168ZM0 168C8 158 10 150 5 144 1 150 0 158 0 168ZM0 168C-2 156 0 146 0 138 3 146 3 158 0 168Z" fill="currentColor" opacity="0.5" />
+    <g transform={`translate(${x} 0)`}>
+      <path d="M-4 0h8l-1.4 7h-5.2Z" fill="currentColor" opacity="0.85" />
+      <path d="M0 0C-7-6-8-13-3-18 0-12 0-6 0 0ZM0 0C7-8 9-15 4-20 1-14 0-8 0 0Z" fill="currentColor" opacity="0.55" />
     </g>
   );
 }
@@ -17,29 +39,38 @@ export function GlasshouseCover({ a, b, date, place, slot }: CoverProps) {
     <div className="cv-glasshouse">
       <span className="cv-kicker cv-glasshouse__kicker">VƯỜN KÍNH · TIỆC SÂN VƯỜN</span>
       <div className="cv-glasshouse__house">
-        <div className="cv-glasshouse__photo">{slot(0, "Ảnh cưới")}</div>
-        <div className="cv-glasshouse__glare" aria-hidden="true" />
-        <svg className="cv-glasshouse__bars" viewBox="0 0 72 106" fill="none" stroke="white" strokeWidth="0.9" aria-hidden="true">
-          <path d="M0 27.5L36 0L72 27.5V106H0Z" strokeWidth="1.6" />
-          <path d="M18 14V106M36 0V106M54 14V106" opacity="0.9" />
-          <path d="M0 52H72M0 76H72" opacity="0.9" />
-          <path d="M0 27.5H72" opacity="0.9" />
+        <div className="cv-glasshouse__photo">{slot(0, "Mẫu thiệp cưới Vườn Kính phong cách sân vườn vòm kính")}</div>
+        <div className="cv-glasshouse__glare" aria-hidden="true">
+          <i />
+        </div>
+        <svg className="cv-glasshouse__bars" viewBox="0 0 84 112" fill="none" stroke="white" aria-hidden="true">
+          <defs>
+            <clipPath id="cv-gh-arch">
+              <path d="M0 112V42A42 42 0 0 1 84 42V112Z" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#cv-gh-arch)" strokeWidth="0.7" opacity="0.92">
+            <path d="M21 0V112M42 0V112M63 0V112" />
+            <path d="M0 22H84M0 42H84M0 62H84M0 82H84M0 100H84" />
+            <path d="M42 0V22M21 6V22M63 6V22" />
+          </g>
+          <path d="M0 112V42A42 42 0 0 1 84 42V112" strokeWidth="1.8" />
         </svg>
-        <svg className="cv-glasshouse__vine" viewBox="0 0 30 106" fill="currentColor" aria-hidden="true">
-          <path d="M4 106C2 80 10 64 6 40S10 10 12 0" fill="none" stroke="currentColor" strokeWidth="0.9" />
-          <path d="M6 88c-5-1-8-5-8-9 5 0 8 4 8 9ZM10 70c6-1 10-5 10-9-6 0-10 4-10 9ZM5 54c-5-1-8-5-8-9 5 0 8 4 8 9ZM9 36c6-1 10-5 10-9-6 0-10 4-10 9ZM7 20c-5-1-8-5-8-9 5 0 8 4 8 9Z" opacity="0.75" />
-        </svg>
+        <Vine side="l" />
+        <Vine side="r" />
       </div>
-      <p className="cv-names cv-glasshouse__names">
-        {b} <span className="cv-glasshouse__amp">&amp;</span> {a}
-      </p>
-      <p className="cv-date cv-glasshouse__date">{date}</p>
-      <p className="cv-place cv-glasshouse__place">{place}</p>
-      <svg className="cv-glasshouse__ground" viewBox="0 0 100 178" aria-hidden="true">
-        <path d="M6 168H94" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
-        <Pot x={8} />
-        <Pot x={92} />
+      <svg className="cv-glasshouse__ground" viewBox="0 0 100 20" aria-hidden="true">
+        <path d="M2 18H98" stroke="currentColor" strokeWidth="0.6" opacity="0.6" />
+        <Pot x={5} />
+        <Pot x={95} />
       </svg>
+      <div className="cv-glasshouse__plinth">
+        <p className="cv-names cv-glasshouse__names">
+          {b} <span className="cv-glasshouse__amp">&amp;</span> {a}
+        </p>
+        <p className="cv-date cv-glasshouse__date">{date}</p>
+        {place && <p className="cv-place cv-glasshouse__place">{place}</p>}
+      </div>
     </div>
   );
 }
