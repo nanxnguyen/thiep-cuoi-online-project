@@ -173,3 +173,10 @@ export const helpGroups: readonly HelpGroup[] = [
 ];
 
 export const allHelpItems = (): Faq[] => helpGroups.flatMap((g) => g.items);
+
+// Other pages reuse help answers word for word; a renamed question fails the build instead of shipping a stale copy.
+export function helpItem(q: string): Faq {
+  const item = allHelpItems().find((i) => i.q === q);
+  if (!item) throw new Error(`No help item: ${q}`);
+  return item;
+}

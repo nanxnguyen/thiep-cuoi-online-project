@@ -15,6 +15,23 @@ export function publisherLogo(base: string) {
   return { "@type": "ImageObject", url: logoUrl(base) };
 }
 
+// The business entity, one @id site-wide so every page's markup points at the same node. Contact fields are omitted
+// while empty (lib/site.ts keeps them empty until the owner sets them): never a fabricated phone, email or address.
+export function organization(base: string, opts: { email?: string; phone?: string; address?: string; sameAs?: string[] } = {}) {
+  const contact = { ...(opts.email ? { email: opts.email } : {}), ...(opts.phone ? { telephone: opts.phone } : {}) };
+  return {
+    "@type": "Organization",
+    "@id": `${abs(base, "/")}/#organization`,
+    name: "MỘC Wedding",
+    url: abs(base, "/"),
+    logo: logoUrl(base),
+    description: "MỘC — tạo thiệp cưới online đẹp, miễn phí cho các cặp đôi Việt Nam.",
+    ...(Object.keys(contact).length ? { contactPoint: { "@type": "ContactPoint", contactType: "customer support", availableLanguage: "vi", ...contact } } : {}),
+    ...(opts.address ? { address: opts.address } : {}),
+    ...(opts.sameAs?.length ? { sameAs: opts.sameAs } : {}),
+  };
+}
+
 // The last crumb is the current page; Google wants its `item` omitted or equal to the page URL.
 export function breadcrumbList(base: string, trail: Crumb[]) {
   return {

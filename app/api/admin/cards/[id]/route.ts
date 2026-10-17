@@ -4,6 +4,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/server/auth";
 import { adminCardPatchSchema } from "@/lib/server/admin-schemas";
 import { createAdminClient, createRouteClient } from "@/lib/server/supabase";
+import { deleteInvitationMedia } from "@/lib/server/media";
 import { HttpError, parseJson, routeResponse } from "@/lib/server/http";
 import { assertSameOrigin } from "@/lib/server/security";
 import { getTemplate } from "@/lib/templates";
@@ -104,10 +105,17 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
     const { client, applyCookies } = createRouteClient(request);
     await requireAdmin(client);
     const admin = createAdminClient();
-    // Guests/RSVPs/wishes cascade in the DB; media cleanup is best-effort.
+    // Guests/RSVPs/wishes cascade in the DB. Storage files are removed
+    // best-effort: a storage failure must not resurrect the deleted row, so a
+    // media error is logged and the 204 still goes out.
     const { data, error } = await admin.from("invitations").delete().eq("id", id).select("id").maybeSingle();
     if (error) throw new HttpError(500, "Chưa xoá được thiệp.");
     if (!data) throw new HttpError(404, "Không tìm thấy nội dung này.");
+    try {
+      await deleteInvitationMedia(admin, id);
+    } catch (mediaError) {
+      console.error("admin card delete: media cleanup failed", id, mediaError instanceof Error ? mediaError.message : "unknown error");
+    }
     return applyCookies(new NextResponse(null, { status: 204 }));
   });
 }

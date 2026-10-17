@@ -6,7 +6,7 @@ import { templates } from "@/lib/templates";
 
 // Dates are fixed (bump `lastModified` in lib/seo.ts when a page's content changes): `new Date()` would tell
 // crawlers every page changed on every request, which makes them ignore the field.
-const TEMPLATE_LASTMOD = "2026-10-01";
+const TEMPLATE_LASTMOD = "2026-10-12";
 
 // Marketing pages, tools, legal pages and template previews. Private routes (/studio, /account, /invite) stay out.
 export default function sitemap(): MetadataRoute.Sitemap {

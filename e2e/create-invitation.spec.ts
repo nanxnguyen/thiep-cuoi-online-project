@@ -225,6 +225,8 @@ test.describe("layout", () => {
 
   test("the template picker and create button are reachable without horizontal scrolling", async ({ page }) => {
     await page.goto("/studio");
+    // /studio is prerendered: the query-string island swaps the static fallback on hydration.
+    await page.waitForLoadState("networkidle");
     const go = startButton(page);
     await go.scrollIntoViewIfNeeded();
     const box = await go.boundingBox();

@@ -8,6 +8,7 @@ import { FaqList, type Faq } from "@/components/marketing/FaqList";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { ScrollReveal } from "@/components/site/ScrollReveal";
 import { templates } from "@/lib/templates";
+import { helpItem } from "@/lib/marketing/help";
 import "./pricing.css";
 
 export const metadata: Metadata = pageMetadata("/bang-gia");
@@ -27,20 +28,17 @@ const included = [
 
 const planned = ["Video trong thiệp"];
 
+// Answers come from /tro-giup word for word (lib/marketing/help.ts), so pricing never says something help does not.
+// No FAQPage schema here: /tro-giup already marks these up, and Google wants one marked-up instance per site.
 const PRICE_FAQ: Faq[] = [
-  {
-    q: "Dùng MỘC có mất phí không?",
-    a: "Hiện tại toàn bộ tính năng miễn phí. Nếu sau này có gói trả phí, thông tin sẽ được đăng ở trang Bảng giá.",
-  },
-  {
-    q: "Thiệp cưới online có miễn phí thật không?",
-    a: "Có. Hiện tại MỘC miễn phí toàn bộ: tạo thiệp, chọn mẫu, ảnh nhạc, xác nhận tham dự, sổ lưu bút và mã QR mừng cưới. Bạn không cần nhập thẻ hay đăng ký gói nào.",
-  },
-  {
-    q: "Tôi có cần đăng ký tài khoản không?",
-    a: "Không bắt buộc. Hai bạn có thể tạo thiệp ngay và lưu link chỉnh sửa. Nếu tạo tài khoản, bạn có thể nhận thiệp vào tài khoản để mở lại trên thiết bị khác.",
-  },
-];
+  "Dùng MỘC có mất phí không?",
+  "Thiệp cưới online có miễn phí thật không?",
+  "Tôi có cần đăng ký tài khoản không?",
+  "MỘC là gì?",
+  "Tôi có đổi mẫu thiệp sau khi đã nhập nội dung được không?",
+  "Tôi thêm được bao nhiêu ảnh?",
+  "Cách gửi thiệp cưới qua Zalo cho nhiều khách?",
+].map(helpItem);
 
 export default function PricingPage() {
   return (
@@ -102,7 +100,7 @@ export default function PricingPage() {
       </section>
       <section className="pricing-faq" aria-label="Hỏi đáp về giá">
         <h2>Thắc mắc về giá?</h2>
-        <FaqList items={PRICE_FAQ} schema />
+        <FaqList items={PRICE_FAQ} />
         <p>
           Xem thêm <Link href="/tro-giup">31 câu hỏi thường gặp</Link> và <Link href="/templates">50 mẫu thiệp</Link>.
         </p>

@@ -22,3 +22,13 @@ test("the root layout sets the phone viewport without blocking zoom", () => {
   assert.match(layout, /interactiveWidget: "resizes-content"/);
   assert.doesNotMatch(layout, /maximumScale|userScalable|viewportFit/);
 });
+
+import { contactAddress, contactPhone, socialUrls } from "../lib/site.ts";
+
+test("phone, address and social links stay empty until the owner sets them", () => {
+  assert.equal(contactPhone({}), "");
+  assert.equal(contactPhone({ NEXT_PUBLIC_CONTACT_PHONE: " +84900000000 " }), "+84900000000");
+  assert.equal(contactAddress({ NEXT_PUBLIC_CONTACT_ADDRESS: "Hà Nội" }), "Hà Nội");
+  assert.deepEqual(socialUrls({}), []);
+  assert.deepEqual(socialUrls({ NEXT_PUBLIC_SOCIAL_URLS: "https://facebook.com/a, ,https://tiktok.com/@b" }), ["https://facebook.com/a", "https://tiktok.com/@b"]);
+});

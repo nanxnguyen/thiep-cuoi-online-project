@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { blogPosting, breadcrumbList, itemList, logoUrl, product, publisherLogo, webApplication } from "../lib/jsonld.ts";
+import { blogPosting, breadcrumbList, itemList, logoUrl, organization, product, publisherLogo, webApplication } from "../lib/jsonld.ts";
 
 const B = "https://x.vn";
 
@@ -60,4 +60,16 @@ test("product is a free Product with Offer, absolutised URLs and optional isRela
   assert.equal("isRelatedTo" in j, false);
   const rel = product(B, { name: "N", description: "d", image: "https://x.vn/photos/a.jpg", url: "https://x.vn/templates/x", relatedUrls: ["/templates/y"] });
   assert.deepEqual(rel.isRelatedTo, ["https://x.vn/templates/y"]);
+});
+
+test("organization keeps one site-wide @id and omits contact fields until they are real", () => {
+  const bare = organization(B, { email: "", phone: "", address: "", sameAs: [] });
+  assert.equal(bare["@id"], "https://x.vn/#organization");
+  assert.equal(bare.logo, "https://x.vn/logo.png");
+  for (const key of ["contactPoint", "address", "sameAs"]) assert.equal(key in bare, false);
+  const full = organization(B, { email: "a@x.vn", phone: "+84900000000", address: "Hà Nội", sameAs: ["https://facebook.com/moc"] });
+  assert.equal(full.contactPoint?.email, "a@x.vn");
+  assert.equal(full.contactPoint?.telephone, "+84900000000");
+  assert.equal(full.address, "Hà Nội");
+  assert.deepEqual(full.sameAs, ["https://facebook.com/moc"]);
 });

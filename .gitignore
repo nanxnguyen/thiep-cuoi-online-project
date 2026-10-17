@@ -41,3 +41,4 @@ playwright-report/
 
 # DB dumps (contain guest data)
 backup/
+public/photos/w/

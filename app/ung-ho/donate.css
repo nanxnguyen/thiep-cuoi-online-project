@@ -1,26 +1,33 @@
 /* design/Ung Ho.dc.html, value for value */
 @keyframes donateRise { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: .8; } 100% { transform: translateY(-420px) scale(1.1); opacity: 0; } }
 @keyframes cardIn { 0% { opacity: 0; transform: translateY(40px) rotate(-3deg); } 100% { opacity: 1; transform: rotate(-1.5deg); } }
+@keyframes donateGlow { 0%, 100% { box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .5), 0 0 0 0 rgba(163, 22, 28, .35); } 50% { box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .5), 0 0 0 10px rgba(163, 22, 28, 0); } }
+@keyframes donateTick { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: none; } }
 @keyframes donateToast { 0% { opacity: 0; transform: translate(-50%, 10px); } 15%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -6px); } }
 .donate-hero { position: relative; overflow: hidden; background: var(--accent); color: var(--surface); }
 .donate-hearts { position: absolute; inset: 0; pointer-events: none; }
 .donate-hearts span { position: absolute; bottom: -30px; color: rgba(255, 255, 255, .35); animation: donateRise 9s ease-in infinite; }
-.donate-hero__inner { max-width: 1280px; margin: 0 auto; padding: 96px 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 56px; align-items: center; position: relative; }
-.donate-hero__copy { display: flex; flex-direction: column; gap: 24px; }
+.donate-hero__inner { max-width: 1280px; margin: 0 auto; padding: 88px 32px 72px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 56px; align-items: center; position: relative; }
+.donate-hero__copy { display: flex; flex-direction: column; gap: 22px; }
 .donate-hero__heart { font-size: 44px; display: inline-block; animation: heart 1.6s ease-in-out infinite; align-self: flex-start; }
-.donate-hero h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(46px, 6vw, 84px); line-height: 1; letter-spacing: normal; animation: fadeUp .9s .1s both; --fu-y: 28px; }
+.donate-hero h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(44px, 5.6vw, 76px); line-height: 1.04; letter-spacing: normal; animation: fadeUp .9s .1s both; --fu-y: 28px; }
 .donate-hero h1 em { color: var(--gold-on-red); }
 .donate-hero__copy > p { margin: 0; font-size: 17px; line-height: 1.75; color: var(--rose-on-red); max-width: 460px; animation: fadeUp .9s .25s both; --fu-y: 28px; }
-.donate-hero__copy ol { display: flex; flex-direction: column; gap: 12px; margin: 8px 0 0; padding: 0; list-style: none; animation: fadeUp .9s .4s both; --fu-y: 28px; }
-.donate-hero__copy li { display: flex; gap: 14px; align-items: center; font-size: 15px; }
-.donate-hero__copy li span { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .4); display: grid; place-items: center; font-size: 12px; flex: none; }
-.donate-card { justify-self: center; width: 100%; max-width: 400px; background: var(--surface); color: var(--ink); border-radius: 24px; padding: 32px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .5); animation: cardIn 1s .3s cubic-bezier(.2, .8, .2, 1) both; position: relative; }
-.donate-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.donate-hero__cta { margin-top: 6px; align-self: flex-start; background: var(--surface); color: var(--accent); font-weight: 600; padding: 16px 30px; border-radius: 999px; font-size: 16px; animation: fadeUp .9s .4s both; --fu-y: 28px; }
+.donate-hero__cta:hover { background: var(--gold-on-red); color: var(--red-800); }
+.donate-card { justify-self: center; width: 100%; max-width: 400px; background: var(--surface); color: var(--ink); border-radius: 24px; padding: 28px; animation: cardIn 1s .3s cubic-bezier(.2, .8, .2, 1) both, donateGlow 2.8s 1.3s ease-in-out infinite; position: relative; scroll-margin-top: 90px; }
+.donate-card__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .donate-card__head span:first-child { font-size: 12px; letter-spacing: .2em; color: var(--gold-deep); font-weight: 600; }
 .donate-card__bank { font-size: 13px; font-weight: 600; color: var(--tpbank); }
+.donate-amounts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.donate-amounts > span:first-child { font-size: 12px; color: var(--faint); }
+.donate-amounts > div { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.donate-amounts button { font-family: inherit; font-size: 14px; font-weight: 500; padding: 11px 8px; border-radius: 12px; border: 1.5px solid var(--line-mid); background: var(--surface); color: var(--ink); cursor: pointer; }
+.donate-amounts button[data-on="true"] { border-color: var(--accent); background: var(--accent); color: var(--surface); }
+.donate-amounts__impact { font-size: 12px; color: var(--muted); line-height: 1.5; animation: donateTick .25s both; }
 .donate-card__qr { aspect-ratio: 1; border-radius: 16px; overflow: hidden; position: relative; background: var(--qr-ground); border: 1px solid var(--paper-alt); }
 .donate-card__qr img { display: block; width: 100%; height: 100%; object-fit: contain; }
-.donate-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 22px; }
+.donate-rows { display: flex; flex-direction: column; gap: 2px; margin-top: 18px; }
 .donate-rows > div { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--paper-alt); }
 .donate-rows__text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 .donate-rows__text span:first-child { font-size: 12px; color: var(--faint); }
@@ -30,9 +37,9 @@
 .donate-toast { position: absolute; left: 50%; bottom: -18px; pointer-events: none; }
 .donate-toast span { position: absolute; left: 0; bottom: 0; background: var(--ink); color: var(--surface); font-size: 13px; padding: 9px 16px; border-radius: 999px; animation: donateToast 1.8s both; white-space: nowrap; }
 .donate-quote { max-width: 880px; margin: 0 auto; padding: 96px 32px; text-align: center; display: flex; flex-direction: column; gap: 18px; align-items: center; }
-.donate-quote > span { font-family: var(--display); font-style: italic; font-size: clamp(28px, 3.4vw, 40px); line-height: 1.35; }
-.donate-quote a { margin-top: 12px; background: var(--ink); color: var(--surface); padding: 15px 26px; border-radius: 999px; font-size: 15px; }
-.donate-quote a:hover { background: var(--ink-hover); color: var(--surface); }
+.donate-quote > span { font-family: var(--display); font-style: italic; font-size: clamp(24px, 2.8vw, 32px); line-height: 1.4; }
+.donate-quote a { margin-top: 12px; background: var(--accent); color: var(--surface); padding: 16px 30px; border-radius: 999px; font-size: 15px; font-weight: 500; }
+.donate-quote a:hover { background: var(--accent-hover); color: var(--surface); }
 
 /* ---------- phones (≤767px): docs/superpowers/specs/2026-10-07-mobile-first-design.md ---------- */
 @media (max-width: 767px) {
@@ -41,7 +48,8 @@
   .donate-hero__heart { font-size: 34px; }
   .donate-hero h1 { font-size: var(--m-display-xl); }
   .donate-hero__copy > p { font-size: var(--m-lede); line-height: var(--m-lede-lh); }
-  .donate-hero__copy li { font-size: 14px; }
+  .donate-hero__cta { display: inline-flex; align-items: center; min-height: var(--m-btn-h); padding: 0 var(--m-btn-px); font-size: var(--m-btn-fs); }
+  .donate-amounts button { min-height: var(--m-tap); }
   .donate-card { padding: 22px; border-radius: 22px; }
   .donate-rows button { min-height: var(--m-tap); padding: 0 14px; font-size: 13px; }
   .donate-quote { padding: var(--m-section-y) var(--m-gutter); }

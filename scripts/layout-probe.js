@@ -9,7 +9,7 @@ async () => {
     "/", "/account", "/bang-gia", "/blog", "/cong-cu-dam-cuoi", "/demo", "/dieu-khoan",
     "/qr-tien-mung", "/quyen-rieng-tu", "/studio", "/tao-thiep-cuoi",
     "/templates", "/thiep-cuoi-online-mien-phi", "/tin-nhan-moi-cuoi",
-    "/tro-giup", "/ung-ho", "/thiet-ke-thiep-rieng", "/cong-cu/tao-qr", "/cong-cu/nen-anh", "/cong-cu/nen-video",
+    "/tro-giup", "/ung-ho", "/ve-moc", "/thiet-ke-thiep-rieng", "/cong-cu/tao-qr", "/cong-cu/nen-anh", "/cong-cu/nen-video",
     "/cong-cu/save-the-date", "/cong-cu/tin-nhan-moi", "/cong-cu/danh-sach-khach",
     "/templates/song-hy", "/templates/song-hy?preview=1", "/blog/cach-lam-thiep-cuoi-online", "/khong-co-trang-nay",
   ];

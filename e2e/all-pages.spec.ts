@@ -23,6 +23,7 @@ const PUBLIC_PAGES = [
   "/cong-cu/danh-sach-khach",
   "/cong-cu/save-the-date",
   "/ung-ho",
+  "/ve-moc",
   "/dieu-khoan",
   "/quyen-rieng-tu",
   "/thiet-ke-thiep-rieng",

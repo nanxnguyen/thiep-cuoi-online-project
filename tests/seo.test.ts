@@ -32,3 +32,12 @@ test("titles and descriptions are unique across pages", () => {
   assert.equal(new Set(titles).size, titles.length);
   assert.equal(new Set(descriptions).size, descriptions.length);
 });
+
+import { metadataFor, withShareImage } from "../lib/seo.ts";
+
+test("a page share image replaces both the Open Graph and the layout's twitter image", () => {
+  const meta = withShareImage(metadataFor("/blog/a", "T", "D"), { url: "https://x.vn/photos/a.jpg", alt: "A" });
+  assert.equal(meta.openGraph.images[0].url, "https://x.vn/photos/a.jpg");
+  assert.equal(meta.openGraph.url, "/blog/a");
+  assert.equal(meta.twitter.images[0].url, "https://x.vn/photos/a.jpg");
+});

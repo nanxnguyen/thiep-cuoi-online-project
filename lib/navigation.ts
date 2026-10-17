@@ -51,6 +51,7 @@ export const FOOTER_COLUMNS: readonly { title: string; links: readonly Navigatio
     links: [
       { href: "/tro-giup", label: "Trợ giúp" },
       { href: "/ung-ho", label: "Ủng hộ" },
+      { href: "/ve-moc", label: "Về MỘC" },
     ],
   },
   {

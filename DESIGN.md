@@ -132,10 +132,17 @@ Kiểm chứng: `tsc --noEmit` sạch, `node --test tests/covers.test.ts tests/t
 - Không `viewport-fit=cover` và không safe-area: site chạy `display: "browser"`. `viewport` export chỉ thêm `themeColor` (ivory) và `interactiveWidget: "resizes-content"`.
 - Spec: `docs/superpowers/specs/2026-10-07-mobile-first-design.md`.
 
+## Deviation: `/ung-ho` so với `design/Ung Ho.dc.html` (05/10/2026)
+
+- Bỏ dòng "chồng avatar + 238 người đã ủng hộ trong tháng này" ở hero và dòng "— Thu Hà & Quốc Bảo, đã tạo thiệp trên Mộc" dưới câu trích: cả hai là số liệu/người dùng bịa trong prototype; đưa lên production là thông tin giả (README design 05/10 mục 5 cũng từng bỏ vì lý do này). Khi có số liệu ủng hộ thật (webhook `donations`) thì mới thêm lại.
+- Khung QR dùng VietQR thật của tài khoản chủ dự án và mã hoá luôn mức tiền đã chọn (design chỉ có ô kéo-thả ảnh).
+
 ## Do's and Don'ts
 
 - Dùng đúng tên 16 mẫu và palette trong design v2; ID cũ chỉ là alias dữ liệu.
 - Giữ nội dung thiệp thật, RSVP, link riêng khách và autosave khi đổi UI.
 - Không thêm thông điệp trial/thanh toán vì sản phẩm hiện miễn phí.
 - Blog (`/blog`) không có mockup trong `design/` (đã gỡ ở đợt 26–27/09), nên là ngoại lệ có chủ đích: chỉ dùng token, primitive `mk-*` và Playfair/Be Vietnam Pro; mục lục, khối mẹo, thẻ liên kết và ảnh bìa là phần bổ sung riêng của blog (`components/blog/blog.css`).
+- Trang `/ve-moc` (giới thiệu, tín hiệu tin cậy cho SEO, 2026-10-12) cũng không có mockup: chỉ dùng `PageHero` + `mk-prose` + `CtaBand`, không CSS riêng. Cột "Hỗ trợ" của footer thêm link "Về MỘC" (lệch footer design 1 dòng, có chủ đích để trang được liên kết nội bộ).
+- `/templates/[id]`: phần trên (khối `<main>` `tdt`) vẫn khớp `design/Mau Thiep Chi Tiet.dc.html`; bên dưới có thêm section "Về mẫu thiệp …" (`components/templates/TemplateAbout.tsx`, `mk-prose`) mà design không có, chủ dự án yêu cầu 2026-10-12 để 50 trang mẫu có nội dung riêng cho SEO.
 - Không thay khả năng đọc, focus hay lỗi form để đổi lấy ảnh giống design.

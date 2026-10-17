@@ -34,3 +34,17 @@ test("webhook route bounds the raw body before signature verification", () => {
   assert.match(source, /readBody\(request, JSON_MAX_BYTES\)/);
   assert.doesNotMatch(source, /await request\.text\(\)/);
 });
+
+test("vietQrUrl adds the amount only for a positive integer", async () => {
+  const { vietQrUrl } = await import("../lib/vietqr.ts");
+  const acc = { bankCode: "970423", accountNumber: "04123513201", accountName: "Nguyễn Anh Nhựt" };
+  assert.match(vietQrUrl(acc, "Ung ho", 50000), /&addInfo=Ung%20ho&amount=50000$/);
+  for (const bad of [0, -5, 1.5, Number.NaN]) assert.doesNotMatch(vietQrUrl(acc, "Ung ho", bad), /amount=/);
+  assert.doesNotMatch(vietQrUrl(acc, "Ung ho"), /amount=/);
+});
+
+test("donate amounts match the design chips and are strictly increasing", async () => {
+  const { DONATE_AMOUNTS } = await import("../lib/donate.ts");
+  assert.deepEqual(DONATE_AMOUNTS.map((a) => a[1]), ["50.000đ", "100.000đ", "200.000đ", "500.000đ"]);
+  assert.deepEqual(DONATE_AMOUNTS.map((a) => a[0]), [...DONATE_AMOUNTS.map((a) => a[0])].sort((x, y) => x - y));
+});

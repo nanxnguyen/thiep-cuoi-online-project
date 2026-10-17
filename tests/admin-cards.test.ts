@@ -101,6 +101,11 @@ test("cards list requires admin, uses the service role and never caches", () => 
   assert.doesNotMatch(listSource, /createAnonClient/);
 });
 
+test("card delete also removes storage files best-effort (no orphan media)", () => {
+  assert.match(itemSource, /deleteInvitationMedia\(admin, id\)/);
+  assert.match(itemSource, /from "@\/lib\/server\/media"/);
+});
+
 test("cards list filters status in SQL with reported winning over published", () => {
   assert.match(listSource, /\.eq\("published", true\)\.eq\("is_flagged", false\)/);
   assert.match(listSource, /\.eq\("published", false\)\.eq\("is_flagged", false\)/);

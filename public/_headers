@@ -1,0 +1,11 @@
+# Cloudflare Workers Static Assets. Hashed Next chunks never change under the same URL.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+# Fonts change by renaming the file, never in place.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+# Photos and music are sometimes replaced in place: 30 days, not immutable.
+/photos/*
+  Cache-Control: public, max-age=2592000
+/music/*
+  Cache-Control: public, max-age=2592000

@@ -34,6 +34,7 @@ export const SEO_PAGES: Record<string, SeoPage> = {
   "/cong-cu/tin-nhan-moi": page("Tạo tin nhắn mời cưới, gửi Zalo hoặc SMS", "Điền tên cô dâu chú rể, ngày cưới và link thiệp, nhận ngay 2 gợi ý tin nhắn mời, gần gũi và trang trọng, để sao chép và gửi.", 0.7, "monthly"),
   "/cong-cu/danh-sach-khach": page("Lập danh sách khách mời cưới miễn phí (CSV)", "Lập danh sách khách mời theo hộ hoặc nhóm, xuất file CSV để lưu hoặc nhập vào sổ khách mời trong Studio khi bạn đã tạo thiệp.", 0.7, "monthly"),
   "/cong-cu/save-the-date": page("Tạo ảnh Save The Date miễn phí", "Tạo ảnh báo ngày cưới (save the date) ngay trên trình duyệt: tên, ngày cưới, ảnh nền tuỳ chọn. Tải về để đăng Zalo, Facebook hoặc Instagram.", 0.7, "monthly"),
+  "/ve-moc": page("Về MỘC: công cụ làm thiệp cưới online", "MỘC là công cụ làm thiệp cưới online cho các cặp đôi Việt Nam: chọn mẫu, gửi link qua Zalo, nhận xác nhận tham dự, lời chúc và tiền mừng trên thiệp.", 0.5, "monthly", "2026-10-12"),
   "/dieu-khoan": page("Điều khoản sử dụng", "Điều khoản khi dùng MỘC để tạo thiệp cưới online: nội dung của bạn, link chỉnh sửa, mừng cưới bằng QR, nội dung bị cấm và giới hạn trách nhiệm.", 0.3, "yearly"),
   "/quyen-rieng-tu": page("Quyền riêng tư", "MỘC lưu những dữ liệu nào khi bạn làm thiệp cưới online, ai xem được, dùng dịch vụ bên ngoài nào và bạn có những quyền gì.", 0.3, "yearly"),
 };
@@ -66,4 +67,12 @@ export function metadataFor(path: string, title: string, description: string, ab
       images: [{ url: "/og.png", width: 1200, height: 630, alt: "MỘC Wedding — thiệp cưới online" }],
     },
   };
+}
+
+type ShareImage = { url: string; alt: string; width?: number; height?: number };
+
+// Page-specific share image. Metadata merges shallowly, so the root layout's twitter card (og.png) wins unless the
+// page sets `twitter` too: replace both together.
+export function withShareImage<M extends ReturnType<typeof metadataFor>>(meta: M, image: ShareImage) {
+  return { ...meta, openGraph: { ...meta.openGraph, images: [image] }, twitter: { card: "summary_large_image" as const, images: [image] } };
 }

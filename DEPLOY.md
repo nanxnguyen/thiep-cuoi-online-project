@@ -62,7 +62,7 @@ Production: `https://thiep-cuoi-online-project.vercel.app`. Cron giữ ấm vẫ
 Chuẩn bị 1 lần: `wrangler.jsonc` (đã có trong repo), đăng ký workers.dev subdomain ở dashboard, rồi:
 ```bash
 npx -y wrangler@latest login
-npm run build # sinh .open-next/worker.js (build sạch: rm -rf .open-next dist trước)
+npm run build # sinh .open-next/worker.js + nạp cache trang tĩnh vào assets (build sạch: rm -rf .open-next dist trước)
 ./node_modules/.bin/opennextjs-cloudflare deploy # hoặc: npx wrangler deploy
 ```
 Env: `vars` public nằm sẵn trong `wrangler.jsonc`; secret set tay:
@@ -72,8 +72,10 @@ npx wrangler secret put EDGE_SHARED_SECRET
 npx wrangler secret put RATE_LIMIT_HMAC_SECRET
 ```
 Lưu ý:
+- Workers Free = 10ms CPU/request; lỗi `1102 Worker exceeded resource limits` = vượt CPU. `open-next.config.ts` dùng `staticAssetsIncrementalCache` để trang tĩnh phục vụ từ assets (không render lại); bước `populateCache local` trong `npm run build` bắt buộc, thiếu thì trang tĩnh quay lại bị render mỗi request. Đừng đặt `limits.cpu_ms` (chỉ gói trả phí).
 - Build Cloudflare snapshot toàn bộ env shell vào `.open-next/cloudflare/next-env.mjs` — build xong kiểm tra không lọt token lạ (`grep -o "VERCEL_[A-Z_]*" ...` phải trống). `.env` thừa và dòng lạ trong `.env.local` phải xóa trước build.
 - `NEXT_PUBLIC_*` nướng vào build: luôn build với `NEXT_PUBLIC_SITE_URL=https://taothiepcuoimienphi.raystudio.com.vn npm run build` rồi `npx wrangler deploy` (domain chính thức, đặt trong `wrangler.jsonc`).
+- Liên hệ công khai (tuỳ chọn, cũng nướng vào build): `NEXT_PUBLIC_CONTACT_EMAIL`, `NEXT_PUBLIC_CONTACT_PHONE`, `NEXT_PUBLIC_CONTACT_ADDRESS`, `NEXT_PUBLIC_SOCIAL_URLS` (URL cách nhau dấu phẩy). Trống thì khối Liên hệ ở `/ve-moc` và `contactPoint` trong schema Organization tự ẩn.
 - Có thể connect GitHub trong dashboard để auto-deploy (Build command `npm run build`, Deploy command `npx wrangler deploy`); env vẫn phải set tay ở Settings → Variables.
 
 ## 5. Verify sau deploy

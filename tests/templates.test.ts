@@ -88,7 +88,7 @@ test("every template has a unique SEO description fitting a search result", () =
 });
 
 test("template detail renders the design's single layout paragraph", () => {
-  const page = readFileSync("app/templates/[id]/page.tsx", "utf8");
+  const page = readFileSync("components/templates/TemplateDetailMain.tsx", "utf8");
   const head = page.match(/<div className="tdt__head">([\s\S]*?)<\/div>/)?.[1] ?? "";
 
   assert.equal((head.match(/<p>/g) ?? []).length, 1);

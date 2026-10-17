@@ -11,7 +11,7 @@ import { PostRow, formatPostDate } from "@/components/blog/PostRow";
 import { Toc } from "@/components/blog/Toc";
 import { blogPostSeo, getPost, headings, posts, readingMinutes } from "@/lib/blog";
 import { blogPosting } from "@/lib/jsonld";
-import { metadataFor } from "@/lib/seo";
+import { metadataFor, withShareImage } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 import "@/components/marketing/marketing.css";
 import "@/components/blog/blog.css";
@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const post = getPost((await params).slug);
   if (!post) return {};
   const { title, description } = blogPostSeo(post);
-  const meta = metadataFor(`/blog/${post.slug}`, title, description);
+  const { cover } = post;
+  const meta = withShareImage(metadataFor(`/blog/${post.slug}`, title, description), { url: `${SITE_URL}${cover.src}`, width: cover.w, height: cover.h, alt: cover.alt });
   return {
     ...meta,
     openGraph: { ...meta.openGraph, type: "article", publishedTime: post.date, modifiedTime: post.updated, authors: ["MỘC Wedding"] },

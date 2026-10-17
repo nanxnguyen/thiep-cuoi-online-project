@@ -15,6 +15,18 @@ export const CONTACT_EMAIL = (process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "").trim(
 // Zalo number (digits only) for the custom-design page. Empty until the owner provides one: the button is then hidden.
 export const CONTACT_ZALO = (process.env.NEXT_PUBLIC_CONTACT_ZALO ?? "").replace(/\D/g, "");
 
+// Phone, address and social profiles for /ve-moc and the Organization schema. Empty until the owner sets the env var,
+// same "hidden until set" rule as CONTACT_ZALO: never a placeholder.
+type Env = Record<string, string | undefined>;
+export const contactPhone = (env: Env) => (env.NEXT_PUBLIC_CONTACT_PHONE ?? "").trim();
+export const contactAddress = (env: Env) => (env.NEXT_PUBLIC_CONTACT_ADDRESS ?? "").trim();
+export const socialUrls = (env: Env) =>
+  (env.NEXT_PUBLIC_SOCIAL_URLS ?? "").split(",").map((u) => u.trim()).filter(Boolean);
+
+export const CONTACT_PHONE = contactPhone(process.env);
+export const CONTACT_ADDRESS = contactAddress(process.env);
+export const SOCIAL_URLS = socialUrls(process.env);
+
 if (process.env.NODE_ENV === "production" && SITE_URL.startsWith("http://localhost")) {
   console.warn("NEXT_PUBLIC_SITE_URL is not set: sitemap, canonical and Open Graph URLs will point to localhost.");
 }

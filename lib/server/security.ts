@@ -16,5 +16,7 @@ export function securityHeaders(): Record<string, string> {
     "X-Frame-Options": "DENY",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    // One year, this host only: no includeSubDomains/preload, which would pin every *.raystudio.com.vn site too.
+    "Strict-Transport-Security": "max-age=31536000",
   };
 }
